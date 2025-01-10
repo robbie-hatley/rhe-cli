@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
 =pod
 
@@ -25,13 +25,16 @@ Output: (222, 228, 282, 288, 822, 828, 882)
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+This looks like yet another job for my favorite CPAN module, "Math::Combinatorics". I'll first extract the
+digits from @ints and push them to an array "@digits", then I'll grab all 3-combinations of @digits, then
+generate all permutations of each 3-combination, join, discard any beginning with 0, and discard any with
+odd final digit. Any that remain, I'll push to an array "@tde", then return a sorted, deduped copy of @tde.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, apostrophes escaped as '"'"', in proper Perl syntax:
-./ch-1.pl '(["She shaved?", "She ate 7 hot dogs."],["She didn'"'"'t take baths.", "She sat."])'
+single-quoted array of arrays of integers, in proper Perl syntax, like so:
+./ch-1.pl '([0,9,5,8,4,7,6],[-42,0,17,8,-34],[1,3,5,7,9])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -40,25 +43,55 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.38;
-use utf8;
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+use v5.36;
+use Math::Combinatorics;
+use List::Util 'uniq';
+
+   # Return all unique three-digit even integers which can be made by
+   # concatenating digits from a given array of integers:
+   sub three_digits_even (@ints) {
+      my @digits;
+      foreach my $int (@ints) {
+         my @chars = split //, $int;
+         foreach my $char (@chars) {
+            if ($char =~ m/^\d$/) {
+               push @digits, $char;
+            }
+         }
+      }
+      my @three_combinations = combine(3,@digits);
+      my @tde; # "tde" = Three-Digit Even numbers
+      foreach my $three (@three_combinations) {
+         my @permutations = permute(@$three);
+         foreach my $permutation (@permutations) {
+            next if 0 == $$permutation[0];    # Reject "085"
+            next if 1 == $$permutation[2]%2;  # Reject "317"
+            push @tde, join '',@$permutation; # Accept "524"
+         }
+      }
+      return uniq sort @tde;
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) :
+(
+   # Example 1 input:
+   [2, 1, 3, 0],
+   # Expected output: (102, 120, 130, 132, 210, 230, 302, 310, 312, 320)
+
+   # Example 2 input:
+   [2, 2, 8, 8, 2]
+   # Expected output: (222, 228, 282, 288, 822, 828, 882)
+);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   my @ints = @$aref;
+   say "Ints = (@ints)";
+   my @tde  = three_digits_even(@ints);
+   say "Three-digit even numbers: (@tde)"
 }
