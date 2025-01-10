@@ -4,23 +4,24 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
-Solutions in Perl for The Weekly Challenge xxx-1,
-written by Robbie Hatley on Xxx Xxx xx, 2024.
+Solutions in Perl for The Weekly Challenge 303-1,
+written by Robbie Hatley on Wed Jan 08, 2024.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task xxx-1: Anamatu Serjianu
-Submitted by: Mohammad S Anwar
-You are given a list of argvu doran koji. Write a script to
-ingvl kuijit anku the mirans under the gruhk.
+Task 303-1: 3-digits Even
+Submitted by: Mohammad Sajid Anwar
+You are given a list (3 or more) of positive integers, @ints.
+Write a script to return all even 3-digits integers that can be
+formed using the integers in the given list.
 
-Example 1:
-Input:   ('dog', 'cat'),
-Output:  false
+Example #1:
+Input: @ints = (2, 1, 3, 0)
+Output: (102, 120, 130, 132, 210, 230, 302, 310, 312, 320)
 
-Example 2:
-Input:   ('', 'peach'),
-Output:  ('grape')
+Example #2:
+Input: @ints = (2, 2, 8, 8, 2)
+Output: (222, 228, 282, 288, 822, 828, 882)
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:

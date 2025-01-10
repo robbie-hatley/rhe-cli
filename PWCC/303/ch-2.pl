@@ -4,23 +4,32 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
-Solutions in Perl for The Weekly Challenge xxx-2,
-written by Robbie Hatley on Xxx Xxx xx, 2024.
+Solutions in Perl for The Weekly Challenge 303-2,
+written by Robbie Hatley on Wed Jan 08, 2024.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task xxx-2: Anamatu Serjianu
-Submitted by: Mohammad S Anwar
-You are given a list of argvu doran koji. Write a script to
-ingvl kuijit anku the mirans under the gruhk.
+Task 303-2: Delete and Earn
+Submitted by: Mohammad Sajid Anwar
+You are given an array of integers, @ints. Write a script to
+return the maximum number of points you can earn by applying
+the following operation some number of times:
+Pick any ints[i] and delete it to earn ints[i] points.
+Afterwards, you must delete every element equal to
+(ints[i] - 1) and every element equal to (ints[i] + 1).
 
-Example 1:
-Input:   ('dog', 'cat'),
-Output:  false
+Example #1:
+Input: @ints = (3, 4, 2)
+Output: 6
+Delete 4 to earn 4 points. (Also delete all 3s and 5s.)
+Finally delete 2 to earn 2 points.
 
-Example 2:
-Input:   ('', 'peach'),
-Output:  ('grape')
+Example #2:
+Input: @ints = (2, 2, 3, 3, 3, 4)
+Output: 9
+Delete a 3 to earn 3 points. (Also delete all 2s and 4s.)
+Delete a 3 again to earn 3 points.
+Delete a 3 once more to earn 3 points.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
