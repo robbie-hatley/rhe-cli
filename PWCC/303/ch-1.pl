@@ -9,7 +9,7 @@ written by Robbie Hatley on Wed Jan 08, 2024.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task 303-1: 3-Digits Even
+Task 303-1: "3-Digits Even"
 Submitted by: Mohammad Sajid Anwar
 You are given a list (3 or more) of positive integers, @ints.
 Write a script to return all even 3-digits integers that can be

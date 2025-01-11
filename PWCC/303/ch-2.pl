@@ -9,7 +9,7 @@ written by Robbie Hatley on Wed Jan 08, 2024.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task 303-2: Delete and Earn
+Task 303-2: "Delete and Earn"
 Submitted by: Mohammad Sajid Anwar
 You are given an array of integers, @ints. Write a script to
 return the maximum number of points you can earn by applying
