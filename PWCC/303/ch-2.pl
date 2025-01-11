@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
 =pod
 
@@ -33,13 +33,17 @@ Delete a 3 once more to earn 3 points.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+Like most "minima" and "maxima" problems, this begs for recursion, so as to try all possibilities, seeking
+which yields minimum or maximum results. The trick is, whether/how to pass "results so far" to each recursive
+level. I think in this case, since we're finding a maximum within integer scores, I'll make a recursive
+subroutine "scores" that returns a list of all scores, then feed that list to the "max" function from CPAN
+module "List::Util".
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, apostrophes escaped as '"'"', in proper Perl syntax:
-./ch-2.pl '(["She shaved?", "She ate 7 hot dogs."],["She didn'"'"'t take baths.", "She sat."])'
+single-quoted array of arrays of integers, in proper Perl syntax, like so:
+./ch-2.pl '([0,9,5,8,4,7,6],[-42,0,17,8,-34],[1,3,5,7,9])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -48,25 +52,63 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.38;
-use utf8;
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+use v5.36;
+use List::Util qw( max );
+
+   # What scores can be generated from a given list of ints?
+   sub scores ($score, @ints) {
+      # If we're out of ints, just return the score:
+      if (!@ints) {
+         return $score;
+      }
+      # Otherwise, return all scores which can be obtained by
+      # selecting each integer in-turn as "next to be removed":
+      else {
+         my @scores;
+         foreach my $i (0..$#ints) {
+            # Make local copies of everything:
+            my $local_scor = $score;
+            my @local_ints = @ints;
+            my $local_valu = $local_ints[$i];
+            # Reap $local_ints[$i] and add it to score:
+            $local_scor += $local_ints[$i];
+            splice @local_ints, $i, 1;
+            # Examine each remaining element of @local_ints:
+            for ( my $j = 0 ; $j <= $#local_ints ; ++$j ) {
+               # If $local_ints[$j] is one-less or one-greater
+               # than $local_valu, eliminate it:
+               if ( 1 == abs($local_ints[$j] - $local_valu) ) {
+                  # Eliminate element:
+                  splice @local_ints, $j, 1;
+                  # Back-track $j because we just shifted the
+                  # right portion of @local_ints one-left:
+                  --$j;
+               }
+            }
+            # Send $local_scor and @local_ints (even if empty)
+            # to next-deeper recursive level of "sub scores",
+            # and append return values to @scores:
+            push @scores, scores($local_scor, @local_ints);
+         }
+         # Return scores:
+         return @scores;
+      }
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) : ([3, 4, 2],[2, 2, 3, 3, 3, 4]);
+# Expected output:                         9              11
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   my @ints = @$aref;
+   my @scores = scores(0, @ints);
+   my $max = max @scores;
+   say "Ints = (@ints)";
+   say "Scores = (@scores)";
+   say "Max Score = $max";
 }
