@@ -11,6 +11,7 @@ written by Robbie Hatley on Mon Jan 13, 2024.
 PROBLEM DESCRIPTION:
 Task 304-2: "Maximum Average"
 Submitted by: Mohammad Sajid Anwar
+Reworded for clarity by Robbie Hatley.
 You are given an array @ints of integers and an integer $n which
 is less-than-or-equal-to the number of elements of @ints. Write a
 script to find the contiguous subarray of @ints of length $n
@@ -29,7 +30,7 @@ Output: 5
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
 I'll use slices to make the subarrays, then use "sum0" from CPAN module "List::Util" to make the averages.
-Then just see what average is greatest.
+I'll then just see which subarray has the greatest average.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
@@ -37,7 +38,7 @@ Input is via either built-in variables or via @ARGV. If using @ARGV, provide one
 single-quoted array of arrays of integer, in proper Perl syntax. The first element of each inner array will
 be construed as the "$n" in the problem description, and the remainder will be construed as the array "@ints".
 The integer $n must be less-than-or-equal-to the number of elements of @ints. For example:
-./ch-2.pl '([4,-17,11,5,21,36,7,-42],[4,-5,-4,-3,-2,-1,0,1,2,3],[0],[1])'
+./ch-2.pl '([4,-17,11,5,21,36,7,-42],[4,-5,-4,-3,-2,-1,0,1,2,3])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -46,44 +47,27 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.40;
-use builtin    qw( inf                   );
-no  warnings   qw( experimental::builtin );
-use List::Util qw( sum0                  );
+   use v5.40;
+   use builtin    qw( inf                   );
+   no  warnings   qw( experimental::builtin );
+   use List::Util qw( sum0                  );
 
-# Is our input valid?
-sub input_is_valid ($n, @ints) {
-   if ($n !~ m/^0$|^[1-9]\d*$/) {
-      return 0;
-   }
-   for my $int (@ints) {
-      if ($int !~ m/^-[1-9]\d*$|^0$|^[1-9]\d*$/) {
-         return 0;
+   # Return the maximum average of a contiguous
+   # $n-element subarray of @ints:
+   sub maximum_average ($n, @ints) {
+      my $max = -inf;
+      my @sub = ();
+      goto RETURN if $n < 1 || $n > scalar(@ints);
+      for my $i (0..scalar(@ints)-$n) {
+         my @slice = @ints[$i..$i+$n-1];
+         my $avg = sum0(@slice)/$n;
+         if ($avg > $max) {
+            $max = $avg;
+            @sub = @slice;
+         }
       }
+      RETURN: return $max, @sub;
    }
-   if ($n > scalar(@ints)) {
-      return 0;
-   }
-   return 1;
-}
-
-# Return the maximum average of a contiguous
-# $n-element subarray of @ints:
-sub maximum_average ($n, @ints) {
-   my $max = -inf;
-   my @sub = ();
-   for my $i (0..scalar(@ints)-$n) {
-      last if $n < 1;
-      my @slice = @ints[$i..$i+$n-1];
-      my $sum = sum0(@slice);
-      my $avg = $sum/$n;
-      if ($avg > $max) {
-         $max = $avg;
-         @sub = @slice;
-      }
-   }
-   return $max, @sub;
-}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
@@ -100,10 +84,6 @@ for my $aref (@arrays) {
    my @ints = @array;
    say "Ints = (@ints)";
    say "Sub-array size = $n";
-   if (!input_is_valid($n,@ints)) {
-      say "Errror: Invalid input.";
-      next;
-   }
    my ($max, @sub) = maximum_average($n, @ints);
    say "Greatest-max subarray = (@sub)";
    say "Maximum Average = $max";
