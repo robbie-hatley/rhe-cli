@@ -82,9 +82,8 @@ for my $aref (@arrays) {
    my @array = @$aref;
    my $n = shift @array;
    my @ints = @array;
-   say "Ints = (@ints)";
-   say "Sub-array size = $n";
    my ($max, @sub) = maximum_average($n, @ints);
-   say "Greatest-max subarray = (@sub)";
+   say "Ints = (@ints)";
+   say "Max-Avg contiguous size-$n subarray = (@sub)";
    say "Maximum Average = $max";
 }
