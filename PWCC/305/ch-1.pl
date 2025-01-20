@@ -40,8 +40,9 @@ false, false, false, true)
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-First I'll apply eval to "0b" tacked to the left of each joined binary number, in order to convert it to
-decimal; then I'll feed each decimal number to an "is_prime" function.
+For each binary prefix, I'll apply eval to "0b" tacked to the left of the join of the slice of the prefix
+in order to convert it to decimal; then I'll feed each such decimal number to an "is_prime" function to
+determine its primality.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
@@ -56,58 +57,58 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
+   use v5.36;
 
-#
-sub is_binary_array($aref) {
-   return 0 unless 'ARRAY' eq ref $aref;
-   return 0 unless scalar(@$aref) > 0;
-   foreach my $element (@$aref) {
-      return 0 unless $element eq '0' || $element eq '1';
+   # Is a given scalar a reference to a binary array?
+   sub is_binary_array($aref) {
+      return 0 unless 'ARRAY' eq ref $aref;
+      return 0 unless scalar(@$aref) > 0;
+      foreach my $element (@$aref) {
+         return 0 unless $element eq '0' || $element eq '1';
+      }
+      return 1;
    }
-   return 1;
-}
 
-# Is a given scalar a prime number?
-sub is_prime($x) {
-   # If $x ain't an integer then it ain't prime:
-   return 0 unless $x =~ m/^-[1-9]\d*$|^0$|^[1-9]\d*$/;
-   # If $x is less than 2 it ain't prime:
-   return 0 if $x < 2;
-   # If $x is equal to 2, it's prime:
-   return 1 if 2 == $x;
-   # If $x is even, it ain't prime:
-   return 0 if 0 == $x%2;
-   # If we get to here, $x is an odd integer > 2.
-   # Get its square root:
-   my $root = $x**0.5;
-   # If $x is divisible by any odd integer <= $root,
-   # then $x ain't prime:
-   for ( my $test = 3 ; $test <= $root ; $test += 2 ) {
-      return 0 if 0 == $x%$test
+   # Is a given scalar a prime number?
+   sub is_prime($x) {
+      # If $x ain't an integer then it ain't prime:
+      return 0 unless $x =~ m/^-[1-9]\d*$|^0$|^[1-9]\d*$/;
+      # If $x is less than 2 it ain't prime:
+      return 0 if $x < 2;
+      # If $x is equal to 2, it's prime:
+      return 1 if 2 == $x;
+      # If $x is even, it ain't prime:
+      return 0 if 0 == $x%2;
+      # If we get to here, $x is an odd integer > 2.
+      # Get its square root:
+      my $root = $x**0.5;
+      # If $x is divisible by any odd integer <= $root,
+      # then $x ain't prime:
+      for ( my $test = 3 ; $test <= $root ; $test += 2 ) {
+         return 0 if 0 == $x%$test
+      }
+      # If we get to here, $x isn't divisible by a damn thing,
+      # so $x is prime:
+      return 1;
    }
-   # If we get to here, $x isn't divisible by a damn thing,
-   # so $x is prime:
-   return 1;
-}
 
-# What are the primalities of every binary prefix
-# of the binary number given by an array of 1s & 0s?
-sub binary_prefixes_are_prime ($aref) {
-   my @results = ();
-   for my $size (1..scalar(@$aref)) {
-      my @slice = @$aref[0..$size-1];
-      my $prefix = eval("0b".join('',@slice));
-      push @results, (is_prime($prefix) ? "T" : "F");
+   # What are the primalities of every binary prefix
+   # of the binary number given by an array of 1s & 0s?
+   sub binary_prefixes_are_prime ($aref) {
+      my @results = ();
+      for my $size (1..scalar(@$aref)) {
+         my @slice = @$aref[0..$size-1];
+         my $prefix = eval("0b".join('',@slice));
+         push @results, (is_prime($prefix) ? "T" : "F");
+      }
+      return @results;
    }
-   return @results;
-}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
 my @arrays = @ARGV ? eval($ARGV[0])
                    : ([1, 0, 1], [1, 1, 0], [1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1]);
-# Expected outputs :  (F  T  T)  (F  T  F)  (F, T, T, F, F, T, F, F, F, F, F, F, F, F, F, F, F, F, F, T)
+# Expected outputs :  (F, T, T)  (F, T, F)  (F, T, T, F, F, T, F, F, F, F, F, F, F, F, F, F, F, F, F, T)
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
