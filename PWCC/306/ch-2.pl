@@ -49,7 +49,7 @@ The problem description doesn't specify "two biggest UNIQUE integers", so I elec
 Example #1 to be "in-error" rather than re-write the problem description.
 
 I also note that by following the problem description as-written (ie, "the two biggest integers present,
-whether unique or identical"), the answer 1 is also obtained, though in a very different way.
+whether unique or identical"), in Example 1 the answer 1 is also obtained, though in a very different way.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:

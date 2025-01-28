@@ -38,8 +38,8 @@ Output: 4
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
 I'll solve this problem by using nested for loops to generate all valid odd-length blocks of contiguous
-indices for the given array, sum each with sum0 (from CPAN module "List::Util") and push to "@sums", then
-return sum0(@sums).
+indices for the given array, sum each with sum0 (from CPAN module "List::Util"), add each such sum to a
+variable "$sum", then return $sum.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
