@@ -75,10 +75,8 @@ use v5.36;
          @array = sort {$b<=>$a} @array;
          my $y = shift @array;
          my $x = shift @array;
-         unshift @array, $y-$x;
-      }
-      return $array[0];
-   }
+         unshift @array, $y-$x;}
+      return $array[0];}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
