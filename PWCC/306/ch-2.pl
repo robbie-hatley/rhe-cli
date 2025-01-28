@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
 =pod
 
@@ -36,13 +36,26 @@ Step 2: pick 2 and 2 => ()
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+Since we're going to end up boiling each incoming array down to 1 or 0 elements, order doesn't matter, so I'll
+start by doing reverse numeric sort on the array. And each time an element is replaced, I'll sort the array
+again. That way, "the two biggest integers" will always be the first two elements. I'll then keep deleting and
+replacing as specified in the problem description, except that if the two largest integers are equal, I'll
+replace them with 0. That way, I'll always end up with exactly 1 integer left in the array (which may be
+zero or non-zero), and I'll present that integer as the output.
+
+By the way, I note that Example #1 doesn't obey the problem description's mandate "pick two biggest integers",
+as Steps 4 and 5 both pick "2 and 1" when in either case the two biggest integers would have been "2 and 2".
+The problem description doesn't specify "two biggest UNIQUE integers", so I elect to consider steps 4 and 5 of
+Example #1 to be "in-error" rather than re-write the problem description.
+
+I also note that by following the problem description as-written (ie, "the two biggest integers present,
+whether unique or identical"), the answer 1 is also obtained, though in a very different way.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, apostrophes escaped as '"'"', in proper Perl syntax:
-./ch-2.pl '(["She shaved?", "She ate 7 hot dogs."],["She didn'"'"'t take baths.", "She sat."])'
+single-quoted array of arrays of integers, in proper Perl syntax, like so:
+./ch-2.pl '([-42,17,73,-84, 56],[-3,-2,-1,0,1,2,3]),[7,7,7,7,]'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -51,25 +64,33 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.38;
-use utf8;
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+use v5.36;
+
+   # Keep replacing the two largest integers in an array
+   # with the absolute value of their difference until
+   # only one integer is left, then return that integer:
+   sub last_element ($aref) {
+      my @array = @$aref;
+      while (scalar(@array) > 1) {
+         @array = sort {$b<=>$a} @array;
+         my $y = shift @array;
+         my $x = shift @array;
+         unshift @array, $y-$x;
+      }
+      return $array[0];
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) : ([3, 8, 5, 2, 9, 2],[3, 2, 5]);
+# Expected outputs:                            1              0
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   say "Array = (@$aref)";
+   my $l_e = last_element($aref);
+   say "Last Element = $l_e";
 }

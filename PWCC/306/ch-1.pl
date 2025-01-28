@@ -57,24 +57,19 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 use v5.36;
 use List::Util 'sum0';
 
-# Return sum of sums of all odd-length subarrays
-# of an array of numeric scalars:
-sub odd_sum ($aref) {
-   my $sum = 0;
-   for    ( my $i =  0 ; $i <= $#$aref ; $i += 1 ) {
-      for ( my $j = $i ; $j <= $#$aref ; $j += 2 ) {
-         my @indices = $i..$j;
-         my @slice   = @$aref[@indices];
-         $sum += sum0(@slice);
-      }
-   }
-   return $sum;
-}
+   # Return sum of sums of all odd-length subarrays
+   # of an array of numbers:
+   sub odd_sum ($aref) {
+      my $sum = 0;
+      for    ( my $i =  0 ; $i <= $#$aref ; $i += 1 ) {
+         for ( my $j = $i ; $j <= $#$aref ; $j += 2 ) {
+            $sum += sum0(@$aref[$i..$j]);}}
+      return $sum;}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
 my @arrays = @ARGV ? eval($ARGV[0]) : ([2, 5, 3, 6, 4], [1, 3]);
-                 # Expected outputs :       77             4
+# Expected outputs:                         77             4
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
