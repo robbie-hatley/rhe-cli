@@ -10,6 +10,7 @@
 #                      Flex, and I can't NOT include it on programs that DO use Flex. So I'm importing
 #                      a lot of stuff from maketail into this file instead.
 #    Sat Aug 06, 2022: I changed EXEDIR to point to the currently-correct locations.
+#    Sun Feb 02, 2025: Changed exe dir location from "/d/rhe2" to "/d/rhe-bin".
 
 # Set source vpath directories so that make can find the c and cpp files for this collection:
 vpath %.c   /d/rhe-cli/src/jive
@@ -17,12 +18,12 @@ vpath %.cpp /d/rhe-cli/src/jive
 
 # Set PLATFORM, EXEDIR, MACROS, and ALL:
 ifeq ($(PLATFORM),Win64)
-   EXEDIR   := /d/rhe2/bin_cyg/jive
+   EXEDIR   := /d/rhe-bin/bin_cyg/jive
    MACROS   := -DPLATFORM_IS_WIN64 -D_GNU_SOURCE
    ALL      := piglatin.exe chef.exe jive.exe valspeak.exe
    EXEPATHS := $(EXEDIR)/piglatin.exe $(EXEDIR)/chef.exe $(EXEDIR)/jive.exe $(EXEDIR)/valspeak.exe
 else ifeq ($(PLATFORM),Linux)
-   EXEDIR   := /d/rhe2/bin_lin/jive
+   EXEDIR   := /d/rhe-bin/bin_lin/jive
    MACROS   := -DPLATFORM_IS_LINUX -D_GNU_SOURCE
    ALL      := piglatin chef jive valspeak
    EXEPATHS := $(EXEDIR)/piglatin $(EXEDIR)/chef $(EXEDIR)/jive $(EXEDIR)/valspeak
@@ -48,10 +49,10 @@ WC := -Wall -Wfloat-equal -Wshadow -Wcast-qual \
 -Wcast-align -Wconversion -Wcomments -Wundef -Wnested-externs
 
 # Compilation Command string for C files which WERE    made from Flex:
-COMPILE_FLEX_YES = gcc $(MACROS) $(WC) -s -O2 -std=gnu17 $< -L/usr/lib -lfl -o $(EXEDIR)/$@
+COMPILE_FLEX_YES = gcc $(MACROS) $(WC) -s -O2 -std=c89 $< -L/usr/lib -lfl -o $(EXEDIR)/$@
 
 # Compilation Command string for C files which WEREN'T made from Flex:
-COMPILE_FLEX_NO  = gcc $(MACROS) $(WC) -s -O2 -std=gnu17 $< -L/usr/lib      -o $(EXEDIR)/$@
+COMPILE_FLEX_NO  = gcc $(MACROS) $(WC) -s -O2 -std=c89 $< -L/usr/lib      -o $(EXEDIR)/$@
 
 # ============================================================================================================
 # DECLARE PHONY TARGETS:
