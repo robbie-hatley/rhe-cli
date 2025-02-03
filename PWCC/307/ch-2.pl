@@ -75,6 +75,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       return(sig($_[0]) eq sig($_[1]));
    }
 
+   # Remove the first of each pair of consecutive anagrams:
    sub trim_anagrams {
       my @wrds = @_;
       for ( my $i = 0 ; $i <= $#wrds-1 ; ++$i ) {
