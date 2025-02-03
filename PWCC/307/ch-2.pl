@@ -54,37 +54,37 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-# Return the Newtonian signature of a word:
-sub sig {
-   my $word = shift;
-   my @chrs = split //, $word;
-   my %hash;
-   for (@chrs) {
-      ++$hash{$_};
-   }
-   my $sig = '';
-   for (sort keys %hash) {
-      $sig .= $_;
-      $sig .= $hash{$_};
-   }
-   return $sig;
-}
-
-# Are two words anagrams of each other?
-sub are_anagrams {
-   return(sig($_[0]) eq sig($_[1]));
-}
-
-sub trim_anagrams {
-   my @wrds = @_;
-   for ( my $i = 0 ; $i <= $#wrds-1 ; ++$i ) {
-      if (are_anagrams($wrds[$i],$wrds[$i+1])) {
-         splice(@wrds, $i, 1);
-         --$i;
+   # Return the Newtonian signature of a word:
+   sub sig {
+      my $word = shift;
+      my @chrs = split //, $word;
+      my %hash;
+      for (@chrs) {
+         ++$hash{$_};
       }
+      my $sig = '';
+      for (sort keys %hash) {
+         $sig .= $_;
+         $sig .= $hash{$_};
+      }
+      return $sig;
    }
-   return @wrds;
-}
+
+   # Are two words anagrams of each other?
+   sub are_anagrams {
+      return(sig($_[0]) eq sig($_[1]));
+   }
+
+   sub trim_anagrams {
+      my @wrds = @_;
+      for ( my $i = 0 ; $i <= $#wrds-1 ; ++$i ) {
+         if (are_anagrams($wrds[$i],$wrds[$i+1])) {
+            splice(@wrds, $i, 1);
+            --$i;
+         }
+      }
+      return @wrds;
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
