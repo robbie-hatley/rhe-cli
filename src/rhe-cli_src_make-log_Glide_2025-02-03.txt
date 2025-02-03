@@ -1,0 +1,583 @@
+BASH on Manjaro Linux arthur@optiplex-major Mon 2025-02-03, 08:28:41 AM
+~/Belequenta/rhe-cli/src
+%make
+08:29:12 AM
+make -C librh
+make[1]: Entering directory '/home/arthur/Belequenta/rhe-cli/src/librh'
+$PLATFORM  is Linux
+$INCDIR    is /d/rhe-cli/include
+$LIBSRCDIR is /d/rhe-cli/src/librh
+$LIBDIR    is /d/rhe-bin/lib_lin
+$EXEDIR    is /d/rhe-bin/bin_lin/librh
+Robbie Hatley's Library Program Collection is up to date.
+make[1]: Leaving directory '/home/arthur/Belequenta/rhe-cli/src/librh'
+make -C fractals
+make[1]: Entering directory '/home/arthur/Belequenta/rhe-cli/src/fractals'
+$PLATFORM  is Linux
+$INCDIR    is /d/rhe-cli/include
+$LIBSRCDIR is /d/rhe-cli/src/librh
+$LIBDIR    is /d/rhe-bin/lib_lin
+$EXEDIR    is /d/rhe-bin/bin_lin/fractals
+Using pattern rule %:%.cpp to compile rhhennon.cpp to rhhennon:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 rhhennon.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/fractals/rhhennon
+rhhennon is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile rhjulia.cpp to rhjulia:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 rhjulia.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/fractals/rhjulia
+rhjulia is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile rhmandelbrot.cpp to rhmandelbrot:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 rhmandelbrot.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/fractals/rhmandelbrot
+rhmandelbrot is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile rhsierpinski.cpp to rhsierpinski:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 rhsierpinski.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/fractals/rhsierpinski
+rhsierpinski is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Fractals Program Collection is up to date.
+make[1]: Leaving directory '/home/arthur/Belequenta/rhe-cli/src/fractals'
+make -C games
+make[1]: Entering directory '/home/arthur/Belequenta/rhe-cli/src/games'
+$PLATFORM  is Linux
+$INCDIR    is /d/rhe-cli/include
+$LIBSRCDIR is /d/rhe-cli/src/librh
+$LIBDIR    is /d/rhe-bin/lib_lin
+$EXEDIR    is /d/rhe-bin/bin_lin/games
+Using pattern rule %:%.cpp to compile blackjack.cpp to blackjack:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 blackjack.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/games/blackjack
+blackjack is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile eight-queens.cpp to eight-queens:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 eight-queens.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/games/eight-queens
+eight-queens is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile life.c to life:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 life.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/games/life
+life is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile life-standalone.c to life-standalone:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 life-standalone.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/games/life-standalone
+life-standalone is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile poker-odds.cpp to poker-odds:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 poker-odds.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/games/poker-odds
+poker-odds is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Games Program Collection is up to date.
+make[1]: Leaving directory '/home/arthur/Belequenta/rhe-cli/src/games'
+make -C graphics
+make[1]: Entering directory '/home/arthur/Belequenta/rhe-cli/src/graphics'
+$PLATFORM  is Linux
+$INCDIR    is /d/rhe-cli/include
+$LIBSRCDIR is /d/rhe-cli/src/librh
+$LIBDIR    is /d/rhe-bin/lib_lin
+$EXEDIR    is /d/rhe-bin/bin_lin/graphics
+Using pattern rule %:%.cpp to compile plot-points.cpp to plot-points:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 plot-points.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/graphics/plot-points
+plot-points is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile randcuss.cpp to randcuss:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 randcuss.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/graphics/randcuss
+randcuss is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile randpix.cpp to randpix:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 randpix.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/graphics/randpix
+randpix is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile spirograph.cpp to spirograph:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 spirograph.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/graphics/spirograph
+spirograph is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Graphics Program Collection is up to date.
+make[1]: Leaving directory '/home/arthur/Belequenta/rhe-cli/src/graphics'
+make -C humor
+make[1]: Entering directory '/home/arthur/Belequenta/rhe-cli/src/humor'
+$PLATFORM  is Linux
+$INCDIR    is /d/rhe-cli/include
+$LIBSRCDIR is /d/rhe-cli/src/librh
+$LIBDIR    is /d/rhe-bin/lib_lin
+$EXEDIR    is /d/rhe-bin/bin_lin/humor
+Using pattern rule %:%.c to compile cenesis.c to cenesis:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 cenesis.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/humor/cenesis
+cenesis is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile christmas.c to christmas:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 christmas.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/humor/christmas
+christmas.c:2:1: error: return type defaults to ‘int’ [-Wimplicit-int]
+    2 | main(t,_,a)char *a;{return!0<t?t<3?main(-79,-13,a+main(-87,1-_,
+      | ^~~~
+christmas.c: In function ‘main’:
+christmas.c:2:1: warning: old-style function definition [-Wold-style-definition]
+christmas.c:2:1: error: type of ‘t’ defaults to ‘int’ [-Wimplicit-int]
+christmas.c:2:1: error: type of ‘_’ defaults to ‘int’ [-Wimplicit-int]
+christmas.c:2:29: warning: logical not is only applied to the left hand side of comparison [-Wlogical-not-parentheses]
+    2 | main(t,_,a)char *a;{return!0<t?t<3?main(-79,-13,a+main(-87,1-_,
+      |                             ^
+make[1]: [/d/rhe-cli/src/maketail:307: christmas] Error 1 (ignored)
+christmas is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile fizzbuzz.c to fizzbuzz:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 fizzbuzz.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/humor/fizzbuzz
+fizzbuzz is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile response.cpp to response:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 response.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/humor/response
+response is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile zbiciak-golf-01.cpp to zbiciak-golf-01:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 zbiciak-golf-01.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/humor/zbiciak-golf-01
+zbiciak-golf-01.cpp: In function ‘int main()’:
+zbiciak-golf-01.cpp:32:7: warning: statement has no effect [-Wunused-value]
+   32 |       "Over the cobbles he clattered, "
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   33 |       "in the dark inn yard. "
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~
+   34 |       "And he tapped with his whip on the shutters, "
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   35 |       "but all was locked and barred.";
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+zbiciak-golf-01 is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Humor Program Collection is up to date.
+make[1]: Leaving directory '/home/arthur/Belequenta/rhe-cli/src/humor'
+make -C math
+make[1]: Entering directory '/home/arthur/Belequenta/rhe-cli/src/math'
+$PLATFORM  is Linux
+$INCDIR    is /d/rhe-cli/include
+$LIBSRCDIR is /d/rhe-cli/src/librh
+$LIBDIR    is /d/rhe-bin/lib_lin
+$EXEDIR    is /d/rhe-bin/bin_lin/math
+Math Program Collection is up to date.
+make[1]: Leaving directory '/home/arthur/Belequenta/rhe-cli/src/math'
+make -C util
+make[1]: Entering directory '/home/arthur/Belequenta/rhe-cli/src/util'
+$PLATFORM  is Linux
+$INCDIR    is /d/rhe-cli/include
+$LIBSRCDIR is /d/rhe-cli/src/librh
+$LIBDIR    is /d/rhe-bin/lib_lin
+$EXEDIR    is /d/rhe-bin/bin_lin/util
+Using pattern rule %:%.c to compile analyze-csv-file.c to analyze-csv-file:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 analyze-csv-file.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/analyze-csv-file
+analyze-csv-file is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile bar-time.c to bar-time:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 bar-time.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/bar-time
+bar-time is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile celsfahr.c to celsfahr:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 celsfahr.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/celsfahr
+celsfahr is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile celsfahrtable.c to celsfahrtable:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 celsfahrtable.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/celsfahrtable
+celsfahrtable is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile celskelv.c to celskelv:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 celskelv.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/celskelv
+celskelv is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile clock1.cpp to clock1:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 clock1.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/clock1
+clock1 is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile clock2.cpp to clock2:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 clock2.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/clock2
+clock2 is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile clock3.cpp to clock3:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 clock3.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/clock3
+clock3 is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile clock-hands-angle.cpp to clock-hands-angle:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 clock-hands-angle.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/clock-hands-angle
+clock-hands-angle is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile clocks-per-second.c to clocks-per-second:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 clocks-per-second.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/clocks-per-second
+clocks-per-second is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile cpp-template.cpp to cpp-template:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 cpp-template.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/cpp-template
+cpp-template is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile dennis.c to dennis:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 dennis.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/dennis
+dennis is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile distance.cpp to distance:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 distance.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/distance
+distance is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile encode.cpp to encode:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 encode.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/encode
+encode is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile encode-pad.cpp to encode-pad:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 encode-pad.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/encode-pad
+encode-pad is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile endian.c to endian:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 endian.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/endian
+endian is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile even-odd.c to even-odd:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 even-odd.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/even-odd
+even-odd is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile fahrcels.c to fahrcels:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 fahrcels.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/fahrcels
+fahrcels is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile fahrcelstable.c to fahrcelstable:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 fahrcelstable.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/fahrcelstable
+fahrcelstable is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile fahrkelv.c to fahrkelv:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 fahrkelv.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/fahrkelv
+fahrkelv is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile gcd_dec.c to gcd_dec:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 gcd_dec.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/gcd_dec
+gcd_dec is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile gcd_dms.c to gcd_dms:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 gcd_dms.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/gcd_dms
+gcd_dms is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile ieee754.c to ieee754:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 ieee754.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/ieee754
+ieee754 is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile in2mm.c to in2mm:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 in2mm.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/in2mm
+in2mm is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile int32-bytes.c to int32-bytes:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 int32-bytes.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/int32-bytes
+int32-bytes is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile integer-from-string.c to integer-from-string:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 integer-from-string.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/integer-from-string
+integer-from-string is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile kelvcels.c to kelvcels:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 kelvcels.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/kelvcels
+kelvcels is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile kelvfahr.c to kelvfahr:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 kelvfahr.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/kelvfahr
+kelvfahr is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile keyclean.c to keyclean:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 keyclean.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/keyclean
+keyclean is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile letter-count.c to letter-count:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 letter-count.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/letter-count
+letter-count is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile local-clock.c to local-clock:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 local-clock.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/local-clock
+local-clock is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile lollygag.c to lollygag:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 lollygag.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/lollygag
+lollygag is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile longest-line.c to longest-line:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 longest-line.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/longest-line
+longest-line is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile ltime.cpp to ltime:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 ltime.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/ltime
+ltime is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile mm2in.c to mm2in:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 mm2in.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/mm2in
+mm2in is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile myenv.c to myenv:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 myenv.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/myenv
+myenv is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile numeric-limits-c.c to numeric-limits-c:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 numeric-limits-c.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/numeric-limits-c
+numeric-limits-c is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile numeric-limits-cpp.cpp to numeric-limits-cpp:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 numeric-limits-cpp.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/numeric-limits-cpp
+numeric-limits-cpp is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile rand-hex-small.c to rand-hex-small:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 rand-hex-small.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/rand-hex-small
+rand-hex-small is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile randip.c to randip:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 randip.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/randip
+randip is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile randmac.c to randmac:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 randmac.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/randmac
+randmac is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile randname.c to randname:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 randname.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/randname
+randname is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile randnames.c to randnames:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 randnames.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/randnames
+randnames is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile read-first-ten-bytes.c to read-first-ten-bytes:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 read-first-ten-bytes.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/read-first-ten-bytes
+read-first-ten-bytes is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile remove-digits.cpp to remove-digits:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 remove-digits.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/remove-digits
+remove-digits is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile renamefiles.cpp to renamefiles:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 renamefiles.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/renamefiles
+renamefiles is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile reverse-sort.c to reverse-sort:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 reverse-sort.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/reverse-sort
+reverse-sort is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile rhdir-cpp.cpp to rhdir-cpp:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 rhdir-cpp.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/rhdir-cpp
+rhdir-cpp is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile roman.cpp to roman:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 roman.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/roman
+roman is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile rot13.cpp to rot13:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 rot13.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/rot13
+rot13 is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile sizeofc.c to sizeofc:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 sizeofc.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/sizeofc
+sizeofc is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile sizeofcpp.cpp to sizeofcpp:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 sizeofcpp.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/sizeofcpp
+sizeofcpp is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile slurp-cat.c to slurp-cat:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 slurp-cat.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/slurp-cat
+slurp-cat is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile slurp-cat-cpp.cpp to slurp-cat-cpp:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 slurp-cat-cpp.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/slurp-cat-cpp
+slurp-cat-cpp is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile time1970.c to time1970:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 time1970.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/time1970
+time1970 is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile timedelay.c to timedelay:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 timedelay.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/timedelay
+timedelay is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile tokenize.cpp to tokenize:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 tokenize.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/tokenize
+tokenize is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile twos-complement.c to twos-complement:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 twos-complement.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/twos-complement
+twos-complement is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile utc-clock.c to utc-clock:
+gcc -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17 utc-clock.c -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/utc-clock
+utc-clock is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile utime.cpp to utime:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 utime.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/utime
+utime is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile zero-one.cpp to zero-one:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 zero-one.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/zero-one
+zero-one is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile zero-one-two.cpp to zero-one-two:
+g++ -I /d/rhe-cli/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -Wno-deprecated-declarations -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 zero-one-two.cpp -L/d/rhe-bin/lib_lin -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm -lquadmath  -o /d/rhe-bin/bin_lin/util/zero-one-two
+zero-one-two is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Utility Program Collection is up to date.
+make[1]: Leaving directory '/home/arthur/Belequenta/rhe-cli/src/util'
+
+BASH on Manjaro Linux arthur@optiplex-major Mon 2025-02-03, 08:30:04 AM
+~/Belequenta/rhe-cli/src
+%cd humor
+08:30:36 AM
+
+BASH on Manjaro Linux arthur@optiplex-major Mon 2025-02-03, 08:30:36 AM
+~/Belequenta/rhe-cli/src/humor
+%la
+08:30:37 AM
+total 48
+drwxrwxr-x  2 arthur arthur 4096 Feb  3 08:25 ./
+drwxrwxr-x 12 arthur arthur 4096 Feb  3 08:25 ../
+-rw-rw-r--  1 arthur arthur  530 Jan 18  2022 cenesis.c
+-rw-rw-r--  1 arthur arthur  865 Jan 18  2022 christmas.c
+-rw-rw-r--  1 arthur arthur  400 Aug  6  2022 fizzbuzz.c
+-rw-rw-r--  1 arthur arthur 1354 Feb  3 08:25 makefile
+-rw-rw-r--  1 arthur arthur  264 Aug  6  2022 response.cpp
+-rw-rw-r--  1 arthur arthur 5064 Jan 16  2022 SR-Linux-humor-Make-Log_2022-01-16_00-57.txt
+-rw-rw-r--  1 arthur arthur 5025 Jan 16  2022 SR-Windows-humor-Make-Log_2022-01-16_01-57.txt
+-rw-rw-r--  1 arthur arthur 1107 Sep  9  2022 zbiciak-golf-01.cpp
+
+BASH on Manjaro Linux arthur@optiplex-major Mon 2025-02-03, 08:30:37 AM
+~/Belequenta/rhe-cli/src/humor
+%gcc -DPLATFORM_IS_LINUX -std=c89 christmas.c  -o /d/rhe-bin/bin_lin/humor/christmas08:31:29 AM
+
+BASH on Manjaro Linux arthur@optiplex-major Mon 2025-02-03, 08:31:29 AM
+~/Belequenta/rhe-cli/src/humor
+%christmas
+08:32:07 AM
+On the first day of Christmas my true love gave to me
+a partridge in a pear tree.
+
+On the second day of Christmas my true love gave to me
+two turtle doves
+and a partridge in a pear tree.
+
+On the third day of Christmas my true love gave to me
+three french hens, two turtle doves
+and a partridge in a pear tree.
+
+On the fourth day of Christmas my true love gave to me
+four calling birds, three french hens, two turtle doves
+and a partridge in a pear tree.
+
+On the fifth day of Christmas my true love gave to me
+five gold rings;
+four calling birds, three french hens, two turtle doves
+and a partridge in a pear tree.
+
+On the sixth day of Christmas my true love gave to me
+six geese a-laying, five gold rings;
+four calling birds, three french hens, two turtle doves
+and a partridge in a pear tree.
+
+On the seventh day of Christmas my true love gave to me
+seven swans a-swimming,
+six geese a-laying, five gold rings;
+four calling birds, three french hens, two turtle doves
+and a partridge in a pear tree.
+
+On the eighth day of Christmas my true love gave to me
+eight maids a-milking, seven swans a-swimming,
+six geese a-laying, five gold rings;
+four calling birds, three french hens, two turtle doves
+and a partridge in a pear tree.
+
+On the ninth day of Christmas my true love gave to me
+nine ladies dancing, eight maids a-milking, seven swans a-swimming,
+six geese a-laying, five gold rings;
+four calling birds, three french hens, two turtle doves
+and a partridge in a pear tree.
+
+On the tenth day of Christmas my true love gave to me
+ten lords a-leaping,
+nine ladies dancing, eight maids a-milking, seven swans a-swimming,
+six geese a-laying, five gold rings;
+four calling birds, three french hens, two turtle doves
+and a partridge in a pear tree.
+
+On the eleventh day of Christmas my true love gave to me
+eleven pipers piping, ten lords a-leaping,
+nine ladies dancing, eight maids a-milking, seven swans a-swimming,
+six geese a-laying, five gold rings;
+four calling birds, three french hens, two turtle doves
+and a partridge in a pear tree.
+
+On the twelfth day of Christmas my true love gave to me
+twelve drummers drumming, eleven pipers piping, ten lords a-leaping,
+nine ladies dancing, eight maids a-milking, seven swans a-swimming,
+six geese a-laying, five gold rings;
+four calling birds, three french hens, two turtle doves
+and a partridge in a pear tree.
+
+
+BASH on Manjaro Linux arthur@optiplex-major Mon 2025-02-03, 08:32:07 AM
+~/Belequenta/rhe-cli/src/humor
+%zbiciak-golf-01
+08:33:48 AM
+Enter a positive integer (or just hit Enter to exit): 34
+Your number is even.
+Enter a positive integer (or just hit Enter to exit): 79
+Your number is odd.
+Enter a positive integer (or just hit Enter to exit):
+Bye-bye.
+
+BASH on Manjaro Linux arthur@optiplex-major Mon 2025-02-03, 08:34:01 AM
+~/Belequenta/rhe-cli/src/humor
+%cat zbiciak-golf-01.c
+08:34:10 AM
+cat: zbiciak-golf-01.c: No such file or directory
+
+BASH on Manjaro Linux arthur@optiplex-major Mon 2025-02-03, 08:34:10 AM
+~/Belequenta/rhe-cli/src/humor
+%la
+08:34:16 AM
+total 48
+drwxrwxr-x  2 arthur arthur 4096 Feb  3 08:25 ./
+drwxrwxr-x 12 arthur arthur 4096 Feb  3 08:25 ../
+-rw-rw-r--  1 arthur arthur  530 Jan 18  2022 cenesis.c
+-rw-rw-r--  1 arthur arthur  865 Jan 18  2022 christmas.c
+-rw-rw-r--  1 arthur arthur  400 Aug  6  2022 fizzbuzz.c
+-rw-rw-r--  1 arthur arthur 1354 Feb  3 08:25 makefile
+-rw-rw-r--  1 arthur arthur  264 Aug  6  2022 response.cpp
+-rw-rw-r--  1 arthur arthur 5064 Jan 16  2022 SR-Linux-humor-Make-Log_2022-01-16_00-57.txt
+-rw-rw-r--  1 arthur arthur 5025 Jan 16  2022 SR-Windows-humor-Make-Log_2022-01-16_01-57.txt
+-rw-rw-r--  1 arthur arthur 1107 Sep  9  2022 zbiciak-golf-01.cpp
+
+BASH on Manjaro Linux arthur@optiplex-major Mon 2025-02-03, 08:34:16 AM
+~/Belequenta/rhe-cli/src/humor
+%cat zbiciak-golf-01.cpp
+08:34:21 AM
+// zbiciak-golf-01.cpp
+#include <iostream>
+#include <limits>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
+#define MEANING_OF_LIFE 42
+#define CTHULHU_FHTAGN 10849
+int main (void)
+{
+   char Endometrium[137] =
+      "Invalid input.\n\0"
+      "Your number is even.\n\0"
+      "Your number is odd.\n\0"
+      "Enter a positive integer "
+      "(or just hit Enter to exit): ";
+   size_t Khazad_Dum;
+   while (42 == MEANING_OF_LIFE)
+   {
+      Khazad_Dum =
+         strlen
+         (
+            "A way a lone a last a loved a long the "
+            "riverrun,"
+         );
+      std::cout << &Endometrium[';'];
+      while (std::cin && std::isdigit(std::cin.peek()))
+         Khazad_Dum = '\x10' + 026 * (std::cin.get() & 1);
+      if (Khazad_Dum > MEANING_OF_LIFE) break;
+      std::cout << &Endometrium[Khazad_Dum];
+      std::cin.ignore(CTHULHU_FHTAGN, '\n');
+      "Over the cobbles he clattered, "
+      "in the dark inn yard. "
+      "And he tapped with his whip on the shutters, "
+      "but all was locked and barred.";
+   }
+   std::cout << "Bye-bye." << std::endl;
+   exit(EXIT_SUCCESS);
+}
+
+BASH on Manjaro Linux arthur@optiplex-major Mon 2025-02-03, 08:34:21 AM
+~/Belequenta/rhe-cli/src/humor
+%
