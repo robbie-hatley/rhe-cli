@@ -17,8 +17,8 @@ COLLECTION := Robbie Hatley\'s Library
 EXSUFF := librh
 
 # Set source vpath directories so that make can find the c and cpp files for this collection:
-vpath %.c   /d/rhe/src/librh
-vpath %.cpp /d/rhe/src/librh
+vpath %.c   /d/rhe-cli/src-cli/librh
+vpath %.cpp /d/rhe-cli/src-cli/librh
 
 # Since we're compiling and archiving object modules, NOT exe files,
 # set variable ALL to a list of all library objects,
@@ -35,7 +35,7 @@ ALL = $(LIBRARY_OBJECTS_C) $(LIBRARY_OBJECTS_X)
 #  ****************************************************************************
 
 # Include maketail:
-include /d/rhe/src/maketail
+include /d/rhe-cli/src/maketail
 
 
 

@@ -16,8 +16,8 @@ COLLECTION := Graphics
 EXSUFF := graphics
 
 # Set source vpath directories so that make can find the c and cpp files for this collection:
-vpath %.c   /d/rhe/src/graphics
-vpath %.cpp /d/rhe/src/graphics
+vpath %.c   /d/rhe-cli/src/graphics
+vpath %.cpp /d/rhe-cli/src/graphics
 
 # ALL        = list of all *.exe files corresponding to the *.c and *.cpp files in current directory.
 # C_PROGRAMS = list of all *.exe files corresponding to the *.c           files in current directory.
@@ -33,7 +33,7 @@ X_PROGRAMS = $(shell make-x-list.pl)
 #  ****************************************************************************
 
 # Include maketail:
-include /d/rhe/src/maketail
+include /d/rhe-cli/src/maketail
 
 
 

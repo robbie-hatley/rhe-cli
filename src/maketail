@@ -78,19 +78,20 @@
 #   Sat Jan 15, 2022: Restructured for use with Linux + Windows.
 #   Tue Jan 18, 2022: Updated paths to start with "/d/", and clarified instructions & comments.
 #   Fri Aug 11, 2023: Updated due to splitting rhe into rhe, rhe2, rhe3.
+#   Sun Feb 02, 2025: Updated for restructuring of "rhe" directories.
 
 # ======================================================================================================================
 # SET DIRECTORIES:
 
-   INCDIR    := /d/rhe/include
-   LIBSRCDIR := /d/rhe/src/librh
+   INCDIR    := /d/rhe-cli/include
+   LIBSRCDIR := /d/rhe-cli/src/librh
 ifeq ($(PLATFORM),Win64)
-   EXEDIR    := /d/rhe2/bin_cyg/$(EXSUFF)
-   LIBDIR    := /d/rhe2/lib_cyg
+   EXEDIR    := /d/rhe-bin/bin_cyg/$(EXSUFF)
+   LIBDIR    := /d/rhe-bin/lib_cyg
    MACROS    := -DPLATFORM_IS_WIN64 -D_GNU_SOURCE
 else ifeq ($(PLATFORM),Linux)
-   EXEDIR    := /d/rhe2/bin_lin/$(EXSUFF)
-   LIBDIR    := /d/rhe2/lib_lin
+   EXEDIR    := /d/rhe-bin/bin_lin/$(EXSUFF)
+   LIBDIR    := /d/rhe-bin/lib_lin
    MACROS    := -DPLATFORM_IS_LINUX -D_GNU_SOURCE
 else
    $(error Error: Unknown PLATFORM)

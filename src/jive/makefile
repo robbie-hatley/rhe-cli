@@ -12,8 +12,8 @@
 #    Sat Aug 06, 2022: I changed EXEDIR to point to the currently-correct locations.
 
 # Set source vpath directories so that make can find the c and cpp files for this collection:
-vpath %.c   /d/rhe/src/jive
-vpath %.cpp /d/rhe/src/jive
+vpath %.c   /d/rhe-cli/src/jive
+vpath %.cpp /d/rhe-cli/src/jive
 
 # Set PLATFORM, EXEDIR, MACROS, and ALL:
 ifeq ($(PLATFORM),Win64)

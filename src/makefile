@@ -6,5 +6,4 @@ a : b
 	$(MAKE) -C graphics
 	$(MAKE) -C humor
 	$(MAKE) -C math
-	$(MAKE) -C problematic
 	$(MAKE) -C util

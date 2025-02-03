@@ -19,14 +19,11 @@
 # Thu Nov 25, 2021: Simplified and synchronized comments.
 # Fri Aug 11, 2023: Upgraded from "v5.32" to "v5.36". Got rid of "common::sense".
 # Sat Aug 12, 2023: Reduced width from 120 to 110.
+# Sun Feb 02, 2025: Got rid of "use Sys::Binmode;"
 ##############################################################################################################
 
 use v5.36;
-use strict;
-use warnings;
 use utf8;
-use warnings FATAL => 'utf8';
-use Sys::Binmode;
 
 my @names = `ls -1`; # Doesn't need decoding! Due to piping from ls's STDOUT to this program's STDIN?
 my @library_dependent;

@@ -14,8 +14,8 @@ COLLECTION := Games
 EXSUFF := games
 
 # Set source vpath directories so that make can find the c and cpp files for this collection:
-vpath %.c   /d/rhe/src/games
-vpath %.cpp /d/rhe/src/games
+vpath %.c   /d/rhe-cli/src/games
+vpath %.cpp /d/rhe-cli/src/games
 
 # ALL        = list of all *.exe files corresponding to the *.c and *.cpp files in current directory.
 # C_PROGRAMS = list of all *.exe files corresponding to the *.c           files in current directory.
@@ -31,7 +31,7 @@ X_PROGRAMS = $(shell make-x-list.pl)
 #  ****************************************************************************
 
 # Include maketail:
-include /d/rhe/src/maketail
+include /d/rhe-cli/src/maketail
 
 
 

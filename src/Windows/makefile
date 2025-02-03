@@ -10,8 +10,8 @@ COLLECTION := Windows
 EXSUFF := /Windows
 
 # Set source vpath directories so that make can find the c and cpp files for this collection:
-vpath %.c   /rhe/src/Windows
-vpath %.cpp /rhe/src/Windows
+vpath %.c   /rhe-cli/src/Windows
+vpath %.cpp /rhe-cli/src/Windows
 
 # ALL        = list of all *.exe files corresponding to the *.c and *.cpp files in current directory.
 # C_PROGRAMS = list of all *.exe files corresponding to the *.c           files in current directory.
@@ -27,4 +27,4 @@ X_PROGRAMS = $(shell make-x-list.pl)
 #  ****************************************************************************
 
 # Include maketail:
-include /d/rhe/src/maketail
+include /d/rhe-cli/src/maketail
