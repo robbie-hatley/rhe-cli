@@ -14,6 +14,5 @@
 
 use v5.32;
 use common::sense;
-use Sys::Binmode;
 
 say 15*$ARGV[0] + $ARGV[1]/4 + $ARGV[2]/240;

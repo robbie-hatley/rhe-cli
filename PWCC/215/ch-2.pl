@@ -49,7 +49,6 @@ use v5.36;
 use strict;
 use warnings;
 use utf8;
-use Sys::Binmode;
 use Time::HiRes 'time';
 $"=', ';
 

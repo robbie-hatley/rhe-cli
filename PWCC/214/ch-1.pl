@@ -58,7 +58,6 @@ use strict;
 use warnings;
 no warnings 'numeric';
 use utf8;
-use Sys::Binmode;
 use Time::HiRes 'time';
 $"=', ';
 

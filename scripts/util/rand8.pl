@@ -19,7 +19,6 @@
 use v5.32;
 use strict;
 use warnings;
-use Sys::Binmode;
 
 use RH::Util;
 

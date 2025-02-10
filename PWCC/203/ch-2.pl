@@ -70,7 +70,6 @@ Expected Result:
 # PRELIMINARIES:
 use v5.36;
 use feature "signatures";
-use Sys::Binmode;
 use strict;
 use warnings;
 use warnings FATAL => 'utf8';

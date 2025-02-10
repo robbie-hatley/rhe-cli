@@ -23,7 +23,6 @@ use v5.36;
 use strict;
 use warnings;
 use utf8;
-use Sys::Binmode;
 use Digest::MD5   qw( md5_hex );
 use Digest::SHA   qw( sha1_hex sha224_hex sha256_hex sha384_hex sha512_hex );
 use Encode 'encode';

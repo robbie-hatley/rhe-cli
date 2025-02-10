@@ -58,7 +58,6 @@ use v5.36;
 use strict;
 use warnings;
 use utf8;
-use Sys::Binmode;
 use Math::Combinatorics;
 use Math::Prime::Util 'is_power';
 use List::Util 'uniq';

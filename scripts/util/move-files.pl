@@ -26,7 +26,6 @@
 
 use v5.32;
 use common::sense;
-use Sys::Binmode;
 use Time::HiRes 'time';
 use RH::Dir;
 

@@ -43,7 +43,6 @@ use warnings;
 $"=", ";
 
 # CPAN MODULES:
-use Sys::Binmode;
 use List::AllUtils qw( max );
 
 # SUBROUTINES:

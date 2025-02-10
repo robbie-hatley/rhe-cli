@@ -13,7 +13,6 @@
 
 use v5.32;
 use utf8;
-use Sys::Binmode;
 no strict;
 no warnings;
 

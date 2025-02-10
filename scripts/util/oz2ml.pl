@@ -17,7 +17,6 @@
 
 use v5.32;
 use common::sense;
-use Sys::Binmode;
 
 exit if @ARGV < 1;
 

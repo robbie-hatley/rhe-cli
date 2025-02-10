@@ -30,7 +30,6 @@
 
 use v5.32;
 use common::sense;
-use Sys::Binmode;
 use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS ==================================================================================

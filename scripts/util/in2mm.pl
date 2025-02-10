@@ -17,6 +17,5 @@
 
 use v5.32;
 use common::sense;
-use Sys::Binmode;
 
 say( $_ * 25.4 ) for @ARGV;

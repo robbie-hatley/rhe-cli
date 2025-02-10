@@ -56,7 +56,6 @@ use v5.36;
 use strict;
 use warnings;
 use utf8;
-use Sys::Binmode;
 use Time::HiRes 'time';
 use List::Util  'max';
 use Math::Combinatorics;

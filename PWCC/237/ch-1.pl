@@ -69,7 +69,6 @@ use strict;
 use warnings;
 use utf8;
 use warnings FATAL => 'utf8';
-use Sys::Binmode;
 use Time::HiRes 'time';
 use Time::Local 'timelocal_modern';
 

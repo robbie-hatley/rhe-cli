@@ -31,7 +31,6 @@ use warnings;
 use utf8;
 use warnings FATAL => 'utf8';
 
-use Sys::Binmode;
 use Cwd;
 use Time::HiRes 'time';
 
