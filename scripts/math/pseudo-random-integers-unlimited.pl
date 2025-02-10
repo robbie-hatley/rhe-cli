@@ -1,10 +1,9 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
-# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# This is a 110-character-wide ASCII-encoded Perl-source-code text file with hard Unix line breaks ("\x0A").
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
-########################################################################################################################
+##############################################################################################################
 # pseudo-random-integers-unlimied.pl
 # Prints some pseudo-random integers.
 # Edit history:
@@ -12,33 +11,27 @@
 #    Sun Feb 07, 2021: Renamed from "pseudo-random-integers.pl" to "pseudo-random-integers-unlimied.pl".
 #                      Severely refactored. Now generates pseudo-random integers to a googol and beyond.
 #    Tue Feb 09, 2021: Fine-tuned range to be 2e102.
-########################################################################################################################
+##############################################################################################################
 
 use v5.32;
-use strict;
-use warnings;
-use utf8;
-use warnings FATAL => "utf8";
-
 use bignum;
-
 Math::BigFloat->accuracy(250);
 
-# ======= VARIABLES: ===================================================================================================
+# ======= VARIABLES: =========================================================================================
 my $db    =  0 ; # Debug?
 my $N     = 25 ; # Number of numbers
 my $A     =  0 ; # Begin range
 my $B     = 99 ; # End   range
 my $width =  0 ; # Max width of numbers to print
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
 sub process_argv     ();
 sub print_rand_ints  ();
 sub error            ($);
 sub number_of_digits ($);
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
    # Process @ARGV:
@@ -51,7 +44,7 @@ sub number_of_digits ($);
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
 sub process_argv ()
 {

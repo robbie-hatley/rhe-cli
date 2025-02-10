@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 # is-prime-regexp.pl
 # Finds primes using a regexp.
 # Written by Robbie Hatley on

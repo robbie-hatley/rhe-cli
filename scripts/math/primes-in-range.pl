@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 @ARGV != 2          and die 'Error: must have two arguments: lower limit and upper limit.';
 my $lwr = $ARGV[0];
 my $upr = $ARGV[1];

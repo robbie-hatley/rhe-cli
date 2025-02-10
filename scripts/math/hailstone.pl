@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # hailstone.pl
 # Prints The Hailstone Sequence for a given positive-integer seed,
 # then prints the Total Stopping Time (minimum index for which

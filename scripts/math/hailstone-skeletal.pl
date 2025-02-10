@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 sub c {
    my $x = shift;
    0 == $x%2

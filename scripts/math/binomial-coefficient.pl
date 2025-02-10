@@ -11,19 +11,19 @@
 #    Mon Feb 10, 2025:
 #       Added this title block. Changed from "bignum" to "bigrat".
 
-   use v5.40;
-   use Scalar::Util 'looks_like_number';
-   use bigrat lib => 'GMP';
-   sub bc ($a, $k) {
-      my $num = 1;
-      my $den = 1;
-      for (1..$k) {
-         my $i = $_;
-         $num *= ( $a - $i + 1 );
-         $den *= (      $i     );
-      }
-      return $num/$den;
+use v5.40;
+use Scalar::Util 'looks_like_number';
+use bigrat lib => 'GMP';
+sub bc ($a, $k) {
+   my $num = 1;
+   my $den = 1;
+   for (1..$k) {
+      my $i = $_;
+      $num *= ( $a - $i + 1 );
+      $den *= (      $i     );
    }
+   return $num/$den;
+}
 
 foreach my $arg (@ARGV) {
    if ("-h" eq $arg || "--help" eq $arg) {

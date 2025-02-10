@@ -9,4 +9,4 @@ if ($n !~ m/^0$|^[1-9]\d*$/) {
 if ($n > 1473) {
    die "Error: Argument must be an integer 0-1473.\n";
 }
-print (((1+sqrt(5))/2)**($n+1)-((1-sqrt(5))/2)**($n+1))/sqrt(5);
+print((((1+sqrt(5))/2)**($n+1)-((1-sqrt(5))/2)**($n+1))/sqrt(5));

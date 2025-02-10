@@ -1,31 +1,14 @@
-#!/usr/bin/perl
-
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
-# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
-
-########################################################################################################################
+#!/usr/bin/env perl
+##############################################################################################################
 # quadratic.pl
 # Calculates quadratic functions.
-#
 # Edit history:
 #    Sun Jan 31, 2021: Wrote it.
-########################################################################################################################
-
-use v5.32;
-use strict;
-use warnings;
-use utf8;
-use warnings FATAL => "utf8";
-
-use common::sense;
+##############################################################################################################
+use v5.36;
 exit 666 if 3 != scalar(@ARGV);
-sub Quad
-{
-   my $a = shift;
-   my $b = shift;
-   my $c = shift;
-   return sub {my $x = shift; return $a*$x*$x + $b*$x + $c;}
+sub Quad ($a,$b,$c) {
+   return sub ($x) {$a*$x*$x + $b*$x + $c}
 }
 my $f = Quad(@ARGV);
 my ($x, $y);

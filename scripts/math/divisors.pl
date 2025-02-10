@@ -1,8 +1,4 @@
 #!/usr/bin/env perl
-
-# This is a 110-character-wide ASCII Perl-source-code text file with hard Unix line breaks ("\x0A").
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
-
 ##############################################################################################################
 # "divisors.pl"
 # Prints all of the divisors of the given positive integer.
@@ -11,7 +7,6 @@
 #    Mon Apr 27, 2015: Wrote it.
 #    Mon Feb 10, 2025: Simplified it.
 ##############################################################################################################
-
 use v5.16;
 my  $i      = 0;
 my  $Number = 0;

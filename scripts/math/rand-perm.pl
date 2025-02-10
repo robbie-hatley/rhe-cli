@@ -1,15 +1,11 @@
 #!/usr/bin/env -S perl -CSDA
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
-
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# "rand-perm.pl"
 use v5.32;
-use strict;
-use warnings;
 use utf8;
-use warnings FATAL => "utf8";
-
 use POSIX 'floor';
 use Time::HiRes 'time';
 die "Must have exactly 1 string argument of length 1-20.\n" if 1 != scalar @ARGV;
@@ -26,7 +22,7 @@ my $min;
 my $max;
 my $rand_int;
 my $t0 = time;
-while (time-$t0 < 1.173) {;} # Wait a sec.
+while (time-$t0 < 0.173) {;} # Wait a bit.
 srand(time()*($$+$$<<15)/14703.2954); # Use both time and PID to seed pseudo-random number generator.
 for (1..12)
 {

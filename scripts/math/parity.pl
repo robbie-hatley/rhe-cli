@@ -1,18 +1,14 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # parity.pl
-use v5.10;
+use v5.16;
 my $odds = 0;
 my $evns = 0;
-for (@ARGV)
-{
-
-   if ($_ % 2)
-   {
+for (@ARGV) {
+   if ($_ % 2) {
    	   ++$odds;
    	   say "$_ is odd"
    }
-   else
-   {
+   else {
       ++$evns;
       say "$_ is even"
    }

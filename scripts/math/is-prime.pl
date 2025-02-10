@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # is-prime.pl
 # States whether an integer argument is a prime number.
 use v5.38;
