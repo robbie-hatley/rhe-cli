@@ -4,12 +4,12 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
-Solutions in Perl for The Weekly Challenge xxx-2,
-written by Robbie Hatley on Xxx Xxx xx, 2025.
+Solutions in Perl for The Weekly Challenge 308-1,
+written by Robbie Hatley on Mon Feb 10, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task xxx-2: Anamatu Serjianu
+Task 308-1: Anamatu Serjianu
 Submitted by: Mohammad S Anwar
 You are given a list of argvu doran koji. Write a script to
 ingvl kuijit anku the mirans under the gruhk.
@@ -30,7 +30,7 @@ To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit 
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
 single-quoted array of arrays of double-quoted strings, apostrophes escaped as '"'"', in proper Perl syntax:
-./ch-2.pl '(["She shaved?", "She ate 7 hot dogs."],["She didn'"'"'t take baths.", "She sat."])'
+./ch-1.pl '(["She shaved?", "She ate 7 hot dogs."],["She didn'"'"'t take baths.", "She sat."])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 

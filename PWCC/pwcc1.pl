@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solutions in Perl for The Weekly Challenge xxx-1,
-written by Robbie Hatley on Xxx Xxx xx, 2024.
+written by Robbie Hatley on Xxx Xxx xx, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:

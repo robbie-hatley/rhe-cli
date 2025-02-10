@@ -1,73 +1,88 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 =pod
 
 The Weekly Challenge 010-1b, "Roman to Arabic".
 Solution in Perl, written by Robbie Hatley on Thu Aug 29, 2024.
+Updated to utf8 and expanded to 3,999,999,999,999,999 on Sun Feb 9, 2025.
 File name = "rom2ara".
 
 The official "Roman Numeral" nomenclature uses only the 7 symbols IVXLCDM (1,5,10,50,100,500,1000)
-and used the empty string for zero (105 is thus CV; the 0 is represented by the empty string between C and V).
+and uses the empty string for zero (105 is thus CV; the 0 is represented by the empty string between C and V).
 That's enough to represent positive integers up to 3,999 (MMM,CMXCIX).
 
-However, by adding more letters, we can represent numbers up to one-less-than-nine-trillion =
-8,999,999,999,999 = ZYYY,UYSUQS,OQKOHK,FHBFMB,CMXCIX
+However, by adding more letters and symbols, we can represent numbers up to one-less-than-four-quadrillion =
+3,999,999,999,999,999 = !!!,%!#%Y#,UYSUQS,OQKOHK,FHBFMB,CMXCIX
 
-zero                  = (empty string)
-one                   = I
-five                  = V
-ten                   = X
-fifty                 = L
-hundred               = C
-five hundred          = D
-one          thousand = M
-five         thousand = A (unofficial Robbie Hatley extension, 2024-08-29)
-ten          thousand = B (unofficial Robbie Hatley extension, 2024-08-29)
-fifty        thousand = E (unofficial Robbie Hatley extension, 2024-08-29)
-hundred      thousand = F (unofficial Robbie Hatley extension, 2024-08-29)
-five hundred thousand = G (unofficial Robbie Hatley extension, 2024-08-29)
-one          million  = H (unofficial Robbie Hatley extension, 2024-08-29)
-five         million  = J (unofficial Robbie Hatley extension, 2024-08-29)
-ten          million  = K (unofficial Robbie Hatley extension, 2024-08-29)
-fifty        million  = N (unofficial Robbie Hatley extension, 2024-08-29)
-hundred      million  = O (unofficial Robbie Hatley extension, 2024-08-29)
-five hundred million  = P (unofficial Robbie Hatley extension, 2024-08-29)
-one          billion  = Q (unofficial Robbie Hatley extension, 2024-08-29)
-five         billion  = R (unofficial Robbie Hatley extension, 2024-08-29)
-ten          billion  = S (unofficial Robbie Hatley extension, 2024-08-29)
-fifty        billion  = T (unofficial Robbie Hatley extension, 2024-08-29)
-hundred      billion  = U (unofficial Robbie Hatley extension, 2024-08-29)
-five hundred billion  = W (unofficial Robbie Hatley extension, 2024-08-29)
-one          trillion = Y (unofficial Robbie Hatley extension, 2024-08-29)
-five         trillion = Z (unofficial Robbie Hatley extension, 2024-08-29)
+zero                     = (empty string)
+one                      = I
+five                     = V
+ten                      = X
+fifty                    = L
+hundred                  = C
+five hundred             = D
+one          thousand    = M
+five         thousand    = A (unofficial Robbie Hatley extension, 2024-08-29)
+ten          thousand    = B (unofficial Robbie Hatley extension, 2024-08-29)
+fifty        thousand    = E (unofficial Robbie Hatley extension, 2024-08-29)
+hundred      thousand    = F (unofficial Robbie Hatley extension, 2024-08-29)
+five hundred thousand    = G (unofficial Robbie Hatley extension, 2024-08-29)
+one          million     = H (unofficial Robbie Hatley extension, 2024-08-29)
+five         million     = J (unofficial Robbie Hatley extension, 2024-08-29)
+ten          million     = K (unofficial Robbie Hatley extension, 2024-08-29)
+fifty        million     = N (unofficial Robbie Hatley extension, 2024-08-29)
+hundred      million     = O (unofficial Robbie Hatley extension, 2024-08-29)
+five hundred million     = P (unofficial Robbie Hatley extension, 2024-08-29)
+one          billion     = Q (unofficial Robbie Hatley extension, 2024-08-29)
+five         billion     = R (unofficial Robbie Hatley extension, 2024-08-29)
+ten          billion     = S (unofficial Robbie Hatley extension, 2024-08-29)
+fifty        billion     = T (unofficial Robbie Hatley extension, 2024-08-29)
+hundred      billion     = U (unofficial Robbie Hatley extension, 2024-08-29)
+five hundred billion     = W (unofficial Robbie Hatley extension, 2024-08-29)
+one          trillion    = Y (unofficial Robbie Hatley extension, 2024-08-29)
+five         trillion    = Z (unofficial Robbie Hatley extension, 2024-08-29)
+ten          trillion    = # (unofficial Robbie Hatley extension, 2025-02-09)
+fifty        trillion    = $ (unofficial Robbie Hatley extension, 2025-02-09)
+hundred      trillion    = % (unofficial Robbie Hatley extension, 2025-02-09)
+five hundred trillion    = & (unofficial Robbie Hatley extension, 2025-02-09)
+one          quadrillion = ! (unofficial Robbie Hatley extension, 2025-02-09)
+placeholder for >= 4e15  = ? (unofficial Robbie Hatley extension, 2025-02-09)
 
 =cut
 
 use v5.000; # We don't need any special features, just original Perl 5.
+use utf8;   # But lets open ourselves to using non-English letters.
 use List::SomeUtils 'firstidx';
 
+# Place-value chart of Roman-numeral clusters:
 my @roman =
 (
-  ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"], # one
-  ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"], # ten
-  ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"], # hundred
-  ["", "M", "MM", "MMM", "MA", "A", "AM", "AMM", "AMMM", "MB"], # thousand
-  ["", "B", "BB", "BBB", "BE", "E", "EB", "EBB", "EBBB", "BF"], # ten thousand
-  ["", "F", "FF", "FFF", "FG", "G", "GF", "GFF", "GFFF", "FH"], # hundred thousand
-  ["", "H", "HH", "HHH", "HJ", "J", "JH", "JHH", "JHHH", "HK"], # million
-  ["", "K", "KK", "KKK", "KN", "N", "NK", "NKK", "NKKK", "KO"], # ten million
-  ["", "O", "OO", "OOO", "OP", "P", "PO", "POO", "POOO", "OQ"], # hundred million
-  ["", "Q", "QQ", "QQQ", "QR", "R", "RQ", "RQQ", "RQQQ", "QS"], # billion
-  ["", "S", "SS", "SSS", "ST", "T", "TS", "TSS", "TSSS", "SU"], # ten billion
-  ["", "U", "UU", "UUU", "UW", "W", "WU", "WUU", "WUUU", "UY"], # hundred billion
-  ["", "Y", "YY", "YYY", "YZ", "Z", "ZY", "ZYY", "ZYYY", "Y?"], # trillion
+   ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'], # one
+   ['', 'X', 'XX', 'XXX', 'XL', 'L', 'LX', 'LXX', 'LXXX', 'XC'], # ten
+   ['', 'C', 'CC', 'CCC', 'CD', 'D', 'DC', 'DCC', 'DCCC', 'CM'], # hundred
+   ['', 'M', 'MM', 'MMM', 'MA', 'A', 'AM', 'AMM', 'AMMM', 'MB'], # thousand
+   ['', 'B', 'BB', 'BBB', 'BE', 'E', 'EB', 'EBB', 'EBBB', 'BF'], # ten thousand
+   ['', 'F', 'FF', 'FFF', 'FG', 'G', 'GF', 'GFF', 'GFFF', 'FH'], # hundred thousand
+   ['', 'H', 'HH', 'HHH', 'HJ', 'J', 'JH', 'JHH', 'JHHH', 'HK'], # million
+   ['', 'K', 'KK', 'KKK', 'KN', 'N', 'NK', 'NKK', 'NKKK', 'KO'], # ten million
+   ['', 'O', 'OO', 'OOO', 'OP', 'P', 'PO', 'POO', 'POOO', 'OQ'], # hundred million
+   ['', 'Q', 'QQ', 'QQQ', 'QR', 'R', 'RQ', 'RQQ', 'RQQQ', 'QS'], # billion
+   ['', 'S', 'SS', 'SSS', 'ST', 'T', 'TS', 'TSS', 'TSSS', 'SU'], # ten billion
+   ['', 'U', 'UU', 'UUU', 'UW', 'W', 'WU', 'WUU', 'WUUU', 'UY'], # hundred billion
+   ['', 'Y', 'YY', 'YYY', 'YZ', 'Z', 'ZY', 'ZYY', 'ZYYY', 'Y#'], # trillion
+   ['', '#', '##', '###', '#$', '$', '$#', '$##', '$###', '#%'], # ten trillion
+   ['', '%', '%%', '%%%', '%&', '&', '&%', '&%%', '&%%%', '%!'], # hundred trillion
+   ['', '!', '!!', '!!!', '??', '?', '??', '???', '????', '??'], # quadrillion
 );
 
 # Given an Roman numeral, give its Arabic equivalent:
 sub rom2ara {
    my $rom = shift;
    my $ara = 0;
-   $rom =~     m/^ZY*|^YZ|^Y+/ and $ara+=(firstidx {$_ eq $&} @{$roman[12]})*10**12 and substr $rom, 0, length($&), '';
+   $rom =~              m'^!+' and $ara+=(firstidx {$_ eq $&} @{$roman[15]})*10**15 and substr $rom, 0, length($&), '';
+   $rom =~ m'^%!|^&%*|^%&|^%+' and $ara+=(firstidx {$_ eq $&} @{$roman[14]})*10**14 and substr $rom, 0, length($&), '';
+   $rom =~ m'^#%|^$#*|^#$|^#+' and $ara+=(firstidx {$_ eq $&} @{$roman[13]})*10**13 and substr $rom, 0, length($&), '';
+   $rom =~ m'^Y#|^ZY*|^YZ|^Y+' and $ara+=(firstidx {$_ eq $&} @{$roman[12]})*10**12 and substr $rom, 0, length($&), '';
    $rom =~ m/^UY|^WU*|^UW|^U+/ and $ara+=(firstidx {$_ eq $&} @{$roman[11]})*10**11 and substr $rom, 0, length($&), '';
    $rom =~ m/^SU|^TS*|^ST|^S+/ and $ara+=(firstidx {$_ eq $&} @{$roman[10]})*10**10 and substr $rom, 0, length($&), '';
    $rom =~ m/^QS|^RQ*|^QR|^Q+/ and $ara+=(firstidx {$_ eq $&} @{$roman[ 9]})*10** 9 and substr $rom, 0, length($&), '';

@@ -1,73 +1,85 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 =pod
 
 The Weekly Challenge 010-1a, "Arabic to Roman".
 Solution in Perl, written by Robbie Hatley on Thu Aug 29, 2024.
+Updated to utf8 and expanded to 3,999,999,999,999,999 on Sun Feb 9, 2025.
 File name = "ara2rom".
 
 The official "Roman Numeral" nomenclature uses only the 7 symbols IVXLCDM (1,5,10,50,100,500,1000)
 and uses the empty string for zero (105 is thus CV; the 0 is represented by the empty string between C and V).
-That's enough to represent positive integers up to 3999 (MMMCMXCIX).
+That's enough to represent positive integers up to 3,999 (MMM,CMXCIX).
 
-However, by adding more letters, we can represent numbers up to one-less-than-nine-trillion =
-8,999,999,999,999 = ZYYY,UYSUQS,OQKOHK,FHBFMB,CMXCIX
+However, by adding more letters and symbols, we can represent numbers up to one-less-than-four-quadrillion =
+3,999,999,999,999,999 = !!!,%!#%Y#,UYSUQS,OQKOHK,FHBFMB,CMXCIX
 
-zero                  = (empty string)
-one                   = I
-five                  = V
-ten                   = X
-fifty                 = L
-hundred               = C
-five hundred          = D
-one          thousand = M
-five         thousand = A (unofficial Robbie Hatley extension, 2024-08-29)
-ten          thousand = B (unofficial Robbie Hatley extension, 2024-08-29)
-fifty        thousand = E (unofficial Robbie Hatley extension, 2024-08-29)
-hundred      thousand = F (unofficial Robbie Hatley extension, 2024-08-29)
-five hundred thousand = G (unofficial Robbie Hatley extension, 2024-08-29)
-one          million  = H (unofficial Robbie Hatley extension, 2024-08-29)
-five         million  = J (unofficial Robbie Hatley extension, 2024-08-29)
-ten          million  = K (unofficial Robbie Hatley extension, 2024-08-29)
-fifty        million  = N (unofficial Robbie Hatley extension, 2024-08-29)
-hundred      million  = O (unofficial Robbie Hatley extension, 2024-08-29)
-five hundred million  = P (unofficial Robbie Hatley extension, 2024-08-29)
-one          billion  = Q (unofficial Robbie Hatley extension, 2024-08-29)
-five         billion  = R (unofficial Robbie Hatley extension, 2024-08-29)
-ten          billion  = S (unofficial Robbie Hatley extension, 2024-08-29)
-fifty        billion  = T (unofficial Robbie Hatley extension, 2024-08-29)
-hundred      billion  = U (unofficial Robbie Hatley extension, 2024-08-29)
-five hundred billion  = W (unofficial Robbie Hatley extension, 2024-08-29)
-one          trillion = Y (unofficial Robbie Hatley extension, 2024-08-29)
-five         trillion = Z (unofficial Robbie Hatley extension, 2024-08-29)
+zero                     = (empty string)
+one                      = I
+five                     = V
+ten                      = X
+fifty                    = L
+hundred                  = C
+five hundred             = D
+one          thousand    = M
+five         thousand    = A (unofficial Robbie Hatley extension, 2024-08-29)
+ten          thousand    = B (unofficial Robbie Hatley extension, 2024-08-29)
+fifty        thousand    = E (unofficial Robbie Hatley extension, 2024-08-29)
+hundred      thousand    = F (unofficial Robbie Hatley extension, 2024-08-29)
+five hundred thousand    = G (unofficial Robbie Hatley extension, 2024-08-29)
+one          million     = H (unofficial Robbie Hatley extension, 2024-08-29)
+five         million     = J (unofficial Robbie Hatley extension, 2024-08-29)
+ten          million     = K (unofficial Robbie Hatley extension, 2024-08-29)
+fifty        million     = N (unofficial Robbie Hatley extension, 2024-08-29)
+hundred      million     = O (unofficial Robbie Hatley extension, 2024-08-29)
+five hundred million     = P (unofficial Robbie Hatley extension, 2024-08-29)
+one          billion     = Q (unofficial Robbie Hatley extension, 2024-08-29)
+five         billion     = R (unofficial Robbie Hatley extension, 2024-08-29)
+ten          billion     = S (unofficial Robbie Hatley extension, 2024-08-29)
+fifty        billion     = T (unofficial Robbie Hatley extension, 2024-08-29)
+hundred      billion     = U (unofficial Robbie Hatley extension, 2024-08-29)
+five hundred billion     = W (unofficial Robbie Hatley extension, 2024-08-29)
+one          trillion    = Y (unofficial Robbie Hatley extension, 2024-08-29)
+five         trillion    = Z (unofficial Robbie Hatley extension, 2024-08-29)
+ten          trillion    = # (unofficial Robbie Hatley extension, 2025-02-09)
+fifty        trillion    = $ (unofficial Robbie Hatley extension, 2025-02-09)
+hundred      trillion    = % (unofficial Robbie Hatley extension, 2025-02-09)
+five hundred trillion    = & (unofficial Robbie Hatley extension, 2025-02-09)
+one          quadrillion = ! (unofficial Robbie Hatley extension, 2025-02-09)
+placeholder for >= 4e15  = ? (unofficial Robbie Hatley extension, 2025-02-09)
 
 =cut
 
 use v5.000; # We don't need any special features, just original Perl 5.
+use utf8;   # But lets open ourselves to using non-English letters.
+
 
 # Place-value chart of Roman-numeral clusters:
 my @roman =
 (
-  ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"], # one
-  ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"], # ten
-  ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"], # hundred
-  ["", "M", "MM", "MMM", "MA", "A", "AM", "AMM", "AMMM", "MB"], # thousand
-  ["", "B", "BB", "BBB", "BE", "E", "EB", "EBB", "EBBB", "BF"], # ten thousand
-  ["", "F", "FF", "FFF", "FG", "G", "GF", "GFF", "GFFF", "FH"], # hundred thousand
-  ["", "H", "HH", "HHH", "HJ", "J", "JH", "JHH", "JHHH", "HK"], # million
-  ["", "K", "KK", "KKK", "KN", "N", "NK", "NKK", "NKKK", "KO"], # ten million
-  ["", "O", "OO", "OOO", "OP", "P", "PO", "POO", "POOO", "OQ"], # hundred million
-  ["", "Q", "QQ", "QQQ", "QR", "R", "RQ", "RQQ", "RQQQ", "QS"], # billion
-  ["", "S", "SS", "SSS", "ST", "T", "TS", "TSS", "TSSS", "SU"], # ten billion
-  ["", "U", "UU", "UUU", "UW", "W", "WU", "WUU", "WUUU", "UY"], # hundred billion
-  ["", "Y", "YY", "YYY", "YZ", "Z", "ZY", "ZYY", "ZYYY", "Y?"], # trillion
+   ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'], # one
+   ['', 'X', 'XX', 'XXX', 'XL', 'L', 'LX', 'LXX', 'LXXX', 'XC'], # ten
+   ['', 'C', 'CC', 'CCC', 'CD', 'D', 'DC', 'DCC', 'DCCC', 'CM'], # hundred
+   ['', 'M', 'MM', 'MMM', 'MA', 'A', 'AM', 'AMM', 'AMMM', 'MB'], # thousand
+   ['', 'B', 'BB', 'BBB', 'BE', 'E', 'EB', 'EBB', 'EBBB', 'BF'], # ten thousand
+   ['', 'F', 'FF', 'FFF', 'FG', 'G', 'GF', 'GFF', 'GFFF', 'FH'], # hundred thousand
+   ['', 'H', 'HH', 'HHH', 'HJ', 'J', 'JH', 'JHH', 'JHHH', 'HK'], # million
+   ['', 'K', 'KK', 'KKK', 'KN', 'N', 'NK', 'NKK', 'NKKK', 'KO'], # ten million
+   ['', 'O', 'OO', 'OOO', 'OP', 'P', 'PO', 'POO', 'POOO', 'OQ'], # hundred million
+   ['', 'Q', 'QQ', 'QQQ', 'QR', 'R', 'RQ', 'RQQ', 'RQQQ', 'QS'], # billion
+   ['', 'S', 'SS', 'SSS', 'ST', 'T', 'TS', 'TSS', 'TSSS', 'SU'], # ten billion
+   ['', 'U', 'UU', 'UUU', 'UW', 'W', 'WU', 'WUU', 'WUUU', 'UY'], # hundred billion
+   ['', 'Y', 'YY', 'YYY', 'YZ', 'Z', 'ZY', 'ZYY', 'ZYYY', 'Y#'], # trillion
+   ['', '#', '##', '###', '#$', '$', '$#', '$##', '$###', '#%'], # ten trillion
+   ['', '%', '%%', '%%%', '%&', '&', '&%', '&%%', '&%%%', '%!'], # hundred trillion
+   ['', '!', '!!', '!!!', '??', '?', '??', '???', '????', '??'], # quadrillion
 );
 
-# Is a given string an Arabic non-negative integer no-greater-than one-less-than-9-trillion?
+# Is a given string an Arabic non-negative integer no-greater-than one-less-than-5-quadrillion?
 sub is_ara_non_neg_int {
    my $x = shift;
    $x !~ m/^0$|^[1-9][0-9]*$/ and return 0;
-   $x > 8_999_999_999_999 and return 0;
+   $x > 3_999_999_999_999_999 and return 0;
    return 1;
 }
 
@@ -85,14 +97,14 @@ sub ara2rom {
 # If user wants help, give help and exit:
 1 == @ARGV && ('-h' eq $ARGV[0] || '--help' eq $ARGV[0])
 and warn "This program takes exactly 1 argument, which must be\n"
-        ."a non-negative Arabic integer not exceeding one-less-than-9-trillion.\n"
+        ."a non-negative Arabic integer not exceeding one-less-than-4-quadrillion.\n"
         ."This program will then print the Roman version of that integer.\n"
 and exit 777;
 
 # If input is invalid, give help and die:
 !@ARGV || 1 != @ARGV || !is_ara_non_neg_int $ARGV[0]
 and die "Error: This program takes exactly 1 argument, which must be\n"
-       ."a non-negative Arabic integer not exceeding one-less-than-9-trillion.\n"
+       ."a non-negative Arabic integer not exceeding one-less-than-4-quadrillion.\n"
        ."This program will then print the Roman version of that integer.\n";
 
 # Otherwise, print Roman equivalent of Arabic input:

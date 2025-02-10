@@ -1,26 +1,22 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
-# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# This is a 110-character-wide ASCII Perl-source-code text file with hard Unix line breaks ("\x0A").
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
-########################################################################################################################
+##############################################################################################################
 # polynomial.pl
 # Calculates polynomial functions.
 #
 # Edit history:
-#    Sun Jan 31, 2021: Wrote it.
-########################################################################################################################
+#    Sun Jan 31, 2021:
+#       Wrote it.
+#    Sun Feb 09, 2025:
+#       Dramatically simplified: ASCII instead of Unicode; reduced width from 120 to 110; reduced version
+#       requirement from "v5.32" to "v5.16"; got rid of "strict", "warnings", "common::sense", "utf8", etc.
+##############################################################################################################
 
-use v5.32;
-use strict;
-use warnings;
-use utf8;
-use warnings FATAL => "utf8";
-
-use common::sense;
-sub Poly
-{
+use v5.16;
+sub Poly {
    my @coefs = @_;
    return sub
    {
@@ -32,8 +28,7 @@ sub Poly
 }
 my $f = Poly(@ARGV);
 my ($x, $y);
-for ( $x = -5.0 ; $x < 5.001 ; $x += 0.1 )
-{
+for ( $x = -5.0 ; $x < 5.001 ; $x += 0.1 ) {
    $y = &$f($x);
    printf("f(%7.4f) = %10.4f\n", $x, $y);
 }

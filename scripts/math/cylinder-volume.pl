@@ -1,20 +1,10 @@
-#!/usr/bin/env -S perl -CSDA
-
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
-# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
-
-# cylinder-volume.pl
-
-use v5.32;
-use strict;
-use warnings;
-use utf8;
-use warnings FATAL => "utf8";
-
+#!/usr/bin/env perl
+# "cylinder-volume.pl"
+# Written by Robbie Hatley on-or-before 2024-08-14.
+# Dramatically-simplified on 2025-02-10.
 use Math::Trig 'pi';
 print "Height? ";
 my $Height = readline;
 print "Radius? ";
 my $Radius = readline;
-say "Volume = ", (pi * $Radius * $Radius * $Height);
+print "Volume = ", (pi * $Radius * $Radius * $Height), "\n";
