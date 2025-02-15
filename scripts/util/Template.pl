@@ -83,6 +83,7 @@
 #                   it does nothing. Also corrected comments for "$filecount" to include mention of target.
 #                   Also added a comment for the "for(@ARGV)" loop in sub "argv".
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
+# Fri Feb 14, 2025: Got rid of Sys::Binmode and made other minor tweaks.
 ##############################################################################################################
 
 ##############################################################################################################

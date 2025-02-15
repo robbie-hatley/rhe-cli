@@ -21,6 +21,8 @@
 # Fri Aug 11, 2023: Added end-of-options marker. Added debug option.
 # Sat Sep 09, 2023: Got rid of '/o' on all qr(). Applied qr($_) to all incoming arguments. Improved help.
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
+# Fri Feb 14, 2025: Refactored: Now using only one RegExp (1st arg), and now using predicate (2nd arg).
+#                   Also got rid of Sys::Binmode, added more options, added "--", added debugging, etc.
 ##############################################################################################################
 
 use v5.36;
