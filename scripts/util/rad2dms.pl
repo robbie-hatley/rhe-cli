@@ -1,6 +1,6 @@
 #!/usr/bin/env -S perl -C63
 
-# deg2dms.pl
+# rad2dms.pl
 
 use v5.16;
 use utf8;
@@ -24,7 +24,8 @@ if ( scalar(@ARGV) > 1 ) {
 # 1 senska  = 1/60 argblu
 # Etc, etc, etc. Sexagesimal is fun! :-)
 
-my $deg_dec = $ARGV[0] // 0;
+my $rad_dec = $ARGV[0] // 0;
+my $deg_dec = 180 * $rad_dec / pi;
 my $deg_int = int $deg_dec;
 my $deg_frc = $deg_dec - $deg_int;
 
