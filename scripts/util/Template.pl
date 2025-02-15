@@ -124,7 +124,7 @@ sub help    ; # Print help and exit.
 
 # ======= GLOBAL VARIABLES: ==================================================================================
 
-our $t0     ; # Seconds since 00:00:00 on Thu Jan 1, 1970.
+our $t0     ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time the following "BEGIN" block is executed.
 
 # ======= START TIMER: =======================================================================================
 
@@ -171,8 +171,8 @@ my $unkncount = 0 ; # Count of all unknown files.
    # Process @ARGV:
    argv;
 
-   # Print entry message if being terse or verbose:
-   if ( $Verbose >= 1 ) {
+   # Print entry message if being terse or verbose or debugging:
+   if ( $Db || $Verbose >= 1 ) {
       say    STDERR '';
       say    STDERR "Now entering program \"$pname\"." ;
       say    STDERR "\$Db        = $Db"        ;
@@ -191,9 +191,10 @@ my $unkncount = 0 ; # Count of all unknown files.
 
    # Print exit message if being terse or verbose:
    if ( $Verbose >= 1 ) {
+      my $ms = 1000 * (time-$t0);
       say    STDERR '';
       say    STDERR "Now exiting program \"$pname\".";
-      printf STDERR "Execution time was %.3f seconds.", time - $t0;
+      printf STDERR "Execution time was %.3fms.", $ms;
    }
 
    # Exit program, returning success code "0" to caller:
@@ -393,7 +394,7 @@ sub help {
    program-name.pl [options] [Arg1] [Arg2] [Arg3]    (to [perform funciton] )
 
    -------------------------------------------------------------------------------
-   Description of options:
+   Description of Options:
 
    Option:            Meaning:
    -h or --help       Print help and exit.
@@ -424,7 +425,7 @@ sub help {
    All options not listed above are ignored.
 
    -------------------------------------------------------------------------------
-   Description of arguments:
+   Description of Arguments:
 
    In addition to options, this program can take 1 or 2 optional arguments.
 
