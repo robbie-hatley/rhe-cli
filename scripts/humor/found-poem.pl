@@ -364,7 +364,7 @@ sub cthulhu {
    the ground. The spacetime continuum in front of you shatters and a hideous
    monster erupts from the breech and stands in front of you, gazing into your
    soul with glowing red eyes. You are about to have the worst day of your life.
-   Unfortunately it will also be the LAST day of your life has a free, sane human.
+   Unfortunately it will also be the LAST day of your life as a free, sane human.
    You are about to be enthralled to Cthulhu and become his slave.
 
    END_OF_CTHULHU
