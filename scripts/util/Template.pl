@@ -84,6 +84,12 @@
 #                   Also added a comment for the "for(@ARGV)" loop in sub "argv".
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
 # Fri Feb 14, 2025: Got rid of Sys::Binmode and made other minor tweaks.
+# Tue Feb 18, 2025: Added timestamps to program entry and exit messages; decoupled debug, verbosity, and help;
+#                   consolidated debug variable printing; consolidated recursion, stats, and help on one line;
+#                   made "@opts"and "@args" file-lexical; and "--" is now stored in "@opts". I incorporated
+#                   many bits of tech from "age.pl", but I decided to keep "extra arguments" a fatal error
+#                   (instead of just a warning as in "age.pl"), because this template may be used to make
+#                   programs which are more dangerous than "age.pl" is.
 ##############################################################################################################
 
 ##############################################################################################################
@@ -125,7 +131,8 @@ sub help    ; # Print help and exit.
 
 # ======= GLOBAL VARIABLES: ==================================================================================
 
-our $t0     ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time the following "BEGIN" block is executed.
+our $t0     ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program entry.
+our $t1     ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program exit.
 
 # ======= START TIMER: =======================================================================================
 
@@ -133,18 +140,22 @@ BEGIN {$t0 = time}
 
 # ======= LEXICAL VARIABLES: =================================================================================
 
-# Setting:      Default Value:   Meaning of Setting:         Range:     Meaning of Default:
-my $Db        = 0            ; # Debug?                      bool       Don't debug.
-my $Verbose   = 0            ; # Be wordy?                   0,1,2      Be quiet.
-my $Recurse   = 0            ; # Recurse subdirectories?     bool       Be local.
-my $Target    = 'A'          ; # Files, dirs, both, all?     F|D|B|A    Process all file types.
-my $RegExp    = qr/^.+$/o    ; # Regular expression.         regexp     Process all file names.
-my $Predicate = 1            ; # Boolean predicate.          bool       Process all file types.
+# Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
+   $"         = ', '      ; # Quoted-array formatting.  string    Comma space.
+my @opts      = ()        ; # options                   array     Options.
+my @args      = ()        ; # arguments                 array     Arguments.
+my $Db        = 0         ; # Debug?                    bool      Don't debug.
+my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
+my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
+my $Target    = 'A'       ; # Target                    F|D|B|A   All directory entries.
+my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
-my $filecount = 0 ; # Count of files found which match file-type target and file-name regexp.
-my $predcount = 0 ; # Count of files found which also match file-type predicate.
+my $filecount = 0 ; # Count of files matching target and regexp.
+my $predcount = 0 ; # Count of files also matching predicate.
 
 # Accumulations of counters from RH::Dir::GetFiles():
 my $totfcount = 0 ; # Count of all directory entries encountered.
@@ -166,35 +177,39 @@ my $unkncount = 0 ; # Count of all unknown files.
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   # Set program name:
-   my $pname = substr $0, 1 + rindex $0, '/';
-
    # Process @ARGV:
    argv;
 
-   # Print entry message if being terse or verbose or debugging:
-   if ( $Db || $Verbose >= 1 ) {
-      say    STDERR '';
-      say    STDERR "Now entering program \"$pname\"." ;
-      say    STDERR "\$Db        = $Db"        ;
-      say    STDERR "\$Verbose   = $Verbose"   ;
-      say    STDERR "\$Recurse   = $Recurse"   ;
-      say    STDERR "\$Target    = $Target"    ;
-      say    STDERR "\$RegExp    = $RegExp"    ;
-      say    STDERR "\$Predicate = $Predicate" ;
+   # Set program name:
+   my $pname = substr $0, 1 + rindex $0, '/';
+
+   # Print program entry message if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
    }
 
-   # Process current directory (and all subdirectories if recursing):
-   $Recurse and RecurseDirs {curdire} or curdire;
+   # Print the values of the settings variables if debugging:
+   if ( $Db ) {
+      say STDERR '';
+      say STDERR "Options   = (", join(', ', map {"\"$_\""} @opts), ')';
+      say STDERR "Arguments = (", join(', ', map {"\"$_\""} @args), ')';
+      say STDERR "Verbose   = $Verbose";
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "Target    = $Target";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
+   }
 
-   # Print stats:
-   stats;
+   # Process current directory (and all subdirectories if recursing) and print stats,
+   # unless user requested help, in which case just print help:
+   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
 
    # Print exit message if being terse or verbose:
    if ( $Verbose >= 1 ) {
-      my $ms = 1000 * (time-$t0);
+      $t1 = time;
+      my $ms = 1000 * ($t1-$t0);
       say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\".";
+      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
       printf STDERR "Execution time was %.3fms.", $ms;
    }
 
@@ -207,14 +222,13 @@ my $unkncount = 0 ; # Count of all unknown files.
 # Process @ARGV :
 sub argv {
    # Get options and arguments:
-   my @opts = ();            # options
-   my @args = ();            # arguments
    my $end = 0;              # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
    for ( @ARGV ) {           # For each element of @ARGV,
       /^--$/                 # "--" = end-of-options marker = construe all further CL items as arguments,
       and $end = 1           # so if we see that, then set the "end-of-options" flag
+      and push @opts, $_     # and push the "--" to @opts
       and next;              # and skip to next element of @ARGV.
       !$end                  # If we haven't yet reached end-of-options,
       && ( /^-(?!-)$s+$/     # and if we get a valid short option
@@ -225,38 +239,34 @@ sub argv {
 
    # Process options:
    for ( @opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit 777 ;
-      /^-$s*e/ || /^--debug$/   and $Db      =  1     ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0     ;
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1     ;
-      /^-$s*v/ || /^--verbose$/ and $Verbose =  2     ;
-      /^-$s*l/ || /^--local$/   and $Recurse =  0     ;
-      /^-$s*r/ || /^--recurse$/ and $Recurse =  1     ;
-      /^-$s*f/ || /^--files$/   and $Target  = 'F'    ;
-      /^-$s*d/ || /^--dirs$/    and $Target  = 'D'    ;
-      /^-$s*b/ || /^--both$/    and $Target  = 'B'    ;
-      /^-$s*a/ || /^--all$/     and $Target  = 'A'    ;
-   }
-   if ( $Db ) {
-      say STDERR '';
-      say STDERR "\$opts = (", join(', ', map {"\"$_\""} @opts), ')';
-      say STDERR "\$args = (", join(', ', map {"\"$_\""} @args), ')';
+      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
+      /^-$s*e/ || /^--debug$/   and $Db      =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
+      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
+      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
+      /^-$s*f/ || /^--files$/   and $Target  = 'F' ;
+      /^-$s*d/ || /^--dirs$/    and $Target  = 'D' ;
+      /^-$s*b/ || /^--both$/    and $Target  = 'B' ;
+      /^-$s*a/ || /^--all$/     and $Target  = 'A' ; # Default.
    }
 
-   # Process arguments:
-   my $NA = scalar(@args);     # Get number of arguments.
+   # Get number of arguments:
+   my $NA = scalar(@args);
 
-   # Use all arguments as RegExps?
-   # my $re; $NA >= 1 and $re = join '|', @args and $RegExp = qr/$re/o;
-
-   # Use positional arguments instead?
+   # First argument, if present, is a file-selection regexp:
    if ( $NA >= 1 ) {           # If number of arguments >= 1,
       $RegExp = qr/$args[0]/o; # set $RegExp to $args[0].
    }
+
+   # Second argument, if present, is a file-selection predicate:
    if ( $NA >= 2 ) {           # If number of arguments >= 2,
       $Predicate = $args[1];   # set $Predicate to $args[1]
       $Target = 'A';           # and set $Target to 'A' to avoid conflicts with $Predicate.
    }
+
+   # If user types more than 3 arguments, and we're not debugging, print error and help messages and exit:
    if ( $NA >= 3 && !$Db ) {   # If number of arguments >= 3 and we're not debugging,
       error($NA);              # print error message,
       help;                    # and print help message,
@@ -368,11 +378,12 @@ sub stats {
 } # end sub stats
 
 # Handle errors:
-sub error ($err_msg) {
+sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
-   Error: you typed $err_msg arguments, but this program takes at most
-   # arguments, which must be blah blah blah. Help follows:
+   Error: you typed $NA arguments, but this program takes at most
+   2 arguments (an optional file-selection regexp and an optional
+   file-selection predicate). Help follows:
    END_OF_ERROR
    return 1;
 } # end sub error

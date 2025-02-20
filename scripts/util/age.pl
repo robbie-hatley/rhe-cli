@@ -35,15 +35,14 @@ use RH::Dir;
 
 sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
-sub curfile ; # Print info for current file.
+sub curfile ; # Process current file.
 sub stats   ; # Print statistics.
-sub vortex  ; # Rift in spacetime.
-sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
 
 # ======= GLOBAL VARIABLES: ==================================================================================
 
-our $t0     ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time the following "BEGIN" block is executed.
+our $t0     ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program entry.
+our $t1     ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program exit.
 
 # ======= START TIMER: =======================================================================================
 
@@ -51,14 +50,18 @@ BEGIN {$t0 = time}
 
 # ======= LEXICAL VARIABLES: =================================================================================
 
-# Settings:     Default:       Meaning of setting:       Range:    Meaning of default:
-   $"         = ', '       ; # Quoted-array formatting.  string    Comma space.
-my $Db        = 0          ; # Debug?                    bool      Don't debug.
-my $Verbose   = 0          ; # Be verbose?               bool      Shhhh!! Be quiet!!
-my $Recurse   = 0          ; # Recurse subdirectories?   bool      Don't recurse.
-my $Target    = 'A'        ; # Target                    F|D|B|A   All directory entries.
-my $RegExp    = qr/^.+$/o  ; # Regular expression.       regexp    Process all file names.
-my $Predicate = 1          ; # Boolean predicate.        bool      Process all file types.
+# Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
+   $"         = ', '      ; # Quoted-array formatting.  string    Comma space.
+my @opts      = ()        ; # options                   array     Options.
+my @args      = ()        ; # arguments                 array     Arguments.
+my $NA        = 0         ; # number of arguments       int       Count of arguments.
+my $Db        = 0         ; # Debug?                    bool      Don't debug.
+my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
+my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
+my $Target    = 'A'       ; # Target                    F|D|B|A   All directory entries.
+my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed.
@@ -85,32 +88,46 @@ my $unkncount = 0 ; # Count of all unknown files.
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   # Set program name:
-   my $pname = substr $0, 1 + rindex $0, '/';
-
    # Process @ARGV:
    argv;
 
-   # Print entry message if being terse or verbose or debugging:
-   if ( $Db || $Verbose >= 1 ) {
-      say STDERR "\nNow entering program \"$pname\".";
-      say STDERR "Recurse = $Recurse";
-      say STDERR "Target  = $Target";
-      say STDERR "RegExp  = $RegExp";
-      say STDERR "Verbose = $Verbose";
+   # Set program name:
+   my $pname = substr $0, 1 + rindex $0, '/';
+
+   # Print program entry message if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
    }
 
-   # Process current directory (and all subdirectories if recursing):
-   $Recurse and RecurseDirs {curdire} or curdire;
+   # Print the values of the settings variables if debugging:
+   if ( $Db ) {
+      say STDERR '';
+      say STDERR "Options   = (", join(', ', map {"\"$_\""} @opts), ')';
+      say STDERR "Arguments = (", join(', ', map {"\"$_\""} @args), ')';
+      say STDERR "Verbose   = $Verbose";
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "Target    = $Target";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
+   }
 
-   # Print stats:
-   stats;
+   # If user has typed more than 3 arguments, print warning:
+   if ( $NA >= 3 ) {
+      say STDERR '';
+      say STDERR "Warning: This program ignores all arguments after the first two.";
+      say STDERR "Use a \"-h\" or \"--help\" option to get help.";
+   }
+
+   # Process current directory (and all subdirectories if recursing) and print stats,
+   # unless user requested help, in which case just print help:
+   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
 
    # Print exit message if being terse or verbose:
    if ( $Verbose >= 1 ) {
-      my $ms = 1000 * (time-$t0);
+      $t1 = time;
+      my $ms = 1000 * ($t1-$t0);
       say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\".";
+      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
       printf STDERR "Execution time was %.3fms.", $ms;
    }
 
@@ -123,14 +140,13 @@ my $unkncount = 0 ; # Count of all unknown files.
 # Process @ARGV :
 sub argv {
    # Get options and arguments:
-   my @opts = ();            # options
-   my @args = ();            # arguments
    my $end = 0;              # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
    for ( @ARGV ) {           # For each element of @ARGV,
       /^--$/                 # "--" = end-of-options marker = construe all further CL items as arguments,
       and $end = 1           # so if we see that, then set the "end-of-options" flag
+      and push @opts, $_     # and push the "--" to @opts
       and next;              # and skip to next element of @ARGV.
       !$end                  # If we haven't yet reached end-of-options,
       && ( /^-(?!-)$s+$/     # and if we get a valid short option
@@ -141,42 +157,31 @@ sub argv {
 
    # Process options:
    for ( @opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit 777 ;
-      /^-$s*e/ || /^--debug$/   and $Db      =  1     ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0     ; # Default.
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1     ;
-      /^-$s*v/ || /^--verbose$/ and $Verbose =  2     ;
-      /^-$s*l/ || /^--local$/   and $Recurse =  0     ; # Default.
-      /^-$s*r/ || /^--recurse$/ and $Recurse =  1     ;
-      /^-$s*f/ || /^--files$/   and $Target  = 'F'    ;
-      /^-$s*d/ || /^--dirs$/    and $Target  = 'D'    ;
-      /^-$s*b/ || /^--both$/    and $Target  = 'B'    ;
-      /^-$s*a/ || /^--all$/     and $Target  = 'A'    ; # Default.
-   }
-   if ( $Db ) {
-      say STDERR '';
-      say STDERR "\$opts = (", join(', ', map {"\"$_\""} @opts), ')';
-      say STDERR "\$args = (", join(', ', map {"\"$_\""} @args), ')';
+      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
+      /^-$s*e/ || /^--debug$/   and $Db      =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
+      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
+      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
+      /^-$s*f/ || /^--files$/   and $Target  = 'F' ;
+      /^-$s*d/ || /^--dirs$/    and $Target  = 'D' ;
+      /^-$s*b/ || /^--both$/    and $Target  = 'B' ;
+      /^-$s*a/ || /^--all$/     and $Target  = 'A' ; # Default.
    }
 
    # Get number of arguments:
-   my $NA = scalar(@args);
+   $NA = scalar(@args);
 
-   # Number of arguments can NOT be less than 0. But if it is:
-   if ( $NA < 0 ) {vortex($NA); help; exit 666;}
-
-   # Bail if number of arguments is greater than 2:
-   if ( $NA > 2 ) {error($NA);  help; exit 666;}
-
-   # First argument (if any) is regexp:
-   if ( $NA >= 1 ) {
-      $RegExp = qr/$args[0]/o;
+   # First argument, if present, is a file-selection regexp:
+   if ( $NA >= 1 ) {           # If number of arguments >= 1,
+      $RegExp = qr/$args[0]/o; # set $RegExp to $args[0].
    }
 
-   # Second argument (if any) is predicate:
-   if ( $NA >= 2 ) {
-      $Predicate = $args[1];
-      $Target='A';
+   # Second argument, if present, is a file-selection predicate:
+   if ( $NA >= 2 ) {           # If number of arguments >= 2,
+      $Predicate = $args[1];   # set $Predicate to $args[1]
+      $Target = 'A';           # and set $Target to 'A' to avoid conflicts with $Predicate.
    }
 
    # Return success code 1 to caller:
@@ -278,28 +283,6 @@ sub stats {
    }
    return 1;
 } # end sub stats
-
-# Handle spacetime rifts:
-sub vortex ($NA) {
-   print ((<<"   END_OF_VORTEX") =~ s/^   //gmr);
-
-   You typed $NA arguments, which is impossible!
-   In the process, you have opened up a rift in spacetime!
-   Oh, no! You have awakened Cthulhu! He comes!
-   Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn!
-   END_OF_VORTEX
-   return 1;
-}
-
-# Handle errors:
-sub error ($NA) {
-   print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
-
-   Error: you typed $NA arguments, but this program takes 0, 1, or 2
-   arguments. Help follows:
-   END_OF_ERROR
-   return 1;
-} # end sub error
 
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
@@ -403,18 +386,12 @@ sub help {
     (-d && -l)   # INVALID: missing quotes            (confuses shell        )
      -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
 
-   (Exception: Technically, you can use an integer as a boolean, and it doesn't
-   need quotes or parentheses; but if you use an integer, any non-zero integer
-   will process all paths and 0 will process no paths, so this isn't very useful.)
-
    Arguments and options may be freely mixed, but the arguments must appear in
    the order Arg1, Arg2 (RegExp first, then File-Type Predicate); if you get them
    backwards, they won't do what you want, as most predicates aren't valid regexps
    and vice-versa.
 
-   A number of arguments greater than 2 will cause this program to print an error
-   message and abort.
-
+   Any arguments after the first two will be cheerfully ignored.
 
    Happy files-by-age listing!
    Cheers,
