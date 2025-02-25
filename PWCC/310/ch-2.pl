@@ -50,13 +50,12 @@ sorted in decreasing order and the even-index elements sorted in increasing orde
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-   use v5.16;
+   use v5.36;
    use List::SomeUtils 'mesh';
 
    # Sort an array of integers such that the even-index elements are in
    # increasing order and the odd-index elements are in decreasing order:
-   sub even_up_odd_down {
-      my $aref = shift @_;
+   sub even_up_odd_down ($aref) {
       my @evn_uns;
       my @odd_uns;
       for (0..$#$aref) {
@@ -73,8 +72,12 @@ sorted in decreasing order and the even-index elements sorted in increasing orde
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([4, 1, 2, 3], [3, 1], [5, 3, 2, 1, 4]);
-#                  Expected outputs :  (2, 3, 4, 1)  (3, 1)  (2, 3, 4, 1, 5)
+my @arrays = @ARGV ? eval($ARGV[0]) :
+(
+   [4, 1, 2, 3   ], # Expected output: (2, 3, 4, 1)
+   [3, 1         ], # Expected output: (3, 1)
+   [5, 3, 2, 1, 4], # Expected output: (2, 3, 4, 1, 5)
+);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:

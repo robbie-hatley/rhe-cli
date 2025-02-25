@@ -45,32 +45,23 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-   use v5.16;
+   use v5.36;
    use List::SomeUtils 'distinct';
 
    # Is a given integer in an array of integers?
-   sub is_in_array {
-      my $scalar = shift @_;
-      my $aref   = shift @_;
-      for my $integer (@$aref) {
-         return 1 if $integer == $scalar;
-      }
+   sub is_in_array ($scalar, $aref) {
+      for my $integer (@$aref) {return 1 if $integer == $scalar}
       return 0;
    }
 
    # Is a given integer in all arrays of a set?
-   sub is_in_all_arrays {
-      my $scalar = shift @_;
-      my @arefs  = @_;
-      for my $aref (@arefs) {
-         return 0 if !is_in_array($scalar, $aref);
-      }
+   sub is_in_all_arrays ($scalar, @arefs) {
+      for my $aref (@arefs) {return 0 if !is_in_array($scalar, $aref)}
       return 1;
    }
 
    # What are the common integers between a set of arrays of integers?
-   sub common_integers {
-      my @arefs  = @_;
+   sub common_integers (@arefs) {
       my @common = ();
       for my $aref (@arefs) {
          my @array = @$aref;
@@ -91,16 +82,16 @@ my @aarefs = @ARGV ? eval($ARGV[0]) :
       [1, 2, 3, 4],
       [4, 5, 6, 1],
       [4, 2, 1, 3],
-   ],                # Expected: (1,4)
+   ],                # Expected output: (1,4)
    [
       [1, 0, 2, 3],
       [2, 4, 5   ],
-   ],                # Expected: (2)
+   ],                # Expected output: (2)
    [
       [1, 2, 3   ],
       [4, 5      ],
       [6         ],
-   ],                # Expected: ()
+   ],                # Expected output: ()
 );
 
 # ------------------------------------------------------------------------------------------------------------
