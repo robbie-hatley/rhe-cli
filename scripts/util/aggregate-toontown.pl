@@ -29,6 +29,7 @@
 #                   Now expressing execution time in seconds, to nearest millisecond.
 # Mon Aug 28, 2023: Changed all "$db" to "$Db". Now using "d getcwd" instead of "cwd_utf8".
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
+# Wed Feb 26, 2025: Trimmed one horizontal divider.
 ##############################################################################################################
 
 # ======= PRELIMINARIES: =====================================================================================
@@ -39,7 +40,7 @@ use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
 sub argv;
 sub aggregate;

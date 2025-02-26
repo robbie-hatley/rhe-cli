@@ -4,7 +4,7 @@
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
-########################################################################################################################
+##############################################################################################################
 # merge-files.pl
 # Given the paths of two directories, Source and Destination, this script first deletes all "Thumbs.db",
 # "pspbrwse.jbf", and "desktop.ini" files from Source, then moves all remaining files from Source to
@@ -47,22 +47,23 @@
 #                   "merge-files.pl" as it should have.
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements; upgraded to "use v5.36;"; reduced width
 #                   from 120 to 110; and added prototypes and signatures to all subroutines.
+# Wed Feb 26, 2025: Got rid of "use Encode;". Fixed "missing sub 'help'" bug. Got rid of all prototypes and
+#                   empty signatures. Trimmed over-length horizontal dividers.
 ##############################################################################################################
 
 use v5.36;
-use Encode;
 use RH::Dir;
 use RH::Util;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv  :prototype()   ;
-sub merge :prototype($$) ;
-sub stats :prototype()   ;
-sub error :prototype($)  ;
-sub help  :prototype()   ;
+sub argv  ; # Process @ARGV
+sub merge ; # Merge directories.
+sub stats ; # Print stats.
+sub error ; # Process errors.
+sub help  ; # Print help.
 
-# ======= PAGE-GLOBAL LEXICAL VARIABLES: ===============================================================================
+# ======= PAGE-GLOBAL LEXICAL VARIABLES: =====================================================================
 
 # Debugging:
 my $Db = 0; # Use debugging? (Ie, print diagnostics?)
@@ -72,7 +73,7 @@ my $delecount = 0; # Count of all files deleted from Dir1
 my $mergcount = 0; # Count of all files successfully merged.
 my $failcount = 0; # Count of all files which couldn't be merged.
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 {
    say "\nNow entering program \"merge-files.pl\".";
@@ -83,18 +84,18 @@ my $failcount = 0; # Count of all files which couldn't be merged.
    exit 0;
 }
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-sub argv :prototype() () {
+sub argv {
    my $help     = 0;   # Print help and exit?
    my $dir1     = '';  # Directory 1 (source)
    my $dir2     = '';  # Directory 2 (destination)
    my @CLArgs   = ();  # Command-Line Arguments from @ARGV (not including options).
    foreach (@ARGV)
    {
-      if (/^-[\pL\pN]{1}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/)
-      {
-         /^-h$/ || /^--help$/ and $help = 1;
+      if (/^-[\pL\pN]{1}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/) {
+         /^-h$/ || /^--help$/  and $help = 1;
+         /^-e$/ || /^--debug$/ and $Db   = 1;
       }
       else
       {
@@ -113,7 +114,7 @@ sub argv :prototype() () {
    return ($dir1, $dir2);
 } # end sub argv
 
-sub merge :prototype($$) ($dir1, $dir2) {
+sub merge ($dir1, $dir2) {
    my @spaths = glob_utf8("${dir1}/* ${dir1}/.*");
    if ($Db) {
       say $dir1;
@@ -163,7 +164,7 @@ sub merge :prototype($$) ($dir1, $dir2) {
    return 1;
 } # end subroutine merge_directories
 
-sub stats :prototype() () {
+sub stats {
    say '';
    say "Statistics from \"merge-files.pl\":";
    say "Deleted $delecount files from source directory.";
@@ -172,7 +173,7 @@ sub stats :prototype() () {
    return 1;
 }
 
-sub error :prototype($) ($NA) {
+sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
    Error: You typed $NA arguments, but "merge-files.pl" takes exactly 2 arguments
@@ -182,7 +183,7 @@ sub error :prototype($) ($NA) {
    return 1;
 }
 
-sub help_msg :prototype() () {
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    Welcome to "merge-files.pl", Robbie Hatley's nifty directory merging
@@ -192,13 +193,14 @@ sub help_msg :prototype() () {
    "desktop*.ini" files from the source directory. This program then removes the
    now-empty dir1 (or prints a warning if dir1 is not empty).
 
-   Command line:
-   merge-files.pl [-h|--help] [-v|--verbose] dir1 dir2
+   Command lines:
+   merge-files.pl [-h|--help]               (to print this help and exit)
+   merge-files.pl [-e|--debug] dir1 dir2    (to merge directories)
 
    Description of options:
    Option:                      Meaning:
    "-h" or "--help"             Print help and exit.
-   "-v" or "--verbose"          Be verbose.
+   "-e" or "--debug"            Print diagnostics.
 
    This program takes exactly two arguments which must be paths of
    existing directories; dir1 is the source directory and the dir2 is the

@@ -95,6 +95,7 @@
 #                   Removed "no debug" option as that's already default in all of my programs.
 #                   Changed short option for debugging from "-e" to "-d".
 # Wed Aug 14, 2024: Removed unnecessary "use" statements. Changed short option for debug from "-d" to "-e".
+# Wed Feb 26, 2025: Trimmed horizontal dividers and reformated over-length comment lines.
 ##############################################################################################################
 
 use v5.36;
@@ -148,14 +149,14 @@ my %PrejudHash; $PrejudHash{0}='Newer';     $PrejudHash{1}='Older';
 # Note regarding settings:
 
 # Default values:
-# The "0" value for each of the above settings is the "default" setting, which may be overridden by command-line
-# options or by this program itself. (Well, except for $RegExp, which has default qr/^.+$/o which means
-# "process all file names".)
+# The "0" value for each of the above settings is the "default" setting, which may be overridden by
+# command-line options or by this program itself. (Well, except for $RegExp, which has default qr/^.+$/o
+# which means "process all file names".)
 
 # File selection:
-# The target type is set to 'F' for "regular files only" and this never changes. The file-name specification is
-# initially set to "all file names", but this can be over-ridden by using an argument, which must be a Perl-compliant
-# regular expression describing which file names to process.
+# The target type is set to 'F' for "regular files only" and this never changes. The file-name specification
+# is initially set to "all file names", but this can be over-ridden by using an argument, which must be
+# a Perl-compliant regular expression describing which file names to process.
 
 # Prompting Modes:
 # This program is always in 1 of 3 prompting modes: DupPrompt, Spotlight, or NoPrompt.
@@ -199,7 +200,7 @@ my $failcount = 0; # Count of failed attempts at deleting files.
 my $errocount = 0; # Count of errors.
 my $simucount = 0; # Count of simulated file unlinkages.
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
    my $t0 = time;
@@ -221,7 +222,7 @@ my $simucount = 0; # Count of simulated file unlinkages.
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
 sub argv {
    # Get options and arguments:
