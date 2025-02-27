@@ -12,9 +12,13 @@
 #    Sat Aug 06, 2022: I changed EXEDIR to point to the currently-correct locations.
 #    Sun Feb 02, 2025: Changed exe dir location from "/d/rhe2" to "/d/rhe-bin".
 
-# Set source vpath directories so that make can find the c and cpp files for this collection:
-vpath %.c   /d/rhe-cli/src/jive
-vpath %.cpp /d/rhe-cli/src/jive
+# Set vpath directories so that make can find the files it needs:
+vpath %.c      .
+vpath %.cism   .
+vpath %.cpp    .
+vpath %.cppism .
+vpath %.h      ../../include /usr/include
+vpath %.hpp    ../../include /usr/include
 
 # Set PLATFORM, EXEDIR, MACROS, and ALL:
 ifeq ($(PLATFORM),Win64)

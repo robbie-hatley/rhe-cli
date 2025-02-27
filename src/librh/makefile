@@ -9,6 +9,7 @@
 #    Thu Apr 02, 2015 - Drastically streamlined.
 #    Sun Feb 21, 2016 - Removed makehead and make-all-list (both now subsumed into maketail).
 #    Mon Oct 16, 2017 - Updated for Ketch's new location for rhe at "D:\rhe", which is also ~ in Cygwin.
+#    Thu Feb 27, 2025 - Corrected vpaths.
 
 # Set collection name:
 COLLECTION := Robbie Hatley\'s Library
@@ -16,9 +17,13 @@ COLLECTION := Robbie Hatley\'s Library
 # Set the exe directory suffix (dummy; not actually used because we're not making executables):
 EXSUFF := librh
 
-# Set source vpath directories so that make can find the c and cpp files for this collection:
-vpath %.c   /d/rhe-cli/src-cli/librh
-vpath %.cpp /d/rhe-cli/src-cli/librh
+# Set vpath directories so that make can find the files it needs:
+vpath %.c      .
+vpath %.cism   .
+vpath %.cpp    .
+vpath %.cppism .
+vpath %.h      ../../include /usr/include
+vpath %.hpp    ../../include /usr/include
 
 # Since we're compiling and archiving object modules, NOT exe files,
 # set variable ALL to a list of all library objects,
@@ -28,28 +33,12 @@ ALL = $(LIBRARY_OBJECTS_C) $(LIBRARY_OBJECTS_X)
 # And since no programs are being made from the cpp files in this directory,
 # do NOT set variable LIBRARY_DEPENDANT_PROGRAMS here.
 
-#  ****************************************************************************
-#  *                                                                          *
-#  *  (All the actual compilation is done via the pattern rules in maketail.) *
-#  *                                                                          *
-#  ****************************************************************************
+#  ******************************************************************************
+#  *                                                                            *
+#  *  All of the actual compilation is done via the pattern rules in maketail:  *
+#  *                                                                            *
+#  ******************************************************************************
 
 # Include maketail:
-include /d/rhe-cli/src/maketail
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+include ../maketail
 
