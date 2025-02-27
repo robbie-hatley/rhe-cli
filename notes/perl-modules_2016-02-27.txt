@@ -1,0 +1,892 @@
+Algorithm::Diff           - Compute `intelligent' differences between two files / lists
+Algorithm::DiffOld        - Compute `intelligent' differences between two files / lists
+AnyDBM_File               - provide framework for multiple DBMs
+App::Cpan                 - easily interact with CPAN from the command line
+App::Prove                - Implements the C<prove> command.
+App::Prove::State         - State storage for the C<prove> command.
+App::Prove::State::Result - Individual test suite results.
+App::Prove::State::Result::Test - Individual test results.
+Archive::Tar              - module for manipulations of tar archives
+Archive::Tar::File        - a subclass for in-memory extracted file from Archive::Tar
+Attribute                 - a single attribute
+Attribute::Handlers       - Simpler definition of attribute handlers
+AutoLoader                - load subroutines only on demand
+AutoSplit                 - split a package for autoloading
+B                         - The Perl Compiler Backend
+B::Concise                - Walk Perl syntax tree, printing concise info about ops
+B::Debug                  - Walk Perl syntax tree, printing debug info about ops
+B::Deparse                - Perl compiler backend to produce perl code
+B::Op_private             - OP op_private flag definitions
+B::Showlex                - Show lexical variables used in functions or files
+B::Terse                  - Walk Perl syntax tree, printing terse info about ops
+B::Xref                   - Generates cross reference reports for Perl programs
+Benchmark                 - benchmark running times of Perl code
+Bundle::DBI               - A bundle to install DBI and required modules.
+C<IO::Socket::IP>         - Family-neutral IP socket supporting both IPv4 and IPv6
+C<Socket>                 - networking constants and support functions
+CPAN                      - query, download and build perl modules from CPAN sites
+CPAN::Debug               - internal debugging for CPAN.pm
+CPAN::Distroprefs         - read and match distroprefs
+CPAN::FirstTime           - Utility for CPAN::Config file Initialization
+CPAN::HandleConfig        - internal configuration handling for CPAN.pm
+CPAN::Kwalify             - Interface between CPAN.pm and Kwalify.pm
+CPAN::Meta                - the distribution metadata for a CPAN dist
+CPAN::Meta::Converter     - Convert CPAN distribution metadata structures
+CPAN::Meta::Feature       - an optional feature provided by a CPAN distribution
+CPAN::Meta::History       - history of CPAN Meta Spec changes
+CPAN::Meta::Merge         - Merging CPAN Meta fragments
+CPAN::Meta::Prereqs       - a set of distribution prerequisites by phase and type
+CPAN::Meta::Requirements  - a set of version requirements for a CPAN dist
+CPAN::Meta::Spec          - specification for CPAN distribution metadata
+CPAN::Meta::Validator     - validate CPAN distribution metadata structures
+CPAN::Meta::YAML          - Read and write a subset of YAML for CPAN Meta files
+CPAN::Mirrors             - Get CPAN mirror information and select a fast one
+CPAN::Nox                 - Wrapper around CPAN.pm without using any XS module
+CPAN::Plugin              - Base class for CPAN shell extensions
+CPAN::Plugin::Specfile    - Proof of concept implementation of a trivial CPAN::Plugin
+CPAN::Queue               - internal queue support for CPAN.pm
+CPAN::Tarzip              - internal handling of tar archives for CPAN.pm
+CPAN::Version             - utility functions to compare CPAN versions
+Carp                      - alternative warn and die for modules
+Class::Struct             - declare struct-like datatypes as Perl classes
+Class::XSAccessor         - Generate fast XS accessors without runtime compilation
+Class::XSAccessor::Array  - Generate fast XS accessors without runtime compilation
+Class::XSAccessor::Heavy  - Guts you don't care about
+Clone                     - recursively copy Perl datatypes
+Comment                   - an XML comment: <!--comment-->
+Compress::Raw::Bzip2      - Low-Level Interface to bzip2 compression library
+Compress::Raw::Zlib       - Low-Level Interface to zlib compression library
+Compress::Zlib            - Interface to zlib compression library
+Config::Extensions        - hash lookup of which core extensions were built.
+Config::Perl::V           - Structured data retrieval of perl -V output
+Cwd                       - get pathname of current working directory
+DB                        - programmatic interface to the Perl debugging API
+DBD::DBM                  - a DBI driver for DBM & MLDBM files
+DBD::File                 - Base class for writing file based DBI drivers
+DBD::Gofer                - A stateless-proxy driver for communicating with a remote DBI
+DBD::Gofer::Policy::Base  - Base class for DBD::Gofer policies
+DBD::Gofer::Policy::classic - The 'classic' policy for DBD::Gofer
+DBD::Gofer::Policy::pedantic - The 'pedantic' policy for DBD::Gofer
+DBD::Gofer::Policy::rush  - The 'rush' policy for DBD::Gofer
+DBD::Gofer::Transport::Base - base class for DBD::Gofer client transports
+DBD::Gofer::Transport::corostream - Async DBD::Gofer stream transport using Coro and AnyEvent
+DBD::Gofer::Transport::null - DBD::Gofer client transport for testing
+DBD::Gofer::Transport::pipeone - DBD::Gofer client transport for testing
+DBD::Gofer::Transport::stream - DBD::Gofer transport for stdio streaming
+DBD::Proxy                - A proxy driver for the DBI
+DBD::Sponge               - Create a DBI statement handle from Perl data
+DBI                       - Database independent interface for Perl
+DBI::Changes              - List of significant changes to the DBI
+DBI::Const::GetInfo::ANSI - ISO/IEC SQL/CLI Constants for GetInfo
+DBI::Const::GetInfo::ODBC - ODBC Constants for GetInfo
+DBI::Const::GetInfoReturn - Data and functions for describing GetInfo results
+DBI::Const::GetInfoType   - Data describing GetInfo type codes
+DBI::DBD                  - Perl DBI Database Driver Writer's Guide
+DBI::DBD::Metadata        - Generate the code and data for some DBI metadata methods
+DBI::DBD::SqlEngine       - Base class for DBI drivers without their own SQL engine
+DBI::FAQ                  - The Frequently Asked Questions for the Perl5 Database Interface
+DBI::Gofer::Execute       - Executes Gofer requests and returns Gofer responses
+DBI::Gofer::Request       - Encapsulate a request from DBD::Gofer to DBI::Gofer::Execute
+DBI::Gofer::Response      - Encapsulate a response from DBI::Gofer::Execute to DBD::Gofer
+DBI::Gofer::Serializer::Base - base class for Gofer serialization
+DBI::Gofer::Serializer::DataDumper - Gofer serialization using DataDumper
+DBI::Gofer::Serializer::Storable - Gofer serialization using Storable
+DBI::Gofer::Transport::Base - Base class for Gofer transports
+DBI::Gofer::Transport::pipeone - DBD::Gofer server-side transport for pipeone
+DBI::Gofer::Transport::stream - DBD::Gofer server-side transport for stream
+DBI::Profile              - Performance profiling and benchmarking for the DBI
+DBI::ProfileData          - manipulate DBI::ProfileDumper data dumps
+DBI::ProfileDumper        - profile DBI usage and output data to a file
+DBI::ProfileDumper::Apache - capture DBI profiling data from Apache/mod_perl
+DBI::ProfileSubs          - Subroutines for dynamic profile Path
+DBI::ProxyServer          - a server for the DBD::Proxy driver
+DBI::PurePerl             - a DBI emulation using pure perl (no C/XS compilation required)
+DBI::SQL::Nano            - a very tiny SQL engine
+DBI::Util::CacheMemory    - a very fast but very minimal subset of Cache::Memory
+DBI::W32ODBC              - An experimental DBI emulation layer for Win32::ODBC
+DBM_Filter                - Filter DBM keys/values 
+DBM_Filter::compress      - filter for DBM_Filter
+DBM_Filter::encode        - filter for DBM_Filter
+DBM_Filter::int32         - filter for DBM_Filter
+DBM_Filter::null          - filter for DBM_Filter
+DBM_Filter::utf8          - filter for DBM_Filter
+DB_File                   - Perl5 access to Berkeley DB version 1.x
+Data::Alias               - Comprehensive set of aliasing operations
+Data::Compare             - compare perl data structures
+Data::Compare::Plugin::Scalar::Properties - plugin for Data::Compare to
+Data::Diver               - Simple, ad-hoc access to elements of deeply nested structures
+Data::Dump                - Pretty printing of data structures
+Data::Dump::Filtered      - Pretty printing with filtering
+Data::Dump::Trace         - Helpers to trace function and method calls
+Data::Dumper              - stringified perl data structures, suitable for both printing and C<eval>
+Data::Grove               - support for deeply nested structures
+Data::Grove::Parent       - provide parent properties to Data::Grove objects
+Data::Grove::Visitor      - add visitor/callback methods to Data::Grove objects
+Data::OptList             - parse and validate simple name/value option pairs
+Data::Uniqid              - Perl extension for simple genrating of unique id's
+Date::Format              - Date formating subroutines
+Date::Language            - Language specific date formating and parsing
+Date::Language::Bulgarian - localization for Date::Format
+Date::Language::Hungarian - Magyar format for Date::Format
+Date::Parse               - Parse date strings into time values
+Date::Simple              - a simple date object
+Date::Simple::D8          - Sub class of Date::Simple with eight digit date style formatting
+Date::Simple::Fmt         - Sub class of Date::Simple with per object level formatting for
+Date::Simple::ISO         - Sub class of Date::Simple
+Date::Simple::NoXS        - Pure Perl support for Date::Simple.
+Devel::Autoflush          - Set autoflush from the command line
+Devel::PPPort             - Perl/Pollution/Portability
+Devel::Peek               - A data debugging tool for the XS programmer
+Devel::SelfStubber        - generate stubs for a SelfLoading module
+Devel::Symdump            - dump symbol names or the symbol table
+Digest                    - Modules that calculate message digests
+Digest::MD5               - Perl interface to the MD5 Algorithm
+Digest::SHA               - Perl extension for SHA-1/224/256/384/512
+Digest::base              - Digest base class
+Digest::file              - Calculate digests of files
+DirHandle                 - supply object methods for directory handles
+Dumpvalue                 - provides screen dump of Perl data.
+DynaLoader                - Dynamically load C libraries into Perl code
+Element                   - an <element>
+Encode                    - character encodings in Perl
+Encode::Alias             - alias definitions to encodings
+Encode::Byte              - Single Byte Encodings
+Encode::CJKConstants.pm   - Internally used by Encode::??::ISO_2022_*
+Encode::CN                - China-based Chinese Encodings
+Encode::CN::HZ            - internally used by Encode::CN
+Encode::Config            - internally used by Encode
+Encode::EBCDIC            - EBCDIC Encodings
+Encode::Encoder           - Object Oriented Encoder
+Encode::Encoding          - Encode Implementation Base Class
+Encode::GSM0338           - ESTI GSM 03.38 Encoding
+Encode::Guess             - Guesses encoding from data
+Encode::JP                - Japanese Encodings
+Encode::JP::H2Z           - internally used by Encode::JP::2022_JP*
+Encode::JP::JIS7          - internally used by Encode::JP
+Encode::KR                - Korean Encodings
+Encode::KR::2022_KR       - internally used by Encode::KR
+Encode::Locale            - Determine the locale encoding
+Encode::MIME::Header      - MIME 'B' and 'Q' header encoding
+Encode::MIME::NAME        - internally used by Encode
+Encode::Symbol            - Symbol Encodings
+Encode::TW                - Taiwan-based Chinese Encodings
+Encode::Unicode           - Various Unicode Transformation Formats
+Encode::Unicode::UTF7     - UTF-7 encoding
+English                   - use nice English (or awk) names for ugly punctuation variables
+Env                       - perl module that imports environment variables as scalars or arrays
+Errno                     - System errno constants
+Error                     - Error/exception handling in an OO-ish way
+Error::Simple             - the simple error sub-class of Error
+Exporter                  - Implements default import method for modules
+Exporter::Heavy           - Exporter guts
+Exporter::Shiny           - shortcut for Exporter::Tiny
+Exporter::Tiny            - an exporter with the features of Sub::Exporter but only core dependencies
+ExtUtils::CBuilder        - Compile and link C code for Perl modules
+ExtUtils::CBuilder::Platform::Windows - Builder class for Windows platforms
+ExtUtils::Command         - utilities to replace common UNIX commands in Makefiles etc.
+ExtUtils::Command::MM     - Commands for the MM's to use in Makefiles
+ExtUtils::Constant        - generate XS code to import C header constants
+ExtUtils::Constant::Base  - base class for ExtUtils::Constant objects
+ExtUtils::Constant::Utils - helper functions for ExtUtils::Constant
+ExtUtils::Constant::XS    - generate C code for XS modules' constants.
+ExtUtils::Embed           - Utilities for embedding Perl in C/C++ applications
+ExtUtils::Install         - install files from here to there
+ExtUtils::Installed       - Inventory management of installed modules
+ExtUtils::Liblist         - determine libraries to use and how to use them
+ExtUtils::MM              - OS adjusted ExtUtils::MakeMaker subclass
+ExtUtils::MM_AIX          - AIX specific subclass of ExtUtils::MM_Unix
+ExtUtils::MM_Any          - Platform-agnostic MM methods
+ExtUtils::MM_BeOS         - methods to override UN*X behaviour in ExtUtils::MakeMaker
+ExtUtils::MM_Cygwin       - methods to override UN*X behaviour in ExtUtils::MakeMaker
+ExtUtils::MM_DOS          - DOS specific subclass of ExtUtils::MM_Unix
+ExtUtils::MM_Darwin       - special behaviors for OS X
+ExtUtils::MM_MacOS        - once produced Makefiles for MacOS Classic
+ExtUtils::MM_NW5          - methods to override UN*X behaviour in ExtUtils::MakeMaker
+ExtUtils::MM_OS2          - methods to override UN*X behaviour in ExtUtils::MakeMaker
+ExtUtils::MM_QNX          - QNX specific subclass of ExtUtils::MM_Unix
+ExtUtils::MM_UWIN         - U/WIN specific subclass of ExtUtils::MM_Unix
+ExtUtils::MM_Unix         - methods used by ExtUtils::MakeMaker
+ExtUtils::MM_VMS          - methods to override UN*X behaviour in ExtUtils::MakeMaker
+ExtUtils::MM_VOS          - VOS specific subclass of ExtUtils::MM_Unix
+ExtUtils::MM_Win32        - methods to override UN*X behaviour in ExtUtils::MakeMaker
+ExtUtils::MM_Win95        - method to customize MakeMaker for Win9X
+ExtUtils::MY              - ExtUtils::MakeMaker subclass for customization
+ExtUtils::MakeMaker       - Create a module Makefile
+ExtUtils::MakeMaker::Config - Wrapper around Config.pm
+ExtUtils::MakeMaker::Locale - bundled Encode::Locale
+ExtUtils::Manifest        - utilities to write and check a MANIFEST file
+ExtUtils::Miniperl        - write the C code for perlmain.c
+ExtUtils::Mkbootstrap     - make a bootstrap file for use by DynaLoader
+ExtUtils::Mksymlists      - write linker options files for dynamic extension
+ExtUtils::Packlist        - manage .packlist files
+ExtUtils::ParseXS::Constants - Initialization values for some globals
+ExtUtils::ParseXS::Eval   - Clean package to evaluate code in
+ExtUtils::ParseXS::Utilities - Subroutines used with ExtUtils::ParseXS
+ExtUtils::Typemaps        - Read/Write/Modify Perl/XS typemap files
+ExtUtils::Typemaps::Cmd   - Quick commands for handling typemaps
+ExtUtils::Typemaps::InputMap - Entry in the INPUT section of a typemap
+ExtUtils::Typemaps::OutputMap - Entry in the OUTPUT section of a typemap
+ExtUtils::Typemaps::Type  - Entry in the TYPEMAP section of a typemap
+ExtUtils::testlib         - add blib/* directories to @INC
+Fatal                     - Replace functions with equivalents which succeed or die
+Fcntl                     - load the C Fcntl.h defines
+File::Basename            - Parse file paths into directory, filename and suffix.
+File::Compare             - Compare files or filehandles
+File::Copy                - Copy files or filehandles
+File::Copy::Recursive     - Perl extension for recursively copying files and directories
+File::DosGlob             - DOS like globbing and then some
+File::Fetch               - A generic file fetching mechanism
+File::Find                - Traverse a directory tree.
+File::Find::Object        - An object oriented File::Find replacement
+File::Find::Object::Base  - base class for File::Find::Object
+File::Find::Object::PathComp - base class for File::Find::Object's Path Components
+File::Find::Object::Result - a result class for File::Find::Object
+File::Find::Object::Rule  - Alternative interface to File::Find::Object
+File::Find::Rule          - Alternative interface to File::Find
+File::Glob                - Perl extension for BSD glob routine
+File::GlobMapper          - Extend File Glob to Allow Input and Output Files
+File::Listing             - parse directory listing
+File::Path                - Create or remove directory trees
+File::Slurp               - Simple and Efficient Reading/Writing/Modifying of Complete Files
+File::Slurp::Tiny         - A simple, sane and efficient file slurper [DISCOURAGED]
+File::Spec                - portably perform operations on file names
+File::Spec::Cygwin        - methods for Cygwin file specs
+File::Spec::Epoc          - methods for Epoc file specs
+File::Spec::Functions     - portably perform operations on file names
+File::Spec::Mac           - File::Spec for Mac OS (Classic)
+File::Spec::OS2           - methods for OS/2 file specs
+File::Spec::Unix          - File::Spec for Unix, base for other File::Spec modules
+File::Spec::VMS           - methods for VMS file specs
+File::Spec::Win32         - methods for Win32 file specs
+File::Temp                - return name and handle of a temporary file safely
+File::Which               - Perl implementation of the which utility as an API
+File::pushd               - change directory temporarily for a limited scope
+File::stat                - by-name interface to Perl's built-in stat() functions
+FileCache                 - keep more files open than the system permits
+FileHandle                - supply object methods for filehandles
+Filter::Simple            - Simplified source filtering
+Filter::Util::Call        - Perl Source Filter Utility Module
+FindBin                   - Locate directory of original perl script
+Getopt::ArgvFile          - interpolates script options from files into @ARGV or another array
+Getopt::Long              - Extended processing of command line options
+Git                       - Perl interface to the Git version control system
+Git::I18N                 - Perl interface to Git's Gettext localizations
+HTML::Entities            - Encode or decode strings with HTML entities
+HTML::Filter              - Filter HTML text through the parser
+HTML::HeadParser          - Parse <HEAD> section of a HTML document
+HTML::LinkExtor           - Extract links from an HTML document
+HTML::Parser              - HTML parser class
+HTML::PullParser          - Alternative HTML::Parser interface
+HTML::Tagset              - data tables useful in parsing HTML
+HTML::TokeParser          - Alternative HTML::Parser interface
+HTTP::Config              - Configuration for request and response objects
+HTTP::Cookies             - HTTP cookie jars
+HTTP::Cookies::Microsoft  - access to Microsoft cookies files
+HTTP::Cookies::Netscape   - access to Netscape cookies files
+HTTP::Daemon              - a simple http server class
+HTTP::Date                - date conversion routines
+HTTP::Headers             - Class encapsulating HTTP Message headers
+HTTP::Headers::Util       - Header value parsing utility functions
+HTTP::Message             - HTTP style message (base class)
+HTTP::Negotiate           - choose a variant to serve
+HTTP::Request             - HTTP style request message
+HTTP::Request::Common     - Construct common HTTP::Request objects
+HTTP::Response            - HTTP style response message
+HTTP::Status              - HTTP Status code processing
+HTTP::Tiny                - A small, simple, correct HTTP/1.1 client
+Hash::Util                - A selection of general-utility hash subroutines
+Hash::Util::FieldHash     - Support for Inside-Out Classes
+I18N::Collate             - compare 8-bit scalar data according to the current locale
+I18N::LangTags            - functions for dealing with RFC3066-style language tags
+I18N::LangTags::Detect    - detect the user's language preferences
+I18N::LangTags::List      - tags and names for human languages
+I18N::Langinfo            - query locale information
+IO                        - load various IO modules
+IO::Compress::Base        - Base Class for IO::Compress modules 
+IO::Compress::Bzip2       - Write bzip2 files/buffers
+IO::Compress::Deflate     - Write RFC 1950 files/buffers
+IO::Compress::Gzip        - Write RFC 1952 files/buffers
+IO::Compress::RawDeflate  - Write RFC 1951 files/buffers
+IO::Compress::Zip         - Write zip files/buffers
+IO::Dir                   - supply object methods for directory handles
+IO::File                  - supply object methods for filehandles
+IO::HTML                  - Open an HTML file with automatic charset detection
+IO::Handle                - supply object methods for I/O handles
+IO::Pipe                  - supply object methods for pipes
+IO::Poll                  - Object interface to system poll call
+IO::Seekable              - supply seek based methods for I/O objects
+IO::Select                - OO interface to the select system call
+IO::Socket                - Object interface to socket communications
+IO::Socket::INET          - Object interface for AF_INET domain sockets
+IO::Socket::SSL::Intercept - SSL interception (man in the middle)
+IO::Socket::SSL::PublicSuffix - provide access to Mozilla's list of effective TLD names
+IO::Socket::SSL::Utils    - loading, storing, creating certificates and keys
+IO::Socket::UNIX          - Object interface for AF_UNIX domain sockets
+IO::String                - Emulate file interface for in-core strings
+IO::Uncompress::AnyInflate - Uncompress zlib-based (zip, gzip) file/buffer
+IO::Uncompress::AnyUncompress - Uncompress gzip, zip, bzip2 or lzop file/buffer
+IO::Uncompress::Base      - Base Class for IO::Uncompress modules 
+IO::Uncompress::Bunzip2   - Read bzip2 files/buffers
+IO::Uncompress::Gunzip    - Read RFC 1952 files/buffers
+IO::Uncompress::Inflate   - Read RFC 1950 files/buffers
+IO::Uncompress::RawInflate - Read RFC 1951 files/buffers
+IO::Uncompress::Unzip     - Read zip files/buffers
+IO::Zlib                  - IO:: style interface to L<Compress::Zlib>
+IPC::Cmd                  - finding and running system commands made easy
+IPC::Msg                  - SysV Msg IPC object class
+IPC::Open2                - open a process for both reading and writing using open2()
+IPC::Open3                - open a process for reading, writing, and error handling using open3()
+IPC::Run3                 - run a subprocess with input/ouput redirection
+IPC::Run3::ProfArrayBuffer - Store profile events in RAM in an array
+IPC::Run3::ProfLogReader  - read and process a ProfLogger file
+IPC::Run3::ProfLogger     - write profiling data to a log file
+IPC::Run3::ProfPP         - Generate reports from IPC::Run3 profiling data
+IPC::Run3::ProfReporter   - base class for handling profiling data
+IPC::Semaphore            - SysV Semaphore IPC object class
+IPC::SharedMem            - SysV Shared Memory IPC object class
+IPC::SysV                 - System V IPC constants and system calls
+Inline::Files             - Multiple virtual files at the end of your code
+Inline::Files::Virtual    - Multiple virtual files in a single file
+JSON::PP                  - JSON::XS compatible pure-Perl module.
+JSON::PP::Boolean         - dummy module providing JSON::PP::Boolean
+LWP                       - The World-Wide Web library for Perl
+LWP::Authen::Ntlm         - Library for enabling NTLM authentication (Microsoft) in LWP
+LWP::ConnCache            - Connection cache manager
+LWP::Debug                - deprecated
+LWP::MediaTypes           - guess media type for a file or a URL
+LWP::MemberMixin          - Member access mixin class
+LWP::Protocol             - Base class for LWP protocols
+LWP::Protocol::https      - Provide https support for LWP::UserAgent
+LWP::RobotUA              - a class for well-behaved Web robots
+LWP::Simple               - simple procedural interface to LWP
+LWP::UserAgent            - Web user agent class
+List::AllUtils            - Combines List::Util and List::MoreUtils in one bite-sized package
+List::MoreUtils           - Provide the stuff missing in List::Util
+List::MoreUtils::PP       - Provide List::MoreUtils pure Perl implementation
+List::MoreUtils::XS       - Provide compiled List::MoreUtils functions
+List::Util                - A selection of general-utility list subroutines
+List::Util::XS            - Indicate if List::Util was compiled with a C compiler
+Locale::Codes::LangFam_Retired - retired langfam codes for the Locale::Codes::LangFam module
+Locale::Maketext::Guts    - Deprecated module to load Locale::Maketext utf8 code
+Locale::Maketext::GutsLoader - Deprecated module to load Locale::Maketext utf8 code
+Locale::Maketext::Simple  - Simple interface to Locale::Maketext::Lexicon
+Locale::gettext           - message handling functions
+Log::Log4perl             - Log4j implementation for Perl
+Log::Log4perl::Appender   - Log appender class
+Log::Log4perl::Appender::Buffer - Buffering Appender
+Log::Log4perl::Appender::DBI - implements appending to a DB
+Log::Log4perl::Appender::File - Log to file
+Log::Log4perl::Appender::Limit - Limit message delivery via block period
+Log::Log4perl::Appender::RRDs - Log to a RRDtool Archive
+Log::Log4perl::Appender::Screen - Log to STDOUT/STDERR
+Log::Log4perl::Appender::ScreenColoredLevel - Colorize messages according to level
+Log::Log4perl::Appender::Socket - Log to a socket
+Log::Log4perl::Appender::String - Append to a string
+Log::Log4perl::Appender::Synchronized - Synchronizing other appenders
+Log::Log4perl::Appender::TestArrayBuffer - Subclass of Appender::TestBuffer
+Log::Log4perl::Appender::TestBuffer - Appender class for testing
+Log::Log4perl::Appender::TestFileCreeper - Intentionally slow test appender
+Log::Log4perl::Catalyst   - Log::Log4perl Catalyst Module
+Log::Log4perl::Config     - Log4perl configuration file syntax
+Log::Log4perl::Config::BaseConfigurator - Configurator Base Class
+Log::Log4perl::Config::DOMConfigurator - reads xml config files
+Log::Log4perl::Config::PropertyConfigurator - reads properties file
+Log::Log4perl::Config::Watch - Detect file changes
+Log::Log4perl::DateFormat - Log4perl advanced date formatter helper class
+Log::Log4perl::FAQ        - Frequently Asked Questions on Log::Log4perl
+Log::Log4perl::Filter     - Log4perl Custom Filter Base Class
+Log::Log4perl::Filter::Boolean - Special filter to combine the results of others
+Log::Log4perl::Filter::LevelMatch - Filter to match the log level exactly
+Log::Log4perl::Filter::LevelRange - Filter for a range of log levels
+Log::Log4perl::Filter::MDC - Filter to match on values of a MDC key
+Log::Log4perl::Filter::StringMatch - Filter on log message string
+Log::Log4perl::InternalDebug - Dark Magic to enable _INTERNAL_DEBUG
+Log::Log4perl::JavaMap    - maps java log4j appenders to Log::Dispatch classes
+Log::Log4perl::JavaMap::ConsoleAppender - wraps Log::Dispatch::Screen
+Log::Log4perl::JavaMap::FileAppender - wraps Log::Dispatch::File
+Log::Log4perl::JavaMap::JDBCAppender - wraps Log::Log4perl::Appender::DBI
+Log::Log4perl::JavaMap::NTEventLogAppender - wraps Log::Dispatch::Win32EventLog
+Log::Log4perl::JavaMap::RollingFileAppender - wraps Log::Dispatch::FileRotate
+Log::Log4perl::JavaMap::SysLogAppender - wraps Log::Dispatch::Syslog
+Log::Log4perl::JavaMap::TestBuffer - wraps Log::Log4perl::Appender::TestBuffer
+Log::Log4perl::Layout     - Log4perl Layout Virtual Base Class
+Log::Log4perl::Layout::NoopLayout - Pass-thru Layout
+Log::Log4perl::Layout::PatternLayout - Pattern Layout
+Log::Log4perl::Layout::SimpleLayout - Simple Layout
+Log::Log4perl::Level      - Predefined log levels
+Log::Log4perl::Logger     - Main Logger Class
+Log::Log4perl::MDC        - Mapped Diagnostic Context
+Log::Log4perl::NDC        - Nested Diagnostic Context
+Log::Log4perl::Resurrector - Dark Magic to resurrect hidden L4p statements
+Log::Log4perl::Util       - Internal utility functions
+Log::Log4perl::Util::Semaphore - Easy to use semaphores
+Log::Log4perl::Util::TimeTracker - Track time elapsed
+MIME::Base64              - Encoding and decoding of base64 strings
+MIME::Charset             - Charset Information for MIME
+MIME::QuotedPrint         - Encoding and decoding of quoted-printable strings
+Math::BigFloat            - Arbitrary size floating point math package
+Math::BigInt              - Arbitrary size integer/float math package
+Math::BigInt::Calc        - Pure Perl module to support Math::BigInt
+Math::BigInt::CalcEmu     - Emulate low-level math with BigInt code
+Math::BigInt::FastCalc    - Math::BigInt::Calc with some XS for more speed
+Math::BigRat              - Arbitrary big rational numbers
+Math::Complex             - complex numbers and associated mathematical functions
+Math::Int64               - Manipulate 64 bits integers in Perl
+Math::Int64::die_on_overflow - catch overflows when using Math::Int64
+Math::Int64::native_if_available - Use the native Perl 64-bit integer implementation when available
+Math::Trig                - trigonometric functions
+Math::UInt64              - Manipulate 64 bit unsigned integers from Perl
+Memoize                   - Make functions faster by trading space for time
+Memoize::AnyDBM_File      - glue to provide EXISTS for AnyDBM_File for Storable use
+Memoize::Expire           - Plug-in module for automatic expiration of memoized values
+Memoize::ExpireFile       - test for Memoize expiration semantics
+Memoize::ExpireTest       - test for Memoize expiration semantics
+Memoize::NDBM_File        - glue to provide EXISTS for NDBM_File for Storable use
+Memoize::SDBM_File        - glue to provide EXISTS for SDBM_File for Storable use
+Memoize::Storable         - store Memoized data in Storable database
+Module::Build             - Build and install Perl modules
+Module::Build::Base       - Default methods for Module::Build
+Module::Build::Compat     - Compatibility with ExtUtils::MakeMaker
+Module::Build::ConfigData - Configuration for Module::Build
+Module::Build::Cookbook   - Examples of Module::Build Usage
+Module::Build::Notes      - Create persistent distribution configuration modules
+Module::Build::PPMMaker   - Perl Package Manager file creation
+Module::Build::Platform::Default - Stub class for unknown platforms
+Module::Build::Platform::MacOS - Builder class for MacOS platforms
+Module::Build::Platform::Unix - Builder class for Unix platforms
+Module::Build::Platform::VMS - Builder class for VMS platforms
+Module::Build::Platform::VOS - Builder class for VOS platforms
+Module::Build::Platform::Windows - Builder class for Windows platforms
+Module::Build::Platform::aix - Builder class for AIX platform
+Module::Build::Platform::cygwin - Builder class for Cygwin platform
+Module::Build::Platform::darwin - Builder class for Mac OS X platform
+Module::Build::Platform::os2 - Builder class for OS/2 platform
+Module::CoreList::Utils   - what utilities shipped with versions of perl
+Module::Load              - runtime require of both modules and files
+Module::Load::Conditional - Looking up module information / loading at runtime
+Module::Loaded            - mark modules as loaded or unloaded
+Module::Metadata          - Gather package and POD information from perl module files
+Module::ScanDeps          - Recursively scan Perl code for dependencies
+Module::Signature         - Module signature file manipulation
+Mozilla::CA               - Mozilla's CA cert bundle in PEM format
+NEXT.pm                   - Provide a pseudo-class NEXT (et al) that allows method redispatch
+Namespace                 - an XML namespace node
+Net::Cmd                  - Network Command class (as used by FTP, SMTP etc)
+Net::Config               - Local configuration data for libnet
+Net::Domain               - Attempt to evaluate the current host's internet name and domain
+Net::FTP                  - FTP Client class
+Net::FTP::dataconn        - FTP Client data connection class
+Net::HTTP                 - Low-level HTTP connection (client)
+Net::HTTP::NB             - Non-blocking HTTP client
+Net::HTTPS                - Low-level HTTP over SSL/TLS connection (client)
+Net::NNTP                 - NNTP Client class
+Net::Netrc                - OO interface to users netrc file
+Net::POP3                 - Post Office Protocol 3 Client class (RFC1939)
+Net::Ping                 - check a remote host for reachability
+Net::SMTP                 - Simple Mail Transfer Protocol Client
+Net::SSLeay::Handle       - Perl module that lets SSL (HTTPS) sockets be
+Net::Time                 - time and daytime network client interface
+Net::hostent              - by-name interface to Perl's built-in gethost*() functions
+Net::netent               - by-name interface to Perl's built-in getnet*() functions
+Net::protoent             - by-name interface to Perl's built-in getproto*() functions
+Net::servent              - by-name interface to Perl's built-in getserv*() functions
+Number::Compare           - numeric comparisons
+O                         - Generic interface to Perl Compiler backends
+Opcode                    - Disable named opcodes when compiling perl code
+PAR::Dist                 - Create and manipulate PAR distributions
+PI                        - an XML processing instruction node
+PadWalker                 - play with other peoples' lexical variables
+Params::Check             - A generic input parsing/checking mechanism.
+Params::Util              - Simple, compact and correct param-checking functions
+Parse::CPAN::Meta         - Parse META.yml and META.json CPAN metadata files
+Parse::RecDescent         - Generate Recursive-Descent Parsers
+Path::Class               - Cross-platform path specification manipulation
+Path::Class::Dir          - Objects representing directories
+Path::Class::Entity       - Base class for files and directories
+Path::Class::File         - Objects representing files
+Perl::OSType              - Map Perl operating system names to generic types
+PerlIO                    - On demand loader for PerlIO layers and root of PerlIO::* name space
+PerlIO::encoding          - encoding layer
+PerlIO::mmap              - Memory mapped IO
+PerlIO::scalar            - in-memory IO, scalar IO
+PerlIO::via               - Helper class for PerlIO layers implemented in perl
+PerlIO::via::QuotedPrint  - PerlIO layer for quoted-printable strings
+Pod::Coverage             - Checks if the documentation of a module is comprehensive
+Pod::Coverage::CountParents - subclass of Pod::Coverage that examines the inheritance tree
+Pod::Coverage::ExportOnly - subclass of Pod::Coverage than only examines exported functions
+Pod::Coverage::Overloader - deprecated subclass of Pod::Coverage
+Pod::Escapes              - for resolving Pod EE<lt>...E<gt> sequences
+Pod::Find                 - find POD documents in directory trees
+Pod::Functions            - Group Perl's functions a la perlfunc.pod
+Pod::Html                 - module to convert pod files to HTML
+Pod::InputObjects         - objects representing POD input paragraphs, commands, etc.
+Pod::Man                  - Convert POD data to formatted *roff input
+Pod::ParseLink            - Parse an LE<lt>E<gt> formatting code in POD text
+Pod::ParseUtils           - helpers for POD parsing and conversion
+Pod::Parser               - base class for creating POD filters and translators
+Pod::Perldoc              - Look up Perl documentation in Pod format.
+Pod::Perldoc::BaseTo      - Base for Pod::Perldoc formatters
+Pod::Perldoc::GetOptsOO   - Customized option parser for Pod::Perldoc
+Pod::Perldoc::ToANSI      - render Pod with ANSI color escapes 
+Pod::Perldoc::ToChecker   - let Perldoc check Pod for errors
+Pod::Perldoc::ToMan       - let Perldoc render Pod as man pages
+Pod::Perldoc::ToNroff     - let Perldoc convert Pod to nroff
+Pod::Perldoc::ToPod       - let Perldoc render Pod as ... Pod!
+Pod::Perldoc::ToRtf       - let Perldoc render Pod as RTF
+Pod::Perldoc::ToTerm      - render Pod with terminal escapes 
+Pod::Perldoc::ToText      - let Perldoc render Pod as plaintext
+Pod::Perldoc::ToTk        - let Perldoc use Tk::Pod to render Pod
+Pod::Perldoc::ToXml       - let Perldoc render Pod as XML
+Pod::PlainText            - Convert POD data to formatted ASCII text
+Pod::Simple::Checker      - check the Pod syntax of a document
+Pod::Simple::Debug        - put Pod::Simple into trace/debug mode
+Pod::Simple::DumpAsText   - dump Pod-parsing events as text
+Pod::Simple::DumpAsXML    - turn Pod into XML
+Pod::Simple::HTML         - convert Pod to HTML
+Pod::Simple::HTMLBatch    - convert several Pod files to several HTML files
+Pod::Simple::LinkSection  - represent "section" attributes of L codes
+Pod::Simple::Methody      - turn Pod::Simple events into method calls
+Pod::Simple::PullParser   - a pull-parser interface to parsing Pod
+Pod::Simple::PullParserEndToken - end-tokens from Pod::Simple::PullParser
+Pod::Simple::PullParserStartToken - start-tokens from Pod::Simple::PullParser
+Pod::Simple::PullParserTextToken - text-tokens from Pod::Simple::PullParser
+Pod::Simple::PullParserToken - tokens from Pod::Simple::PullParser
+Pod::Simple::RTF          - format Pod as RTF
+Pod::Simple::Search       - find POD documents in directory trees
+Pod::Simple::SimpleTree   - parse Pod into a simple parse tree 
+Pod::Simple::Text         - format Pod as plaintext
+Pod::Simple::TextContent  - get the text content of Pod
+Pod::Simple::XHTML        - format Pod as validating XHTML
+Pod::Simple::XMLOutStream - turn Pod into XML
+Pod::Text                 - Convert POD data to formatted ASCII text
+Pod::Text::Color          - Convert POD data to formatted color ASCII text
+Pod::Text::Termcap        - Convert POD data to ASCII text with format escapes
+Pod::Usage                - print a usage message from embedded pod documentation
+Probe::Perl               - Information about the currently running perl
+Proc::Killfam             - kill a list of pids, and all their sub-children
+Proc::ProcessTable        - Perl extension to access the unix process table
+Proc::ProcessTable::Process - Perl process objects
+Readonly                  - Facility for creating read-only scalars, arrays, hashes
+Regexp::Common            - Provide commonly requested regular expressions
+Regexp::Common::CC        - provide patterns for credit card numbers.
+Regexp::Common::SEN       - provide regexes for Social-Economical Numbers.
+Regexp::Common::URI       - provide patterns for URIs.
+Regexp::Common::URI::RFC1035 - Definitions from RFC1035;
+Regexp::Common::URI::RFC1738 - Definitions from RFC1738;
+Regexp::Common::URI::RFC1808 - Definitions from RFC1808;
+Regexp::Common::URI::RFC2384 - Definitions from RFC2384;
+Regexp::Common::URI::RFC2396 - Definitions from RFC2396;
+Regexp::Common::URI::RFC2806 - Definitions from RFC2806;
+Regexp::Common::URI::fax  - Returns a pattern for fax URIs.
+Regexp::Common::URI::file - Returns a pattern for file URIs.
+Regexp::Common::URI::ftp  - Returns a pattern for FTP URIs.
+Regexp::Common::URI::gopher - Returns a pattern for gopher URIs.
+Regexp::Common::URI::http - Returns a pattern for HTTP URIs.
+Regexp::Common::URI::news - Returns a pattern for file URIs.
+Regexp::Common::URI::pop  - Returns a pattern for POP URIs.
+Regexp::Common::URI::prospero - Returns a pattern for prospero URIs.
+Regexp::Common::URI::tel  - Returns a pattern for telephone URIs.
+Regexp::Common::URI::telnet - Returns a pattern for telnet URIs.
+Regexp::Common::URI::tv   - Returns a pattern for tv URIs.
+Regexp::Common::URI::wais - Returns a pattern for WAIS URIs.
+Regexp::Common::balanced  - provide regexes for strings with balanced
+Regexp::Common::comment   - provide regexes for comments.
+Regexp::Common::delimited - provides a regex for delimited strings
+Regexp::Common::lingua    - provide regexes for language related stuff.
+Regexp::Common::list      - provide regexes for lists
+Regexp::Common::net       - provide regexes for IPv4 addresses.
+Regexp::Common::number    - provide regexes for numbers
+Regexp::Common::profanity - provide regexes for profanity
+Regexp::Common::support   - Support functions for Regexp::Common.
+Regexp::Common::whitespace - provides a regex for leading or
+Regexp::Common::zip       - provide regexes for postal codes.
+SDBM_File                 - Tied access to sdbm files
+Safe                      - Compile and execute code in restricted compartments
+Scalar::Util              - A selection of general-utility scalar subroutines
+Search::Dict              - look - search for key in dictionary file
+SelectSaver               - save and restore selected file handle
+SelfLoader                - load functions only on demand
+Statistics::Descriptive   - Module of basic descriptive statistical functions.
+Statistics::Descriptive::Discrete - Compute descriptive statistics for discrete data sets.
+Statistics::Descriptive::Smoother - Base module for smoothing statistical data
+Statistics::Descriptive::Smoother::Exponential - Implement exponential smoothing
+Statistics::Descriptive::Smoother::Weigthedexponential - Implement weighted
+Storable                  - persistence for Perl data structures
+Sub::Exporter             - a sophisticated exporter for custom-built routines
+Sub::Exporter::Util       - utilities to make Sub::Exporter easier
+Sub::Install              - install subroutines into packages easily
+Sub::Util                 - A selection of utility subroutines for subs and CODE references
+Symbol                    - manipulate Perl symbols and their names
+Sys::Hostname             - Try every conceivable way to get hostname
+Sys::Syslog               - Perl interface to the UNIX syslog(3) calls
+TAP::Base                 - Base class that provides common functionality to L<TAP::Parser>
+TAP::Formatter::Base      - Base class for harness output delegates
+TAP::Formatter::Color     - Run Perl test scripts with color
+TAP::Formatter::Console   - Harness output delegate for default console output
+TAP::Formatter::Console::ParallelSession - Harness output delegate for parallel console output
+TAP::Formatter::Console::Session - Harness output delegate for default console output
+TAP::Formatter::File      - Harness output delegate for file output
+TAP::Formatter::File::Session - Harness output delegate for file output
+TAP::Formatter::Session   - Abstract base class for harness output delegate 
+TAP::Harness              - Run test scripts with statistics
+TAP::Harness::Env         - Parsing harness related environmental variables where appropriate
+TAP::Object               - Base class that provides common functionality to all C<TAP::*> modules
+TAP::Parser               - Parse L<TAP|Test::Harness::TAP> output
+TAP::Parser::Aggregator   - Aggregate TAP::Parser results
+TAP::Parser::Grammar      - A grammar for the Test Anything Protocol.
+TAP::Parser::Iterator     - Base class for TAP source iterators
+TAP::Parser::Iterator::Array - Iterator for array-based TAP sources
+TAP::Parser::Iterator::Process - Iterator for process-based TAP sources
+TAP::Parser::Iterator::Stream - Iterator for filehandle-based TAP sources
+TAP::Parser::IteratorFactory - Figures out which SourceHandler objects to use for a given Source
+TAP::Parser::Multiplexer  - Multiplex multiple TAP::Parsers
+TAP::Parser::Result       - Base class for TAP::Parser output objects
+TAP::Parser::Result::Bailout - Bailout result token.
+TAP::Parser::Result::Comment - Comment result token.
+TAP::Parser::Result::Plan - Plan result token.
+TAP::Parser::Result::Pragma - TAP pragma token.
+TAP::Parser::Result::Test - Test result token.
+TAP::Parser::Result::Unknown - Unknown result token.
+TAP::Parser::Result::Version - TAP syntax version token.
+TAP::Parser::Result::YAML - YAML result token.
+TAP::Parser::ResultFactory - Factory for creating TAP::Parser output objects
+TAP::Parser::Scheduler    - Schedule tests during parallel testing
+TAP::Parser::Scheduler::Job - A single testing job.
+TAP::Parser::Scheduler::Spinner - A no-op job.
+TAP::Parser::Source       - a TAP source & meta data about it
+TAP::Parser::SourceHandler - Base class for different TAP source handlers
+TAP::Parser::SourceHandler::Executable - Stream output from an executable TAP source
+TAP::Parser::SourceHandler::File - Stream TAP from a text file.
+TAP::Parser::SourceHandler::Handle - Stream TAP from an IO::Handle or a GLOB.
+TAP::Parser::SourceHandler::Perl - Stream TAP from a Perl executable
+TAP::Parser::SourceHandler::RawTAP - Stream output from raw TAP in a scalar/array ref.
+TAP::Parser::YAMLish::Reader - Read YAMLish data from iterator
+TAP::Parser::YAMLish::Writer - Write YAMLish data
+Term::ANSIColor           - Color screen output using ANSI escape sequences
+Term::Cap                 - Perl termcap interface
+Term::Complete            - Perl word completion module
+Term::ReadKey             - A perl module for simple terminal control
+Term::ReadLine            - Perl interface to various C<readline> packages.
+Term::ReadLine::Gnu       - Perl extension for the GNU Readline/History Library
+Test                      - provides a simple framework for writing test scripts
+Test::Builder             - Backend for building test libraries
+Test::Builder::IO::Scalar - A copy of IO::Scalar for Test::Builder
+Test::Builder::Module     - Base class for test modules
+Test::Builder::Tester     - test testsuites that have been built with
+Test::Builder::Tester::Color - turn on colour in Test::Builder::Tester
+Test::Harness             - Run Perl standard test scripts with statistics
+Test::More                - yet another framework for writing test scripts
+Test::Simple              - Basic utilities for writing tests.
+Test::Tester              - Ease testing test modules built with Test::Builder
+Test::Tester::Capture     - Help testing test modules built with Test::Builder
+Test::Tester::CaptureRunner - Help testing test modules built with Test::Builder
+Test::use::ok             - Alternative to Test::More::use_ok
+Text                      - an XML text node
+Text::Abbrev              - abbrev - create an abbreviation table from a list
+Text::Balanced            - Extract delimited text sequences from strings.
+Text::BibTeX              - interface to read and parse BibTeX files
+Text::BibTeX::Bib         - defines the "Bib" database structure
+Text::BibTeX::BibFormat   - formats bibliography entries
+Text::BibTeX::BibSort     - generate sort keys for bibliographic entries
+Text::BibTeX::Entry       - read and parse BibTeX files
+Text::BibTeX::File        - interface to whole BibTeX files
+Text::BibTeX::Name        - interface to BibTeX-style author names
+Text::BibTeX::NameFormat  - format BibTeX-style author names
+Text::BibTeX::Structure   - provides base classes for user structure modules
+Text::BibTeX::Value       - interfaces to BibTeX values and simple values
+Text::CSV                 - comma-separated values manipulator (using XS or PurePerl)
+Text::CSV_PP              - Text::CSV_XS compatible pure-Perl module
+Text::CSV_XS              - comma-separated values manipulation routines
+Text::CharWidth           - Get number of occupied columns of a string on terminal
+Text::Diff                - Perform diffs on files and record sets
+Text::Diff::Config        - global configuration for Text::Diff (as a 
+Text::Diff::Table         - Text::Diff plugin to generate "table" format output
+Text::Glob                - match globbing patterns against text
+Text::LineFold            - Line Folding for Plain Text
+Text::ParseWords          - parse text into an array of tokens or array of arrays
+Text::Roman               - Allows conversion between Roman and Arabic algarisms.
+Text::Tabs                - expand and unexpand tabs like unix expand(1) and unexpand(1)
+Text::Template            - Expand template text with embedded Perl
+Text::Template::Preprocess - Expand template text with embedded Perl
+Text::Wrap                - line wrapping to form simple paragraphs
+Thread                    - Manipulate threads in Perl (for old code only)
+Thread::Queue             - Thread-safe queues
+Thread::Semaphore         - Thread-safe semaphores
+Tie::Array                - base class for tied arrays
+Tie::Cycle                - Cycle through a list of values via a scalar.
+Tie::ExtraHash            - base class definitions for tied hashes
+Tie::File                 - Access the lines of a disk file via a Perl array
+Tie::Handle               - base class definitions for tied handles
+Tie::Hash::NamedCapture   - Named regexp capture buffers
+Tie::Memoize              - add data to hash when needed
+Tie::RefHash              - use references as hash keys
+Tie::StdHandle            - base class definitions for tied handles
+Tie::StdScalar            - base class definitions for tied scalars
+Tie::SubstrHash           - Fixed-table-size, fixed-key-length hashing
+Tie::Watch                - place watchpoints on Perl variables.
+Time::HiRes               - High resolution alarm, sleep, gettimeofday, interval timers
+Time::Local               - efficiently compute time from local and GMT time
+Time::Piece               - Object Oriented time objects
+Time::Seconds             - a simple API to convert seconds to other date values
+Time::Zone                - miscellaneous timezone manipulations routines
+Time::gmtime              - by-name interface to Perl's built-in gmtime() function
+Time::localtime           - by-name interface to Perl's built-in localtime() function
+Time::tm                  - internal object used by Time::gmtime and Time::localtime
+Tk::JPEG                  - JPEG loader for Tk::Photo
+Tk::More                  - a 'more' or 'less' like text widget
+Tk::PNG                   - PNG loader for Tk::Photo
+Tk::Pane                  - A window panner
+Tk::Pod                   - Pod browser toplevel widget
+Tk::Pod::Cache            - internal Tk-Pod module for cache control
+Tk::Pod::FindPods         - find Pods installed on the current system
+Tk::Pod::Search           - Widget to access perlindex Pod full text index
+Tk::Pod::Search_db        - dirty OO wrapper for C<perlindex>'s search functionality
+Tk::Pod::SimpleBridge     - render Pod::Simple events to a Tk::Pod window
+Tk::Pod::Text             - Pod browser widget
+Tk::Pod::Tree             - list Pod file hierarchy
+Tk::Pod::Util             - Tk::Pod specific utility functions
+Tk::ProgressBar           - A graphical progress bar
+Tk::Reindex               - change the base index of Text-like widgets
+Tk::Trace                 - emulate Tcl/Tk B<trace> functions.
+Tk::WinPhoto              - Load a Photo image from a window
+UNIVERSAL                 - base class for ALL classes (blessed references)
+URI                       - Uniform Resource Identifiers (absolute and relative)
+URI::Escape               - Percent-encode and percent-decode unsafe characters
+URI::Heuristic            - Expand URI using heuristics
+URI::QueryParam           - Additional query methods for URIs
+URI::Split                - Parse and compose URI strings
+URI::URL                  - Uniform Resource Locators
+URI::WithBase             - URIs which remember their base
+URI::_punycode            - encodes Unicode string in Punycode
+URI::data                 - URI that contains immediate data
+URI::file                 - URI that maps to local file names
+URI::ldap                 - LDAP Uniform Resource Locators
+Unicode::CaseFold         - Unicode case-folding for case-insensitive lookups.
+Unicode::Collate          - Unicode Collation Algorithm
+Unicode::Collate::CJK::Big5 - weighting CJK Unified Ideographs
+Unicode::Collate::CJK::GB2312 - weighting CJK Unified Ideographs
+Unicode::Collate::CJK::JISX0208 - weighting JIS KANJI for Unicode::Collate
+Unicode::Collate::CJK::Korean - weighting CJK Unified Ideographs
+Unicode::Collate::CJK::Pinyin - weighting CJK Unified Ideographs
+Unicode::Collate::CJK::Stroke - weighting CJK Unified Ideographs
+Unicode::Collate::CJK::Zhuyin - weighting CJK Unified Ideographs
+Unicode::Collate::Locale  - Linguistic tailoring for DUCET via Unicode::Collate
+Unicode::Normalize        - Unicode Normalization Forms
+Unicode::UCD              - Unicode character database
+User::grent               - by-name interface to Perl's built-in getgr*() functions
+User::pwent               - by-name interface to Perl's built-in getpw*() functions
+WWW::RobotRules           - database of robots.txt-derived permissions
+WWW::RobotRules::AnyDBM_File - Persistent RobotRules
+Win32                     - Interfaces to some Win32 API Functions
+Win32::DBIODBC            - Win32::ODBC emulation layer for the DBI
+Win32API::File            - Low-level access to Win32 system API calls for files/dirs.
+Win32CORE                 - Win32 CORE function stubs
+XML::DOM                  - A perl module for building DOM Level 1 compliant document structures
+XML::DOM::PerlSAX         - Old name of L<XML::Handler::BuildDOM>
+XML::ESISParser           - Perl SAX parser using nsgmls
+XML::Handler::BuildDOM    - PerlSAX handler that creates XML::DOM document structures
+XML::Handler::CanonXMLWriter - output XML in canonical XML format
+XML::Handler::Sample      - a trivial PerlSAX handler
+XML::Handler::Subs        - a PerlSAX handler base class for calling user-defined subs
+XML::Handler::XMLWriter   - a PerlSAX handler for writing readable XML
+XML::LibXML::AttributeHash - tie an XML::LibXML::Element to a hash to access its attributes
+XML::LibXML::Boolean      - Boolean true/false values
+XML::LibXML::Devel        - makes functions from LibXML.xs available
+XML::LibXML::Literal      - Simple string values.
+XML::LibXML::NodeList     - a list of XML document nodes
+XML::LibXML::Number       - Simple numeric values.
+XML::LibXML::SAX::Generator - Generate SAX events from a LibXML tree
+XML::LibXSLT              - Interface to the GNOME libxslt library
+XML::NamespaceSupport     - a simple generic namespace support class
+XML::Parser               - A perl module for parsing XML documents
+XML::Parser::Expat        - Lowlevel access to James Clark's expat XML parser
+XML::Parser::PerlSAX      - Perl SAX parser using XML::Parser
+XML::Parser::PurePerl::Reader - Abstract Reader factory class
+XML::Parser::Style::Debug - Debug style for XML::Parser
+XML::Parser::Style::Objects - Objects styler parser
+XML::Parser::Style::Stream - Stream style for XML::Parser
+XML::Parser::Style::Subs  - glue for handling element callbacks
+XML::Parser::Style::Tree  - Tree style parser
+XML::PatAct::ACTION       - An action module for
+XML::PatAct::Amsterdam    - An action module for simplistic style-sheets
+XML::PatAct::MatchName    - A pattern module for matching element names
+XML::PatAct::PATTERN      - A pattern module for 
+XML::PatAct::ToObjects    - An action module for creating Perl objects
+XML::RegExp               - Regular expressions for XML tokens
+XML::SAX                  - Simple API for XML
+XML::SAX2Perl             - translate Java/CORBA style SAX methods to Perl methods
+XML::SAX::Base            - Base class SAX Drivers and Filters
+XML::SAX::DocumentLocator - Helper class for document locators
+XML::SAX::Exception       - Exception classes for XML::SAX
+XML::SAX::Expat           - SAX2 Driver for Expat (XML::Parser)
+XML::SAX::ParserFactory   - Obtain a SAX parser
+XML::SAX::PurePerl        - Pure Perl XML Parser with SAX2 interface
+XML::Simple               - An API for simple XML files
+XML::Writer               - Perl extension for writing XML documents.
+XML::XPath                - a set of modules for parsing and evaluating XPath statements
+XML::XPath::Boolean       - Boolean true/false values
+XML::XPath::Builder       - SAX handler for building an XPath tree
+XML::XPath::Literal       - Simple string values.
+XML::XPath::Node          - internal representation of a node
+XML::XPath::NodeSet       - a list of XML document nodes
+XML::XPath::Number        - Simple numeric values.
+XML::XPath::PerlSAX       - A PerlSAX event generator for my wierd node structure
+XML::XPath::XMLParser     - The default XML parsing class that produces a node tree
+XSLoader                  - Dynamically load C libraries into Perl code
+arybase                   - Set indexing base via $[
+attributes                - get/set subroutine or variable attributes
+autodie                   - Replace functions with ones that succeed or die with lexical scope
+autodie::Scope::Guard     - Wrapper class for calling subs at end of scope
+autodie::Scope::GuardStack - Hook stack for managing scopes via %^H
+autodie::ScopeUtil        - Utilities for managing %^H scopes
+autodie::exception        - Exceptions from autodying functions.
+autodie::exception::system - Exceptions from autodying system().
+autodie::hints            - Provide hints about user subroutines to autodie
+autodie::skip             - Skip a package when throwing autodie exceptions
+autouse                   - postpone load of modules until a function is used
+base                      - Establish an ISA relationship with base classes at compile time
+bigint                    - Transparent BigInteger support for Perl
+bignum                    - Transparent BigNumber support for Perl
+bigrat                    - Transparent BigNumber/BigRational support for Perl
+blib                      - Use MakeMaker's uninstalled version of a package
+bytes                     - Perl pragma to force byte semantics rather than character semantics
+charnames                 - access to Unicode character names and named character sequences; also define character names
+constant                  - Perl pragma to declare constants
+deprecate                 - Perl pragma for deprecating the core version of a module
+encoding                  - allows you to write your script in non-ASCII and non-UTF-8
+encoding::warnings        - Warn on implicit encoding conversions
+experimental              - Experimental features made easy
+feature                   - Perl pragma to enable new features
+fields                    - compile-time class fields
+filetest                  - Perl pragma to control the filetest permission operators
+getopts                   - Process single-character switches with switch clustering
+if                        - C<use> a Perl module if a condition holds (also can C<no> a module)
+inc::latest               - use modules bundled in inc/ if they are newer than installed ones
+inc::latest::private      - private implementation for inc::latest
+integer                   - Perl pragma to use integer arithmetic instead of floating point
+killall                   - Kill all instances of a process by pattern matching the command-line
+less                      - perl pragma to request less of something
+lib                       - manipulate @INC at compile time
+locale                    - Perl pragma to use or avoid POSIX locales for built-in operations
+mro                       - Method Resolution Order
+ok                        - Alternative to Test::More::use_ok
+open                      - perl pragma to set default PerlIO layers for input and output
+ops                       - Perl pragma to restrict unsafe operations when compiling
+overload                  - Package for overloading Perl operations
+overloading               - perl pragma to lexically control overloading
+parent                    - Establish an ISA relationship with base classes at compile time
+podchecker()              - check pod documents for syntax errors
+podselect()               - extract selected sections of POD from input
+re                        - Perl pragma to alter regular expression behaviour
+sigtrap                   - Perl pragma to enable simple signal handling
+sort                      - perl pragma to control sort() behaviour
+splain                    - produce verbose warning diagnostics
+strict                    - Perl pragma to restrict unsafe constructs
+subs                      - Perl pragma to predeclare sub names
+threads                   - Perl interpreter-based threads
+threads::shared           - Perl extension for sharing data structures between threads
+utf8                      - Perl pragma to enable/disable UTF-8 (or UTF-EBCDIC) in source code
+vars                      - Perl pragma to predeclare global variable names
+vmsish                    - Perl pragma to control VMS-specific language features
+warnings                  - Perl pragma to control optional warnings
+warnings::register        - warnings import function

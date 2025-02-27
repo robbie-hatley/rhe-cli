@@ -1,0 +1,615 @@
+
+Programming Journal
+
+This is an 110-character-wide utf8 text file with hard Unix line breaks.
+# ¡España! Олег Газманов русский поэт. Þórinn Eikinskjaldi. 富士川町、山梨県.
+12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+
+--------------------------------------------------------------------------------------------------------------
+Fri. June 22, 2001:
+I've discovered some unsettling things about certain C built-in
+string functions:
+
+  gets(char *a) :
+  This does not check for over-run, so if you code:
+           char *array[5];
+           gets(array);
+  and the user types:
+           This is a fun thing to do.
+  then a General Protection Fault will occur due to array over-run
+  and subsequent corruption of protected portions of RAM.
+
+  sprintf(char *a, const char *b, const char *c, ...) :
+  I suspect this has the same problem, since there is no way to tell
+  the function how many characters to write to char array a.
+
+To get around the gets() problem mentioned above, always use
+fgets() instead, like this:
+          char array[5];
+          fgets(array, 5, stdin);
+user types:
+          This is a fun thing to do.
+but array is not over-run.  fgets() only copies first 4 characters
+of input into array, so that:
+          array[0] is 'T'
+          array[1] is 'h'
+          array[2] is 'i'
+          array[3] is 's'
+          array[4] is '\0' (end-of-string marker)
+
+--------------------------------------------------------------------------------------------------------------
+Wednesday July 4, 2001:
+   I've been thinking-about and experimenting-with arrays today.  I've
+learned that the nomenclature:
+       int array[5][7][11];
+means: "an array of 5 elements, each of which is an array of 7 elements,
+each of which is an array of 11 elements, each of which is an integer".
+
+That is pretty much backwards from how I had thought that arrays work!
+
+   In memory, a [3][4] array is stored in a contiguous block, in this
+order:
+[0][0]  [0][1]  [0][2]  [0][3]
+[1][0]  [1][1]  [1][2]  [1][3]
+[2][0]  [2][1]  [2][2]  [2][3]
+   Another way to look at multi-dimensional arrays is that they are
+multi-level n-ary trees.  A [l][m][n] array is a tree with one trunk,
+l limbs, m branches per limb, and n twigs per branch.  So, element
+array[3][5][7] is (from left to right): limb 3, branch 5, twig 7;
+or (from right to left): twig 7 of branch 5 of limb 3 of the array.
+
+Behind the scenes, I believe element address for an array such as:
+
+   int Array[Size1][Size2][Size3];
+
+is implimented by pointers, like so:
+
+   Array[x][y][z] =
+      *(&(Array[0][0][0]) + x*Size2*Size3 + y*Size3 + z);
+
+All sizes except for the first are needed to calculate the RAM address of each element.
+
+(
+   And still deeper behind the scenes, at the assembly level, we need to know the size of
+   the actual elements (this is, sizeof(int)), so that we can translate this C statement:
+
+      IntPtr += 4;    /* step forward over 4 "int" elements */
+
+   Into the equivalent pseudo-machine-language statement:
+
+      BytePtr += 16   /* step forward over 16 bytes */
+
+   In other words,
+
+      MachLangArray[x][y][z] =
+         *
+         (
+            sizeof(int)
+            *
+            (
+                 &(Array[0][0][0])
+               + x*Size2*Size3
+               + y*Size3
+               + z
+            )
+         );
+
+)
+
+This is why, when passing n-dimensional arrays to functions, all but the first size
+number must be passed:
+
+   int MyArray[3][16][6][82];
+   /* ... */
+   QuidBlitz = GurzBlunkt(Fidgit, MyArray[][16][6][82]);
+
+The first number is not needed, because the RAM address of any one element is independent
+of the number of items in the top-level grouping.  (This is because we don't need to pass
+over the end boundary of the top-level grouping, but we DO pass over end-boundaries
+for all the other grouping levels, so we need to know how long they all are in order to
+calculate the RAM addresses in bytes.)
+
+--------------------------------------------------------------------------------------------------------------
+Thursday July 5, 2001:
+   I had a lot of problems when I was making my sortfile2.cpp program
+a few days ago with GPFs due to inappropriate uses of delete, free, and
+destructors.
+   free() is for freeing memory previously allocated with malloc(),
+calloc(), or realloc().  These are dynamic memory allocation functions
+for use in grabbing new memory allocations on the fly during run time.
+They should not be used if dynamic memory allocation is not really
+necessary. And NEVER, NEVER, NEVER use free() on anything not previously
+allocated by malloc(), calloc(), or realloc()!!!!!!!  To do so will crash
+the system.
+   new and delete are C++'s version of malloc() and free().  new not only
+allocates memory and return a pointer to it, but actually creates an
+object and invokes the appropriate constructor.  Similarly, delete
+destroys an object previously created using new, and invokes it's
+destructor.
+Here as with free(), NEVER, NEVER, NEVER delete anything not previously
+created with new!!!!!!!  To do so will crash the system.
+   While these dynamic memory allocation statements are useful in cases
+where one doesn't know in advance how much memory or how many objects
+are going to be needed, they should be avoided unless necessary for
+several reasons:
+1. they create objects which are effectively global, not local
+2. they allocate memory which does NOT then automatically become
+   de-allocated when the function terminates
+3. if a class's destructor contains inappropriate use of delete, it can
+   lead to infinite recursion and subsequent stack fault and system
+   crash.  This is a big problem with circular linked lists.
+
+In general, it's better to declare:
+
+  myobjecttype thing;
+
+than:
+
+  myobjecttype *thngptr=new myobjecttype;
+
+unless one really does need dynamic memory allocation.
+
+--------------------------------------------------------------------------------------------------------------
+Sun. Jan. 6, 2002:
+   I'm getting back into C/C++ practice after a four-month sabatical.
+Time to get cracking!
+   My current project is a bitmap making program.
+
+--------------------------------------------------------------------------------------------------------------
+Fri. Jan 3, 2003:
+   I took too much time off from programming in 2002.  I did manage to
+complete my bitmap class library bitmap.cpp, and a math/utility
+library, mathutil.cpp.  I also made a very nice mandelbrot-set mapper,
+which I've enjoyed using to make maps of many parts of the Mandelbrot
+Set.  But I should have done more programming, and taken fewer and
+shorter sabbaticals.
+
+--------------------------------------------------------------------------------------------------------------
+Thu. Jan. 6, 2005:
+I haven't made an entry in this programming journal for over 2 years!
+My programming career has been going reasonably well.  Starting in mid-2003,
+I started working part-time as a professional computer programmer for the
+first time in my life.  Around New Year's Day 2004, Mike Andren was fired,
+the project I had been working on ("Fallback") was cancelled, and I was
+re-assigned to Gemlink bug fixes.  Around mid-2004, I was upgraded from
+part-time to full-time, so I am now a full-time computer programmer.
+
+Tonight, I want to refresh my memory of SED and AWK, so I set a task for
+myself:
+
+Task: parse a text document, looking for web URLs.  Use "http://" as the starting
+delimiter and " " as the ending delimiter for each URL, and output the URLs to a
+text file as a vertical list (ie, using newline as delimiter).  Write a SED and/or
+AWK program to achieve this goal.
+
+Perhaps this could be done using a state machine in C, C++, or AWK.
+
+Or, I could use some pattern-matching scheme using regular expressions in SED.
+Let's try the SED approach first.  What would be the RE to use?
+
+http://[[:graph:]]*[[:blank:]]
+
+Now, what would the command to extract and print just the URL?
+Let's try:
+
+   s@^.*\(http://[[:graph:]]*[[:blank:]]\).*$@\1@
+
+Well, that's not doing what we want.  Mostly it just feeds the output to the input,
+but it's also erasing all but the first URL on each line.  For one thing, not all
+URLs are followed by a [[:blank:]]; some are followed by a newline.  Also, there may
+be 0, 1, 2, or more URLs per line.  Lets try using a batch file which calls a
+sequence of SED scripts.  Let's make our first SED script just replaces any
+whitespace after a URL with a newline:
+
+   /http/ {
+      s@\(http://[[:graph:]]*\)[[:blank:]]*@\1\n@g
+   }
+
+Ok, that works, as far as it goes.  Now lets do several operations in sequence:
+1. Get rid of lines NOT containing a URL
+2. Put a newline immediately after every URL
+3. Get rid of any junk before each url
+4. print the line
+
+   /http/! {
+      d
+   }
+   /http/ {
+      s@\(http[[:graph:]]*\)[[:blank:]]*@\1\n@g
+      s@[^\n]*\(http[[:graph:]]*\)@\1@g
+   }
+
+--------------------------------------------------------------------------------------------------------------
+Mon. Jun. 06, 2005:
+I've come up with the following rules regarding "using" declarations, to avoid
+polluting the global namespace (or other namespaces), and to avoid critic names
+whose namespace is not obvious, and yet to decrease the necessity of typing
+"std::" over and over again:
+
+1. NEVER use "using" in a header!  Absolutely qualify everything.  This prevents
+   polluting the namespaces of files that #include the header.  (Exceptions: it's ok to
+   use "using" declarations inside inline-function and template definitions in headers,
+   because this doesn't pollute the namespace of the calling scope.  The only reason
+   these are in headers in the first place is because most compilers don't
+   cross-check compilation units, and most don't support the "export" keyword.)
+2. Never write "std::" in function definitions in *.cpp files!  This is an
+   unforgivable assault on poor, long-suffering fingers and eyeballs!  Use "using"
+   declarations up at the top of the file instead, immediately below the #includes.
+3. Use "using myspace::myname" and "using namespace myspace" in *.cpp files judiciously.
+   Avoid using these if the namespace of the names is not obvious from context.  If a
+   moderately-attentive reader is muttering "what the heck namespace is 'flibber'
+   declared in, anyhow?" then it's time to write "glurk::flibber" inside function
+   definitions instead of writing "using glurk::flibber" once at the top of the file
+   (or worse, "using namespace glurk").
+
+--------------------------------------------------------------------------------------------------------------
+Sat Sep 10, 2005:
+
+Notes on RenameFiles.exe :
+
+I've recently heavily refactored this program.  I'm trying to make it rename directories
+as well as files, but there is still some work to do.
+
+For one thing, rhdir::RenameFiles() won't rename directories, because it can't see
+them as actually existing.  (It's probably calling FileExists(), which tries to
+open the directory as a file, which (of course) will not work.)  Fix this....  Done.
+
+Also need to print attributes....  Done.
+
+And figure out why | fails when there's no suffix (should be empty then, but instead,
+it echos prefix)....  Done.  (Blunders.  Wrong return values.  Fixed.)
+
+--------------------------------------------------------------------------------------------------------------
+Sun Sep 11, 2005:
+
+I've finally got Regular Expressions up and running!  I successfully made a function
+rhdir::Substitute(), which uses djgpp's built-in regular-expression system to perform
+regular-expression matching and substituting.  I then included used this function to add
+regular-expression capability to RenameFiles.  In fact, regex is now RenameFiles's default
+renaming method.  This mostly subsumes my "substrings" method, though my "pattern" method
+still has its appeal.  A giant leap forward in file renaming!
+
+
+--------------------------------------------------------------------------------------------------------------
+Sat Sep 24, 2005:
+
+It's about time to learn more about exceptions and how to use them.  One thing to research
+is std::exception .  What is that?  A class?  A template?
+
+Another thing to investigate is "Resource Acquisition Is Initialization".  This seems to
+be implimented mostly by the "auto_ptr" template class, in header <memory>.
+
+
+--------------------------------------------------------------------------------------------------------------
+Sun Feb 19, 2006:
+
+Perl programming task:
+Make program that, given file urls##-raw.txt, generates these extractions:
+   urls##.txt       (extract urls, sort, dedup)
+   urls##.html      (present urls as hyperlinks in html document)
+   pics##-##.html   (present jpg images in html documents, 100-per-document)
+
+--------------------------------------------------------------------------------------------------------------
+Thu Mar 19, 2009:
+
+C++ Programs that need work:
+   erase-thumbs               (stubb)                           [use Perl instead (files).]
+   merge                      (stubb)                           [use Perl instead (files).]
+   boxify                     (Needs to be totally re-written.) [use Perl instead (REs  ).]
+
+--------------------------------------------------------------------------------------------------------------
+Wed Mar 25, 2009:
+
+Error message in dedup-newsbin:
+
+Name group #7582:
+pic-133-14.jpg
+2 files in this group.
+Assertion failed at dedup-newsbin-files.cpp line 796:
+rhdir::FileExists(Current->second.name)
+Exiting due to signal SIGABRT
+
+Unknown what THAT was due to.  Possibly trying to rename the current directory?  Needs
+investigation.  Keeps failing due to "files-exists assertion failed on line 796", so
+perhaps I should add code around there that checks to make sure that we're neither
+renaming the current directory, nor using stale directory names.
+
+--------------------------------------------------------------------------------------------------------------
+Mon Mar 30, 2009:
+
+I just fixed Encode so that it now uses an external one-time pad as an input, instead of
+using a single fixed internal pad.  Now, it needs a pad checker, to insure pad integrity.
+
+--------------------------------------------------------------------------------------------------------------
+Fri May 01, 2009:
+
+I experienced more occurrances of the error I reported above on Wed Mar 25, where an
+assertion that a file which cannot possibly not exist exists fails.  This only seemed
+to crop up when processing directories with over 1000 entries.  Even though the function
+rhdir::FileExists() was returning true, the value RECEIVED by the calling function was
+boolean false!  This seems to me to indicate stack corruption.  I was able to make the
+problem stop occuring by replacing calls to rhdir::FileExists() with __file_exists()
+from djgpp's <unistd.h> header.
+
+--------------------------------------------------------------------------------------------------------------
+Thu Oct 13, 2011:
+
+Perl idea: try nested hash calls, such as
+hash1[hash2[array[7]]]
+
+--------------------------------------------------------------------------------------------------------------
+Wed May 30, 2012:
+
+Investigate, in-depth, behaviour of "time-out" functionality of window-related built-in
+functions in AutoIt3.
+
+--------------------------------------------------------------------------------------------------------------
+Mon Oct 15, 2012:
+
+I've been trying to get my "for-each-dir" program to work correctly, but for many commands, I get
+"bad command or file name" when system() sends SystemCommand to cmd.exe.  Unknown what is causing
+this.  DOS command "Move" always fails when I try to run it through "for-each-dir".
+
+UPDATE, a couple hours later:
+I discovered that system() is invoking the 16-bit legacy command processor "command.com" instead of the
+32-bit command processor "cmd.exe".  So I tried tacking "cmd /C " to the beginning of SystemCommand,
+and it works!  I'm now able to invoke DOS commands such as move from for-each-dir.  Excellent!
+
+--------------------------------------------------------------------------------------------------------------
+Fri Jul 10, 2015:
+
+Yikes, no entries in 3 years? I must have forgot this journal existed. In the last 3 years I've had to
+go over to Cygwin and Perl for my file & directory maintenance programs, because I'm now doing most of
+my work on Ketch, my Asus notebook with 64-bit CPU, and DJGPP does NOT work on 64-bit Windows 8.1.
+(I now use C and C++ only for things OTHER THAN file & directory maintenance.)
+
+Furthermore, the C and C++ languages and the DJGPP programming platform have zero capabilities when it comes
+to dealing with non-English languages and Unicode, whereas Perl, Linux, and Cygwin are fully Unicode capable.
+
+Hence, as of 2015-01-01 and beyond, I'm now doing all of my file and directory maintenance programming in
+Perl instead of C++ as I was using previously. (My old C++ executables won't even run on Cygwin, and most
+can't be compiled for Cygwin either, due to using non-std DJGPP libraries with no analog in Cygwin. So I'm
+reimplimenting many programs from scratch in Perl. But that's just fine, because Perl is a much better
+language for doing this kind of thing anyway.
+
+--------------------------------------------------------------------------------------------------------------
+Sat Jul 11, 2015:
+
+Current tasks underway are upgrading all my Perl scripts (and I have many) so that they work correctly
+with files with non-English names and/or non-English content. Everything needs to go over to utf8.
+C and C++ have little support for that, but Perl has lots. However, it does take quite a bit of learning
+about where to apply the necessary changes to ensure each script works correctly in a utf8 environment.
+
+The key areas where utf8 decoding must be specified are:
+1. Opening files.
+2. Std streams STDIN, STDOUT, STDERR.
+3. <>
+4. CWD::getcwd
+5. glob or <*>
+6. readdir
+7. Command-line arguments.
+
+1, 2, 3 are handled by a "use open" pragma.
+4 and 5 I'm doing mostly by using wrappers in RH::Dir.
+7 I'm handling putting this code line near the top of every file:
+   BEGIN {$_ = decode_utf8 $_ for @ARGV;}
+
+[Update, Tue May 03, 2016:
+	1 is now handled by #! /usr/bin/perl -CSDA
+	2 is now handled by #! /usr/bin/perl -CSDA
+	3 is now handled by #! /usr/bin/perl -CSDA
+	4 is now handled by cwd_utf8     in RH::Util
+	5 is now handled by glob_utf8    in RH::Util
+	6 is now handled by readdir_utf8 in RH::Util
+	7 is now handled by #! /usr/bin/perl -CSDA
+]
+
+--------------------------------------------------------------------------------------------------------------
+Thu Jul 16, 2015:
+
+I've finished with phase 1 of upgrading all my scripts for utf8: The ones that need to be encoded in utf8
+now are (and are so-marked), and the ones that don't need that are now encoded in ASCII (and so-marked).
+All EOLs are now set to Unix (some had been CRLF).
+
+Current phase is going through and checking all files for correct utf8 decoding, and for functionality.
+I started by opening all scripts in Notepad++, and as I finish each script I close it.
+
+NEXT phase will be fine-tuning by using a BEGIN{} block, and by using decode_utf8() instead of decode().
+BEGIN {$_ = decode_utf8 $_ for @ARGV;}. Also, put the main bodies of all scripts in MAIN:{} blocks,
+update all description blocks with final utf8 update date, and test everything.
+
+Also, program set-extensions.perl has issues: needs to state WHICH "known type" it is assuming for each
+file it processes, instead of just saying "file xxxxxx is of known type". And, it seems to be having
+problems recognizing some mp3 files. I've closed this for now because it's up-to-date utf8-wise, but it
+needs to be worked on later.
+
+--------------------------------------------------------------------------------------------------------------
+Wed Sep 02, 2015:
+
+I completed upgrading all my Perl scripts for utf8 in late July.  Been taking a break from programming.
+(Been doing music, etc.) Let's get back to "Set Extensions". That can be improved.
+
+--------------------------------------------------------------------------------------------------------------
+Thu Apr 14, 2016:
+
+I've been updating my C++ dir module and utility programs to work with Cygwin and Windows 10. It's been
+challenging going, but may be helped by the new C++ 2011 regex facilities. Now, I just need to find a way
+to do file globbing that works with Unicode; fnmatch() isn't cutting it.
+
+To-do: change all perl program names such as "d", "rnf", etc, back to the full-length versions ("rhdir.perl",
+"renamefiles.perl", etc), and re-implement the short names as BASH aliases in ".bashrc"
+[Update, Tue May 03, 2016: Done.]
+
+--------------------------------------------------------------------------------------------------------------
+Wed Dec 27, 2017:
+
+Another year almost gone, and no entries in this log for 1.5 years. I did a lot of Perl programming in
+2016 (though very little in 2017). My latest work: "merge-files.perl", which merges the contents of one
+directory into another, the erases the first directory if it is now empty, then dedups and denumerates the
+combined directory.
+
+What should be my next project?
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Tue Jan 23, 2018, 9:45AM:
+
+Fix these issues in "rhmath.h":
+
+Using pattern rule %.exe:%.cpp to compile base.cpp to base.exe:
+g++ -I /cygdrive/d/rhe/include -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion
+   -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8
+   -std=gnu++14 -O2 -s base.cpp -L/cygdrive/d/rhe/lib -L/lib -lrh -lfl -ly -lm -lname
+   -o /cygdrive/d/rhe/bin/math/base.exe
+In file included from base.cpp:21:0:
+/cygdrive/d/rhe/include/rhmath.h: In instantiation of ‘std::string rhmath::Base(int, T, bool, int)
+[with T = long long int; std::string = std::basic_string<char>]’:
+base.cpp:62:59:   required from here
+/cygdrive/d/rhe/include/rhmath.h:442:40: warning: conversion to ‘double’ from ‘long long int’ may alter
+its value [-Wconversion]
+                              log(number+3) // the "3" prevents this from being < 1 if number >= 0
+                                  ~~~~~~^~
+/cygdrive/d/rhe/include/rhmath.h:462:24: warning: conversion to ‘double’ alters ‘long long int’ constant
+value [-Wfloat-conversion]
+             || largest > max                   // or largest test divisor is out-of-range
+                ~~~~~~~~^~~~~
+base.exe is up to date.
+
+--------------------------------------------------------------------------------------------------------------
+Sat Sep 22, 2018:
+
+Another 9 months with no entries. I really need to do more programming AND more journalling. I did some
+Project Euler programming earlier in 2018, but in mid and late 2018, I've done little programming, other than
+writing a few short test programs in the process of answering questions on Quora. It's time for me to get more
+programming practice.
+
+--------------------------------------------------------------------------------------------------------------
+Mon Feb 04, 2019:
+
+Perl versions in-use on my systems:
+
+Square-Rigger:   v5.26.3
+Ketch:           v5.26.2
+Galleon WinXP:   V5.22.2
+Galleon Linux:   v5.20.2
+
+--------------------------------------------------------------------------------------------------------------
+Fri Jun 06, 2020:
+
+Perl 6 History:
+
+2000 roughly: Perl 6 conceived.
+200?: Apocalypses, Synopses, and Exigeses written.
+2002: Perl 6 is scheduled to be "released in time for Christmas [year unstated]".
+2004: Decision is made that Perl 6 will NOT be backward-compatible with Perl 5.
+2012 summer: Perl Reunification Summit
+2012 summer: Perl 11 Summit
+2015-12-25: First version of Perl6, version 6.C ("C" for "Christmas) is released, 13 years late.
+2019-10: Perl6 renamed "Raku" and is no longer considered to be a version of "Perl".
+(Does this free-up the name "Perl 6" to be a continuation of Perl 5? I hope so.)
+2020: Raku still won't install on my computer. :-/
+
+
+--------------------------------------------------------------------------------------------------------------
+Mon Nov 16, 2020:
+
+Arguments that cause factor-unlimited to freeze up:
+203857385345989574905705924570345
+203857385345989
+203857385345
+99385738534
+99385738527 -> Does finish, but takes about 3 minutes
+factor-unlimited.exe appears to take about 1 minute for each 10 billion numbers it has to process.
+So, 203857385345989574905705924570345 WILL eventually process, but it would take about
+20385738534598957490 minutes = 38785651702052 years to process. YIKES. That's about 1000 times longer than
+this universe has existed.
+
+--------------------------------------------------------------------------------------------------------------
+Mon Feb 15, 2021:
+
+OLD way to control exports from a module:
+
+=pod
+
+sub import
+{
+   *main::round_to_int   = \&RH::Util::round_to_int;
+   *main::rand_int       = \&RH::Util::rand_int;
+   *main::get_character  = \&RH::Util::get_character;
+   *main::is_ascii       = \&RH::Util::is_ascii;
+   *main::is_iso_8859_1  = \&RH::Util::is_iso_8859_1;
+   *main::tc             = \&RH::Util::tc;
+   *main::extract_digits = \&RH::Util::extract_digits;
+   *main::random_name    = \&RH::Util::random_name
+}
+
+=cut
+
+--------------------------------------------------------------------------------------------------------------
+Tue Feb 16, 2021:
+
+I came up with new recursion boilerplate for "main" sections of scripts:
+
+	$Recurse and RecurseDirs {curdir} or curdir;
+
+--------------------------------------------------------------------------------------------------------------
+Fri Mar 05, 2021:
+
+Made substantial improvements to my RH::RegTest module and "match.pl" script.
+
+--------------------------------------------------------------------------------------------------------------
+Sat Jul 17, 2021, 7:01AM PDT:
+
+Kelvin  to Celsius: C = K-273.15
+Celsius to Kelvin : K = C+273.15
+
+Celsius to Fahren : F = C*1.8+32
+Fahren  to Celsius: C = (F-32)/1.8
+
+Fahren  to Kelvin : K = (F-32)/1.8+273.15
+Kelvin  to Fahren : F = (K-273.15)*1.8+32
+
+--------------------------------------------------------------------------------------------------------------
+Fri Aug 11, 2023:
+
+sudo docker run -d -it
+--name devtest
+--mount type=bind,source=/home/aragorn/Data/Celephais/rhe/bin_lin/util,util=/app wbraswell/rperl_cpan
+
+--------------------------------------------------------------------------------------------------------------
+Wed Aug 23, 2023:
+
+Keyboard symbols   matched   by \pP:  ,.?/\;:'"()[]{}?!@#%&*_-
+Keyboard symbols NOT matched by \pP:  <>|$^=+`~
+
+--------------------------------------------------------------------------------------------------------------
+Sat Jan 04, 2025:
+
+It's getting close to 2 years since I wrote anything in this journal! I also had a very hard time find it,
+as I've been refactoring the locations of various programming-related materials on my system the last few
+years. I've been putting more things into repositories on Github, so many directories are getting renamed
+"rhe-xxx".
+
+--------------------------------------------------------------------------------------------------------------
+Sun Feb 09, 2025:
+
+I now have 7 "rhe-.*" directories:
+rhe-bin
+rhe-cli
+rhe-extra
+rhe-notes
+rhe-private
+rhe-qt
+rhe-shared
+
+Four of those are also Git repositories:
+Repo:        Privacy:   Description:
+rhe-cli      public     command-line programming
+rhe-notes    private    notes
+rhe-private  private    scripts and programs
+rhe-shared   public     notes, scripts, programs, images
+
+
+
+
+

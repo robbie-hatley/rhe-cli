@@ -1,0 +1,851 @@
+wd=E:\Test-Range\simplify-fn-test
+%sfn
+
+Just entered ProcessFlags().  About to set Bools.
+
+About to return from ProcessFlags.
+
+
+Just entered ProcessCurDir::operator().
+
+
+In ProcessCurDirFunctor::operator().
+Finished building file list.
+File list size is 41
+About to enter file-iteration for loop.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #1:
+Old file name = all lower case with spaces and no  extension
+New file name = all_lower_case_with_spaces_and_no__extension
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: all lower case with spaces and no  extension
+New name: all_lower_case_with_spaces_and_no__extension
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #2:
+Old file name = all lower case with spaces and txt extension.txt
+New file name = all_lower_case_with_spaces_and_txt_extension.txt
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: all lower case with spaces and txt extension.txt
+New name: all_lower_case_with_spaces_and_txt_extension.txt
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #3:
+Old file name = ALL UPPER CASE WITH SPACES AND NO  EXTENSION
+New file name = ALL_UPPER_CASE_WITH_SPACES_AND_NO__EXTENSION
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: ALL UPPER CASE WITH SPACES AND NO  EXTENSION
+New name: ALL_UPPER_CASE_WITH_SPACES_AND_NO__EXTENSION
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #4:
+Old file name = ALL UPPER CASE WITH SPACES AND TXT EXTENSION.TXT
+New file name = ALL_UPPER_CASE_WITH_SPACES_AND_TXT_EXTENSION.TXT
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: ALL UPPER CASE WITH SPACES AND TXT EXTENSION.TXT
+New name: ALL_UPPER_CASE_WITH_SPACES_AND_TXT_EXTENSION.TXT
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #5:
+Old file name = Amateo Creatzanto Simbiolo Cratanavo.txt
+New file name = Amateo_Creatzanto_Simbiolo_Cratanavo.txt
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: Amateo Creatzanto Simbiolo Cratanavo.txt
+New name: Amateo_Creatzanto_Simbiolo_Cratanavo.txt
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+i = 142
+CharMap[i] = !
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #6:
+Old file name = asdf374é.txt
+New file name = asdf374!.txt
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: asdf374é.txt
+New name: asdf374!.txt
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+i = 143
+CharMap[i] = !
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #7:
+Old file name = asdf376è.txt
+New file name = asdf376!.txt
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: asdf376è.txt
+New name: asdf376!.txt
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+i = 146
+CharMap[i] = !
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #8:
+Old file name = asdf377í.txt
+New file name = asdf377!.txt
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: asdf377í.txt
+New name: asdf377!.txt
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+i = 225
+CharMap[i] = a
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #9:
+Old file name = asdf378·.txt
+New file name = asdf378a.txt
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: asdf378·.txt
+New name: asdf378a.txt
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+
+In ProcessCurrentFile().  A file with the simplified file name already exists.
+About to try to find an unused enumerated version of simplified file name.
+
+
+In ProcessCurrentFile().  Found unused name.
+
+Note: had to enumerate Existing_File_Name_With_Simple_Mirror.txt to Existing_Fil
+e_Name_With_Simple_Mirror-(6048).txt
+File rename attempt #10:
+Old file name = Existing File Name With Simple Mirror.txt
+New file name = Existing_File_Name_With_Simple_Mirror-(6048).txt
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: Existing File Name With Simple Mirror.txt
+New name: Existing_File_Name_With_Simple_Mirror-(6048).txt
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #11:
+Old file name = file name with spaces and -(3871) embedded floating -(3872) extr
+a numerators -(3873).txt
+New file name = file_name_with_spaces_and_-(3871)_embedded_floating_-(3872)_extr
+a_numerators_-(3873).txt
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: file name with spaces and -(3871) embedded floating -(3872) extra nume
+rators -(3873).txt
+New name: file_name_with_spaces_and_-(3871)_embedded_floating_-(3872)_extra_nume
+rators_-(3873).txt
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #12:
+Old file name = File name with spaces and special characters to test SFN_`!@#$%^
+&+={}[](),;.'_.txt
+New file name = File_name_with_spaces_and_special_characters_to_test_SFN_`!@#$%&
+&+={}[]()&&.'_.txt
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: File name with spaces and special characters to test SFN_`!@#$%^&+={}[
+](),;.'_.txt
+New name: File_name_with_spaces_and_special_characters_to_test_SFN_`!@#$%&&+={}[
+]()&&.'_.txt
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+i = 161
+CharMap[i] = !
+i = 133
+CharMap[i] = !
+i = 161
+CharMap[i] = !
+i = 134
+CharMap[i] = !
+i = 139
+CharMap[i] = !
+i = 137
+CharMap[i] = !
+i = 136
+CharMap[i] = !
+i = 168
+CharMap[i] = !
+i = 172
+CharMap[i] = -
+i = 171
+CharMap[i] = !
+i = 246
+CharMap[i] = o
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #13:
+Old file name = F°le-NÖme-W°th-MÜny-ãso-8859-1-Lâttàrs-And-Symbols_®¨´_xˆ_In-It.
+txt
+New file name = F!le-N!me-W!th-M!ny-!so-8859-1-L!tt!rs-And-Symbols_!-!_xo_In-It.
+txt
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: F°le-NÖme-W°th-MÜny-ãso-8859-1-Lâttàrs-And-Symbols_®¨´_xˆ_In-It.txt
+New name: F!le-N!me-W!th-M!ny-!so-8859-1-L!tt!rs-And-Symbols_!-!_xo_In-It.txt
+
+Error in RenameFile(): cannot rename file from
+   "F°le-NÖme-W°th-MÜny-ãso-8859-1-Lâttàrs-And-Symbols_®¨´_xˆ_In-It.txt"
+to
+   "F!le-N!me-W!th-M!ny-!so-8859-1-L!tt!rs-And-Symbols_!-!_xo_In-It.txt"
+because no file exists with old file name.
+
+In ProcessCurrentFile().  File rename failed.
+
+Failed!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #14:
+Old file name = Long file name with lots of spaces, two commas, and a semicolon;
+ to test simplify-file-names.txt
+New file name = Long_file_name_with_lots_of_spaces&_two_commas&_and_a_semicolon&
+_to_test_simplify-file-names.txt
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: Long file name with lots of spaces, two commas, and a semicolon; to te
+st simplify-file-names.txt
+New name: Long_file_name_with_lots_of_spaces&_two_commas&_and_a_semicolon&_to_te
+st_simplify-file-names.txt
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+i = 174
+CharMap[i] = r
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #15:
+Old file name = Æfile-name-starting-with-guillemotleft.txt
+New file name = rfile-name-starting-with-guillemotleft.txt
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: Æfile-name-starting-with-guillemotleft.txt
+New name: rfile-name-starting-with-guillemotleft.txt
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+i = 175
+CharMap[i] = -
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are different.
+
+File rename attempt #16:
+Old file name = Øfile-name-starting-with-guillemotright.txt
+New file name = -file-name-starting-with-guillemotright.txt
+
+In ProcessCurrentFile().  About to attempt the following file rename:
+Old name: Øfile-name-starting-with-guillemotright.txt
+New name: -file-name-starting-with-guillemotright.txt
+
+
+In ProcessCurrentFile().  File rename succeeded.
+
+Succeeded!
+
+
+At bottom of ProcessCurrentFile(); about to return.
+
+
+Just entered ProcessCurrentFile().
+About to get old and simplified file names.
+
+
+In ProcessCurrentFile(); finished getting old and simplified file names.
+About to check to see if old and simplified names are the same.
+
+
+In ProcessCurrentFile(); old and simplified file names are identical,
+so we're bypassing this file and moving on to the next.
+About to return from ProcessCurrentFile().
+
+
+At bottom of ProcessCurDirFunctor::operator(); about to return.
+
+
+Simplify-File-Names run finished.
+Elapsed time:                 2 seconds.
+Directories processed:        1
+Files processed:             41
+Files bypassed:              25
+File renames attempted:      16
+Errors encountered:           1
+File names simplified:       15
+
+
+wd=E:\TEST-R~1\SIMPLI~2
+%

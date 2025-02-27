@@ -1,0 +1,27 @@
+#if 0
+
+// From djgpp header file "dir.h"  -- FOR REFERENCE ONLY -- DO NOT INCLUDE:
+//        #define FA_RDONLY       1
+//        #define FA_HIDDEN       2
+//        #define FA_SYSTEM       4
+//        #define FA_LABEL        8
+//        #define FA_DIREC        16
+//        #define FA_ARCH         32
+//        struct ffblk
+//        {
+//           char           lfn_magic[6];    /* LFN: the magic "LFN32" signature */
+//           short          lFA_DIRECfn_handle;      /* LFN: the handle used by findfirst/findnext */
+//           unsigned short lfn_ctime;       /* LFN: file creation time */
+//           unsigned short lfn_cdate;       /* LFN: file creation date */
+//           unsigned short lfn_atime;       /* LFN: file last access time (usually 0) */
+//           unsigned short lfn_adate;       /* LFN: file last access date */
+//           char           ff_reserved[5];  /* used to hold the state of the search */
+//           unsigned char  ff_attrib;       /* actual attributes of the file found */
+//           unsigned short ff_ftime;        /* hours:5, minutes:6, (seconds/2):5 */
+//           unsigned short ff_fdate;        /* (year-1980):7, month:4, day:5 */
+//           unsigned long  ff_fsize;        /* size of file */
+//           char           ff_name[260];    /* name of file as ASCIIZ std::string */
+//        }
+
+
+#endif

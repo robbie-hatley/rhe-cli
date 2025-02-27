@@ -1,0 +1,723 @@
+Aragorn@Ketch
+/rhe/test-zone
+%rnf -t -f 'o' '8734'
+In RecurseDirs. $DirPath = /rhe/test-zone
+
+In RecurseDirs, about to cd to tarsier
+In RecurseDirs. $DirPath = /rhe/test-zone/tarsier
+
+In RecurseDirs, about to cd to frog
+In RecurseDirs. $DirPath = /rhe/test-zone/tarsier/frog
+
+
+
+Directory # 1:
+/rhe/test-zone/tarsier/frog
+In RecurseDirs, about to cd to gargoyle
+In RecurseDirs. $DirPath = /rhe/test-zone
+
+Warning: bypassing filename tarsier because it re-uses an old inode.
+
+
+Directory # 2:
+/rhe/test-zone
+
+OldName = directory-includes-self.txt
+NewName = direct8734ry-includes-self.txt
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+
+OldName = doeunxys.txt
+NewName = d8734eunxys.txt
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+
+OldName = factorial-table-100-fast-test.txt
+NewName = fact8734rial-table-100-fast-test.txt
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+
+OldName = free-form-test.txt
+NewName = free-f8734rm-test.txt
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+
+OldName = output.txt
+NewName = 8734utput.txt
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+
+OldName = Permute-Speed-Comparisons.txt
+NewName = Permute-Speed-C8734mparis8734ns.txt
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+
+OldName = test-fb-block-file-clean.txt
+NewName = test-fb-bl8734ck-file-clean.txt
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+
+OldName = test-fb-block-file-raw.txt
+NewName = test-fb-bl8734ck-file-raw.txt
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+
+OldName = text15rot13.txt
+NewName = text15r8734t13.txt
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+
+OldName = transform-test.txt
+NewName = transf8734rm-test.txt
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+
+OldName = wodmxnfh.txt
+NewName = w8734dmxnfh.txt
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+In RecurseDirs, about to cd to newt
+In RecurseDirs. $DirPath = /rhe
+
+Warning: bypassing filename test-zone because it re-uses an old inode.
+In RecurseDirs, about to cd to .idlerc
+In RecurseDirs. $DirPath = /rhe/.idlerc
+
+
+
+Directory # 3:
+/rhe/.idlerc
+In RecurseDirs, about to cd to archives
+In RecurseDirs. $DirPath = /rhe/archives
+
+In RecurseDirs, about to cd to code-samples
+In RecurseDirs. $DirPath = /rhe/archives/code-samples
+
+In RecurseDirs, about to cd to graphics-code
+In RecurseDirs. $DirPath = /rhe/archives/code-samples/graphics-code
+
+
+
+Directory # 4:
+/rhe/archives/code-samples/graphics-code
+
+OldName = cu_logo.cpp
+NewName = cu_l8734g8734.cpp
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+Invalid keystroke!
+Press 'y' to rename, 'n' to skip, 'q' to quit, or 'a' to rename all.
+Invalid keystroke!
+Press 'y' to rename, 'n' to skip, 'q' to quit, or 'a' to rename all.
+Renaming "cu_logo.cpp" to "cu_l8734g8734.cpp".
+Successfully renamed "cu_logo.cpp" to "cu_l8734g8734.cpp".
+In RecurseDirs, about to cd to MenuCode
+In RecurseDirs. $DirPath = /rhe/archives/code-samples/MenuCode
+
+In RecurseDirs, about to cd to ftp.oreilly.com-examples-windows-outlook.annoy
+In RecurseDirs. $DirPath = /rhe/archives/code-samples/MenuCode/ftp.oreilly.com-examples-windows-outlook.annoy
+
+
+
+Directory # 5:
+/rhe/archives/code-samples/MenuCode/ftp.oreilly.com-examples-windows-outlook.annoy
+Renaming "DemoCreateNewItem.oft" to "Dem8734CreateNewItem.8734ft".
+Successfully renamed "DemoCreateNewItem.oft" to "Dem8734CreateNewItem.8734ft".
+Renaming "DemoDisplayActiveWindow.oft" to "Dem8734DisplayActiveWind8734w.8734ft".
+Successfully renamed "DemoDisplayActiveWindow.oft" to "Dem8734DisplayActiveWind8734w.8734ft".
+Renaming "Import to Outlook.xls" to "Imp8734rt t8734 Outl87348734k.xls".
+Successfully renamed "Import to Outlook.xls" to "Imp8734rt t8734 Outl87348734k.xls".
+Renaming "MoreOutlookObjectModel.oft" to "M8734reOutl87348734kObjectM8734del.8734ft".
+Successfully renamed "MoreOutlookObjectModel.oft" to "M8734reOutl87348734kObjectM8734del.8734ft".
+Renaming "OutAnnoy Example.dot" to "OutAnn8734y Example.d8734t".
+Successfully renamed "OutAnnoy Example.dot" to "OutAnn8734y Example.d8734t".
+Renaming "OutAnnoy.zip" to "OutAnn8734y.zip".
+Successfully renamed "OutAnnoy.zip" to "OutAnn8734y.zip".
+Renaming "Outlook Annoyances.xls" to "Outl87348734k Ann8734yances.xls".
+Successfully renamed "Outlook Annoyances.xls" to "Outl87348734k Ann8734yances.xls".
+Renaming "OutlookToOutlook.oft" to "Outl87348734kT8734Outl87348734k.8734ft".
+Successfully renamed "OutlookToOutlook.oft" to "Outl87348734kT8734Outl87348734k.8734ft".
+Renaming "OutlookToWordExample.oft" to "Outl87348734kT8734W8734rdExample.8734ft".
+Successfully renamed "OutlookToWordExample.oft" to "Outl87348734kT8734W8734rdExample.8734ft".
+
+
+Directory # 6:
+/rhe/archives/code-samples/MenuCode
+Renaming "ScreenShot.gif" to "ScreenSh8734t.gif".
+Successfully renamed "ScreenShot.gif" to "ScreenSh8734t.gif".
+In RecurseDirs, about to cd to misc-sources
+In RecurseDirs. $DirPath = /rhe/archives/code-samples/misc-sources
+
+
+
+Directory # 7:
+/rhe/archives/code-samples/misc-sources
+In RecurseDirs, about to cd to mystery
+In RecurseDirs. $DirPath = /rhe/archives/code-samples/mystery
+
+
+
+Directory # 8:
+/rhe/archives/code-samples/mystery
+In RecurseDirs, about to cd to oreilly-c-core-examples
+In RecurseDirs. $DirPath = /rhe/archives/code-samples/oreilly-c-core-examples
+
+
+
+Directory # 9:
+/rhe/archives/code-samples/oreilly-c-core-examples
+In RecurseDirs, about to cd to www.roguemojo.com
+In RecurseDirs. $DirPath = /rhe/archives/code-samples/www.roguemojo.com
+
+In RecurseDirs, about to cd to gl
+In RecurseDirs. $DirPath = /rhe/archives/code-samples/www.roguemojo.com/gl
+
+
+
+Directory # 10:
+/rhe/archives/code-samples/www.roguemojo.com/gl
+In RecurseDirs, about to cd to interp
+In RecurseDirs. $DirPath = /rhe/archives/code-samples/www.roguemojo.com/interp
+
+
+
+Directory # 11:
+/rhe/archives/code-samples/www.roguemojo.com/interp
+In RecurseDirs, about to cd to log
+In RecurseDirs. $DirPath = /rhe/archives/code-samples/www.roguemojo.com/log
+
+
+
+Directory # 12:
+/rhe/archives/code-samples/www.roguemojo.com/log
+Renaming "globals.cpp" to "gl8734bals.cpp".
+Successfully renamed "globals.cpp" to "gl8734bals.cpp".
+Renaming "log.cpp" to "l8734g.cpp".
+Successfully renamed "log.cpp" to "l8734g.cpp".
+Renaming "log.h" to "l8734g.h".
+Successfully renamed "log.h" to "l8734g.h".
+In RecurseDirs, about to cd to Props
+In RecurseDirs. $DirPath = /rhe/archives/code-samples/www.roguemojo.com/Props
+
+
+
+Directory # 13:
+/rhe/archives/code-samples/www.roguemojo.com/Props
+Renaming "props.cpp" to "pr8734ps.cpp".
+Successfully renamed "props.cpp" to "pr8734ps.cpp".
+Renaming "props.h" to "pr8734ps.h".
+Successfully renamed "props.h" to "pr8734ps.h".
+Renaming "Props.txt.txt" to "Pr8734ps.txt.txt".
+Successfully renamed "Props.txt.txt" to "Pr8734ps.txt.txt".
+
+
+Directory # 14:
+/rhe/archives/code-samples/www.roguemojo.com
+Renaming "log.zip" to "l8734g.zip".
+Successfully renamed "log.zip" to "l8734g.zip".
+Renaming "Props.zip" to "Pr8734ps.zip".
+Successfully renamed "Props.zip" to "Pr8734ps.zip".
+
+
+Directory # 15:
+/rhe/archives/code-samples
+Renaming "orbit.bas" to "8734rbit.bas".
+Successfully renamed "orbit.bas" to "8734rbit.bas".
+In RecurseDirs, about to cd to experimental
+In RecurseDirs. $DirPath = /rhe/archives/experimental
+
+
+
+Directory # 16:
+/rhe/archives/experimental
+Renaming "print-yourself-output.txt" to "print-y8734urself-8734utput.txt".
+Successfully renamed "print-yourself-output.txt" to "print-y8734urself-8734utput.txt".
+Renaming "print-yourself.c" to "print-y8734urself.c".
+Successfully renamed "print-yourself.c" to "print-y8734urself.c".
+In RecurseDirs, about to cd to old-stuff
+In RecurseDirs. $DirPath = /rhe/archives/old-stuff
+
+In RecurseDirs, about to cd to lib-old-versions
+In RecurseDirs. $DirPath = /rhe/archives/old-stuff/lib-old-versions
+
+
+
+Directory # 17:
+/rhe/archives/old-stuff/lib-old-versions
+In RecurseDirs, about to cd to math-old-versions
+In RecurseDirs. $DirPath = /rhe/archives/old-stuff/math-old-versions
+
+
+
+Directory # 18:
+/rhe/archives/old-stuff/math-old-versions
+Renaming "factorial2_OLD.c_OLD" to "fact8734rial2_OLD.c_OLD".
+Successfully renamed "factorial2_OLD.c_OLD" to "fact8734rial2_OLD.c_OLD".
+Renaming "fctr-old.c" to "fctr-8734ld.c".
+Successfully renamed "fctr-old.c" to "fctr-8734ld.c".
+Renaming "goldbach.c" to "g8734ldbach.c".
+Successfully renamed "goldbach.c" to "g8734ldbach.c".
+Renaming "oldprimes.c" to "8734ldprimes.c".
+Successfully renamed "oldprimes.c" to "8734ldprimes.c".
+Renaming "oldrandom.cpp" to "8734ldrand8734m.cpp".
+Successfully renamed "oldrandom.cpp" to "8734ldrand8734m.cpp".
+Renaming "primesupto.cpp" to "primesupt8734.cpp".
+Successfully renamed "primesupto.cpp" to "primesupt8734.cpp".
+Renaming "primesupto2.cpp" to "primesupt87342.cpp".
+Successfully renamed "primesupto2.cpp" to "primesupt87342.cpp".
+In RecurseDirs, about to cd to old-graphics-code
+In RecurseDirs. $DirPath = /rhe/archives/old-stuff/old-graphics-code
+
+
+
+Directory # 19:
+/rhe/archives/old-stuff/old-graphics-code
+In RecurseDirs, about to cd to old-script-versions
+In RecurseDirs. $DirPath = /rhe/archives/old-stuff/old-script-versions
+
+
+
+Directory # 20:
+/rhe/archives/old-stuff/old-script-versions
+Renaming "factorial.perl" to "fact8734rial.perl".
+Successfully renamed "factorial.perl" to "fact8734rial.perl".
+In RecurseDirs, about to cd to old-scripts
+In RecurseDirs. $DirPath = /rhe/archives/old-stuff/old-scripts
+
+
+
+Directory # 21:
+/rhe/archives/old-stuff/old-scripts
+In RecurseDirs, about to cd to util-bak
+In RecurseDirs. $DirPath = /rhe/archives/old-stuff/util-bak
+
+
+
+Directory # 22:
+/rhe/archives/old-stuff/util-bak
+Renaming "backquote.p" to "backqu8734te.p".
+Successfully renamed "backquote.p" to "backqu8734te.p".
+Renaming "browse-symtab.p" to "br8734wse-symtab.p".
+Successfully renamed "browse-symtab.p" to "br8734wse-symtab.p".
+Renaming "catpod.p" to "catp8734d.p".
+Successfully renamed "catpod.p" to "catp8734d.p".
+Renaming "cleanup-facebook-block-list.p" to "cleanup-faceb87348734k-bl8734ck-list.p".
+Successfully renamed "cleanup-facebook-block-list.p" to "cleanup-faceb87348734k-bl8734ck-list.p".
+Renaming "convert-dates.sed" to "c8734nvert-dates.sed".
+Successfully renamed "convert-dates.sed" to "c8734nvert-dates.sed".
+Renaming "delete-arrow-lines.sed" to "delete-arr8734w-lines.sed".
+Successfully renamed "delete-arrow-lines.sed" to "delete-arr8734w-lines.sed".
+Renaming "delete-non-jpg-lines.sed" to "delete-n8734n-jpg-lines.sed".
+Successfully renamed "delete-non-jpg-lines.sed" to "delete-n8734n-jpg-lines.sed".
+Renaming "delete-non-url-lines.sed" to "delete-n8734n-url-lines.sed".
+Successfully renamed "delete-non-url-lines.sed" to "delete-n8734n-url-lines.sed".
+Renaming "extract-single-quoted-urls.awk" to "extract-single-qu8734ted-urls.awk".
+Successfully renamed "extract-single-quoted-urls.awk" to "extract-single-qu8734ted-urls.awk".
+Renaming "find-modules.p" to "find-m8734dules.p".
+Successfully renamed "find-modules.p" to "find-m8734dules.p".
+Renaming "free-form-test.txt" to "free-f8734rm-test.txt".
+Successfully renamed "free-form-test.txt" to "free-f8734rm-test.txt".
+Renaming "free-form.sed" to "free-f8734rm.sed".
+Successfully renamed "free-form.sed" to "free-f8734rm.sed".
+Renaming "isolate-urls.sed" to "is8734late-urls.sed".
+Successfully renamed "isolate-urls.sed" to "is8734late-urls.sed".
+Renaming "isolate-words.sed" to "is8734late-w8734rds.sed".
+Successfully renamed "isolate-words.sed" to "is8734late-w8734rds.sed".
+Renaming "localtime.p" to "l8734caltime.p".
+Successfully renamed "localtime.p" to "l8734caltime.p".
+Renaming "old-newztoolz-command-line.txt" to "8734ld-newzt87348734lz-c8734mmand-line.txt".
+Successfully renamed "old-newztoolz-command-line.txt" to "8734ld-newzt87348734lz-c8734mmand-line.txt".
+Renaming "present-google-images.awk" to "present-g87348734gle-images.awk".
+Successfully renamed "present-google-images.awk" to "present-g87348734gle-images.awk".
+Renaming "present-toddleland-images.awk" to "present-t8734ddleland-images.awk".
+Successfully renamed "present-toddleland-images.awk" to "present-t8734ddleland-images.awk".
+Renaming "qp-to-ascii.p" to "qp-t8734-ascii.p".
+Successfully renamed "qp-to-ascii.p" to "qp-t8734-ascii.p".
+Renaming "rot13.p" to "r8734t13.p".
+Successfully renamed "rot13.p" to "r8734t13.p".
+Renaming "rot48.p" to "r8734t48.p".
+Successfully renamed "rot48.p" to "r8734t48.p".
+Renaming "second-python.py" to "sec8734nd-pyth8734n.py".
+Successfully renamed "second-python.py" to "sec8734nd-pyth8734n.py".
+Renaming "upside-down-snippet.p" to "upside-d8734wn-snippet.p".
+Successfully renamed "upside-down-snippet.p" to "upside-d8734wn-snippet.p".
+In RecurseDirs, about to cd to util-old-versions
+In RecurseDirs. $DirPath = /rhe/archives/old-stuff/util-old-versions
+
+
+
+Directory # 23:
+/rhe/archives/old-stuff/util-old-versions
+Renaming "Copy of sortdup.cpp" to "C8734py 8734f s8734rtdup.cpp".
+Successfully renamed "Copy of sortdup.cpp" to "C8734py 8734f s8734rtdup.cpp".
+Renaming "dedup-error-log-2003-09-27.txt" to "dedup-err8734r-l8734g-2003-09-27.txt".
+Successfully renamed "dedup-error-log-2003-09-27.txt" to "dedup-err8734r-l8734g-2003-09-27.txt".
+Renaming "dedup-old-version.cpp" to "dedup-8734ld-versi8734n.cpp".
+Successfully renamed "dedup-old-version.cpp" to "dedup-8734ld-versi8734n.cpp".
+Renaming "dedup-old.cpp" to "dedup-8734ld.cpp".
+Successfully renamed "dedup-old.cpp" to "dedup-8734ld.cpp".
+Renaming "old-CelsFahr-very-inefficient.cpp" to "8734ld-CelsFahr-very-inefficient.cpp".
+Successfully renamed "old-CelsFahr-very-inefficient.cpp" to "8734ld-CelsFahr-very-inefficient.cpp".
+Renaming "random-name-generator.c" to "rand8734m-name-generat8734r.c".
+Successfully renamed "random-name-generator.c" to "rand8734m-name-generat8734r.c".
+Renaming "sampcop3.txt" to "sampc8734p3.txt".
+Successfully renamed "sampcop3.txt" to "sampc8734p3.txt".
+Renaming "sample.sorted" to "sample.s8734rted".
+Successfully renamed "sample.sorted" to "sample.s8734rted".
+Renaming "sizeof.cpp" to "size8734f.cpp".
+Successfully renamed "sizeof.cpp" to "size8734f.cpp".
+Renaming "sort-old.cpp" to "s8734rt-8734ld.cpp".
+Successfully renamed "sort-old.cpp" to "s8734rt-8734ld.cpp".
+Renaming "sorted-sortfile.sorted" to "s8734rted-s8734rtfile.s8734rted".
+Successfully renamed "sorted-sortfile.sorted" to "s8734rted-s8734rtfile.s8734rted".
+Renaming "sortfile-OLD.c" to "s8734rtfile-OLD.c".
+Successfully renamed "sortfile-OLD.c" to "s8734rtfile-OLD.c".
+Renaming "sortfile-OLD.cpp" to "s8734rtfile-OLD.cpp".
+Successfully renamed "sortfile-OLD.cpp" to "s8734rtfile-OLD.cpp".
+Renaming "sortfile.c" to "s8734rtfile.c".
+Successfully renamed "sortfile.c" to "s8734rtfile.c".
+Renaming "sortfile.cpp" to "s8734rtfile.cpp".
+Successfully renamed "sortfile.cpp" to "s8734rtfile.cpp".
+Renaming "source-lines-pedantic-lugubrious-stupid.cpp" to "s8734urce-lines-pedantic-lugubri8734us-stupid.cpp".
+Successfully renamed "source-lines-pedantic-lugubrious-stupid.cpp" to "s8734urce-lines-pedantic-lugubri8734us-stupid.cpp".
+Renaming "source-lines_OLD.cpp" to "s8734urce-lines_OLD.cpp".
+Successfully renamed "source-lines_OLD.cpp" to "s8734urce-lines_OLD.cpp".
+
+
+Directory # 24:
+/rhe/archives/old-stuff
+In RecurseDirs, about to cd to oreilly-lex-yacc
+In RecurseDirs. $DirPath = /rhe/archives/oreilly-lex-yacc
+
+
+
+Directory # 25:
+/rhe/archives/oreilly-lex-yacc
+Renaming "mgl-code" to "mgl-c8734de".
+Successfully renamed "mgl-code" to "mgl-c8734de".
+Renaming "progs.zip" to "pr8734gs.zip".
+Successfully renamed "progs.zip" to "pr8734gs.zip".
+In RecurseDirs, about to cd to third-party-executables
+In RecurseDirs. $DirPath = /rhe/archives/third-party-executables
+
+
+
+Directory # 26:
+/rhe/archives/third-party-executables
+Renaming "sysinfo.exe" to "sysinf8734.exe".
+Successfully renamed "sysinfo.exe" to "sysinf8734.exe".
+Renaming "sysinfo.ini" to "sysinf8734.ini".
+Successfully renamed "sysinfo.ini" to "sysinf8734.ini".
+Renaming "sysinfo.pin" to "sysinf8734.pin".
+Successfully renamed "sysinfo.pin" to "sysinf8734.pin".
+Renaming "tm.com" to "tm.c8734m".
+Successfully renamed "tm.com" to "tm.c8734m".
+
+
+Directory # 27:
+/rhe/archives
+In RecurseDirs, about to cd to bin
+In RecurseDirs. $DirPath = /rhe/bin
+
+In RecurseDirs, about to cd to fractals
+In RecurseDirs. $DirPath = /rhe/bin/fractals
+
+
+
+Directory # 28:
+/rhe/bin/fractals
+Renaming "hennon.exe" to "henn8734n.exe".
+Successfully renamed "hennon.exe" to "henn8734n.exe".
+Renaming "mandelbrot.exe" to "mandelbr8734t.exe".
+Successfully renamed "mandelbrot.exe" to "mandelbr8734t.exe".
+Renaming "mandelbrot.ini" to "mandelbr8734t.ini".
+Successfully renamed "mandelbrot.ini" to "mandelbr8734t.ini".
+Renaming "spirograph.exe" to "spir8734graph.exe".
+Successfully renamed "spirograph.exe" to "spir8734graph.exe".
+In RecurseDirs, about to cd to games
+In RecurseDirs. $DirPath = /rhe/bin/games
+
+
+
+Directory # 29:
+/rhe/bin/games
+Renaming "poker.exe" to "p8734ker.exe".
+Successfully renamed "poker.exe" to "p8734ker.exe".
+In RecurseDirs, about to cd to graphics
+In RecurseDirs. $DirPath = /rhe/bin/graphics
+
+
+
+Directory # 30:
+/rhe/bin/graphics
+Renaming "equation.exe" to "equati8734n.exe".
+Successfully renamed "equation.exe" to "equati8734n.exe".
+Renaming "spirograph.exe" to "spir8734graph.exe".
+Successfully renamed "spirograph.exe" to "spir8734graph.exe".
+In RecurseDirs, about to cd to jive
+In RecurseDirs. $DirPath = /rhe/bin/jive
+
+
+
+Directory # 31:
+/rhe/bin/jive
+In RecurseDirs, about to cd to math
+In RecurseDirs. $DirPath = /rhe/bin/math
+
+
+
+Directory # 32:
+/rhe/bin/math
+Renaming "complex.exe" to "c8734mplex.exe".
+Successfully renamed "complex.exe" to "c8734mplex.exe".
+Renaming "factor.exe" to "fact8734r.exe".
+Successfully renamed "factor.exe" to "fact8734r.exe".
+Renaming "factors.exe" to "fact8734rs.exe".
+Successfully renamed "factors.exe" to "fact8734rs.exe".
+Renaming "fibonacci.exe" to "fib8734nacci.exe".
+Successfully renamed "fibonacci.exe" to "fib8734nacci.exe".
+Renaming "goldbach.exe" to "g8734ldbach.exe".
+Successfully renamed "goldbach.exe" to "g8734ldbach.exe".
+Renaming "harmonic.exe" to "harm8734nic.exe".
+Successfully renamed "harmonic.exe" to "harm8734nic.exe".
+Renaming "permute-broken.exe" to "permute-br8734ken.exe".
+Successfully renamed "permute-broken.exe" to "permute-br8734ken.exe".
+Renaming "two-dice.exe" to "tw8734-dice.exe".
+Successfully renamed "two-dice.exe" to "tw8734-dice.exe".
+Renaming "unknown-series.exe" to "unkn8734wn-series.exe".
+Successfully renamed "unknown-series.exe" to "unkn8734wn-series.exe".
+In RecurseDirs, about to cd to test
+In RecurseDirs. $DirPath = /rhe/bin/test
+
+
+
+Directory # 33:
+/rhe/bin/test
+Renaming "9x9-vector-of-sets-test.exe" to "9x9-vect8734r-8734f-sets-test.exe".
+Successfully renamed "9x9-vector-of-sets-test.exe" to "9x9-vect8734r-8734f-sets-test.exe".
+Renaming "abc_remove.exe" to "abc_rem8734ve.exe".
+Successfully renamed "abc_remove.exe" to "abc_rem8734ve.exe".
+Renaming "array-pointer-test.exe" to "array-p8734inter-test.exe".
+Successfully renamed "array-pointer-test.exe" to "array-p8734inter-test.exe".
+Renaming "authors-test.exe" to "auth8734rs-test.exe".
+Successfully renamed "authors-test.exe" to "auth8734rs-test.exe".
+Renaming "auto_ptr-test.exe" to "aut8734_ptr-test.exe".
+Successfully renamed "auto_ptr-test.exe" to "aut8734_ptr-test.exe".
+Renaming "behavior-test.exe" to "behavi8734r-test.exe".
+Successfully renamed "behavior-test.exe" to "behavi8734r-test.exe".
+Renaming "char-array-pointer-test.exe" to "char-array-p8734inter-test.exe".
+Successfully renamed "char-array-pointer-test.exe" to "char-array-p8734inter-test.exe".
+Renaming "char-array-pointer-test3.exe" to "char-array-p8734inter-test3.exe".
+Successfully renamed "char-array-pointer-test3.exe" to "char-array-p8734inter-test3.exe".
+Renaming "chomp-test.exe" to "ch8734mp-test.exe".
+Successfully renamed "chomp-test.exe" to "ch8734mp-test.exe".
+Renaming "clocks-per-sec.exe" to "cl8734cks-per-sec.exe".
+Successfully renamed "clocks-per-sec.exe" to "cl8734cks-per-sec.exe".
+Renaming "construct-test.exe" to "c8734nstruct-test.exe".
+Successfully renamed "construct-test.exe" to "c8734nstruct-test.exe".
+Renaming "container-size-test.exe" to "c8734ntainer-size-test.exe".
+Successfully renamed "container-size-test.exe" to "c8734ntainer-size-test.exe".
+Renaming "CountNumerators-test.exe" to "C8734untNumerat8734rs-test.exe".
+Successfully renamed "CountNumerators-test.exe" to "C8734untNumerat8734rs-test.exe".
+Renaming "expression-statement-test.exe" to "expressi8734n-statement-test.exe".
+Successfully renamed "expression-statement-test.exe" to "expressi8734n-statement-test.exe".
+Renaming "func-ptr-test-void.exe" to "func-ptr-test-v8734id.exe".
+Successfully renamed "func-ptr-test-void.exe" to "func-ptr-test-v8734id.exe".
+Renaming "gargoyle-test.exe" to "garg8734yle-test.exe".
+Successfully renamed "gargoyle-test.exe" to "garg8734yle-test.exe".
+Renaming "hello-world-test.exe" to "hell8734-w8734rld-test.exe".
+Successfully renamed "hello-world-test.exe" to "hell8734-w8734rld-test.exe".
+Renaming "high-precision-add-test.exe" to "high-precisi8734n-add-test.exe".
+Successfully renamed "high-precision-add-test.exe" to "high-precisi8734n-add-test.exe".
+Renaming "index-out-of-range-test.exe" to "index-8734ut-8734f-range-test.exe".
+Successfully renamed "index-out-of-range-test.exe" to "index-8734ut-8734f-range-test.exe".
+Renaming "inserter-problem-test.exe" to "inserter-pr8734blem-test.exe".
+Successfully renamed "inserter-problem-test.exe" to "inserter-pr8734blem-test.exe".
+Renaming "ioflagtest.exe" to "i8734flagtest.exe".
+Successfully renamed "ioflagtest.exe" to "i8734flagtest.exe".
+Renaming "local-class-test.exe" to "l8734cal-class-test.exe".
+Successfully renamed "local-class-test.exe" to "l8734cal-class-test.exe".
+Renaming "longdoub.exe" to "l8734ngd8734ub.exe".
+Successfully renamed "longdoub.exe" to "l8734ngd8734ub.exe".
+Renaming "memory-violation-test.exe" to "mem8734ry-vi8734lati8734n-test.exe".
+Successfully renamed "memory-violation-test.exe" to "mem8734ry-vi8734lati8734n-test.exe".
+Renaming "metaprogramming-pow-test.exe" to "metapr8734gramming-p8734w-test.exe".
+Successfully renamed "metaprogramming-pow-test.exe" to "metapr8734gramming-p8734w-test.exe".
+Renaming "nothing-test.exe" to "n8734thing-test.exe".
+Successfully renamed "nothing-test.exe" to "n8734thing-test.exe".
+Renaming "npos.exe" to "np8734s.exe".
+Successfully renamed "npos.exe" to "np8734s.exe".
+Renaming "obfuscated1.exe" to "8734bfuscated1.exe".
+Successfully renamed "obfuscated1.exe" to "8734bfuscated1.exe".
+Renaming "obfuscated2.exe" to "8734bfuscated2.exe".
+Successfully renamed "obfuscated2.exe" to "8734bfuscated2.exe".
+Renaming "obfuscated3.exe" to "8734bfuscated3.exe".
+Successfully renamed "obfuscated3.exe" to "8734bfuscated3.exe".
+Renaming "obfuscated4.exe" to "8734bfuscated4.exe".
+Successfully renamed "obfuscated4.exe" to "8734bfuscated4.exe".
+Renaming "occur-test.exe" to "8734ccur-test.exe".
+Successfully renamed "occur-test.exe" to "8734ccur-test.exe".
+Renaming "opendir-test.exe" to "8734pendir-test.exe".
+Successfully renamed "opendir-test.exe" to "8734pendir-test.exe".
+Renaming "pointer-initialization-test.exe" to "p8734inter-initializati8734n-test.exe".
+Successfully renamed "pointer-initialization-test.exe" to "p8734inter-initializati8734n-test.exe".
+Renaming "random-test.exe" to "rand8734m-test.exe".
+Successfully renamed "random-test.exe" to "rand8734m-test.exe".
+Renaming "ref-count.exe" to "ref-c8734unt.exe".
+Successfully renamed "ref-count.exe" to "ref-c8734unt.exe".
+Renaming "rollover.exe" to "r8734ll8734ver.exe".
+Successfully renamed "rollover.exe" to "r8734ll8734ver.exe".
+Renaming "romulan-brown.exe" to "r8734mulan-br8734wn.exe".
+Successfully renamed "romulan-brown.exe" to "r8734mulan-br8734wn.exe".
+Renaming "sizeof-malloc-test.exe" to "size8734f-mall8734c-test.exe".
+Successfully renamed "sizeof-malloc-test.exe" to "size8734f-mall8734c-test.exe".
+Renaming "sizeof-new-test.exe" to "size8734f-new-test.exe".
+Successfully renamed "sizeof-new-test.exe" to "size8734f-new-test.exe".
+Renaming "specialization-test.exe" to "specializati8734n-test.exe".
+Successfully renamed "specialization-test.exe" to "specializati8734n-test.exe".
+Renaming "static-const-member-array-test.exe" to "static-c8734nst-member-array-test.exe".
+Successfully renamed "static-const-member-array-test.exe" to "static-c8734nst-member-array-test.exe".
+Renaming "static-const-member-vector-test.exe" to "static-c8734nst-member-vect8734r-test.exe".
+Successfully renamed "static-const-member-vector-test.exe" to "static-c8734nst-member-vect8734r-test.exe".
+Renaming "string-pointer-test.exe" to "string-p8734inter-test.exe".
+Successfully renamed "string-pointer-test.exe" to "string-p8734inter-test.exe".
+Renaming "tolwtest.exe" to "t8734lwtest.exe".
+Successfully renamed "tolwtest.exe" to "t8734lwtest.exe".
+Renaming "truncation-test.exe" to "truncati8734n-test.exe".
+Successfully renamed "truncation-test.exe" to "truncati8734n-test.exe".
+Renaming "union-test.exe" to "uni8734n-test.exe".
+Successfully renamed "union-test.exe" to "uni8734n-test.exe".
+Renaming "vector-capacity-test.exe" to "vect8734r-capacity-test.exe".
+Successfully renamed "vector-capacity-test.exe" to "vect8734r-capacity-test.exe".
+Renaming "vector-test.exe" to "vect8734r-test.exe".
+Successfully renamed "vector-test.exe" to "vect8734r-test.exe".
+Renaming "YesOrNo.exe" to "YesOrN8734.exe".
+Successfully renamed "YesOrNo.exe" to "YesOrN8734.exe".
+Renaming "zero-point-two.exe" to "zer8734-p8734int-tw8734.exe".
+Successfully renamed "zero-point-two.exe" to "zer8734-p8734int-tw8734.exe".
+In RecurseDirs, about to cd to util
+In RecurseDirs. $DirPath = /rhe/bin/util
+
+
+
+Directory # 34:
+/rhe/bin/util
+Renaming "boxify.exe" to "b8734xify.exe".
+Successfully renamed "boxify.exe" to "b8734xify.exe".
+Renaming "clock.exe" to "cl8734ck.exe".
+Successfully renamed "clock.exe" to "cl8734ck.exe".
+Renaming "clock2.exe" to "cl8734ck2.exe".
+Successfully renamed "clock2.exe" to "cl8734ck2.exe".
+Renaming "clock3.exe" to "cl8734ck3.exe".
+Successfully renamed "clock3.exe" to "cl8734ck3.exe".
+Renaming "day-of-month-dirs.exe" to "day-8734f-m8734nth-dirs.exe".
+Successfully renamed "day-of-month-dirs.exe" to "day-8734f-m8734nth-dirs.exe".
+Renaming "dir-names-to-capital.exe" to "dir-names-t8734-capital.exe".
+Successfully renamed "dir-names-to-capital.exe" to "dir-names-t8734-capital.exe".
+Renaming "encode-pad.exe" to "enc8734de-pad.exe".
+Successfully renamed "encode-pad.exe" to "enc8734de-pad.exe".
+Renaming "encode.exe" to "enc8734de.exe".
+Successfully renamed "encode.exe" to "enc8734de.exe".
+Renaming "file-names-to-capital.exe" to "file-names-t8734-capital.exe".
+Successfully renamed "file-names-to-capital.exe" to "file-names-t8734-capital.exe".
+Renaming "file-names-to-lower.exe" to "file-names-t8734-l8734wer.exe".
+Successfully renamed "file-names-to-lower.exe" to "file-names-t8734-l8734wer.exe".
+Renaming "file-names-to-upper.exe" to "file-names-t8734-upper.exe".
+Successfully renamed "file-names-to-upper.exe" to "file-names-t8734-upper.exe".
+Renaming "flatten-directory-tree.exe" to "flatten-direct8734ry-tree.exe".
+Successfully renamed "flatten-directory-tree.exe" to "flatten-direct8734ry-tree.exe".
+Renaming "for-each-dir.exe" to "f8734r-each-dir.exe".
+Successfully renamed "for-each-dir.exe" to "f8734r-each-dir.exe".
+Renaming "lollygag.exe" to "l8734llygag.exe".
+Successfully renamed "lollygag.exe" to "l8734llygag.exe".
+Renaming "longest-line.exe" to "l8734ngest-line.exe".
+Successfully renamed "longest-line.exe" to "l8734ngest-line.exe".
+Renaming "month-dirs.exe" to "m8734nth-dirs.exe".
+Successfully renamed "month-dirs.exe" to "m8734nth-dirs.exe".
+Renaming "pinderloy.exe" to "pinderl8734y.exe".
+Successfully renamed "pinderloy.exe" to "pinderl8734y.exe".
+Renaming "processwww.exe" to "pr8734cesswww.exe".
+Successfully renamed "processwww.exe" to "pr8734cesswww.exe".
+Renaming "recomb.exe" to "rec8734mb.exe".
+Successfully renamed "recomb.exe" to "rec8734mb.exe".
+Renaming "roman.exe" to "r8734man.exe".
+Successfully renamed "roman.exe" to "r8734man.exe".
+Renaming "rot13.exe" to "r8734t13.exe".
+Successfully renamed "rot13.exe" to "r8734t13.exe".
+Renaming "set-extensions.exe" to "set-extensi8734ns.exe".
+Successfully renamed "set-extensions.exe" to "set-extensi8734ns.exe".
+Renaming "sizeofc.exe" to "size8734fc.exe".
+Successfully renamed "sizeofc.exe" to "size8734fc.exe".
+Renaming "sizeofcpp.exe" to "size8734fcpp.exe".
+Successfully renamed "sizeofcpp.exe" to "size8734fcpp.exe".
+Renaming "sortdup.exe" to "s8734rtdup.exe".
+Successfully renamed "sortdup.exe" to "s8734rtdup.exe".
+Renaming "tokenize.exe" to "t8734kenize.exe".
+Successfully renamed "tokenize.exe" to "t8734kenize.exe".
+Renaming "unquote.exe" to "unqu8734te.exe".
+Successfully renamed "unquote.exe" to "unqu8734te.exe".
+Renaming "wbztojpg.exe" to "wbzt8734jpg.exe".
+Successfully renamed "wbztojpg.exe" to "wbzt8734jpg.exe".
+Renaming "zero-one.exe" to "zer8734-8734ne.exe".
+Successfully renamed "zero-one.exe" to "zer8734-8734ne.exe".
+In RecurseDirs, about to cd to xxcopy
+In RecurseDirs. $DirPath = /rhe/bin/xxcopy
+
+
+
+Directory # 35:
+/rhe/bin/xxcopy
+Renaming "XXCopy-Switches.txt" to "XXC8734py-Switches.txt".
+Successfully renamed "XXCopy-Switches.txt" to "XXC8734py-Switches.txt".
+
+
+Directory # 36:
+/rhe/bin
+In RecurseDirs, about to cd to Communications
+In RecurseDirs. $DirPath = /rhe/Communications
+
+
+
+Directory # 37:
+/rhe/Communications
+In RecurseDirs, about to cd to include
+In RecurseDirs. $DirPath = /rhe/include
+
+
+
+Directory # 38:
+/rhe/include
+Renaming "rhdosgraphics.h" to "rhd8734sgraphics.h".
+Successfully renamed "rhdosgraphics.h" to "rhd8734sgraphics.h".
+In RecurseDirs, about to cd to Java
+In RecurseDirs. $DirPath = /rhe/Java
+
+In RecurseDirs, about to cd to QOTD
+In RecurseDirs. $DirPath = /rhe/Java/QOTD
+
+In RecurseDirs, about to cd to clients
+In RecurseDirs. $DirPath = /rhe/Java/QOTD/clients
+
+
+
+Directory # 39:
+/rhe/Java/QOTD/clients
+Renaming "cookie.c" to "c87348734kie.c".
+Successfully renamed "cookie.c" to "c87348734kie.c".
+Renaming "cookie.nrx" to "c87348734kie.nrx".
+Successfully renamed "cookie.nrx" to "c87348734kie.nrx".
+Renaming "qotd.php" to "q8734td.php".
+Successfully renamed "qotd.php" to "q8734td.php".
+Renaming "socket.c" to "s8734cket.c".
+Successfully renamed "socket.c" to "s8734cket.c".
+In RecurseDirs, about to cd to rfc
+In RecurseDirs. $DirPath = /rhe/Java/QOTD/rfc
+
+
+
+Directory # 40:
+/rhe/Java/QOTD/rfc
+
+
+Directory # 41:
+/rhe/Java/QOTD
+Renaming "cookie.zip" to "c87348734kie.zip".
+Successfully renamed "cookie.zip" to "c87348734kie.zip".
+Renaming "DaemonStopper.class" to "Daem8734nSt8734pper.class".
+
+
+Aragorn@Ketch
+/rhe/test-zone
+%^C
+
+Aragorn@Ketch
+/rhe/test-zone
+%

@@ -1,0 +1,9 @@
+# Gibberish pattern:
+my $gib = qr(^\p{Ll}{8}(?:-\(\d{4}\))?(?:\.[[:alpha:]]{3,4})?$);
+
+# Windows SpotLight pattern:
+my $wsl = qr(^[0-9a-z]{64}(?:-\(\d{4}\))?(?:\.[[:alpha:]]{3,4})?$);
+
+# SHA1 hash pattern:
+my $sha = qr(^[0-9a-z]{40}(?:-\(\d{4}\))?(?:\.[[:alpha:]]{3,4})?$);
+

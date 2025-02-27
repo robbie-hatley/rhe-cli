@@ -1,0 +1,1234 @@
+
+
+In LoadFileList() for loop.  About to add a file to the container:
+   Dir       = C:/bin/
+   ff_name   = custom-old.dic
+
+
+In LoadFileList() for loop.  About to add a file to the container:
+   Dir       = C:/bin/
+   ff_name   = custom.dic
+
+
+In LoadFileList() for loop.  About to add a file to the container:
+   Dir       = C:/bin/
+   ff_name   = dic.dic
+
+
+In LoadFileList() for loop.  About to add a file to the container:
+   Dir       = C:/bin/
+   ff_name   = enable2k_MW10ADD_LST.dic
+
+
+In LoadFileList() for loop.  About to add a file to the container:
+   Dir       = C:/bin/
+   ff_name   = enable2k_SIGWORD_LST.dic
+
+
+In LoadFileList() for loop.  About to add a file to the container:
+   Dir       = C:/bin/
+   ff_name   = enable2k_WORD_LST.dic
+
+
+In LoadFileList() for loop.  About to add a file to the container:
+   Dir       = C:/bin/
+   ff_name   = merged.dic
+     
+In AppendFileToListFunctor()() main constructor.
+ref_count    = 1
+instance     = 1
+applications = 0
+     
+In AppendFileToListFunctor()() application operator.
+ref_count    = 1
+instance     = 1
+applications = 1
+     
+In AppendFileToListFunctor()() application operator.
+ref_count    = 1
+instance     = 1
+applications = 2
+     
+In AppendFileToListFunctor()() application operator.
+ref_count    = 1
+instance     = 1
+applications = 3
+     
+In AppendFileToListFunctor()() application operator.
+ref_count    = 1
+instance     = 1
+applications = 4
+     
+In AppendFileToListFunctor()() application operator.
+ref_count    = 1
+instance     = 1
+applications = 5
+     
+In AppendFileToListFunctor()() application operator.
+ref_count    = 1
+instance     = 1
+applications = 6
+     
+In AppendFileToListFunctor()() application operator.
+ref_count    = 1
+instance     = 1
+applications = 7
+     
+In AppendFileToListFunctor()() copy constructor.
+ref_count    = 2
+instance     = 2
+applications = 7
+     
+In AppendFileToListFunctor()() destructor.
+ref_count    = 2
+instance     = 1
+applications = 7
+
+
+In ns_Spell::BuildDictionary().
+   Number of files processed = 7
+   Size of Dictionary:       = 351161
+     
+In AppendFileToListFunctor()() destructor.
+ref_count    = 2
+instance     = 2
+applications = 7
+
+
+About to return from GetNextWord.
+   Start    = 0
+   WordPos  = 4294967295
+   WordLen  = 0
+   Word     = 
+
+
+About to return from GetNextWord.
+   Start    = 0
+   WordPos  = 3
+   WordLen  = 4
+   Word     = File
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = File
+   WordPos  = 3
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 7
+   WordPos  = 8
+   WordLen  = 4
+   Word     = name
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = name
+   WordPos  = 8
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 12
+   WordPos  = 16
+   WordLen  = 8
+   Word     = spellchk
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = spellchk
+   WordPos  = 16
+   WordLen  = 8
+
+
+About to return from GetNextWord.
+   Start    = 24
+   WordPos  = 25
+   WordLen  = 3
+   Word     = cpp
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = cpp
+   WordPos  = 25
+   WordLen  = 3
+
+
+About to return from GetNextWord.
+   Start    = 28
+   WordPos  = 4294967295
+   WordLen  = 3
+   Word     = cpp
+
+
+About to return from GetNextWord.
+   Start    = 0
+   WordPos  = 3
+   WordLen  = 5
+   Word     = Title
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Title
+   WordPos  = 3
+   WordLen  = 5
+
+
+About to return from GetNextWord.
+   Start    = 8
+   WordPos  = 16
+   WordLen  = 5
+   Word     = Spell
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Spell
+   WordPos  = 16
+   WordLen  = 5
+
+
+About to return from GetNextWord.
+   Start    = 21
+   WordPos  = 22
+   WordLen  = 7
+   Word     = Checker
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Checker
+   WordPos  = 22
+   WordLen  = 7
+
+
+About to return from GetNextWord.
+   Start    = 29
+   WordPos  = 4294967295
+   WordLen  = 7
+   Word     = Checker
+
+
+About to return from GetNextWord.
+   Start    = 0
+   WordPos  = 3
+   WordLen  = 10
+   Word     = Authorship
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Authorship
+   WordPos  = 3
+   WordLen  = 10
+
+
+About to return from GetNextWord.
+   Start    = 13
+   WordPos  = 16
+   WordLen  = 7
+   Word     = Written
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Written
+   WordPos  = 16
+   WordLen  = 7
+
+
+About to return from GetNextWord.
+   Start    = 23
+   WordPos  = 24
+   WordLen  = 6
+   Word     = Monday
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Monday
+   WordPos  = 24
+   WordLen  = 6
+
+
+About to return from GetNextWord.
+   Start    = 30
+   WordPos  = 31
+   WordLen  = 5
+   Word     = April
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = April
+   WordPos  = 31
+   WordLen  = 5
+
+
+About to return from GetNextWord.
+   Start    = 36
+   WordPos  = 46
+   WordLen  = 2
+   Word     = by
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = by
+   WordPos  = 46
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 48
+   WordPos  = 49
+   WordLen  = 6
+   Word     = Robbie
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Robbie
+   WordPos  = 49
+   WordLen  = 6
+
+
+About to return from GetNextWord.
+   Start    = 55
+   WordPos  = 56
+   WordLen  = 6
+   Word     = Hatley
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Hatley
+   WordPos  = 56
+   WordLen  = 6
+
+
+About to return from GetNextWord.
+   Start    = 62
+   WordPos  = 4294967295
+   WordLen  = 6
+   Word     = Hatley
+
+
+About to return from GetNextWord.
+   Start    = 0
+   WordPos  = 16
+   WordLen  = 4
+   Word     = Last
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Last
+   WordPos  = 16
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 20
+   WordPos  = 21
+   WordLen  = 6
+   Word     = edited
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = edited
+   WordPos  = 21
+   WordLen  = 6
+
+
+About to return from GetNextWord.
+   Start    = 27
+   WordPos  = 28
+   WordLen  = 9
+   Word     = Wednesday
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Wednesday
+   WordPos  = 28
+   WordLen  = 9
+
+
+About to return from GetNextWord.
+   Start    = 37
+   WordPos  = 38
+   WordLen  = 3
+   Word     = May
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = May
+   WordPos  = 38
+   WordLen  = 3
+
+
+About to return from GetNextWord.
+   Start    = 41
+   WordPos  = 4294967295
+   WordLen  = 3
+   Word     = May
+
+
+About to return from GetNextWord.
+   Start    = 0
+   WordPos  = 3
+   WordLen  = 11
+   Word     = Description
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Description
+   WordPos  = 3
+   WordLen  = 11
+
+
+About to return from GetNextWord.
+   Start    = 14
+   WordPos  = 16
+   WordLen  = 6
+   Word     = Checks
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Checks
+   WordPos  = 16
+   WordLen  = 6
+
+
+About to return from GetNextWord.
+   Start    = 22
+   WordPos  = 23
+   WordLen  = 8
+   Word     = spelling
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = spelling
+   WordPos  = 23
+   WordLen  = 8
+
+
+About to return from GetNextWord.
+   Start    = 31
+   WordPos  = 32
+   WordLen  = 2
+   Word     = in
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = in
+   WordPos  = 32
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 34
+   WordPos  = 35
+   WordLen  = 5
+   Word     = ASCII
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = ASCII
+   WordPos  = 35
+   WordLen  = 5
+
+
+About to return from GetNextWord.
+   Start    = 40
+   WordPos  = 41
+   WordLen  = 4
+   Word     = text
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = text
+   WordPos  = 41
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 45
+   WordPos  = 46
+   WordLen  = 5
+   Word     = files
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = files
+   WordPos  = 46
+   WordLen  = 5
+
+
+About to return from GetNextWord.
+   Start    = 51
+   WordPos  = 4294967295
+   WordLen  = 5
+   Word     = files
+
+
+About to return from GetNextWord.
+   Start    = 0
+   WordPos  = 3
+   WordLen  = 2
+   Word     = To
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = To
+   WordPos  = 3
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 5
+   WordPos  = 6
+   WordLen  = 3
+   Word     = use
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = use
+   WordPos  = 6
+   WordLen  = 3
+
+
+About to return from GetNextWord.
+   Start    = 9
+   WordPos  = 16
+   WordLen  = 6
+   Word     = Invoke
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Invoke
+   WordPos  = 16
+   WordLen  = 6
+
+
+About to return from GetNextWord.
+   Start    = 22
+   WordPos  = 23
+   WordLen  = 4
+   Word     = like
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = like
+   WordPos  = 23
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 27
+   WordPos  = 28
+   WordLen  = 4
+   Word     = this
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = this
+   WordPos  = 28
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 32
+   WordPos  = 4294967295
+   WordLen  = 4
+   Word     = this
+
+
+About to return from GetNextWord.
+   Start    = 0
+   WordPos  = 16
+   WordLen  = 8
+   Word     = spellchk
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = spellchk
+   WordPos  = 16
+   WordLen  = 8
+
+
+About to return from GetNextWord.
+   Start    = 24
+   WordPos  = 25
+   WordLen  = 8
+   Word     = filename
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = filename
+   WordPos  = 25
+   WordLen  = 8
+
+
+About to return from GetNextWord.
+   Start    = 33
+   WordPos  = 34
+   WordLen  = 3
+   Word     = txt
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = txt
+   WordPos  = 34
+   WordLen  = 3
+
+
+About to return from GetNextWord.
+   Start    = 37
+   WordPos  = 4294967295
+   WordLen  = 3
+   Word     = txt
+
+
+About to return from GetNextWord.
+   Start    = 0
+   WordPos  = 16
+   WordLen  = 5
+   Word     = Spell
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Spell
+   WordPos  = 16
+   WordLen  = 5
+
+
+About to return from GetNextWord.
+   Start    = 21
+   WordPos  = 22
+   WordLen  = 7
+   Word     = Checker
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Checker
+   WordPos  = 22
+   WordLen  = 7
+
+
+About to return from GetNextWord.
+   Start    = 29
+   WordPos  = 30
+   WordLen  = 4
+   Word     = will
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = will
+   WordPos  = 30
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 34
+   WordPos  = 35
+   WordLen  = 4
+   Word     = then
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = then
+   WordPos  = 35
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 39
+   WordPos  = 40
+   WordLen  = 6
+   Word     = prompt
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = prompt
+   WordPos  = 40
+   WordLen  = 6
+
+
+About to return from GetNextWord.
+   Start    = 46
+   WordPos  = 47
+   WordLen  = 3
+   Word     = you
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = you
+   WordPos  = 47
+   WordLen  = 3
+
+
+About to return from GetNextWord.
+   Start    = 50
+   WordPos  = 51
+   WordLen  = 9
+   Word     = regarding
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = regarding
+   WordPos  = 51
+   WordLen  = 9
+
+
+About to return from GetNextWord.
+   Start    = 60
+   WordPos  = 61
+   WordLen  = 4
+   Word     = each
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = each
+   WordPos  = 61
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 65
+   WordPos  = 66
+   WordLen  = 4
+   Word     = word
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = word
+   WordPos  = 66
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 70
+   WordPos  = 71
+   WordLen  = 2
+   Word     = in
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = in
+   WordPos  = 71
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 73
+   WordPos  = 4294967295
+   WordLen  = 2
+   Word     = in
+
+
+About to return from GetNextWord.
+   Start    = 0
+   WordPos  = 16
+   WordLen  = 8
+   Word     = filename
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = filename
+   WordPos  = 16
+   WordLen  = 8
+
+
+About to return from GetNextWord.
+   Start    = 24
+   WordPos  = 25
+   WordLen  = 3
+   Word     = txt
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = txt
+   WordPos  = 25
+   WordLen  = 3
+
+
+About to return from GetNextWord.
+   Start    = 28
+   WordPos  = 29
+   WordLen  = 5
+   Word     = which
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = which
+   WordPos  = 29
+   WordLen  = 5
+
+
+About to return from GetNextWord.
+   Start    = 34
+   WordPos  = 35
+   WordLen  = 2
+   Word     = it
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = it
+   WordPos  = 35
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 37
+   WordPos  = 38
+   WordLen  = 6
+   Word     = cannot
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = cannot
+   WordPos  = 38
+   WordLen  = 6
+
+
+About to return from GetNextWord.
+   Start    = 44
+   WordPos  = 45
+   WordLen  = 4
+   Word     = find
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = find
+   WordPos  = 45
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 49
+   WordPos  = 50
+   WordLen  = 2
+   Word     = in
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = in
+   WordPos  = 50
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 52
+   WordPos  = 53
+   WordLen  = 3
+   Word     = its
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = its
+   WordPos  = 53
+   WordLen  = 3
+
+
+About to return from GetNextWord.
+   Start    = 56
+   WordPos  = 57
+   WordLen  = 12
+   Word     = dictionaries
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = dictionaries
+   WordPos  = 57
+   WordLen  = 12
+
+
+About to return from GetNextWord.
+   Start    = 69
+   WordPos  = 4294967295
+   WordLen  = 12
+   Word     = dictionaries
+
+
+About to return from GetNextWord.
+   Start    = 0
+   WordPos  = 16
+   WordLen  = 6
+   Word     = giving
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = giving
+   WordPos  = 16
+   WordLen  = 6
+
+
+About to return from GetNextWord.
+   Start    = 22
+   WordPos  = 23
+   WordLen  = 3
+   Word     = you
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = you
+   WordPos  = 23
+   WordLen  = 3
+
+
+About to return from GetNextWord.
+   Start    = 26
+   WordPos  = 27
+   WordLen  = 3
+   Word     = the
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = the
+   WordPos  = 27
+   WordLen  = 3
+
+
+About to return from GetNextWord.
+   Start    = 30
+   WordPos  = 31
+   WordLen  = 6
+   Word     = choice
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = choice
+   WordPos  = 31
+   WordLen  = 6
+
+
+About to return from GetNextWord.
+   Start    = 37
+   WordPos  = 38
+   WordLen  = 2
+   Word     = of
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = of
+   WordPos  = 38
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 40
+   WordPos  = 41
+   WordLen  = 10
+   Word     = correcting
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = correcting
+   WordPos  = 41
+   WordLen  = 10
+
+
+About to return from GetNextWord.
+   Start    = 51
+   WordPos  = 52
+   WordLen  = 3
+   Word     = the
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = the
+   WordPos  = 52
+   WordLen  = 3
+
+
+About to return from GetNextWord.
+   Start    = 55
+   WordPos  = 56
+   WordLen  = 4
+   Word     = word
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = word
+   WordPos  = 56
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 60
+   WordPos  = 62
+   WordLen  = 2
+   Word     = or
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = or
+   WordPos  = 62
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 64
+   WordPos  = 65
+   WordLen  = 6
+   Word     = adding
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = adding
+   WordPos  = 65
+   WordLen  = 6
+
+
+About to return from GetNextWord.
+   Start    = 71
+   WordPos  = 72
+   WordLen  = 2
+   Word     = it
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = it
+   WordPos  = 72
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 74
+   WordPos  = 4294967295
+   WordLen  = 2
+   Word     = it
+
+
+About to return from GetNextWord.
+   Start    = 0
+   WordPos  = 16
+   WordLen  = 2
+   Word     = to
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = to
+   WordPos  = 16
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 18
+   WordPos  = 19
+   WordLen  = 8
+   Word     = personal
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = personal
+   WordPos  = 19
+   WordLen  = 8
+
+
+About to return from GetNextWord.
+   Start    = 27
+   WordPos  = 28
+   WordLen  = 3
+   Word     = dic
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = dic
+   WordPos  = 28
+   WordLen  = 3
+
+
+About to return from GetNextWord.
+   Start    = 31
+   WordPos  = 33
+   WordLen  = 2
+   Word     = or
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = or
+   WordPos  = 33
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 35
+   WordPos  = 36
+   WordLen  = 8
+   Word     = ignoring
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = ignoring
+   WordPos  = 36
+   WordLen  = 8
+
+
+About to return from GetNextWord.
+   Start    = 44
+   WordPos  = 45
+   WordLen  = 2
+   Word     = it
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = it
+   WordPos  = 45
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 47
+   WordPos  = 4294967295
+   WordLen  = 2
+   Word     = it
+
+
+About to return from GetNextWord.
+   Start    = 0
+   WordPos  = 3
+   WordLen  = 2
+   Word     = To
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = To
+   WordPos  = 3
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 5
+   WordPos  = 6
+   WordLen  = 4
+   Word     = make
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = make
+   WordPos  = 6
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 10
+   WordPos  = 16
+   WordLen  = 4
+   Word     = Link
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = Link
+   WordPos  = 16
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 20
+   WordPos  = 21
+   WordLen  = 4
+   Word     = with
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = with
+   WordPos  = 21
+   WordLen  = 4
+
+
+About to return from GetNextWord.
+   Start    = 25
+   WordPos  = 26
+   WordLen  = 7
+   Word     = modules
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = modules
+   WordPos  = 26
+   WordLen  = 7
+
+
+About to return from GetNextWord.
+   Start    = 33
+   WordPos  = 35
+   WordLen  = 6
+   Word     = rhutil
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = rhutil
+   WordPos  = 35
+   WordLen  = 6
+
+
+About to return from GetNextWord.
+   Start    = 41
+   WordPos  = 42
+   WordLen  = 1
+   Word     = o
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = o
+   WordPos  = 42
+   WordLen  = 1
+
+
+About to return from GetNextWord.
+   Start    = 43
+   WordPos  = 45
+   WordLen  = 3
+   Word     = and
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = and
+   WordPos  = 45
+   WordLen  = 3
+
+
+About to return from GetNextWord.
+   Start    = 48
+   WordPos  = 50
+   WordLen  = 5
+   Word     = rhdir
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = rhdir
+   WordPos  = 50
+   WordLen  = 5
+
+
+About to return from GetNextWord.
+   Start    = 55
+   WordPos  = 56
+   WordLen  = 1
+   Word     = o
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = o
+   WordPos  = 56
+   WordLen  = 1
+
+
+About to return from GetNextWord.
+   Start    = 57
+   WordPos  = 59
+   WordLen  = 2
+   Word     = in
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = in
+   WordPos  = 59
+   WordLen  = 2
+
+
+About to return from GetNextWord.
+   Start    = 61
+   WordPos  = 63
+   WordLen  = 5
+   Word     = librh
+
+
+In SpellCheck().  Just entered inner while loop.
+   Word     = librh
+   WordPos  = 63
+   WordLen  = 5
+Exiting due to signal SIGINT 
+INTR key Pressed at eip=000185f2

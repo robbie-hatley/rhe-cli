@@ -1,0 +1,7 @@
+next if -d; # dir
+next if -l; # link
+next if -c; # character special file
+next if -b; # block special file
+next if -S; # socket
+next if -p; # pipe
+next if -t $_; # tty 

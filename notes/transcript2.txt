@@ -1,0 +1,161 @@
+Type a text string, 80 characters or less:
+Entering recursion level 1, partition number 1.
+entry = 0  size = 80
+string on entry:
+Once he rode roughly over her sweet virgin folds with his Zairian xyzlophone!!!!
+Entering recursion level 2, partition number 2.
+entry = -1  size = 40
+string on entry:
+O!ce he !!de !ehgh a ea heZ  eeh  hg f d
+Entering recursion level 3, partition number 3.
+entry = 1  size = 28
+string on entry:
+!ehgheadea!heZ!eeehhehgcf!Od
+Entering recursion level 4, partition number 4.
+entry = 1  size = 24
+string on entry:
+eadeahheZgeeehhehgcfheOd
+Entering recursion level 5, partition number 5.
+entry = -1  size = 7
+string on entry:
+adadOZc
+Entering recursion level 6, partition number 6.
+entry = -1  size = 5
+string on entry:
+aaOZc
+Entering recursion level 7, partition number 7.
+entry = 1  size = 4
+string on entry:
+aaZc
+Entering recursion level 8, partition number 8.
+entry = 1  size = 3
+string on entry:
+aac
+Returning to recursion level 7.
+String on exit:
+  aacddeeeeeeeehghfhhghhiiiiiislwotnrvtswsrrrvonyxyzloplonuororn
+Returning to recursion level 6.
+String on exit:
+  Zaacddeeeeeeeehghfhhghhiiiiiislwotnrvtswsrrrvonyxyzloplonuororn
+Returning to recursion level 5.
+String on exit:
+  OZaacddeeeeeeeehghfhhghhiiiiiislwotnrvtswsrrrvonyxyzloplonuororn
+Returning to recursion level 4.
+String on exit:
+  OZaacddeeeeeeeehghfhhghhiiiiiislwotnrvtswsrrrvonyxyzloplonuororn
+Entering recursion level 5, partition number 9.
+entry = 1  size = 9
+string on entry:
+hghfhhghh
+Entering recursion level 6, partition number 10.
+entry = -1  size = 3
+string on entry:
+gfg
+Entering recursion level 7, partition number 11.
+entry = 1  size = 2
+string on entry:
+gg
+Returning to recursion level 6.
+String on exit:
+  gghhhhhhiiiiiislwotnrvtswsrrrvonyxyzloplonuororn
+Returning to recursion level 5.
+String on exit:
+  fgghhhhhhiiiiiislwotnrvtswsrrrvonyxyzloplonuororn
+Returning to recursion level 4.
+String on exit:
+  fgghhhhhhiiiiiislwotnrvtswsrrrvonyxyzloplonuororn
+Returning to recursion level 3.
+String on exit:
+  OZaacddeeeeeeeefgghhhhhhiiiiiislwotnrvtswsrrrvonyxyzloplonuororn
+Returning to recursion level 2.
+String on exit:
+  !!!!OZaacddeeeeeeeefgghhhhhhiiiiiislwotnrvtswsrrrvonyxyzloplonuororn
+Returning to recursion level 1.
+String on exit:
+              !!!!OZaacddeeeeeeeefgghhhhhhiiiiiislwotnrvtswsrrrvonyxyzloplonuororn
+Entering recursion level 2, partition number 12.
+entry = 1  size = 34
+string on entry:
+slwotnrvtswsrrrvonyxyzloplonuororn
+Entering recursion level 3, partition number 13.
+entry = -1  size = 3
+string on entry:
+lll
+Returning to recursion level 2.
+String on exit:
+  lllnnnntswsrrrvovyxyzroptoouororws
+Entering recursion level 3, partition number 14.
+entry = 1  size = 27
+string on entry:
+tswsrrrvovyxyzroptoouororws
+Entering recursion level 4, partition number 15.
+entry = -1  size = 26
+string on entry:
+tswsrrrvovyxyroptoouororws
+Entering recursion level 5, partition number 16.
+entry = -1  size = 7
+string on entry:
+ooooopo
+Returning to recursion level 4.
+String on exit:
+  ooooooprrrrrryxtyvuvswstwsz
+Entering recursion level 5, partition number 17.
+entry = 1  size = 13
+string on entry:
+yxtyvuvswstws
+Entering recursion level 6, partition number 18.
+entry = -1  size = 6
+string on entry:
+sttsus
+Entering recursion level 7, partition number 19.
+entry = 1  size = 3
+string on entry:
+utt
+Returning to recursion level 6.
+String on exit:
+  ttuvvwywxyz
+Returning to recursion level 5.
+String on exit:
+  sssttuvvwywxyz
+Entering recursion level 6, partition number 20.
+entry = 1  size = 5
+string on entry:
+wywxy
+Entering recursion level 7, partition number 21.
+entry = 1  size = 3
+string on entry:
+yxy
+Entering recursion level 8, partition number 22.
+entry = 1  size = 2
+string on entry:
+yy
+Returning to recursion level 7.
+String on exit:
+  yyz
+Returning to recursion level 6.
+String on exit:
+  xyyz
+Returning to recursion level 5.
+String on exit:
+  wwxyyz
+Returning to recursion level 4.
+String on exit:
+  sssttuvvwwxyyz
+Returning to recursion level 3.
+String on exit:
+  ooooooprrrrrrsssttuvvwwxyyz
+Returning to recursion level 2.
+String on exit:
+  ooooooprrrrrrsssttuvvwwxyyz
+Returning to recursion level 1.
+String on exit:
+  lllnnnnooooooprrrrrrsssttuvvwwxyyz
+Returning to recursion level 0.
+Final exit point reached after 22 partitions.
+String on exit:
+              !!!!OZaacddeeeeeeeefgghhhhhhiiiiiilllnnnnooooooprrrrrrsssttuvvwwxyyz
+string length: 80
+input  string:
+Once he rode roughly over her sweet virgin folds with his Zairian xyzlophone!!!!
+output string:
+            !!!!OZaacddeeeeeeeefgghhhhhhiiiiiilllnnnnooooooprrrrrrsssttuvvwwxyyz

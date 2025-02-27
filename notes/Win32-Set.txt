@@ -1,0 +1,105 @@
+ALLUSERSPROFILE='C:\Documents and Settings\All Users'
+APPDATA='C:\Documents and Settings\Aragorn\Application Data'
+BASH=/bin/bash
+BASHOPTS=cmdhist:complete_fullquote:expand_aliases:extquote:force_fignore:hostcomplete:interactive_comments:login_shell:progcomp:promptvars:sourcepath
+BASH_ALIASES=()
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_CMDS=()
+BASH_LINENO=()
+BASH_SOURCE=()
+BASH_VERSINFO=([0]="4" [1]="3" [2]="46" [3]="7" [4]="release" [5]="i686-pc-cygwin")
+BASH_VERSION='4.3.46(7)-release'
+CLIENTNAME=Console
+COMMONPROGRAMFILES='C:\Program Files\Common Files'
+COMPUTERNAME=GALLEON
+COMSPEC='C:\WINDOWS\system32\cmd.exe'
+CYG_SYS_BASHRC=1
+DIRSTACK=()
+EUID=197617
+EXECIGNORE='*.dll'
+FP_NO_HOST_CHECK=NO
+GMAXLOC='C:\Programs\Graphics\Gmax\'
+GROUPS=()
+HISTFILE=/home/.bash_history
+HISTFILESIZE=500
+HISTSIZE=500
+HOME=/home
+HOMEDRIVE=C:
+HOMEPATH='\Documents and Settings\Aragorn'
+HOSTNAME=Galleon
+HOSTTYPE=i686
+IFS=$' \t\n'
+INFOPATH=/usr/local/info:/usr/share/info:/usr/info
+LANG=en_US.UTF-8
+LOGONSERVER='\\GALLEON'
+MACHTYPE=i686-pc-cygwin
+MAILCHECK=60
+NUMBER_OF_PROCESSORS=2
+OLDPWD=/home
+OPTERR=1
+OPTIND=1
+ORIGINAL_PATH='/cygdrive/c/Documents and Settings/All Users/Application Data/Oracle/Java/javapath:/cygdrive/c/Program Files/NVIDIA Corporation/PhysX/Common:/cygdrive/c/WINDOWS/system32:/cygdrive/c/WINDOWS:/cygdrive/c/WINDOWS/System32/Wbem:/cygdrive/c/Programs/System-Utilities/Windows-XP-Support-Tools:/cygdrive/c/WINDOWS/system32/WindowsPowerShell/v1.0:/cygdrive/c/Program Files/Common Files/Acronis/SnapAPI:/cygdrive/c/Programs/Document-Readers/Calibre'
+OS=Windows_NT
+OSTYPE=cygwin
+PATH='/usr/local/bin:/usr/bin:/cygdrive/c/Documents and Settings/All Users/Application Data/Oracle/Java/javapath:/cygdrive/c/Program Files/NVIDIA Corporation/PhysX/Common:/cygdrive/c/WINDOWS/system32:/cygdrive/c/WINDOWS:/cygdrive/c/WINDOWS/System32/Wbem:/cygdrive/c/Programs/System-Utilities/Windows-XP-Support-Tools:/cygdrive/c/WINDOWS/system32/WindowsPowerShell/v1.0:/cygdrive/c/Program Files/Common Files/Acronis/SnapAPI:/cygdrive/c/Programs/Document-Readers/Calibre:/home/perl5/bin:/rhe/Euler:/rhe/scripts/util:/rhe/scripts/cryptography:/rhe/scripts/filters:/rhe/scripts/fractals:/rhe/scripts/games:/rhe/scripts/graphics:/rhe/scripts/humor:/rhe/scripts/math:/rhe/scripts/perl-internals:/rhe/scripts/sh:/rhe/scripts/test:/rhe/scripts/third-party:/rhe/scripts/perlmind:/rhe/bin32/util:/rhe/bin32/Euler:/rhe/bin32/fractals:/rhe/bin32/games:/rhe/bin32/graphics:/rhe/bin32/humor:/rhe/bin32/jive:/rhe/bin32/math:/rhe/bin32/test:/rhe/bin32/third-party'
+PATHEXT='.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.PSC1'
+PERL5LIB=/home/perl5/lib/perl5:/rhe/modules
+PERL_LOCAL_LIB_ROOT=/home/perl5
+PERL_MB_OPT='--install_base "/home/perl5"'
+PERL_MM_OPT=INSTALL_BASE=/home/perl5
+PIPESTATUS=([0]="0")
+PLATFORM=Win32
+PPID=3328
+PRINTER='WebEx Document Loader'
+PROCESSOR_ARCHITECTURE=x86
+PROCESSOR_IDENTIFIER='x86 Family 15 Model 6 Stepping 5, GenuineIntel'
+PROCESSOR_LEVEL=15
+PROCESSOR_REVISION=0605
+PROFILEREAD=true
+PROGRAMFILES='C:\Program Files'
+PS1='\[\e]0;\w\a\]\n\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
+PS2='> '
+PS4='+ '
+PSModulePath='C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules\;C:\Programs\Macro-Interpreters\AutoIt3\AutoItX'
+PWD=/rhe
+SESSIONNAME=Console
+SHELL=/bin/bash
+SHELLOPTS=braceexpand:emacs:hashall:histexpand:history:interactive-comments:monitor
+SHLVL=1
+SYSTEMDRIVE=C:
+SYSTEMROOT='C:\WINDOWS'
+TEMP=/tmp
+TERM=xterm
+TMP=/tmp
+TZ=America/Los_Angeles
+UID=197617
+USER=Aragorn
+USERDOMAIN=GALLEON
+USERNAME=Aragorn
+USERPROFILE='C:\Documents and Settings\Aragorn'
+WINDIR='C:\WINDOWS'
+_=/rhe
+__COMPAT_LAYER='EnableNXShowUI '
+profile_d () 
+{ 
+    _LC_ALL_SET_="${LC_ALL+set}";
+    _LC_SAVE_="${LC_ALL-null}";
+    LC_ALL=C;
+    if [ "${_LC_SAVE_}" = "null" ]; then
+        for file in /etc/profile.d/*.$1;
+        do
+            [ -e "${file}" ] && . "${file}";
+        done;
+        unset LC_ALL;
+    else
+        for file in /etc/profile.d/*.$1;
+        do
+            [ -e "${file}" ] && LC_ALL="${_LC_SAVE_}" . "${file}";
+        done;
+        LC_ALL="${_LC_SAVE_}";
+    fi;
+    unset file;
+    unset _LC_ALL_SET_;
+    unset _LC_SAVE_
+}

@@ -1,0 +1,63 @@
+perl -E 'use bigint; say 365365365365365365 * 365365365365365365;' | xargs number-to-words.perl
+133491850208566925016658299941583225
+
+perl -E '
+
+133_491_850_208_566_925_016_658_299_941_583_225
+
+
+
+".  He [ten-year-old Truman Henry
+Safford] flew around the room like a top, pulled his pantaloons over the
+tops of his boots, bit his hands, rolled his eyes in their sockets, sometimes
+smiling and talking, and then seeming to be in an agony, until, in not more
+than one minute, said he, 133_491_850_208_566_925_016_658_299_941_583_225 !
+
+তিনি রাস্তায় নেমে গেল
+সে রাস্তার নিচে দৌড়ে
+তিনি রাস্তায় নেমে গেল
+
+Object compile command line:
+g++ -I /rhe/include -pedantic -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -std=gnu++14 -Os -c rhdir.cpp -o rhdir.o
+
+A  SHR       C:\cygwin64\rhe\test-range\gibberish-test\gib ber ish.txt
+
+。кîû☺♂ã猫eåÞÐ貲эdð♯ß♂本燥нÖШíюà邓巑嬣л慍Èуd♄oарКÒaсíБÁ♇巰浒xб粨ÝР
+覉♪жuЩуüózÊÁeЭищ卤♅。潢оýЩRГ剐鰜ЗìЙî♪сР兾щзÚ
+
+Some file names:
+кîû☺♂ã猫eåÞÐ貲эdð
+ß♂本燥нÖШíюà邓巑嬣л慍
+覉♪жuЩуüózÊÁeЭищ卤♅。
+♄oарКÒaсíБÁ♇
+
+graph-equations.perl '0' '18.85' '-3.0' '3.0' '1200' '800' 'C:\D\Library\NonFiction\Mathematics\Experimental\graph-bitmap-001.bmp' '$y=sin($x)' '$y = cos($x)' '$y = tan($x)' '$y = cot($x)' '$y = sec($x)' '$y = csc($x)'
+
+0p_000_autorebase.dash
+
+perl -E 'use Math::Trig; say();'
+
+Cut from graph-equations.perl main:
+
+=pod
+
+Stuff cut from main:
+
+   my $fh = File::Temp->new(SUFFIX => '.dat');
+
+=cut
+
+Transfer to LagrangeL2 YouTube "Thinking" playlist:
+https://www.youtube.com/watch?v=qUdU7L4sEZQ
+https://www.youtube.com/watch?v=GBfoTUG41i4
+https://www.youtube.com/watch?v=DW4DXOAXF8U
+https://www.youtube.com/watch?v=acLW1vFO-2Q
+https://www.youtube.com/watch?v=M9H8eVcL58s
+https://www.youtube.com/watch?v=inGi9MlKD1k
+https://www.youtube.com/watch?v=NmNUwzowiJw
+
+
+
+
+
+

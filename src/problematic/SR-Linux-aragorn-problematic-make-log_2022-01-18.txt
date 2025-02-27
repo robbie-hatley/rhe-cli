@@ -1,0 +1,1134 @@
+BASH on Mate Terminal on Manjaro Linux aragorn@Square-Rigger Tue 2022-01-18, 02:53:11 PM
+/d/rhe/src/problematic
+%make
+$PLATFORM  is Linux
+$INCDIR    is /d/rhe/include
+$LIBSRCDIR is /d/rhe/src/librh
+$LIBDIR    is /home/aragorn/lib
+$EXEDIR    is /home/aragorn/bin/problematic
+Using pattern rule %:%.cpp to compile alphdirs.cpp to alphdirs:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 alphdirs.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/alphdirs
+alphdirs is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile boxify.cpp to boxify:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 boxify.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/boxify
+boxify.cpp: In function ‘int main(int, char**)’:
+boxify.cpp:68:14: warning: conversion from ‘time_t’ {aka ‘long int’} to ‘unsigned int’ may change value [-Wconversion]
+   68 |    srand(time(0));
+      |          ~~~~^~~
+boxify is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile census.cpp to census:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 census.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/census
+census.cpp:31: warning: macro "NDEBUG" is not used [-Wunused-macros]
+   31 | #define NDEBUG
+      | 
+census.cpp:37: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   37 | #define BLAT_ENABLE
+      | 
+census.cpp: In member function ‘void ns_Census::ProcessCurDirFunctor::operator()()’:
+census.cpp:256:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  256 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+census.cpp:262:37: warning: conversion from ‘std::vector<rhdir::FileRecord>::size_type’ {aka ‘long unsigned int’} to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  262 |    uint32_t NumFiles = FileList.size();
+      |                        ~~~~~~~~~~~~~^~
+make: [/rhe/src/maketail:312: census] Error 1 (ignored)
+census is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile day-dirs.cpp to day-dirs:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 day-dirs.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/day-dirs
+day-dirs is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile day-of-month-dirs.cpp to day-of-month-dirs:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 day-of-month-dirs.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/day-of-month-dirs
+day-of-month-dirs is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile dedup-files.cpp to dedup-files:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 dedup-files.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/dedup-files
+dedup-files.cpp:39:10: fatal error: pc.h: No such file or directory
+   39 | #include <pc.h>
+      |          ^~~~~~
+compilation terminated.
+make: [/rhe/src/maketail:312: dedup-files] Error 1 (ignored)
+dedup-files is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile dedup-newsbin-files.cpp to dedup-newsbin-files:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 dedup-newsbin-files.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/dedup-newsbin-files
+dedup-newsbin-files.cpp:215: warning: macro "NDEBUG" is not used [-Wunused-macros]
+  215 | #define NDEBUG
+      | 
+dedup-newsbin-files.cpp:223: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+  223 | #define BLAT_ENABLE
+      | 
+dedup-newsbin-files.cpp: In member function ‘void ns_DedupNewsbin::DedupCurDir::operator()()’:
+dedup-newsbin-files.cpp:639:33: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  639 |    std::string CurrDir ( rhdir::GetFullCurrPath() );
+      |                                 ^~~~~~~~~~~~~~~
+dedup-newsbin-files.cpp: In function ‘void ns_DedupNewsbin::LoadFileNameMap(ns_DedupNewsbin::FRM&, ns_DedupNewsbin::LS&, const string&)’:
+dedup-newsbin-files.cpp:763:4: error: ‘ffblk’ was not declared in this scope
+  763 |    ffblk              File_Block    = ffblk();
+      |    ^~~~~
+dedup-newsbin-files.cpp:778:25: error: ‘FA_RDONLY’ was not declared in this scope; did you mean ‘rhdir::FA_RDONLY’?
+  778 |    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+      |                         ^~~~~~~~~
+      |                         rhdir::FA_RDONLY
+In file included from dedup-newsbin-files.cpp:227:
+/d/rhe/include/rhdir.hpp:115:27: note: ‘rhdir::FA_RDONLY’ declared here
+  115 | const unsigned short int  FA_RDONLY  =  1;
+      |                           ^~~~~~~~~
+dedup-newsbin-files.cpp:778:37: error: ‘FA_HIDDEN’ was not declared in this scope; did you mean ‘rhdir::FA_HIDDEN’?
+  778 |    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+      |                                     ^~~~~~~~~
+      |                                     rhdir::FA_HIDDEN
+In file included from dedup-newsbin-files.cpp:227:
+/d/rhe/include/rhdir.hpp:116:27: note: ‘rhdir::FA_HIDDEN’ declared here
+  116 | const unsigned short int  FA_HIDDEN  =  2;
+      |                           ^~~~~~~~~
+dedup-newsbin-files.cpp:778:49: error: ‘FA_SYSTEM’ was not declared in this scope; did you mean ‘rhdir::FA_SYSTEM’?
+  778 |    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+      |                                                 ^~~~~~~~~
+      |                                                 rhdir::FA_SYSTEM
+In file included from dedup-newsbin-files.cpp:227:
+/d/rhe/include/rhdir.hpp:117:27: note: ‘rhdir::FA_SYSTEM’ declared here
+  117 | const unsigned short int  FA_SYSTEM  =  4;
+      |                           ^~~~~~~~~
+dedup-newsbin-files.cpp:778:61: error: ‘FA_ARCH’ was not declared in this scope; did you mean ‘rhdir::FA_ARCH’?
+  778 |    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+      |                                                             ^~~~~~~
+      |                                                             rhdir::FA_ARCH
+In file included from dedup-newsbin-files.cpp:227:
+/d/rhe/include/rhdir.hpp:120:27: note: ‘rhdir::FA_ARCH’ declared here
+  120 | const unsigned short int  FA_ARCH    = 32;
+      |                           ^~~~~~~
+dedup-newsbin-files.cpp:785:32: error: ‘File_Block’ was not declared in this scope
+  785 |    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+      |                                ^~~~~~~~~~
+dedup-newsbin-files.cpp:785:16: error: ‘findfirst’ was not declared in this scope
+  785 |    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+      |                ^~~~~~~~~
+dedup-newsbin-files.cpp:785:76: error: ‘findnext’ was not declared in this scope; did you mean ‘rindex’?
+  785 |    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+      |                                                                            ^~~~~~~~
+      |                                                                            rindex
+dedup-newsbin-files.cpp: In function ‘int ns_DedupNewsbin::EradicateDuplicates(ns_DedupNewsbin::FRM&, const string&, const ns_DedupNewsbin::Bools_t&, ns_DedupNewsbin::Stats_t&)’:
+dedup-newsbin-files.cpp:943:18: error: ‘__file_exists’ was not declared in this scope
+  943 |             if (!__file_exists(Current->second.name.c_str()))
+      |                  ^~~~~~~~~~~~~
+dedup-newsbin-files.cpp:965:18: error: ‘__file_exists’ was not declared in this scope
+  965 |             if (!__file_exists(Compare->second.name.c_str()))
+      |                  ^~~~~~~~~~~~~
+dedup-newsbin-files.cpp:1035:33: error: ‘struct rhdir::FileRecord’ has no member named ‘timestamp’
+ 1035 |             if (Current->second.timestamp > Compare->second.timestamp)
+      |                                 ^~~~~~~~~
+dedup-newsbin-files.cpp:1035:61: error: ‘struct rhdir::FileRecord’ has no member named ‘timestamp’
+ 1035 |             if (Current->second.timestamp > Compare->second.timestamp)
+      |                                                             ^~~~~~~~~
+make: [/rhe/src/maketail:312: dedup-newsbin-files] Error 1 (ignored)
+dedup-newsbin-files is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile dedup-newsbin-multi.cpp to dedup-newsbin-multi:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 dedup-newsbin-multi.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/dedup-newsbin-multi
+dedup-newsbin-multi.cpp: In function ‘void ns_DedupNewsbin::ProcessArguments(const VS&, const VS&, ns_DedupNewsbin::Bools_t&)’:
+dedup-newsbin-multi.cpp:381:26: warning: unused parameter ‘Flags’ [-Wunused-parameter]
+  381 |       VS       const  &  Flags,
+      |       ~~~~~~~~~~~~~~~~~~~^~~~~
+dedup-newsbin-multi.cpp: In function ‘void ns_DedupNewsbin::LoadFileNameMap(ns_DedupNewsbin::FRM&, ns_DedupNewsbin::LS&, const ns_DedupNewsbin::Bools_t&, ns_DedupNewsbin::Stats_t&)’:
+dedup-newsbin-multi.cpp:529:48: warning: conversion from ‘long unsigned int’ to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  529 |          Stats.DirCount += rhdir::CursDirs(TMap);
+      |                                                ^
+dedup-newsbin-multi.cpp:535:48: warning: conversion from ‘long unsigned int’ to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  535 |          Stats.DirCount += rhdir::CursDirs(TMap);
+      |                                                ^
+dedup-newsbin-multi.cpp:541:48: warning: conversion from ‘long unsigned int’ to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  541 |          Stats.DirCount += rhdir::CursDirs(TMap);
+      |                                                ^
+dedup-newsbin-multi.cpp:547:48: warning: conversion from ‘long unsigned int’ to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  547 |          Stats.DirCount += rhdir::CursDirs(TMap);
+      |                                                ^
+dedup-newsbin-multi.cpp:554:39: warning: conversion from ‘long unsigned int’ to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  554 |       Stats.DirCount = rhdir::CursDirs(TMap);
+      |                        ~~~~~~~~~~~~~~~^~~~~~
+dedup-newsbin-multi.cpp: In member function ‘void ns_DedupNewsbin::TreeMap::operator()()’:
+dedup-newsbin-multi.cpp:587:4: error: ‘ffblk’ was not declared in this scope
+  587 |    ffblk              File_Block    = ffblk();
+      |    ^~~~~
+dedup-newsbin-multi.cpp:600:33: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  600 |    std::string CurrDir ( rhdir::GetFullCurrPath() );
+      |                                 ^~~~~~~~~~~~~~~
+dedup-newsbin-multi.cpp:603:25: error: ‘FA_RDONLY’ was not declared in this scope; did you mean ‘rhdir::FA_RDONLY’?
+  603 |    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+      |                         ^~~~~~~~~
+      |                         rhdir::FA_RDONLY
+In file included from dedup-newsbin-multi.cpp:183:
+/d/rhe/include/rhdir.hpp:115:27: note: ‘rhdir::FA_RDONLY’ declared here
+  115 | const unsigned short int  FA_RDONLY  =  1;
+      |                           ^~~~~~~~~
+dedup-newsbin-multi.cpp:603:37: error: ‘FA_HIDDEN’ was not declared in this scope; did you mean ‘rhdir::FA_HIDDEN’?
+  603 |    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+      |                                     ^~~~~~~~~
+      |                                     rhdir::FA_HIDDEN
+In file included from dedup-newsbin-multi.cpp:183:
+/d/rhe/include/rhdir.hpp:116:27: note: ‘rhdir::FA_HIDDEN’ declared here
+  116 | const unsigned short int  FA_HIDDEN  =  2;
+      |                           ^~~~~~~~~
+dedup-newsbin-multi.cpp:603:49: error: ‘FA_SYSTEM’ was not declared in this scope; did you mean ‘rhdir::FA_SYSTEM’?
+  603 |    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+      |                                                 ^~~~~~~~~
+      |                                                 rhdir::FA_SYSTEM
+In file included from dedup-newsbin-multi.cpp:183:
+/d/rhe/include/rhdir.hpp:117:27: note: ‘rhdir::FA_SYSTEM’ declared here
+  117 | const unsigned short int  FA_SYSTEM  =  4;
+      |                           ^~~~~~~~~
+dedup-newsbin-multi.cpp:603:61: error: ‘FA_ARCH’ was not declared in this scope; did you mean ‘rhdir::FA_ARCH’?
+  603 |    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+      |                                                             ^~~~~~~
+      |                                                             rhdir::FA_ARCH
+In file included from dedup-newsbin-multi.cpp:183:
+/d/rhe/include/rhdir.hpp:120:27: note: ‘rhdir::FA_ARCH’ declared here
+  120 | const unsigned short int  FA_ARCH    = 32;
+      |                           ^~~~~~~
+dedup-newsbin-multi.cpp:606:32: error: ‘File_Block’ was not declared in this scope
+  606 |    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+      |                                ^~~~~~~~~~
+dedup-newsbin-multi.cpp:606:16: error: ‘findfirst’ was not declared in this scope
+  606 |    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+      |                ^~~~~~~~~
+dedup-newsbin-multi.cpp:606:76: error: ‘findnext’ was not declared in this scope; did you mean ‘rindex’?
+  606 |    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+      |                                                                            ^~~~~~~~
+      |                                                                            rindex
+dedup-newsbin-multi.cpp: In function ‘int ns_DedupNewsbin::EradicateDuplicates(ns_DedupNewsbin::FRM&, const string&, const ns_DedupNewsbin::Bools_t&, ns_DedupNewsbin::Stats_t&)’:
+dedup-newsbin-multi.cpp:751:33: error: ‘struct rhdir::FileRecord’ has no member named ‘timestamp’
+  751 |             if (Current->second.timestamp > Compare->second.timestamp)
+      |                                 ^~~~~~~~~
+dedup-newsbin-multi.cpp:751:61: error: ‘struct rhdir::FileRecord’ has no member named ‘timestamp’
+  751 |             if (Current->second.timestamp > Compare->second.timestamp)
+      |                                                             ^~~~~~~~~
+dedup-newsbin-multi.cpp:753:37: warning: implicitly-declared ‘rhdir::FileRecord& rhdir::FileRecord::operator=(const rhdir::FileRecord&)’ is deprecated [-Wdeprecated-copy]
+  753 |                NewerFile = Current->second;
+      |                                     ^~~~~~
+In file included from dedup-newsbin-multi.cpp:183:
+/d/rhe/include/rhdir.hpp:570:4: note: because ‘rhdir::FileRecord’ has user-provided ‘rhdir::FileRecord::FileRecord(const rhdir::FileRecord&)’
+  570 |    FileRecord(FileRecord const & FR);
+      |    ^~~~~~~~~~
+dedup-newsbin-multi.cpp:754:37: warning: implicitly-declared ‘rhdir::FileRecord& rhdir::FileRecord::operator=(const rhdir::FileRecord&)’ is deprecated [-Wdeprecated-copy]
+  754 |                OlderFile = Compare->second;
+      |                                     ^~~~~~
+In file included from dedup-newsbin-multi.cpp:183:
+/d/rhe/include/rhdir.hpp:570:4: note: because ‘rhdir::FileRecord’ has user-provided ‘rhdir::FileRecord::FileRecord(const rhdir::FileRecord&)’
+  570 |    FileRecord(FileRecord const & FR);
+      |    ^~~~~~~~~~
+dedup-newsbin-multi.cpp:759:37: warning: implicitly-declared ‘rhdir::FileRecord& rhdir::FileRecord::operator=(const rhdir::FileRecord&)’ is deprecated [-Wdeprecated-copy]
+  759 |                NewerFile = Compare->second;
+      |                                     ^~~~~~
+In file included from dedup-newsbin-multi.cpp:183:
+/d/rhe/include/rhdir.hpp:570:4: note: because ‘rhdir::FileRecord’ has user-provided ‘rhdir::FileRecord::FileRecord(const rhdir::FileRecord&)’
+  570 |    FileRecord(FileRecord const & FR);
+      |    ^~~~~~~~~~
+dedup-newsbin-multi.cpp:760:37: warning: implicitly-declared ‘rhdir::FileRecord& rhdir::FileRecord::operator=(const rhdir::FileRecord&)’ is deprecated [-Wdeprecated-copy]
+  760 |                OlderFile = Current->second;
+      |                                     ^~~~~~
+In file included from dedup-newsbin-multi.cpp:183:
+/d/rhe/include/rhdir.hpp:570:4: note: because ‘rhdir::FileRecord’ has user-provided ‘rhdir::FileRecord::FileRecord(const rhdir::FileRecord&)’
+  570 |    FileRecord(FileRecord const & FR);
+      |    ^~~~~~~~~~
+make: [/rhe/src/maketail:312: dedup-newsbin-multi] Error 1 (ignored)
+dedup-newsbin-multi is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile denumerate-file-names.cpp to denumerate-file-names:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 denumerate-file-names.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/denumerate-file-names
+denumerate-file-names.cpp: In function ‘int main(int, char**)’:
+denumerate-file-names.cpp:133:14: warning: conversion from ‘time_t’ {aka ‘long int’} to ‘unsigned int’ may change value [-Wconversion]
+  133 |    srand(time(0));
+      |          ~~~~^~~
+denumerate-file-names.cpp: In member function ‘void ns_DFN::ProcessCurDirFunctor::operator()()’:
+denumerate-file-names.cpp:219:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  219 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+denumerate-file-names.cpp: In function ‘void ns_DFN::ProcessCurrentFile(ns_DFN::Stats_t&, const FR&)’:
+denumerate-file-names.cpp:323:8: error: ‘__file_exists’ was not declared in this scope
+  323 |    if (__file_exists(NewFileName.c_str()))
+      |        ^~~~~~~~~~~~~
+make: [/rhe/src/maketail:312: denumerate-file-names] Error 1 (ignored)
+denumerate-file-names is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile dir-names-to-capital.cpp to dir-names-to-capital:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 dir-names-to-capital.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/dir-names-to-capital
+dir-names-to-capital.cpp:29: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   29 | #define BLAT_ENABLE
+      | 
+dir-names-to-capital is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile enumerate-file-names.cpp to enumerate-file-names:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 enumerate-file-names.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/enumerate-file-names
+enumerate-file-names.cpp:33: warning: macro "NDEBUG" is not used [-Wunused-macros]
+   33 | #define NDEBUG
+      | 
+enumerate-file-names.cpp:40: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   40 | #define BLAT_ENABLE
+      | 
+enumerate-file-names.cpp: In function ‘int main(int, char**)’:
+enumerate-file-names.cpp:141:14: warning: conversion from ‘time_t’ {aka ‘long int’} to ‘unsigned int’ may change value [-Wconversion]
+  141 |    srand(time(0));
+      |          ~~~~^~~
+enumerate-file-names.cpp: In member function ‘void ns_EFN::ProcessCurDirFunctor::operator()()’:
+enumerate-file-names.cpp:227:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  227 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+enumerate-file-names.cpp: In function ‘void ns_EFN::ProcessCurrentFile(ns_EFN::Stats_t&, const FR&)’:
+enumerate-file-names.cpp:324:19: error: ‘__file_exists’ was not declared in this scope
+  324 |       bSuccess = !__file_exists(NewFileName.c_str());
+      |                   ^~~~~~~~~~~~~
+make: [/rhe/src/maketail:312: enumerate-file-names] Error 1 (ignored)
+enumerate-file-names is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile erase_ph.cpp to erase_ph:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 erase_ph.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/erase_ph
+In file included from erase_ph.cpp:22:
+/d/rhe/include/rhdir.hpp: In instantiation of ‘Container& rhdir::LoadFileList(Container&, const string&, int, int) [with Container = std::__cxx11::list<std::__cxx11::basic_string<char> >; std::string = std::__cxx11::basic_string<char>]’:
+erase_ph.cpp:59:23:   required from here
+/d/rhe/include/rhdir.hpp:781:18: error: no matching function for call to ‘std::__cxx11::list<std::__cxx11::basic_string<char> >::push_back(rhdir::FileRecord&)’
+  781 |       C.push_back(FR);
+      |       ~~~~~~~~~~~^~~~
+In file included from /usr/include/c++/11.1.0/list:63,
+                 from erase_ph.cpp:16:
+/usr/include/c++/11.1.0/bits/stl_list.h:1211:7: note: candidate: ‘void std::__cxx11::list<_Tp, _Alloc>::push_back(const value_type&) [with _Tp = std::__cxx11::basic_string<char>; _Alloc = std::allocator<std::__cxx11::basic_string<char> >; std::__cxx11::list<_Tp, _Alloc>::value_type = std::__cxx11::basic_string<char>]’
+ 1211 |       push_back(const value_type& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11.1.0/bits/stl_list.h:1211:35: note:   no known conversion for argument 1 from ‘rhdir::FileRecord’ to ‘const value_type&’ {aka ‘const std::__cxx11::basic_string<char>&’}
+ 1211 |       push_back(const value_type& __x)
+      |                 ~~~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/11.1.0/bits/stl_list.h:1216:7: note: candidate: ‘void std::__cxx11::list<_Tp, _Alloc>::push_back(std::__cxx11::list<_Tp, _Alloc>::value_type&&) [with _Tp = std::__cxx11::basic_string<char>; _Alloc = std::allocator<std::__cxx11::basic_string<char> >; std::__cxx11::list<_Tp, _Alloc>::value_type = std::__cxx11::basic_string<char>]’
+ 1216 |       push_back(value_type&& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11.1.0/bits/stl_list.h:1216:30: note:   no known conversion for argument 1 from ‘rhdir::FileRecord’ to ‘std::__cxx11::list<std::__cxx11::basic_string<char> >::value_type&&’ {aka ‘std::__cxx11::basic_string<char>&&’}
+ 1216 |       push_back(value_type&& __x)
+      |                 ~~~~~~~~~~~~~^~~
+make: [/rhe/src/maketail:312: erase_ph] Error 1 (ignored)
+erase_ph is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile erase-thumbs.cpp to erase-thumbs:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 erase-thumbs.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/erase-thumbs
+erase-thumbs.cpp: In function ‘bool ns_EraseThumbs::InArgs(const VS&, const string&)’:
+erase-thumbs.cpp:277:30: warning: unused parameter ‘Text’ [-Wunused-parameter]
+  277 |       std::string  const  &  Text
+      |       ~~~~~~~~~~~~~~~~~~~~~~~^~~~
+erase-thumbs.cpp: In function ‘int ns_EraseThumbs::EradicateDuplicates(ns_EraseThumbs::FRM&, const string&, const ns_EraseThumbs::Flags_t&, ns_EraseThumbs::Stats_t&)’:
+erase-thumbs.cpp:477:33: error: ‘struct rhdir::FileRecord’ has no member named ‘timestamp’
+  477 |             if (Current->second.timestamp > Compare->second.timestamp)
+      |                                 ^~~~~~~~~
+erase-thumbs.cpp:477:61: error: ‘struct rhdir::FileRecord’ has no member named ‘timestamp’
+  477 |             if (Current->second.timestamp > Compare->second.timestamp)
+      |                                                             ^~~~~~~~~
+erase-thumbs.cpp:479:37: warning: implicitly-declared ‘rhdir::FileRecord& rhdir::FileRecord::operator=(const rhdir::FileRecord&)’ is deprecated [-Wdeprecated-copy]
+  479 |                NewerFile = Current->second;
+      |                                     ^~~~~~
+In file included from erase-thumbs.cpp:88:
+/d/rhe/include/rhdir.hpp:570:4: note: because ‘rhdir::FileRecord’ has user-provided ‘rhdir::FileRecord::FileRecord(const rhdir::FileRecord&)’
+  570 |    FileRecord(FileRecord const & FR);
+      |    ^~~~~~~~~~
+erase-thumbs.cpp:480:37: warning: implicitly-declared ‘rhdir::FileRecord& rhdir::FileRecord::operator=(const rhdir::FileRecord&)’ is deprecated [-Wdeprecated-copy]
+  480 |                OlderFile = Compare->second;
+      |                                     ^~~~~~
+In file included from erase-thumbs.cpp:88:
+/d/rhe/include/rhdir.hpp:570:4: note: because ‘rhdir::FileRecord’ has user-provided ‘rhdir::FileRecord::FileRecord(const rhdir::FileRecord&)’
+  570 |    FileRecord(FileRecord const & FR);
+      |    ^~~~~~~~~~
+erase-thumbs.cpp:485:37: warning: implicitly-declared ‘rhdir::FileRecord& rhdir::FileRecord::operator=(const rhdir::FileRecord&)’ is deprecated [-Wdeprecated-copy]
+  485 |                NewerFile = Compare->second;
+      |                                     ^~~~~~
+In file included from erase-thumbs.cpp:88:
+/d/rhe/include/rhdir.hpp:570:4: note: because ‘rhdir::FileRecord’ has user-provided ‘rhdir::FileRecord::FileRecord(const rhdir::FileRecord&)’
+  570 |    FileRecord(FileRecord const & FR);
+      |    ^~~~~~~~~~
+erase-thumbs.cpp:486:37: warning: implicitly-declared ‘rhdir::FileRecord& rhdir::FileRecord::operator=(const rhdir::FileRecord&)’ is deprecated [-Wdeprecated-copy]
+  486 |                OlderFile = Current->second;
+      |                                     ^~~~~~
+In file included from erase-thumbs.cpp:88:
+/d/rhe/include/rhdir.hpp:570:4: note: because ‘rhdir::FileRecord’ has user-provided ‘rhdir::FileRecord::FileRecord(const rhdir::FileRecord&)’
+  570 |    FileRecord(FileRecord const & FR);
+      |    ^~~~~~~~~~
+erase-thumbs.cpp: In function ‘void ns_EraseThumbs::LoadFileNameMap(ns_EraseThumbs::FRM&, ns_EraseThumbs::LS&, const ns_EraseThumbs::Flags_t&, ns_EraseThumbs::Stats_t&)’:
+erase-thumbs.cpp:581:73: warning: conversion from ‘long unsigned int’ to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  581 |          Stats.DirCount += rhdir::CursDirs(ProcessCurDirFunctor(M, Keys));
+      |                                                                         ^
+erase-thumbs.cpp:587:73: warning: conversion from ‘long unsigned int’ to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  587 |          Stats.DirCount += rhdir::CursDirs(ProcessCurDirFunctor(M, Keys));
+      |                                                                         ^
+erase-thumbs.cpp:593:73: warning: conversion from ‘long unsigned int’ to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  593 |          Stats.DirCount += rhdir::CursDirs(ProcessCurDirFunctor(M, Keys));
+      |                                                                         ^
+erase-thumbs.cpp:599:73: warning: conversion from ‘long unsigned int’ to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  599 |          Stats.DirCount += rhdir::CursDirs(ProcessCurDirFunctor(M, Keys));
+      |                                                                         ^
+erase-thumbs.cpp:605:73: warning: conversion from ‘long unsigned int’ to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  605 |          Stats.DirCount += rhdir::CursDirs(ProcessCurDirFunctor(M, Keys));
+      |                                                                         ^
+erase-thumbs.cpp:611:73: warning: conversion from ‘long unsigned int’ to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  611 |          Stats.DirCount += rhdir::CursDirs(ProcessCurDirFunctor(M, Keys));
+      |                                                                         ^
+erase-thumbs.cpp:617:73: warning: conversion from ‘long unsigned int’ to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  617 |          Stats.DirCount += rhdir::CursDirs(ProcessCurDirFunctor(M, Keys));
+      |                                                                         ^
+erase-thumbs.cpp:624:39: warning: conversion from ‘long unsigned int’ to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  624 |       Stats.DirCount = rhdir::CursDirs(ProcessCurDirFunctor(M, Keys));
+      |                        ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+erase-thumbs.cpp: In member function ‘void ns_EraseThumbs::ProcessCurDirFunctor::operator()()’:
+erase-thumbs.cpp:657:4: error: ‘ffblk’ was not declared in this scope
+  657 |    ffblk              File_Block    = ffblk();
+      |    ^~~~~
+erase-thumbs.cpp:670:33: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  670 |    std::string CurrDir ( rhdir::GetFullCurrPath() );
+      |                                 ^~~~~~~~~~~~~~~
+erase-thumbs.cpp:673:25: error: ‘FA_RDONLY’ was not declared in this scope; did you mean ‘rhdir::FA_RDONLY’?
+  673 |    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+      |                         ^~~~~~~~~
+      |                         rhdir::FA_RDONLY
+In file included from erase-thumbs.cpp:88:
+/d/rhe/include/rhdir.hpp:115:27: note: ‘rhdir::FA_RDONLY’ declared here
+  115 | const unsigned short int  FA_RDONLY  =  1;
+      |                           ^~~~~~~~~
+erase-thumbs.cpp:673:37: error: ‘FA_HIDDEN’ was not declared in this scope; did you mean ‘rhdir::FA_HIDDEN’?
+  673 |    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+      |                                     ^~~~~~~~~
+      |                                     rhdir::FA_HIDDEN
+In file included from erase-thumbs.cpp:88:
+/d/rhe/include/rhdir.hpp:116:27: note: ‘rhdir::FA_HIDDEN’ declared here
+  116 | const unsigned short int  FA_HIDDEN  =  2;
+      |                           ^~~~~~~~~
+erase-thumbs.cpp:673:49: error: ‘FA_SYSTEM’ was not declared in this scope; did you mean ‘rhdir::FA_SYSTEM’?
+  673 |    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+      |                                                 ^~~~~~~~~
+      |                                                 rhdir::FA_SYSTEM
+In file included from erase-thumbs.cpp:88:
+/d/rhe/include/rhdir.hpp:117:27: note: ‘rhdir::FA_SYSTEM’ declared here
+  117 | const unsigned short int  FA_SYSTEM  =  4;
+      |                           ^~~~~~~~~
+erase-thumbs.cpp:673:61: error: ‘FA_ARCH’ was not declared in this scope; did you mean ‘rhdir::FA_ARCH’?
+  673 |    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+      |                                                             ^~~~~~~
+      |                                                             rhdir::FA_ARCH
+In file included from erase-thumbs.cpp:88:
+/d/rhe/include/rhdir.hpp:120:27: note: ‘rhdir::FA_ARCH’ declared here
+  120 | const unsigned short int  FA_ARCH    = 32;
+      |                           ^~~~~~~
+erase-thumbs.cpp:676:32: error: ‘File_Block’ was not declared in this scope
+  676 |    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+      |                                ^~~~~~~~~~
+erase-thumbs.cpp:676:16: error: ‘findfirst’ was not declared in this scope
+  676 |    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+      |                ^~~~~~~~~
+erase-thumbs.cpp:676:76: error: ‘findnext’ was not declared in this scope; did you mean ‘rindex’?
+  676 |    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+      |                                                                            ^~~~~~~~
+      |                                                                            rindex
+make: [/rhe/src/maketail:312: erase-thumbs] Error 1 (ignored)
+erase-thumbs is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile fexist.cpp to fexist:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 fexist.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/fexist
+fexist.cpp: In function ‘bool FileExists(std::string)’:
+fexist.cpp:27:22: error: cannot convert ‘std::ifstream’ {aka ‘std::basic_ifstream<char>’} to ‘bool’ in initialization
+   27 |   bool file_exists = ifs;
+      |                      ^~~
+      |                      |
+      |                      std::ifstream {aka std::basic_ifstream<char>}
+make: [/rhe/src/maketail:312: fexist] Error 1 (ignored)
+fexist is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile file-access.cpp to file-access:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 file-access.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/file-access
+file-access.cpp:31: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   31 | #define BLAT_ENABLE
+      | 
+file-access.cpp: In function ‘void ns_Access::PrintFileInfo(const string&)’:
+file-access.cpp:116:30: error: ‘D_OK’ was not declared in this scope; did you mean ‘F_OK’?
+  116 |    if (!access(Name.c_str(), D_OK))
+      |                              ^~~~
+      |                              F_OK
+make: [/rhe/src/maketail:312: file-access] Error 1 (ignored)
+file-access is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile file-away.cpp to file-away:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 file-away.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/file-away
+file-away.cpp:27:10: fatal error: dir.h: No such file or directory
+   27 | #include <dir.h>
+      |          ^~~~~~~
+compilation terminated.
+make: [/rhe/src/maketail:312: file-away] Error 1 (ignored)
+file-away is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile file-compare.cpp to file-compare:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 file-compare.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/file-compare
+file-compare.cpp:28:10: fatal error: dir.h: No such file or directory
+   28 | #include <dir.h>
+      |          ^~~~~~~
+compilation terminated.
+make: [/rhe/src/maketail:312: file-compare] Error 1 (ignored)
+file-compare is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile file-names-to-capital.cpp to file-names-to-capital:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 file-names-to-capital.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/file-names-to-capital
+file-names-to-capital.cpp: In function ‘void FNTC::FileNamesToCapital()’:
+file-names-to-capital.cpp:70:29: warning: conversion from ‘std::__cxx11::basic_string<char>::size_type’ {aka ‘long unsigned int’} to ‘int’ may change value [-Wconversion]
+   70 |       size    = NewName.size();
+      |                 ~~~~~~~~~~~~^~
+file-names-to-capital.cpp:80:36: warning: conversion from ‘int’ to ‘__gnu_cxx::__alloc_traits<std::allocator<char>, char>::value_type’ {aka ‘char’} may change value [-Wconversion]
+   80 |                NewName[i] = toupper(NewName[i]);
+      |                             ~~~~~~~^~~~~~~~~~~~
+file-names-to-capital.cpp:91:39: warning: conversion from ‘int’ to ‘__gnu_cxx::__alloc_traits<std::allocator<char>, char>::value_type’ {aka ‘char’} may change value [-Wconversion]
+   91 |                   NewName[i] = toupper(NewName[i]);
+      |                                ~~~~~~~^~~~~~~~~~~~
+file-names-to-capital.cpp:97:39: warning: conversion from ‘int’ to ‘__gnu_cxx::__alloc_traits<std::allocator<char>, char>::value_type’ {aka ‘char’} may change value [-Wconversion]
+   97 |                   NewName[i] = tolower(NewName[i]);
+      |                                ~~~~~~~^~~~~~~~~~~~
+file-names-to-capital is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile file-names-to-lower.cpp to file-names-to-lower:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 file-names-to-lower.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/file-names-to-lower
+file-names-to-lower is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile file-names-to-upper.cpp to file-names-to-upper:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 file-names-to-upper.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/file-names-to-upper
+file-names-to-upper is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile find-bad-file-names.cpp to find-bad-file-names:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 find-bad-file-names.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/find-bad-file-names
+find-bad-file-names.cpp:51: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   51 | #define BLAT_ENABLE
+      | 
+find-bad-file-names.cpp: In function ‘void ns_FindBadFileNames::ProcessArguments(const VS&, ns_FindBadFileNames::Settings_t&)’:
+find-bad-file-names.cpp:291:29: warning: unused parameter ‘Arguments’ [-Wunused-parameter]
+  291 |       VS          const  &  Arguments,
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+find-bad-file-names.cpp:292:29: warning: unused parameter ‘Settings’ [-Wunused-parameter]
+  292 |       Settings_t         &  Settings
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+find-bad-file-names.cpp: In member function ‘void ns_FindBadFileNames::ProcessCurDirFunctor::operator()()’:
+find-bad-file-names.cpp:323:35: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  323 |       std::string CurDir = rhdir::GetFullCurrPath();
+      |                                   ^~~~~~~~~~~~~~~
+find-bad-file-names.cpp: In function ‘void ns_FindBadFileNames::ProcessCurrentFile(const ns_FindBadFileNames::Settings_t&, const VS&, ns_FindBadFileNames::Stats_t&, const FR&)’:
+find-bad-file-names.cpp:419:16: error: ‘FileNameIsInvalid’ is not a member of ‘rhdir’; did you mean ‘FileNameIsWindowsInvalid’?
+  419 |    if ( rhdir::FileNameIsInvalid(FileRecord.name) or not __file_exists(FileRecord.name.c_str()) )
+      |                ^~~~~~~~~~~~~~~~~
+      |                FileNameIsWindowsInvalid
+find-bad-file-names.cpp:419:58: error: ‘__file_exists’ was not declared in this scope
+  419 |    if ( rhdir::FileNameIsInvalid(FileRecord.name) or not __file_exists(FileRecord.name.c_str()) )
+      |                                                          ^~~~~~~~~~~~~
+find-bad-file-names.cpp:392:29: warning: unused parameter ‘Settings’ [-Wunused-parameter]
+  392 |       Settings_t  const  &  Settings,
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+find-bad-file-names.cpp:393:29: warning: unused parameter ‘Arguments’ [-Wunused-parameter]
+  393 |       VS          const  &  Arguments,
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+make: [/rhe/src/maketail:312: find-bad-file-names] Error 1 (ignored)
+find-bad-file-names is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile find-bad-jpegs.cpp to find-bad-jpegs:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 find-bad-jpegs.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/find-bad-jpegs
+find-bad-jpegs.cpp:30: warning: macro "NDEBUG" is not used [-Wunused-macros]
+   30 | #define NDEBUG
+      | 
+find-bad-jpegs.cpp:36: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   36 | #define BLAT_ENABLE
+      | 
+find-bad-jpegs.cpp: In function ‘int main(int, char**)’:
+find-bad-jpegs.cpp:145:14: warning: conversion from ‘time_t’ {aka ‘long int’} to ‘unsigned int’ may change value [-Wconversion]
+  145 |    srand(time(0));
+      |          ~~~~^~~
+find-bad-jpegs.cpp:160:9: error: ‘__file_exists’ was not declared in this scope
+  160 |    if (!__file_exists("/Bad")) mkdir("/Bad",  S_IWUSR);
+      |         ^~~~~~~~~~~~~
+find-bad-jpegs.cpp: In member function ‘void ns_FndBadJpg::ProcessCurDirFunctor::operator()()’:
+find-bad-jpegs.cpp:243:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  243 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+find-bad-jpegs.cpp:374:15: error: ‘__file_exists’ was not declared in this scope
+  374 |          if (!__file_exists(BadDir.c_str()))
+      |               ^~~~~~~~~~~~~
+make: [/rhe/src/maketail:312: find-bad-jpegs] Error 1 (ignored)
+find-bad-jpegs is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile find-good-jpegs.cpp to find-good-jpegs:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 find-good-jpegs.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/find-good-jpegs
+find-good-jpegs.cpp:24: warning: macro "NDEBUG" is not used [-Wunused-macros]
+   24 | #define NDEBUG
+      | 
+find-good-jpegs.cpp:30: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   30 | #define BLAT_ENABLE
+      | 
+find-good-jpegs.cpp: In function ‘int main(int, char**)’:
+find-good-jpegs.cpp:68:9: error: ‘__file_exists’ was not declared in this scope
+   68 |    if (!__file_exists("/Damaged")) mkdir("/Damaged",  S_IWUSR);
+      |         ^~~~~~~~~~~~~
+find-good-jpegs.cpp: In function ‘void ns_FndGoodJpg::ProcessCurDir()’:
+find-good-jpegs.cpp:95:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+   95 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+make: [/rhe/src/maketail:312: find-good-jpegs] Error 1 (ignored)
+find-good-jpegs is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile find-spacey-file-names.cpp to find-spacey-file-names:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 find-spacey-file-names.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/find-spacey-file-names
+find-spacey-file-names.cpp:35: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   35 | #define BLAT_ENABLE
+      | 
+find-spacey-file-names.cpp: In function ‘void ns_FindSpaceyFileNames::ProcessArguments(const VS&, ns_FindSpaceyFileNames::Settings_t&)’:
+find-spacey-file-names.cpp:275:29: warning: unused parameter ‘Arguments’ [-Wunused-parameter]
+  275 |       VS          const  &  Arguments,
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+find-spacey-file-names.cpp:276:29: warning: unused parameter ‘Settings’ [-Wunused-parameter]
+  276 |       Settings_t         &  Settings
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+find-spacey-file-names.cpp: In member function ‘void ns_FindSpaceyFileNames::ProcessCurDirFunctor::operator()()’:
+find-spacey-file-names.cpp:307:35: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  307 |       std::string CurDir = rhdir::GetFullCurrPath();
+      |                                   ^~~~~~~~~~~~~~~
+find-spacey-file-names.cpp: In function ‘void ns_FindSpaceyFileNames::ProcessCurrentFile(const ns_FindSpaceyFileNames::Settings_t&, const VS&, ns_FindSpaceyFileNames::Stats_t&, const FR&)’:
+find-spacey-file-names.cpp:376:29: warning: unused parameter ‘Settings’ [-Wunused-parameter]
+  376 |       Settings_t  const  &  Settings,
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+find-spacey-file-names.cpp:377:29: warning: unused parameter ‘Arguments’ [-Wunused-parameter]
+  377 |       VS          const  &  Arguments,
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+make: [/rhe/src/maketail:312: find-spacey-file-names] Error 1 (ignored)
+find-spacey-file-names is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile flatten-directory-tree.cpp to flatten-directory-tree:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 flatten-directory-tree.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/flatten-directory-tree
+flatten-directory-tree.cpp:33: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   33 | #define BLAT_ENABLE
+      | 
+flatten-directory-tree.cpp: In function ‘void ns_FDT::ProcessArguments(const VS&, ns_FDT::Settings_t&)’:
+flatten-directory-tree.cpp:213:29: warning: unused parameter ‘Arguments’ [-Wunused-parameter]
+  213 |       VS          const  &  Arguments,
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+flatten-directory-tree.cpp:214:29: warning: unused parameter ‘Settings’ [-Wunused-parameter]
+  214 |       Settings_t         &  Settings
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+flatten-directory-tree.cpp: In member function ‘void ns_FDT::ProcessCurDirFunctor::operator()()’:
+flatten-directory-tree.cpp:239:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  239 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+make: [/rhe/src/maketail:312: flatten-directory-tree] Error 1 (ignored)
+flatten-directory-tree is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile for-each-dir.cpp to for-each-dir:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 for-each-dir.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/for-each-dir
+for-each-dir.cpp:30: warning: macro "NDEBUG" is not used [-Wunused-macros]
+   30 | #define NDEBUG
+      | 
+for-each-dir.cpp:36: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   36 | #define BLAT_ENABLE
+      | 
+for-each-dir.cpp: In member function ‘void ns_fed::ProcessCurDirFunctor::operator()()’:
+for-each-dir.cpp:255:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  255 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+make: [/rhe/src/maketail:312: for-each-dir] Error 1 (ignored)
+for-each-dir is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile missing-files.cpp to missing-files:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 missing-files.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/missing-files
+missing-files.cpp: In function ‘void ns_MissingFiles::MissingFiles()’:
+missing-files.cpp:183:31: warning: conversion from ‘long int’ to ‘int’ may change value [-Wconversion]
+  183 |       for (int i = PrevNumber + 1; i < CurrNumber; ++i)
+      |                    ~~~~~~~~~~~^~~
+missing-files.cpp:198:31: warning: conversion from ‘long int’ to ‘int’ may change value [-Wconversion]
+  198 |       for (int i = CurrNumber + 1; i <= ZNum; ++i)
+      |                    ~~~~~~~~~~~^~~
+missing-files is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile month-dirs.cpp to month-dirs:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 month-dirs.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/month-dirs
+month-dirs is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile numdirs2.cpp to numdirs2:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 numdirs2.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/numdirs2
+numdirs2 is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile numdirs.cpp to numdirs:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 numdirs.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/numdirs
+numdirs is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile pinderloy.cpp to pinderloy:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 pinderloy.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/pinderloy
+pinderloy is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile processwww.cpp to processwww:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 processwww.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/processwww
+In file included from processwww.cpp:27:
+/d/rhe/include/rhdir.hpp: In instantiation of ‘Container& rhdir::LoadFileList(Container&, const string&, int, int) [with Container = std::__cxx11::list<std::__cxx11::basic_string<char> >; std::string = std::__cxx11::basic_string<char>]’:
+processwww.cpp:76:23:   required from here
+/d/rhe/include/rhdir.hpp:781:18: error: no matching function for call to ‘std::__cxx11::list<std::__cxx11::basic_string<char> >::push_back(rhdir::FileRecord&)’
+  781 |       C.push_back(FR);
+      |       ~~~~~~~~~~~^~~~
+In file included from /usr/include/c++/11.1.0/list:63,
+                 from processwww.cpp:23:
+/usr/include/c++/11.1.0/bits/stl_list.h:1211:7: note: candidate: ‘void std::__cxx11::list<_Tp, _Alloc>::push_back(const value_type&) [with _Tp = std::__cxx11::basic_string<char>; _Alloc = std::allocator<std::__cxx11::basic_string<char> >; std::__cxx11::list<_Tp, _Alloc>::value_type = std::__cxx11::basic_string<char>]’
+ 1211 |       push_back(const value_type& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11.1.0/bits/stl_list.h:1211:35: note:   no known conversion for argument 1 from ‘rhdir::FileRecord’ to ‘const value_type&’ {aka ‘const std::__cxx11::basic_string<char>&’}
+ 1211 |       push_back(const value_type& __x)
+      |                 ~~~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/11.1.0/bits/stl_list.h:1216:7: note: candidate: ‘void std::__cxx11::list<_Tp, _Alloc>::push_back(std::__cxx11::list<_Tp, _Alloc>::value_type&&) [with _Tp = std::__cxx11::basic_string<char>; _Alloc = std::allocator<std::__cxx11::basic_string<char> >; std::__cxx11::list<_Tp, _Alloc>::value_type = std::__cxx11::basic_string<char>]’
+ 1216 |       push_back(value_type&& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11.1.0/bits/stl_list.h:1216:30: note:   no known conversion for argument 1 from ‘rhdir::FileRecord’ to ‘std::__cxx11::list<std::__cxx11::basic_string<char> >::value_type&&’ {aka ‘std::__cxx11::basic_string<char>&&’}
+ 1216 |       push_back(value_type&& __x)
+      |                 ~~~~~~~~~~~~~^~~
+make: [/rhe/src/maketail:312: processwww] Error 1 (ignored)
+processwww is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile randomize-file-names.cpp to randomize-file-names:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 randomize-file-names.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/randomize-file-names
+randomize-file-names.cpp: In function ‘int main(int, char**)’:
+randomize-file-names.cpp:126:14: warning: conversion from ‘time_t’ {aka ‘long int’} to ‘unsigned int’ may change value [-Wconversion]
+  126 |    srand(time(0));
+      |          ~~~~^~~
+randomize-file-names.cpp: In member function ‘void ns_RFN::ProcessCurDirFunctor::operator()()’:
+randomize-file-names.cpp:211:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  211 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+randomize-file-names.cpp:273:22: error: ‘__file_exists’ was not declared in this scope
+  273 |          bSuccess = !__file_exists(NewFileName.c_str());
+      |                      ^~~~~~~~~~~~~
+randomize-file-names.cpp: In function ‘std::string ns_RFN::RandomName()’:
+randomize-file-names.cpp:326:29: error: ‘RandInt’ is not a member of ‘rhmath’
+  326 |       Name += chars[rhmath::RandInt(0, 25)];
+      |                             ^~~~~~~
+randomize-file-names.cpp:326:29: note: suggested alternatives:
+In file included from /d/rhe/include/rhutil.hpp:63,
+                 from randomize-file-names.cpp:46:
+/d/rhe/include/rhutilc.h:51:5: note:   ‘rhutil::RandInt’
+   51 | int RandInt (int min, int max);
+      |     ^~~~~~~
+In file included from randomize-file-names.cpp:47:
+/d/rhe/include/rhdir.hpp:184:5: note:   ‘rhdir::RandInt’
+  184 | int RandInt(int min, int max);
+      |     ^~~~~~~
+make: [/rhe/src/maketail:312: randomize-file-names] Error 1 (ignored)
+randomize-file-names is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.c to compile recomb.c to recomb:
+gcc -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-definition -Wnested-externs -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu17   recomb.c -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/recomb
+recomb.c: In function ‘main’:
+recomb.c:53:27: warning: ‘%s’ directive writing up to 404 bytes into a region of size 400 [-Wformat-overflow=]
+   53 |   sprintf(Command, "dir \"%s\" /b /-p /a:-d > %s", WildCard, PartList);
+      |                           ^~                       ~~~~~~~~
+recomb.c:53:3: note: ‘sprintf’ output between 43 and 447 bytes into a destination of size 405
+   53 |   sprintf(Command, "dir \"%s\" /b /-p /a:-d > %s", WildCard, PartList);
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+recomb.c:89:29: warning: ‘%s’ directive writing up to 404 bytes into a region of size 379 [-Wformat-overflow=]
+   89 |   sprintf(Command, "copy %s %s", TempComb, NewName);
+      |                             ^~             ~~~~~~~
+recomb.c:89:3: note: ‘sprintf’ output between 27 and 431 bytes into a destination of size 405
+   89 |   sprintf(Command, "copy %s %s", TempComb, NewName);
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+recomb.c:74:38: warning: ‘%s’ directive writing up to 404 bytes into a region of size 374 [-Wformat-overflow=]
+   74 |       sprintf(Command, "copy /b %s + %s %s /y", TempComb, PartName, TempComb);
+      |                                      ^~                   ~~~~~~~~
+recomb.c:74:7: note: ‘sprintf’ output between 56 and 460 bytes into a destination of size 405
+   74 |       sprintf(Command, "copy /b %s + %s %s /y", TempComb, PartName, TempComb);
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+recomb.c:70:33: warning: ‘%s’ directive writing up to 404 bytes into a region of size 397 [-Wformat-overflow=]
+   70 |       sprintf(Command, "copy /b %s %s /y", PartName, TempComb);
+      |                                 ^~         ~~~~~~~~
+recomb.c:70:7: note: ‘sprintf’ output between 33 and 437 bytes into a destination of size 405
+   70 |       sprintf(Command, "copy /b %s %s /y", PartName, TempComb);
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+recomb is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile rhmerge.cpp to rhmerge:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 rhmerge.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/rhmerge
+rhmerge.cpp:48:10: fatal error: conio.h: No such file or directory
+   48 | #include <conio.h>
+      |          ^~~~~~~~~
+compilation terminated.
+make: [/rhe/src/maketail:312: rhmerge] Error 1 (ignored)
+rhmerge is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile same-size.cpp to same-size:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 same-size.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/same-size
+same-size.cpp: In function ‘void ns_rhdedup::ProcessArguments(const VS&, ns_rhdedup::Settings_t&)’:
+same-size.cpp:228:29: warning: unused parameter ‘Arguments’ [-Wunused-parameter]
+  228 |       VS          const  &  Arguments,
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+same-size.cpp:229:29: warning: unused parameter ‘Settings’ [-Wunused-parameter]
+  229 |       Settings_t         &  Settings
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+same-size.cpp: In member function ‘void ns_rhdedup::ProcessCurDirFunctor::operator()()’:
+same-size.cpp:258:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  258 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+same-size.cpp:292:35: warning: conversion from ‘std::multimap<long unsigned int, rhdir::FileRecord>::size_type’ {aka ‘long unsigned int’} to ‘uint32_t’ {aka ‘unsigned int’} may change value [-Wconversion]
+  292 |    Stats.FilCount += FileMap.size();
+      |                                   ^
+make: [/rhe/src/maketail:312: same-size] Error 1 (ignored)
+same-size is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile separate-jpeg-palimpsests.cpp to separate-jpeg-palimpsests:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 separate-jpeg-palimpsests.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/separate-jpeg-palimpsests
+separate-jpeg-palimpsests.cpp:55: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   55 | #define BLAT_ENABLE
+      | 
+separate-jpeg-palimpsests.cpp: In function ‘int main(int, char**)’:
+separate-jpeg-palimpsests.cpp:148:14: warning: conversion from ‘time_t’ {aka ‘long int’} to ‘unsigned int’ may change value [-Wconversion]
+  148 |    srand(time(0));
+      |          ~~~~^~~
+separate-jpeg-palimpsests.cpp: In member function ‘void ns_Palimpsest::ProcessCurDirFunctor::operator()()’:
+separate-jpeg-palimpsests.cpp:236:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  236 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+separate-jpeg-palimpsests.cpp: In function ‘void ns_Palimpsest::ProcessCurrentFile(const ns_Palimpsest::Bools_t&, ns_Palimpsest::Stats_t&, const FR&)’:
+separate-jpeg-palimpsests.cpp:306:26: warning: unused parameter ‘Bools’ [-Wunused-parameter]
+  306 |       Bools_t  const  &  Bools,
+      |       ~~~~~~~~~~~~~~~~~~~^~~~~
+make: [/rhe/src/maketail:312: separate-jpeg-palimpsests] Error 1 (ignored)
+separate-jpeg-palimpsests is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile set-extensions.cpp to set-extensions:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 set-extensions.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/set-extensions
+set-extensions.cpp:30: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   30 | #define BLAT_ENABLE
+      | 
+set-extensions.cpp: In function ‘int main(int, char**)’:
+set-extensions.cpp:157:14: warning: conversion from ‘time_t’ {aka ‘long int’} to ‘unsigned int’ may change value [-Wconversion]
+  157 |    srand(time(0));
+      |          ~~~~^~~
+set-extensions.cpp: In member function ‘void ns_SetExt::ProcessCurDirFunctor::operator()()’:
+set-extensions.cpp:266:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  266 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+set-extensions.cpp: In function ‘void ns_SetExt::ProcessCurrentFile(const ns_SetExt::Settings_t&, ns_SetExt::Stats_t&, const FR&)’:
+set-extensions.cpp:310:29: warning: unused parameter ‘Settings’ [-Wunused-parameter]
+  310 |       Settings_t  const  &  Settings,
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+make: [/rhe/src/maketail:312: set-extensions] Error 1 (ignored)
+set-extensions is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile show-heads.cpp to show-heads:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 show-heads.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/show-heads
+show-heads.cpp:25: warning: macro "NDEBUG" is not used [-Wunused-macros]
+   25 | #define NDEBUG
+      | 
+show-heads.cpp:31: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   31 | #define BLAT_ENABLE
+      | 
+show-heads.cpp: In function ‘int main(int, char**)’:
+show-heads.cpp:139:14: warning: conversion from ‘time_t’ {aka ‘long int’} to ‘unsigned int’ may change value [-Wconversion]
+  139 |    srand(time(0));
+      |          ~~~~^~~
+show-heads.cpp:154:9: error: ‘__file_exists’ was not declared in this scope
+  154 |    if (!__file_exists("/Bad")) mkdir("/Bad",  S_IWUSR);
+      |         ^~~~~~~~~~~~~
+show-heads.cpp: In member function ‘void ns_ShwHds::ProcessCurDirFunctor::operator()()’:
+show-heads.cpp:237:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  237 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+show-heads.cpp: In function ‘void ns_ShwHds::ProcessCurrentFile(const ns_ShwHds::Settings_t&, ns_ShwHds::Stats_t&, const FR&)’:
+show-heads.cpp:281:29: warning: unused parameter ‘Settings’ [-Wunused-parameter]
+  281 |       Settings_t  const  &  Settings,
+      |       ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+make: [/rhe/src/maketail:312: show-heads] Error 1 (ignored)
+show-heads is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile simplify-file-names.cpp to simplify-file-names:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 simplify-file-names.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/simplify-file-names
+simplify-file-names.cpp:41: warning: macro "NDEBUG" is not used [-Wunused-macros]
+   41 | #define NDEBUG
+      | 
+simplify-file-names.cpp:48: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   48 | #define BLAT_ENABLE
+      | 
+simplify-file-names.cpp: In function ‘int main(int, char**)’:
+simplify-file-names.cpp:190:14: warning: conversion from ‘time_t’ {aka ‘long int’} to ‘unsigned int’ may change value [-Wconversion]
+  190 |    srand(time(0));
+      |          ~~~~^~~
+simplify-file-names.cpp:194:26: warning: missing initializer for member ‘ns_SFN::Bools_t::bRecurse’ [-Wmissing-field-initializers]
+  194 |    Bools_t Bools = {false};
+      |                          ^
+simplify-file-names.cpp:194:26: warning: missing initializer for member ‘ns_SFN::Bools_t::bVerbose’ [-Wmissing-field-initializers]
+simplify-file-names.cpp:194:26: warning: missing initializer for member ‘ns_SFN::Bools_t::bCommas’ [-Wmissing-field-initializers]
+simplify-file-names.cpp:194:26: warning: missing initializer for member ‘ns_SFN::Bools_t::bSpaces’ [-Wmissing-field-initializers]
+simplify-file-names.cpp:194:26: warning: missing initializer for member ‘ns_SFN::Bools_t::bHyphens’ [-Wmissing-field-initializers]
+simplify-file-names.cpp:194:26: warning: missing initializer for member ‘ns_SFN::Bools_t::bDots’ [-Wmissing-field-initializers]
+simplify-file-names.cpp:194:26: warning: missing initializer for member ‘ns_SFN::Bools_t::bHex’ [-Wmissing-field-initializers]
+In file included from /d/rhe/include/rhutil.hpp:40,
+                 from simplify-file-names.cpp:51:
+simplify-file-names.cpp: In function ‘void ns_SFN::InitializeCharMap(char*)’:
+simplify-file-names.cpp:521:43: warning: use of old-style cast to ‘unsigned char’ [-Wold-style-cast]
+  521 |       assert((int)(unsigned char)CharMap[i] >  31);
+      |                                           ^
+simplify-file-names.cpp:521:43: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+simplify-file-names.cpp:522:43: warning: use of old-style cast to ‘unsigned char’ [-Wold-style-cast]
+  522 |       assert((int)(unsigned char)CharMap[i] < 127);
+      |                                           ^
+simplify-file-names.cpp:522:43: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+simplify-file-names.cpp: In member function ‘void ns_SFN::ProcessCurDirFunctor::operator()()’:
+simplify-file-names.cpp:592:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  592 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+simplify-file-names.cpp: In function ‘void ns_SFN::ProcessCurrentFile(const char*, const ns_SFN::Bools_t&, ns_SFN::Stats_t&, const FR&)’:
+simplify-file-names.cpp:686:9: error: ‘__file_exists’ was not declared in this scope
+  686 |    if (!__file_exists(OldName.c_str()))
+      |         ^~~~~~~~~~~~~
+simplify-file-names.cpp:720:8: error: ‘__file_exists’ was not declared in this scope
+  720 |    if (__file_exists(NewName.c_str()))
+      |        ^~~~~~~~~~~~~
+simplify-file-names.cpp: In function ‘std::string ns_SFN::SimplifyFileName(const string&, const char*, const ns_SFN::Bools_t&)’:
+simplify-file-names.cpp:850:46: warning: conversion from ‘int’ to ‘char’ may change value [-Wconversion]
+  850 |                NewName.replace(Index1, 3, 1, Char);
+      |                                              ^~~~
+simplify-file-names.cpp: In function ‘char ns_SFN::GetCharFromHex(std::string)’:
+simplify-file-names.cpp:999:43: warning: use of old-style cast to ‘char’ [-Wold-style-cast]
+  999 |    if (  3  != Hex.size() ) {return (char)0;}
+      |                                           ^
+      |                                     -------
+      |                                     static_cast<char> (0)
+simplify-file-names.cpp:1000:43: warning: use of old-style cast to ‘char’ [-Wold-style-cast]
+ 1000 |    if ( '%' != Hex[0]     ) {return (char)0;}
+      |                                           ^
+      |                                     -------
+      |                                     static_cast<char> (0)
+simplify-file-names.cpp:1003:60: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+ 1003 |    if (Hex[2] >= '0' && Hex[2] <= '9') {Value0 = (int)Hex[2] - (int)'0' +  0;}
+      |                                                            ^
+      |                                                  -----------
+      |                                                  static_cast<int> (Hex[2])
+simplify-file-names.cpp:1003:69: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+ 1003 |    if (Hex[2] >= '0' && Hex[2] <= '9') {Value0 = (int)Hex[2] - (int)'0' +  0;}
+      |                                                                     ^~~
+      |                                                                --------
+      |                                                                static_cast<int> ('0')
+simplify-file-names.cpp:1004:60: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+ 1004 |    if (Hex[2] >= 'a' && Hex[2] <= 'f') {Value0 = (int)Hex[2] - (int)'a' + 10;}
+      |                                                            ^
+      |                                                  -----------
+      |                                                  static_cast<int> (Hex[2])
+simplify-file-names.cpp:1004:69: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+ 1004 |    if (Hex[2] >= 'a' && Hex[2] <= 'f') {Value0 = (int)Hex[2] - (int)'a' + 10;}
+      |                                                                     ^~~
+      |                                                                --------
+      |                                                                static_cast<int> ('a')
+simplify-file-names.cpp:1005:60: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+ 1005 |    if (Hex[2] >= 'A' && Hex[2] <= 'F') {Value0 = (int)Hex[2] - (int)'A' + 10;}
+      |                                                            ^
+      |                                                  -----------
+      |                                                  static_cast<int> (Hex[2])
+simplify-file-names.cpp:1005:69: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+ 1005 |    if (Hex[2] >= 'A' && Hex[2] <= 'F') {Value0 = (int)Hex[2] - (int)'A' + 10;}
+      |                                                                     ^~~
+      |                                                                --------
+      |                                                                static_cast<int> ('A')
+simplify-file-names.cpp:1008:60: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+ 1008 |    if (Hex[1] >= '0' && Hex[1] <= '9') {Value1 = (int)Hex[1] - (int)'0' +  0;}
+      |                                                            ^
+      |                                                  -----------
+      |                                                  static_cast<int> (Hex[1])
+simplify-file-names.cpp:1008:69: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+ 1008 |    if (Hex[1] >= '0' && Hex[1] <= '9') {Value1 = (int)Hex[1] - (int)'0' +  0;}
+      |                                                                     ^~~
+      |                                                                --------
+      |                                                                static_cast<int> ('0')
+simplify-file-names.cpp:1009:60: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+ 1009 |    if (Hex[1] >= 'a' && Hex[1] <= 'f') {Value1 = (int)Hex[1] - (int)'a' + 10;}
+      |                                                            ^
+      |                                                  -----------
+      |                                                  static_cast<int> (Hex[1])
+simplify-file-names.cpp:1009:69: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+ 1009 |    if (Hex[1] >= 'a' && Hex[1] <= 'f') {Value1 = (int)Hex[1] - (int)'a' + 10;}
+      |                                                                     ^~~
+      |                                                                --------
+      |                                                                static_cast<int> ('a')
+simplify-file-names.cpp:1010:60: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+ 1010 |    if (Hex[1] >= 'A' && Hex[1] <= 'F') {Value1 = (int)Hex[1] - (int)'A' + 10;}
+      |                                                            ^
+      |                                                  -----------
+      |                                                  static_cast<int> (Hex[1])
+simplify-file-names.cpp:1010:69: warning: use of old-style cast to ‘int’ [-Wold-style-cast]
+ 1010 |    if (Hex[1] >= 'A' && Hex[1] <= 'F') {Value1 = (int)Hex[1] - (int)'A' + 10;}
+      |                                                                     ^~~
+      |                                                                --------
+      |                                                                static_cast<int> ('A')
+simplify-file-names.cpp:1016:23: warning: use of old-style cast to ‘char’ [-Wold-style-cast]
+ 1016 |    return (char)(Value); // (Values 128 to 255 will be cast to -128 to -1.)
+      |                       ^
+      |           -------------
+      |           static_cast<char> ((Value))
+make: [/rhe/src/maketail:312: simplify-file-names] Error 1 (ignored)
+simplify-file-names is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile sortdup.cpp to sortdup:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 sortdup.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/sortdup
+sortdup.cpp:44: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   44 | #define BLAT_ENABLE
+      | 
+sortdup is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile source-clean.cpp to source-clean:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 source-clean.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/source-clean
+source-clean.cpp:25:10: fatal error: dir.h: No such file or directory
+   25 | #include <dir.h>
+      |          ^~~~~~~
+compilation terminated.
+make: [/rhe/src/maketail:312: source-clean] Error 1 (ignored)
+source-clean is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile source-lines.cpp to source-lines:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 source-lines.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/source-lines
+source-lines.cpp:29:10: fatal error: dir.h: No such file or directory
+   29 | #include <dir.h>
+      |          ^~~~~~~
+compilation terminated.
+make: [/rhe/src/maketail:312: source-lines] Error 1 (ignored)
+source-lines is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile spellchk.cpp to spellchk:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 spellchk.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/spellchk
+spellchk.cpp:33: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   33 | #define BLAT_ENABLE
+      | 
+spellchk.cpp: In function ‘void ns_Spell::CorrectWord(std::string&, const string&, const SSSS&, const SSSS&)’:
+spellchk.cpp:390:27: warning: unused parameter ‘Line’ [-Wunused-parameter]
+  390 |       std::string       & Line,
+      |       ~~~~~~~~~~~~~~~~~~~~^~~~
+spellchk.cpp:392:27: warning: unused parameter ‘WordPos’ [-Wunused-parameter]
+  392 |       SSSS        const & WordPos,
+      |       ~~~~~~~~~~~~~~~~~~~~^~~~~~~
+spellchk.cpp:393:27: warning: unused parameter ‘WordLen’ [-Wunused-parameter]
+  393 |       SSSS        const & WordLen
+      |       ~~~~~~~~~~~~~~~~~~~~^~~~~~~
+In file included from spellchk.cpp:38:
+/d/rhe/include/rhdir.hpp: In instantiation of ‘Container& rhdir::LoadFileList(Container&, const string&, int, int) [with Container = std::__cxx11::list<std::__cxx11::basic_string<char> >; std::string = std::__cxx11::basic_string<char>]’:
+spellchk.cpp:213:4:   required from here
+/d/rhe/include/rhdir.hpp:781:18: error: no matching function for call to ‘std::__cxx11::list<std::__cxx11::basic_string<char> >::push_back(rhdir::FileRecord&)’
+  781 |       C.push_back(FR);
+      |       ~~~~~~~~~~~^~~~
+In file included from /usr/include/c++/11.1.0/list:63,
+                 from spellchk.cpp:26:
+/usr/include/c++/11.1.0/bits/stl_list.h:1211:7: note: candidate: ‘void std::__cxx11::list<_Tp, _Alloc>::push_back(const value_type&) [with _Tp = std::__cxx11::basic_string<char>; _Alloc = std::allocator<std::__cxx11::basic_string<char> >; std::__cxx11::list<_Tp, _Alloc>::value_type = std::__cxx11::basic_string<char>]’
+ 1211 |       push_back(const value_type& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11.1.0/bits/stl_list.h:1211:35: note:   no known conversion for argument 1 from ‘rhdir::FileRecord’ to ‘const value_type&’ {aka ‘const std::__cxx11::basic_string<char>&’}
+ 1211 |       push_back(const value_type& __x)
+      |                 ~~~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/11.1.0/bits/stl_list.h:1216:7: note: candidate: ‘void std::__cxx11::list<_Tp, _Alloc>::push_back(std::__cxx11::list<_Tp, _Alloc>::value_type&&) [with _Tp = std::__cxx11::basic_string<char>; _Alloc = std::allocator<std::__cxx11::basic_string<char> >; std::__cxx11::list<_Tp, _Alloc>::value_type = std::__cxx11::basic_string<char>]’
+ 1216 |       push_back(value_type&& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11.1.0/bits/stl_list.h:1216:30: note:   no known conversion for argument 1 from ‘rhdir::FileRecord’ to ‘std::__cxx11::list<std::__cxx11::basic_string<char> >::value_type&&’ {aka ‘std::__cxx11::basic_string<char>&&’}
+ 1216 |       push_back(value_type&& __x)
+      |                 ~~~~~~~~~~~~~^~~
+make: [/rhe/src/maketail:312: spellchk] Error 1 (ignored)
+spellchk is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile substitute.cpp to substitute:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 substitute.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/substitute
+substitute.cpp:28: warning: macro "BLAT_ENABLE" is not used [-Wunused-macros]
+   28 | #define BLAT_ENABLE
+      | 
+substitute.cpp: In function ‘void ns_Substitute::Substitute(const VS&)’:
+substitute.cpp:205:26: error: ‘Substitute’ is not a member of ‘rhregex’; did you mean ‘SubstituteC’?
+  205 |       LineOut = rhregex::Substitute(Pattern, Replacement, LineIn, Flag);
+      |                          ^~~~~~~~~~
+      |                          SubstituteC
+make: [/rhe/src/maketail:312: substitute] Error 1 (ignored)
+substitute is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile undamage.cpp to undamage:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 undamage.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/undamage
+undamage.cpp:39:10: fatal error: conio.h: No such file or directory
+   39 | #include <conio.h>
+      |          ^~~~~~~~~
+compilation terminated.
+make: [/rhe/src/maketail:312: undamage] Error 1 (ignored)
+undamage is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile unique-file-names.cpp to unique-file-names:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 unique-file-names.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/unique-file-names
+unique-file-names.cpp: In function ‘int main(int, char**)’:
+unique-file-names.cpp:57:12: error: ‘Randomize’ is not a member of ‘rhmath’; did you mean ‘rhutil::Randomize’?
+   57 |    rhmath::Randomize();
+      |            ^~~~~~~~~
+In file included from /d/rhe/include/rhutil.hpp:63,
+                 from unique-file-names.cpp:24:
+/d/rhe/include/rhutilc.h:45:6: note: ‘rhutil::Randomize’ declared here
+   45 | void Randomize (void);
+      |      ^~~~~~~~~
+unique-file-names.cpp: In function ‘void ns_UFN::UniqueFileNames()’:
+unique-file-names.cpp:92:44: error: ‘Substitute’ is not a member of ‘rhregex’; did you mean ‘SubstituteC’?
+   92 |       TmpFileName = NewFileName = rhregex::Substitute(RegEx, Replacement, NewFileName, 'h');
+      |                                            ^~~~~~~~~~
+      |                                            SubstituteC
+unique-file-names.cpp:94:30: error: ‘Substitute’ is not a member of ‘rhregex’; did you mean ‘SubstituteC’?
+   94 |       NewFileName = rhregex::Substitute(RegEx, Replacement, NewFileName, 'h');
+      |                              ^~~~~~~~~~
+      |                              SubstituteC
+unique-file-names.cpp:102:33: error: ‘Substitute’ is not a member of ‘rhregex’; did you mean ‘SubstituteC’?
+  102 |          NewFileName = rhregex::Substitute(RegEx, Replacement, NewFileName, 'h');
+      |                                 ^~~~~~~~~~
+      |                                 SubstituteC
+unique-file-names.cpp: In function ‘std::string ns_UFN::RandomSix()’:
+unique-file-names.cpp:155:28: error: ‘RandInt’ is not a member of ‘rhmath’
+  155 |       Six += chars[rhmath::RandInt(0, 35)];
+      |                            ^~~~~~~
+unique-file-names.cpp:155:28: note: suggested alternatives:
+In file included from /d/rhe/include/rhutil.hpp:63,
+                 from unique-file-names.cpp:24:
+/d/rhe/include/rhutilc.h:51:5: note:   ‘rhutil::RandInt’
+   51 | int RandInt (int min, int max);
+      |     ^~~~~~~
+In file included from unique-file-names.cpp:25:
+/d/rhe/include/rhdir.hpp:184:5: note:   ‘rhdir::RandInt’
+  184 | int RandInt(int min, int max);
+      |     ^~~~~~~
+make: [/rhe/src/maketail:312: unique-file-names] Error 1 (ignored)
+unique-file-names is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile unmark.cpp to unmark:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 unmark.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/unmark
+unmark.cpp: In function ‘void MakeNewName()’:
+unmark.cpp:97:34: warning: conversion from ‘long int’ to ‘int’ may change value [-Wconversion]
+   97 |   int E=strrchr(OldFileName, '.')-OldFileName;
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+unmark.cpp: In function ‘void UnMarkFile()’:
+unmark.cpp:110:20: warning: conversion from ‘int’ to ‘char’ may change value [-Wconversion]
+  110 |   while ((ch = getc(fp2)) != EOF) {
+      |                ~~~~^~~~~
+unmark.cpp: In function ‘int main(int, char**)’:
+unmark.cpp:68:10: warning: ‘char* strncat(char*, const char*, size_t)’ output may be truncated copying 150 bytes from a string of length 204 [-Wstringop-truncation]
+   68 |   strncat(command, files, MaxFileName);
+      |   ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+unmark.cpp: At global scope:
+unmark.cpp:180:1: warning: macro "MaxCommand" is not used [-Wunused-macros]
+  180 | }
+      | ^
+unmark is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile unquote.cpp to unquote:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 unquote.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/unquote
+unquote is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %:%.cpp to compile untilde.cpp to untilde:
+g++ -I /d/rhe/include -DPLATFORM_IS_LINUX -D_GNU_SOURCE -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion -Wcomments -Wundef -Wunused-macros -Wold-style-cast -Woverloaded-virtual -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17 untilde.cpp -L/home/aragorn/lib -L/lib -L/usr/lib -lrh -lncurses -lname -lgmp -lm  -o /home/aragorn/bin/problematic/untilde
+untilde.cpp:27: warning: macro "NDEBUG" is not used [-Wunused-macros]
+   27 | #define NDEBUG
+      | 
+untilde.cpp: In function ‘int main(int, char**)’:
+untilde.cpp:136:14: warning: conversion from ‘time_t’ {aka ‘long int’} to ‘unsigned int’ may change value [-Wconversion]
+  136 |    srand(time(0));
+      |          ~~~~^~~
+untilde.cpp: In member function ‘void ns_UNT::ProcessCurDirFunctor::operator()()’:
+untilde.cpp:223:32: error: ‘GetFullCurrPath’ is not a member of ‘rhdir’
+  223 |    std::string CurDir = rhdir::GetFullCurrPath();
+      |                                ^~~~~~~~~~~~~~~
+make: [/rhe/src/maketail:312: untilde] Error 1 (ignored)
+untilde is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Problematic Program Collection is up to date.
+
+BASH on Mate Terminal on Manjaro Linux aragorn@Square-Rigger Tue 2022-01-18, 02:54:09 PM
+/d/rhe/src/problematic
+%

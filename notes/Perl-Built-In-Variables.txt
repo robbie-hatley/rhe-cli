@@ -1,0 +1,10 @@
+Perl Built-In Variables:
+
+Separator Variables:           Usage examples:                              Default value
+$/ = $INPUT_RECORD_SEPARATOR   $/ = ','; open(H,'<','myfile.csv');          \n
+$" = $LIST_SEPARATOR           $" = ' '; my@a=qw(Dog Cow Pig);say "@a" ;    ' ' (space)
+$, = $OUTPUT_FIELD_SEPARATOR   $, = ' '; say "Dog","Cow","Pig";             '' (empty string)
+$\ = $OUTPUT_RECORD_SEPARATOR  $\ = '\n'; print 'End with newline';         '' (empty string)
+$; = $SUBSCRIPT_SEPARATOR      $; = '\037'; $income{$country,$state} = $x;  '\034' = chr(28) = \x{1F}
+
+

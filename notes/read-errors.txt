@@ -1,0 +1,6 @@
+Error: Couldn't read file /rhe/archives/code-samples/www.roguemojo.com/Props/README.txt
+Error: Couldn't read file /rhe/misc/sofhenxh.txt
+Error: Couldn't read file /rhe/src/test/nirvana.cpp
+Error: Couldn't read file /rhe/test-zone/tarsier/oejcvztd.txt
+Error: Couldn't read file /rhe/test-zone/tarsier/soikfbxc.txt
+Error: Couldn't read file /rhe/test-zone/soikfbxc.txt

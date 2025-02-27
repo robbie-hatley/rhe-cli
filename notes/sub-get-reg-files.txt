@@ -1,0 +1,73 @@
+sub GetRegularFilesBySize () 
+{
+   my $cwd = cwd_utf8;
+   my $dirhandle;
+   my @filepaths   = ();
+   my %filerecords = ();
+
+   opendir($dirhandle, $cwd)
+   or die "Can't open  directory \"$cwd\"\n$!\n";
+
+   @filepaths = readdir_utf8 $dirhandle;
+
+   closedir($dirhandle)
+   or die "Can't close directory \"$cwd\"\n$!\n";
+
+   # Iterate through current directory, collecting info
+   # on all "regular" files:
+   for (@filepaths)
+   {
+      # Before even so much as running an existence check, 
+      # do an lstat, so that all coming file-test
+      # operators can save time by testing "_":
+      my ( $Ldev,   $Linode, $Lmode,  $Lnlink, 
+           $Luid,   $Lgid,   $Lrdev,  $Lsize,  
+           $Latime, $Lmtime, $Lctime          ) 
+         = lstat($_);
+
+      # Silently skip anything that doesn't exist or
+      # isn't a regular file:
+      next if ! -e _ ;
+      next if ! -f _ ;
+
+      # Get fully qualified path:
+      my $path = ($_ =~ m/^\//) ? $_ : $cwd . '/' . $_ ;
+
+      # Get name from path:
+      my $name = get_name_from_path($path);
+
+      # Get date and time from Lmtime:
+      my @LocalTimeFields = localtime($Lmtime);
+      my $zone = $LocalTimeFields[8] ? 'PDT' : 'PST';
+      my $date = strftime('%F',   @LocalTimeFields);
+      my $time = strftime("%T%Z", @LocalTimeFields);
+
+      # Store file info record for this file in a ref
+      # to a hash of refs to arrays of refs to hashes of
+      # file-info records, with outer hash keyed by size. 
+      # Each new file size found autovivifies a new
+      # "size => array-of-hashes" key/value pair in 
+      # %filerecords for that file size:
+      push @{$filerecords{$Lsize}},
+      {
+         'Path'   => $path,       # path to file
+         'Name'   => $name,       # name of file
+         'Type'   => 'F',         # regular file
+         'Date'   => $date,       # mod-date of file
+         'Time'   => $time,       # mod-time of file
+         'Dev'    => $Ldev,       # lstat[ 0]
+         'Inode'  => $Linode,     # lstat[ 1]
+         'Mode'   => $Lmode,      # lstat[ 2]
+         'Nlink'  => $Lnlink,     #  stat[ 3]
+         'UID'    => $Luid,       # lstat[ 4]
+         'GID'    => $Lgid,       # lstat[ 5]
+         'Rdev'   => $Lrdev,      # lstat[ 6]
+         'Size'   => $Lsize,      # lstat[ 7]
+         'Atime'  => $Latime,     # lstat[ 8]
+         'Mtime'  => $Lmtime,     # lstat[ 9]
+         'Ctime'  => $Lctime,     # lstat[10]
+         'Target' => 'NO TARGET', # not a link
+      };
+   };# end DIRENTRY: for (@direntries)
+   return \%filerecords;
+}

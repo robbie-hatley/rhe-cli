@@ -1,0 +1,2 @@
+move "e:\Test-Range\bad-jpeg-test\asdf4.jpg" "G:\Damaged\e`_Test-Range_bad-jpeg-test_Damaged\asdf4.jpg"
+move "e:\Test-Range\bad-jpeg-test\asdf1.jpg" "G:\Damaged\e`_Test-Range_bad-jpeg-test_Damaged\asdf1.jpg"

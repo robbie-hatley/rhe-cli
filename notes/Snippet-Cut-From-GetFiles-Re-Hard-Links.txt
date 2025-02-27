@@ -1,0 +1,39 @@
+      # file type is found. The counters don't get used as much as $type does,
+      # but they are useful in programs which gather file-system statistics,
+      # such as my census and rhdir programs.
+      #
+      # ECHIDNA : How do I detect hard links???
+      # elsif (-h) {$type = 'H'; ++$hlnkcount;} # hard link???
+      #
+      # Note, 2018-12-08: You can't, because there is no difference between 
+      # a "hard link" and a "regular directory entry". Each directory entry
+      # is a hard (direct) link to specific inode number. Most inodes only 
+      # have one directory entry pointing to them in an entire file system.
+      # However, there is nothing preventing multiple directory entries from
+      # pointing to the same inode (address of physical location on disk),
+      # except for attempts by some operating systems (eg, MS Windows 10) to
+      # prevent users from creating additional hard links to existing files.
+      # (However, there are ways -- such as via Cygwin -- to bypass those
+      # measures.) 
+      #
+      # As for detecting "extra hard links", about the only way I can think of
+      # is to keep track of all inode numbers seen so far and note when two
+      # different paths point to the same inode. This is not guaranteed to find
+      # ALL "extra hard links", though, unless one examines all entries in all
+      # directories in the current media partition. 
+      #
+      # And I don't think inodes work across media partitions. Generally, each
+      # media partition -- hard disk partition, RAM-disk partition, USB-Flash 
+      # partition, CD, DVD, or whatever -- has its own file table (MFT or FAT)
+      # and inode set, so inode numbers are likely duplicated across media
+      # partitions. But that's irrelevant, because an OS isn't going to try to
+      # use an inode from one media partition to access items in a different
+      # media partition. So I think any "extra" hard-link to a file would link
+      # to the item (if any) in the CURRENT media partition that has that
+      # inode. And if NO item has that inode, that's a broken link, and I'm
+      # not sure what would happen if one tried to deref such a hardlink.
+      #
+      # But for the purposes of this subroutine, I'm content to use the nlink
+      # returned by stat and lstat to determine if a directory entry is a
+      # "hard link to multi-linked file" and if so, mark it as type "H" for
+      # "hard link".

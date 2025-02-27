@@ -1,0 +1,890 @@
+
+Aragorn@Ketch
+/rhe
+%rhdir-utf8-all-test.perl
+Can't locate utf8/all.pm in @INC (you may need to install the utf8::all module) (@INC contains: /usr/lib/perl5/site_perl/5.22/x86_64-cygwin-threads /usr/lib/perl5/site_perl/5.22 /usr/lib/perl5/vendor_perl/5.22/x86_64-cygwin-threads /usr/lib/perl5/vendor_perl/5.22 /usr/lib/perl5/5.22/x86_64-cygwin-threads /usr/lib/perl5/5.22 .) at /rhe/scripts/test/rhdir-utf8-all-test.perl line 22.
+BEGIN failed--compilation aborted at /rhe/scripts/test/rhdir-utf8-all-test.perl line 22.
+
+Aragorn@Ketch
+/rhe
+%cd 'C:\cygwin64\CPAN\Utf8-All\utf8-all-0.017'
+
+Aragorn@Ketch
+/CPAN/Utf8-All/utf8-all-0.017
+%ll
+total 69K
+drwxr-xr-x+ 1 Aragorn None    0 Mar 26 04:31 ./
+drwxr-xr-x+ 1 Aragorn None    0 Mar 26 04:31 ../
+drwxrwxr-x+ 1 Aragorn None    0 Mar 26 04:31 corpus/
+drwxrwxr-x+ 1 Aragorn None    0 Mar 26 04:31 lib/
+drwxrwxr-x+ 1 Aragorn None    0 Mar 26 04:31 t/
+drwxrwxr-x+ 1 Aragorn None    0 Mar 26 04:31 xt/
+-rwxrwxr-x+ 1 Aragorn None 1.7K Nov 13 23:14 Build.PL*
+-rwxrwxr-x+ 1 Aragorn None 3.1K Nov 13 23:14 Changes*
+-rwxrwxr-x+ 1 Aragorn None  341 Nov 13 23:14 dist.ini*
+-rwxrwxr-x+ 1 Aragorn None  934 Nov 13 23:14 INSTALL*
+-rwxrwxr-x+ 1 Aragorn None  18K Nov 13 23:14 LICENSE*
+-rwxrwxr-x+ 1 Aragorn None 1.9K Nov 13 23:14 Makefile.PL*
+-rwxrwxr-x+ 1 Aragorn None  858 Nov 13 23:14 MANIFEST*
+-rwxrwxr-x+ 1 Aragorn None  824 Nov 13 23:14 MANIFEST.SKIP*
+-rwxrwxr-x+ 1 Aragorn None 2.5K Nov 13 23:14 META.json*
+-rwxrwxr-x+ 1 Aragorn None 1.1K Nov 13 23:14 META.yml*
+-rwxrwxr-x+ 1 Aragorn None 4.3K Nov 13 23:14 README.mkdn*
+
+Aragorn@Ketch
+/CPAN/Utf8-All/utf8-all-0.017
+%cpanm --help
+-bash: cpanm: command not found
+
+Aragorn@Ketch
+/CPAN/Utf8-All/utf8-all-0.017
+%cpan --help
+/usr/bin/cpan version 1.61 calling Getopt::Std::getopts (version 1.11 [paranoid]),
+running under Perl version 5.22.1.
+
+Usage: cpan [-OPTIONS [-MORE_OPTIONS]] [--] [PROGRAM_ARG1 ...]
+
+The following single-character options are accepted:
+        With arguments: -M -j
+        Boolean (without arguments): -h -v -V -I -g -G -C -A -D -O -l -L -a -r -p -P -J -w -T -T -c -f -i -m -t -u
+
+Options may be merged together.  -- stops processing of options.
+Space is not required between options and their arguments.
+
+For more details run
+        perldoc -F /usr/bin/cpan
+  [Now continuing due to backward compatibility and excessive paranoia.
+   See 'perldoc Getopt::Std' about $Getopt::Std::STANDARD_HELP_VERSION.]
+
+CPAN.pm requires configuration, but most of it can be done automatically.
+If you answer 'no' below, you will enter an interactive dialog for each
+configuration option instead.
+
+Would you like to configure as much as possible automatically? [yes]
+
+Aragorn@Ketch
+/CPAN/Utf8-All/utf8-all-0.017
+%ll
+total 69K
+drwxr-xr-x+ 1 Aragorn None    0 Mar 26 04:31 ./
+drwxr-xr-x+ 1 Aragorn None    0 Mar 26 04:31 ../
+drwxrwxr-x+ 1 Aragorn None    0 Mar 26 04:31 corpus/
+drwxrwxr-x+ 1 Aragorn None    0 Mar 26 04:31 lib/
+drwxrwxr-x+ 1 Aragorn None    0 Mar 26 04:31 t/
+drwxrwxr-x+ 1 Aragorn None    0 Mar 26 04:31 xt/
+-rwxrwxr-x+ 1 Aragorn None 1.7K Nov 13 23:14 Build.PL*
+-rwxrwxr-x+ 1 Aragorn None 3.1K Nov 13 23:14 Changes*
+-rwxrwxr-x+ 1 Aragorn None  341 Nov 13 23:14 dist.ini*
+-rwxrwxr-x+ 1 Aragorn None  934 Nov 13 23:14 INSTALL*
+-rwxrwxr-x+ 1 Aragorn None  18K Nov 13 23:14 LICENSE*
+-rwxrwxr-x+ 1 Aragorn None 1.9K Nov 13 23:14 Makefile.PL*
+-rwxrwxr-x+ 1 Aragorn None  858 Nov 13 23:14 MANIFEST*
+-rwxrwxr-x+ 1 Aragorn None  824 Nov 13 23:14 MANIFEST.SKIP*
+-rwxrwxr-x+ 1 Aragorn None 2.5K Nov 13 23:14 META.json*
+-rwxrwxr-x+ 1 Aragorn None 1.1K Nov 13 23:14 META.yml*
+-rwxrwxr-x+ 1 Aragorn None 4.3K Nov 13 23:14 README.mkdn*
+
+Aragorn@Ketch
+/CPAN/Utf8-All/utf8-all-0.017
+%perl Build.PL
+Checking prerequisites...
+  requires:
+    !  Import::Into is not installed
+  test_requires:
+    !  Test::Fatal is not installed
+    !  Test::Warn is not installed
+
+ERRORS/WARNINGS FOUND IN PREREQUISITES.  You may wish to install the versions
+of the modules indicated above before proceeding with this installation
+
+Run 'Build installdeps' to install missing prerequisites.
+
+Created MYMETA.yml and MYMETA.json
+Creating new 'Build' script for 'utf8-all' version '0.017'
+
+Aragorn@Ketch
+/CPAN/Utf8-All/utf8-all-0.017
+%cpan utf8::all
+
+CPAN.pm requires configuration, but most of it can be done automatically.
+If you answer 'no' below, you will enter an interactive dialog for each
+configuration option instead.
+
+Would you like to configure as much as possible automatically? [yes] yes
+CPAN: Storable loaded ok (v2.53_01)
+CPAN: LWP::UserAgent loaded ok (v6.15)
+Fetching with LWP:
+http://www.cpan.org/authors/01mailrc.txt.gz
+CPAN: YAML loaded ok (v1.15)
+Reading '/rhe/.cpan/sources/authors/01mailrc.txt.gz'
+CPAN: Compress::Zlib loaded ok (v2.068)
+............................................................................DONE
+Fetching with LWP:
+http://www.cpan.org/modules/02packages.details.txt.gz
+Reading '/rhe/.cpan/sources/modules/02packages.details.txt.gz'
+  Database was generated on Sat, 26 Mar 2016 09:41:02 GMT
+............................................................................DONE
+Fetching with LWP:
+http://www.cpan.org/modules/03modlist.data.gz
+Reading '/rhe/.cpan/sources/modules/03modlist.data.gz'
+DONE
+Writing /rhe/.cpan/Metadata
+Running install for module 'utf8::all'
+Fetching with LWP:
+http://www.cpan.org/authors/id/D/DO/DOHERTY/utf8-all-0.017.tar.gz
+CPAN: Digest::SHA loaded ok (v5.95)
+Fetching with LWP:
+http://www.cpan.org/authors/id/D/DO/DOHERTY/CHECKSUMS
+Checksum for /rhe/.cpan/sources/authors/id/D/DO/DOHERTY/utf8-all-0.017.tar.gz ok
+CPAN: CPAN::Meta::Requirements loaded ok (v2.132)
+CPAN: Parse::CPAN::Meta loaded ok (v1.4417)
+CPAN: CPAN::Meta loaded ok (v2.150001)
+CPAN: Module::CoreList loaded ok (v5.20151213)
+CPAN: Module::Build loaded ok (v0.4216)
+Configuring D/DO/DOHERTY/utf8-all-0.017.tar.gz with Build.PL
+Checking prerequisites...
+  requires:
+    !  Import::Into is not installed
+  test_requires:
+    !  Test::Fatal is not installed
+    !  Test::Warn is not installed
+
+ERRORS/WARNINGS FOUND IN PREREQUISITES.  You may wish to install the versions
+of the modules indicated above before proceeding with this installation
+
+Created MYMETA.yml and MYMETA.json
+Creating new 'Build' script for 'utf8-all' version '0.017'
+  DOHERTY/utf8-all-0.017.tar.gz
+  /usr/bin/perl Build.PL -- OK
+Running Build for D/DO/DOHERTY/utf8-all-0.017.tar.gz
+---- Unsatisfied dependencies detected during ----
+----       DOHERTY/utf8-all-0.017.tar.gz      ----
+    Import::Into [requires]
+    Test::Warn [build_requires]
+    Test::Fatal [build_requires]
+Running install for module 'Import::Into'
+Fetching with LWP:
+http://www.cpan.org/authors/id/H/HA/HAARG/Import-Into-1.002005.tar.gz
+Fetching with LWP:
+http://www.cpan.org/authors/id/H/HA/HAARG/CHECKSUMS
+Checksum for /rhe/.cpan/sources/authors/id/H/HA/HAARG/Import-Into-1.002005.tar.gz ok
+Configuring H/HA/HAARG/Import-Into-1.002005.tar.gz with Makefile.PL
+Checking if your kit is complete...
+Looks good
+Generating a Unix-style Makefile
+Writing Makefile for Import::Into
+Writing MYMETA.yml and MYMETA.json
+  HAARG/Import-Into-1.002005.tar.gz
+  /usr/bin/perl Makefile.PL -- OK
+Running make for H/HA/HAARG/Import-Into-1.002005.tar.gz
+cp lib/Import/Into.pm blib/lib/Import/Into.pm
+Manifying 1 pod document
+  HAARG/Import-Into-1.002005.tar.gz
+  /usr/bin/make -- OK
+Running make test
+PERL_DL_NONLAZY=1 "/usr/bin/perl.exe" "-MExtUtils::Command::MM" "-MTest::Harness" "-e" "undef *Test::Harness::Switches; test_harness(0, 'blib/lib', 'blib/arch')" t/*.t
+t/import_into.t .. ok
+All tests successful.
+Files=1, Tests=23,  1 wallclock secs ( 0.05 usr  0.01 sys +  0.06 cusr  0.03 csys =  0.15 CPU)
+Result: PASS
+  HAARG/Import-Into-1.002005.tar.gz
+  /usr/bin/make test -- OK
+Running make install
+Manifying 1 pod document
+Installing /usr/lib/perl5/site_perl/5.22/Import/Into.pm
+Installing /usr/share/man/man3/Import.Into.3pm
+Appending installation info to /usr/lib/perl5/5.22/x86_64-cygwin-threads/perllocal.pod
+  HAARG/Import-Into-1.002005.tar.gz
+  /usr/bin/make install  -- OK
+Running install for module 'Test::Warn'
+Fetching with LWP:
+http://www.cpan.org/authors/id/C/CH/CHORNY/Test-Warn-0.30.tar.gz
+Fetching with LWP:
+http://www.cpan.org/authors/id/C/CH/CHORNY/CHECKSUMS
+Checksum for /rhe/.cpan/sources/authors/id/C/CH/CHORNY/Test-Warn-0.30.tar.gz ok
+Configuring C/CH/CHORNY/Test-Warn-0.30.tar.gz with Makefile.PL
+Checking if your kit is complete...
+Looks good
+Warning: prerequisite Sub::Uplevel 0.12 not found.
+Generating a Unix-style Makefile
+Writing Makefile for Test::Warn
+Writing MYMETA.yml and MYMETA.json
+  CHORNY/Test-Warn-0.30.tar.gz
+  /usr/bin/perl Makefile.PL -- OK
+Running make for C/CH/CHORNY/Test-Warn-0.30.tar.gz
+---- Unsatisfied dependencies detected during ----
+----       CHORNY/Test-Warn-0.30.tar.gz       ----
+    Sub::Uplevel [requires]
+Running install for module 'Sub::Uplevel'
+Fetching with LWP:
+http://www.cpan.org/authors/id/D/DA/DAGOLDEN/Sub-Uplevel-0.25.tar.gz
+Fetching with LWP:
+http://www.cpan.org/authors/id/D/DA/DAGOLDEN/CHECKSUMS
+Checksum for /rhe/.cpan/sources/authors/id/D/DA/DAGOLDEN/Sub-Uplevel-0.25.tar.gz ok
+Configuring D/DA/DAGOLDEN/Sub-Uplevel-0.25.tar.gz with Makefile.PL
+Checking if your kit is complete...
+Looks good
+Generating a Unix-style Makefile
+Writing Makefile for Sub::Uplevel
+Writing MYMETA.yml and MYMETA.json
+  DAGOLDEN/Sub-Uplevel-0.25.tar.gz
+  /usr/bin/perl Makefile.PL -- OK
+Running make for D/DA/DAGOLDEN/Sub-Uplevel-0.25.tar.gz
+cp lib/Sub/Uplevel.pm blib/lib/Sub/Uplevel.pm
+Manifying 1 pod document
+  DAGOLDEN/Sub-Uplevel-0.25.tar.gz
+  /usr/bin/make -- OK
+Running make test
+PERL_DL_NONLAZY=1 "/usr/bin/perl.exe" "-MExtUtils::Command::MM" "-MTest::Harness" "-e" "undef *Test::Harness::Switches; test_harness(0, 'blib/lib', 'blib/arch')" t/*.t
+t/00-report-prereqs.t ........ 1/1 #
+# Versions for all modules listed in MYMETA.json (including optional ones):
+#
+# === Configure Requires ===
+#
+#     Module              Want Have
+#     ------------------- ---- ----
+#     ExtUtils::MakeMaker 6.17 7.10
+#
+# === Build Requires ===
+#
+#     Module              Want Have
+#     ------------------- ---- ----
+#     ExtUtils::MakeMaker  any 7.10
+#
+# === Test Requires ===
+#
+#     Module              Want     Have
+#     ------------------- ---- --------
+#     Exporter             any     5.72
+#     ExtUtils::MakeMaker  any     7.10
+#     File::Spec           any  3.56_01
+#     Test::More           any 1.001014
+#
+# === Test Recommends ===
+#
+#     Module         Want     Have
+#     ---------- -------- --------
+#     CPAN::Meta 2.120900 2.150001
+#
+# === Runtime Requires ===
+#
+#     Module   Want   Have
+#     -------- ---- ------
+#     Carp      any 1.3301
+#     constant  any   1.33
+#     strict    any   1.09
+#     warnings  any   1.34
+#
+t/00-report-prereqs.t ........ ok
+t/01_die_check.t ............. ok
+t/02_uplevel.t ............... ok
+t/03_nested_uplevels.t ....... ok
+t/04_honor_later_override.t .. ok
+t/05_honor_prior_override.t .. ok
+t/06_db_args.t ............... ok
+t/07_uplevel_too_high.t ...... ok
+t/08_exporter.t .............. ok
+t/09_emptylist.t ............. ok
+All tests successful.
+Files=10, Tests=158,  1 wallclock secs ( 0.06 usr  0.05 sys +  0.60 cusr  0.38 csys =  1.09 CPU)
+Result: PASS
+  DAGOLDEN/Sub-Uplevel-0.25.tar.gz
+  /usr/bin/make test -- OK
+Running make install
+Manifying 1 pod document
+Installing /usr/lib/perl5/site_perl/5.22/Sub/Uplevel.pm
+Installing /usr/share/man/man3/Sub.Uplevel.3pm
+Appending installation info to /usr/lib/perl5/5.22/x86_64-cygwin-threads/perllocal.pod
+  DAGOLDEN/Sub-Uplevel-0.25.tar.gz
+  /usr/bin/make install  -- OK
+  CHORNY/Test-Warn-0.30.tar.gz
+  Has already been unwrapped into directory /rhe/.cpan/build/Test-Warn-0.30-DKhew4
+  CHORNY/Test-Warn-0.30.tar.gz
+  Has already been prepared
+Running make for C/CH/CHORNY/Test-Warn-0.30.tar.gz
+cp Warn.pm blib/lib/Test/Warn.pm
+Manifying 1 pod document
+  CHORNY/Test-Warn-0.30.tar.gz
+  /usr/bin/make -- OK
+Running make test
+PERL_DL_NONLAZY=1 "/usr/bin/perl.exe" "-MExtUtils::Command::MM" "-MTest::Harness" "-e" "undef *Test::Harness::Switches; test_harness(0, 'blib/lib', 'blib/arch')" t/*.t
+t/1.t ............... ok
+t/carped.t .......... ok
+t/warning_is.t ...... ok
+t/warning_like.t .... ok
+t/warnings_are.t .... ok
+t/warnings_exist.t .. ok
+t/warnings_like.t ... ok
+All tests successful.
+Files=7, Tests=835,  3 wallclock secs ( 0.03 usr  0.05 sys +  2.96 cusr  0.40 csys =  3.44 CPU)
+Result: PASS
+  CHORNY/Test-Warn-0.30.tar.gz
+  /usr/bin/make test -- OK
+Running make install
+Manifying 1 pod document
+Installing /usr/lib/perl5/site_perl/5.22/Test/Warn.pm
+Installing /usr/share/man/man3/Test.Warn.3pm
+Appending installation info to /usr/lib/perl5/5.22/x86_64-cygwin-threads/perllocal.pod
+  CHORNY/Test-Warn-0.30.tar.gz
+  /usr/bin/make install  -- OK
+Running install for module 'Test::Fatal'
+Fetching with LWP:
+http://www.cpan.org/authors/id/R/RJ/RJBS/Test-Fatal-0.014.tar.gz
+Fetching with LWP:
+http://www.cpan.org/authors/id/R/RJ/RJBS/CHECKSUMS
+Checksum for /rhe/.cpan/sources/authors/id/R/RJ/RJBS/Test-Fatal-0.014.tar.gz ok
+Configuring R/RJ/RJBS/Test-Fatal-0.014.tar.gz with Makefile.PL
+Checking if your kit is complete...
+Looks good
+Generating a Unix-style Makefile
+Writing Makefile for Test::Fatal
+Writing MYMETA.yml and MYMETA.json
+  RJBS/Test-Fatal-0.014.tar.gz
+  /usr/bin/perl Makefile.PL -- OK
+Running make for R/RJ/RJBS/Test-Fatal-0.014.tar.gz
+cp lib/Test/Fatal.pm blib/lib/Test/Fatal.pm
+Manifying 1 pod document
+  RJBS/Test-Fatal-0.014.tar.gz
+  /usr/bin/make -- OK
+Running make test
+PERL_DL_NONLAZY=1 "/usr/bin/perl.exe" "-MExtUtils::Command::MM" "-MTest::Harness" "-e" "undef *Test::Harness::Switches; test_harness(0, 'blib/lib', 'blib/arch')" t/*.t
+t/00-report-prereqs.t .. 1/1 #
+# Versions for all modules listed in MYMETA.json (including optional ones):
+#
+# === Configure Requires ===
+#
+#     Module              Want Have
+#     ------------------- ---- ----
+#     ExtUtils::MakeMaker  any 7.10
+#
+# === Build Requires ===
+#
+#     Module              Want Have
+#     ------------------- ---- ----
+#     ExtUtils::MakeMaker  any 7.10
+#
+# === Test Requires ===
+#
+#     Module                Want     Have
+#     --------------------- ---- --------
+#     ExtUtils::MakeMaker    any     7.10
+#     File::Spec             any  3.56_01
+#     Test::Builder::Tester  any     1.28
+#     Test::More            0.96 1.001014
+#     overload               any     1.26
+#
+# === Test Recommends ===
+#
+#     Module         Want     Have
+#     ---------- -------- --------
+#     CPAN::Meta 2.120900 2.150001
+#
+# === Runtime Requires ===
+#
+#     Module        Want     Have
+#     ------------- ---- --------
+#     Carp           any   1.3301
+#     Exporter      5.57     5.72
+#     Test::Builder  any 1.001014
+#     Try::Tiny     0.07     0.24
+#     strict         any     1.09
+#     warnings       any     1.34
+#
+t/00-report-prereqs.t .. ok
+t/basic.t .............. ok
+t/like-exception.t ..... ok
+t/todo.t ............... ok
+All tests successful.
+Files=4, Tests=16,  1 wallclock secs ( 0.06 usr  0.02 sys +  0.40 cusr  0.23 csys =  0.71 CPU)
+Result: PASS
+  RJBS/Test-Fatal-0.014.tar.gz
+  /usr/bin/make test -- OK
+Running make install
+Manifying 1 pod document
+Installing /usr/lib/perl5/site_perl/5.22/Test/Fatal.pm
+Installing /usr/share/man/man3/Test.Fatal.3pm
+Appending installation info to /usr/lib/perl5/5.22/x86_64-cygwin-threads/perllocal.pod
+  RJBS/Test-Fatal-0.014.tar.gz
+  /usr/bin/make install  -- OK
+  DOHERTY/utf8-all-0.017.tar.gz
+  Has already been unwrapped into directory /rhe/.cpan/build/utf8-all-0.017-plnDNb
+  DOHERTY/utf8-all-0.017.tar.gz
+  Has already been prepared
+Running Build for D/DO/DOHERTY/utf8-all-0.017.tar.gz
+Building utf8-all
+Cannot find "perlrun" in podpath: using pods::perlrun as replacement path to perlrun
+Cannot find "perlfunc" in podpath: using pods::perlfunc as replacement path to perlfunc
+Cannot find "File::Find::utf8" in podpath: cannot find suitable replacement path, cannot resolve link
+Cannot find "Cwd::utf8" in podpath: cannot find suitable replacement path, cannot resolve link
+  DOHERTY/utf8-all-0.017.tar.gz
+  ./Build -- OK
+Running Build test
+t/00-compile.t ....... ok
+t/ARGV.t ............. ok
+t/ARGV_nonmain.t ..... ok
+t/ARGV_twice.t ....... ok
+t/FATAL_utf8.t ....... ok
+t/autodie.t .......... skipped: Skipped: cygwin does not have proper utf-8 file system support
+t/charnames.t ........ ok
+t/fc.t ............... ok
+t/glob.t ............. skipped: Skipped: cygwin does not have proper utf-8 file system support
+t/lexical-again.t .... ok
+t/lexical.t .......... ok
+t/open.t ............. ok
+t/readdir.t .......... skipped: Skipped: cygwin does not have proper utf-8 file system support
+t/readlink.t ......... skipped: Skipped: cygwin does not have proper utf-8 file system support
+t/readpipe.t ......... skipped: Skipped: cygwin does not have proper utf-8 file system support
+t/unicode_eval.t ..... ok
+t/unicode_strings.t .. ok
+t/utf8.t ............. ok
+All tests successful.
+Files=18, Tests=70,  3 wallclock secs ( 0.08 usr  0.06 sys +  1.55 cusr  1.31 csys =  3.00 CPU)
+Result: PASS
+  DOHERTY/utf8-all-0.017.tar.gz
+  ./Build test -- OK
+Running Build install
+Building utf8-all
+Installing /usr/lib/perl5/site_perl/5.22/utf8/all.pm
+Installing /usr/share/man/man3/utf8.all.3pm
+Installing /usr/share/doc/perl/html/html3/site/lib/utf8/all.html
+  DOHERTY/utf8-all-0.017.tar.gz
+  ./Build install  -- OK
+
+Aragorn@Ketch
+/CPAN/Utf8-All/utf8-all-0.017
+%cpan Cwd::utf8
+CPAN: Storable loaded ok (v2.53_01)
+Reading '/rhe/.cpan/Metadata'
+  Database was generated on Sat, 26 Mar 2016 09:41:02 GMT
+Running install for module 'Cwd::utf8'
+CPAN: LWP::UserAgent loaded ok (v6.15)
+Fetching with LWP:
+http://www.cpan.org/authors/id/H/HA/HAYOBAAN/Cwd-utf8-0.007.tar.gz
+CPAN: YAML loaded ok (v1.15)
+CPAN: Digest::SHA loaded ok (v5.95)
+Fetching with LWP:
+http://www.cpan.org/authors/id/H/HA/HAYOBAAN/CHECKSUMS
+CPAN: Compress::Zlib loaded ok (v2.068)
+Checksum for /rhe/.cpan/sources/authors/id/H/HA/HAYOBAAN/Cwd-utf8-0.007.tar.gz ok
+CPAN: File::Temp loaded ok (v0.2304)
+CPAN: CPAN::Meta::Requirements loaded ok (v2.132)
+CPAN: Parse::CPAN::Meta loaded ok (v1.4417)
+CPAN: CPAN::Meta loaded ok (v2.150001)
+CPAN: Module::CoreList loaded ok (v5.20151213)
+CPAN: Module::Build loaded ok (v0.4216)
+Configuring H/HA/HAYOBAAN/Cwd-utf8-0.007.tar.gz with Build.PL
+Checking prerequisites...
+  test_requires:
+    !  Test::Exception is not installed
+
+ERRORS/WARNINGS FOUND IN PREREQUISITES.  You may wish to install the versions
+of the modules indicated above before proceeding with this installation
+
+Created MYMETA.yml and MYMETA.json
+Creating new 'Build' script for 'Cwd-utf8' version '0.007'
+  HAYOBAAN/Cwd-utf8-0.007.tar.gz
+  /usr/bin/perl Build.PL -- OK
+Running Build for H/HA/HAYOBAAN/Cwd-utf8-0.007.tar.gz
+---- Unsatisfied dependencies detected during ----
+----      HAYOBAAN/Cwd-utf8-0.007.tar.gz      ----
+    Test::Exception [build_requires]
+Running install for module 'Test::Exception'
+Fetching with LWP:
+http://www.cpan.org/authors/id/E/EX/EXODIST/Test-Exception-0.43.tar.gz
+Fetching with LWP:
+http://www.cpan.org/authors/id/E/EX/EXODIST/CHECKSUMS
+Checksum for /rhe/.cpan/sources/authors/id/E/EX/EXODIST/Test-Exception-0.43.tar.gz ok
+Configuring E/EX/EXODIST/Test-Exception-0.43.tar.gz with Makefile.PL
+Checking if your kit is complete...
+Looks good
+Generating a Unix-style Makefile
+Writing Makefile for Test::Exception
+Writing MYMETA.yml and MYMETA.json
+  EXODIST/Test-Exception-0.43.tar.gz
+  /usr/bin/perl Makefile.PL -- OK
+Running make for E/EX/EXODIST/Test-Exception-0.43.tar.gz
+cp lib/Test/Exception.pm blib/lib/Test/Exception.pm
+Manifying 1 pod document
+  EXODIST/Test-Exception-0.43.tar.gz
+  /usr/bin/make -- OK
+Running make test
+PERL_DL_NONLAZY=1 "/usr/bin/perl.exe" "-MExtUtils::Command::MM" "-MTest::Harness" "-e" "undef *Test::Harness::Switches; test_harness(0, 'blib/lib', 'blib/arch')" t/*.t
+t/caller.t ...... ok
+t/edge-cases.t .. skipped: stuff relating to RT#24678 that I have not fixed yet
+t/Exception.t ... ok
+t/import.t ...... ok
+t/isa.t ......... ok
+t/lives_and.t ... 1/3 # $Test::More::VERSION = 1.001014
+t/lives_and.t ... ok
+t/preserve.t .... ok
+t/return.t ...... ok
+t/rt.t .......... ok
+t/stacktrace.t .. ok
+t/throws_ok.t ... ok
+All tests successful.
+
+Test Summary Report
+-------------------
+t/Exception.t (Wstat: 0 Tests: 20 Failed: 0)
+  TODO passed:   20
+Files=11, Tests=53,  1 wallclock secs ( 0.08 usr  0.05 sys +  0.48 cusr  0.50 csys =  1.11 CPU)
+Result: PASS
+  EXODIST/Test-Exception-0.43.tar.gz
+  /usr/bin/make test -- OK
+Running make install
+Manifying 1 pod document
+Installing /usr/lib/perl5/site_perl/5.22/Test/Exception.pm
+Installing /usr/share/man/man3/Test.Exception.3pm
+Appending installation info to /usr/lib/perl5/5.22/x86_64-cygwin-threads/perllocal.pod
+  EXODIST/Test-Exception-0.43.tar.gz
+  /usr/bin/make install  -- OK
+  HAYOBAAN/Cwd-utf8-0.007.tar.gz
+  Has already been unwrapped into directory /rhe/.cpan/build/Cwd-utf8-0.007-nnDxNF
+  HAYOBAAN/Cwd-utf8-0.007.tar.gz
+  Has already been prepared
+Running Build for H/HA/HAYOBAAN/Cwd-utf8-0.007.tar.gz
+Building Cwd-utf8
+Cannot find "Cwd" in podpath: using x86_64-cygwin-threads::Cwd as replacement path to Cwd
+Cannot find "Cwd" in podpath: using x86_64-cygwin-threads::Cwd as replacement path to Cwd
+Cannot find "Cwd" in podpath: using x86_64-cygwin-threads::Cwd as replacement path to Cwd
+Cannot find "Encode" in podpath: using x86_64-cygwin-threads::Encode as replacement path to Encode
+Cannot find "Cwd" in podpath: using x86_64-cygwin-threads::Cwd as replacement path to Cwd
+Cannot find "Cwd" in podpath: using x86_64-cygwin-threads::Cwd as replacement path to Cwd
+Cannot find "File::Find::utf8" in podpath: cannot find suitable replacement path, cannot resolve link
+Cannot find "Cwd" in podpath: using x86_64-cygwin-threads::Cwd as replacement path to Cwd
+  HAYOBAAN/Cwd-utf8-0.007.tar.gz
+  ./Build -- OK
+Running Build test
+t/00-compile.t .. ok
+t/cwd.t ......... skipped: Skipped: cygwin does not have proper utf-8 file system support
+t/import.t ...... ok
+t/utf8_check.t .. skipped: Skipped: cygwin does not have proper utf-8 file system support
+All tests successful.
+Files=4, Tests=7,  1 wallclock secs ( 0.02 usr  0.05 sys +  0.23 cusr  0.38 csys =  0.68 CPU)
+Result: PASS
+  HAYOBAAN/Cwd-utf8-0.007.tar.gz
+  ./Build test -- OK
+Running Build install
+Building Cwd-utf8
+Installing /usr/lib/perl5/site_perl/5.22/Cwd/utf8.pm
+Installing /usr/share/man/man3/Cwd.utf8.3pm
+Installing /usr/share/doc/perl/html/html3/site/lib/Cwd/utf8.html
+  HAYOBAAN/Cwd-utf8-0.007.tar.gz
+  ./Build install  -- OK
+
+Aragorn@Ketch
+/CPAN/Utf8-All/utf8-all-0.017
+%cpan File::Find::utf8
+CPAN: Storable loaded ok (v2.53_01)
+Reading '/rhe/.cpan/Metadata'
+  Database was generated on Sat, 26 Mar 2016 09:41:02 GMT
+Running install for module 'File::Find::utf8'
+CPAN: LWP::UserAgent loaded ok (v6.15)
+Fetching with LWP:
+http://www.cpan.org/authors/id/H/HA/HAYOBAAN/File-Find-utf8-0.009.tar.gz
+CPAN: YAML loaded ok (v1.15)
+CPAN: Digest::SHA loaded ok (v5.95)
+CPAN: Compress::Zlib loaded ok (v2.068)
+Checksum for /rhe/.cpan/sources/authors/id/H/HA/HAYOBAAN/File-Find-utf8-0.009.tar.gz ok
+CPAN: File::Temp loaded ok (v0.2304)
+CPAN: CPAN::Meta::Requirements loaded ok (v2.132)
+CPAN: Parse::CPAN::Meta loaded ok (v1.4417)
+CPAN: CPAN::Meta loaded ok (v2.150001)
+CPAN: Module::CoreList loaded ok (v5.20151213)
+CPAN: Module::Build loaded ok (v0.4216)
+Configuring H/HA/HAYOBAAN/File-Find-utf8-0.009.tar.gz with Build.PL
+Created MYMETA.yml and MYMETA.json
+Creating new 'Build' script for 'File-Find-utf8' version '0.009'
+  HAYOBAAN/File-Find-utf8-0.009.tar.gz
+  /usr/bin/perl Build.PL -- OK
+Running Build for H/HA/HAYOBAAN/File-Find-utf8-0.009.tar.gz
+Building File-Find-utf8
+Cannot find "Encode" in podpath: using x86_64-cygwin-threads::Encode as replacement path to Encode
+Cannot find "Cwd" in podpath: using x86_64-cygwin-threads::Cwd as replacement path to Cwd
+Cannot find "Cwd" in podpath: using x86_64-cygwin-threads::Cwd as replacement path to Cwd
+  HAYOBAAN/File-Find-utf8-0.009.tar.gz
+  ./Build -- OK
+Running Build test
+t/00-compile.t ...... ok
+t/find.t ............ skipped: Skipped: cygwin does not have proper utf-8 file system support
+t/import.t .......... ok
+t/utf8_check.t ...... skipped: Skipped: cygwin does not have proper utf-8 file system support
+t/warning_levels.t .. ok
+All tests successful.
+Files=5, Tests=9,  1 wallclock secs ( 0.03 usr  0.03 sys +  0.46 cusr  0.30 csys =  0.83 CPU)
+Result: PASS
+  HAYOBAAN/File-Find-utf8-0.009.tar.gz
+  ./Build test -- OK
+Running Build install
+Building File-Find-utf8
+Installing /usr/lib/perl5/site_perl/5.22/File/Find/utf8.pm
+Installing /usr/share/man/man3/File.Find.utf8.3pm
+Installing /usr/share/doc/perl/html/html3/site/lib/File/Find/utf8.html
+  HAYOBAAN/File-Find-utf8-0.009.tar.gz
+  ./Build install  -- OK
+
+Aragorn@Ketch
+/CPAN/Utf8-All/utf8-all-0.017
+%rhdir-utf8-all-test.perl
+
+
+Directory # 1:
+/CPAN/Utf8-All/utf8-all-0.017
+T: Date:       Time:        Size:     Name:
+D  2016-03-26  04:34:45PDT  0.00E+00  _build
+D  2016-03-26  04:31:07PDT  0.00E+00  corpus
+D  2016-03-26  04:31:07PDT  0.00E+00  lib
+D  2016-03-26  04:31:07PDT  0.00E+00  t
+D  2016-03-26  04:31:07PDT  0.00E+00  xt
+F  2016-03-26  04:34:46PDT  1.37E+03  Build
+F  2015-11-13  23:14:32PST  1.73E+03  Build.PL
+F  2015-11-13  23:14:32PST  3.09E+03  Changes
+F  2015-11-13  23:14:32PST  3.41E+02  dist.ini
+F  2015-11-13  23:14:32PST  9.34E+02  INSTALL
+F  2015-11-13  23:14:32PST  1.84E+04  LICENSE
+F  2015-11-13  23:14:32PST  1.89E+03  Makefile.PL
+F  2015-11-13  23:14:32PST  8.58E+02  MANIFEST
+F  2015-11-13  23:14:32PST  8.24E+02  MANIFEST.SKIP
+F  2015-11-13  23:14:32PST  2.52E+03  META.json
+F  2015-11-13  23:14:32PST  1.06E+03  META.yml
+F  2016-03-26  04:34:46PDT  1.96E+03  MYMETA.json
+F  2016-03-26  04:34:46PDT  1.07E+03  MYMETA.yml
+F  2015-11-13  23:14:32PST  4.38E+03  README.mkdn
+
+Navigated 1 directories.
+Encountered 19 files.
+
+Aragorn@Ketch
+/CPAN/Utf8-All/utf8-all-0.017
+%cd ..
+
+Aragorn@Ketch
+/CPAN/Utf8-All
+%ll
+total 32K
+drwxr-xr-x+ 1 Aragorn None   0 Mar 26 04:31 ./
+drwxr-xr-x+ 1 Aragorn None   0 Mar 26 04:30 ../
+drwxr-xr-x+ 1 Aragorn None   0 Mar 26 04:34 utf8-all-0.017/
+-rwxrwxr-x+ 1 Aragorn None 23K Mar 26 04:30 utf8-all-0.017.tar.gz*
+
+Aragorn@Ketch
+/CPAN/Utf8-All
+%cd ..
+
+Aragorn@Ketch
+/CPAN
+%..
+-bash: ..: command not found
+
+Aragorn@Ketch
+/CPAN
+%ll
+total 16K
+drwxr-xr-x+ 1 Aragorn None 0 Mar 26 04:30 ./
+drwxr-xr-x+ 1 Aragorn None 0 Mar 23 14:35 ../
+drwxr-xr-x+ 1 Aragorn None 0 Jul  7  2015 CPAN/
+drwxr-xr-x+ 1 Aragorn None 0 Jul  7  2015 Perl-22/
+drwxr-xr-x+ 1 Aragorn None 0 Jul  7  2015 Statistics-Descriptive/
+drwxr-xr-x+ 1 Aragorn None 0 Jul  7  2015 Statistics-Descriptive-Discrete/
+drwxr-xr-x+ 1 Aragorn None 0 Jul  7  2015 Unicode-CaseFold/
+drwxr-xr-x+ 1 Aragorn None 0 Mar 26 04:31 Utf8-All/
+
+Aragorn@Ketch
+/CPAN
+%perldoc File::Find::utf8
+
+Aragorn@Ketch
+/CPAN
+%cd /rhe/test-range
+
+Aragorn@Ketch
+/rhe/test-range
+%ll
+total 385K
+drwxr-xr-x+ 1 Aragorn None  0 Mar 22 17:24 ./
+drwxr-xr-x+ 1 Aragorn None  0 Mar 26 04:32 ../
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 bad-name-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 cipher-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 'Copy of for-each-dir-move-test'/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 Cut-Excess-Test-Dst/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 Cut-Excess-Test-Dst-Raw/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 Cut-Excess-Test-Src/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 Cut-Excess-Test-Src-Raw/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 dedup-files-test-raw/
+drwxr-xr-x+ 1 Aragorn None  0 Jan 31 15:10 dedup-newsbin-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 dedup-newsbin-test-raw/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 dirs-test/
+drwxr-xr-x+ 1 Aragorn None  0 Mar 13  2015 email-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 encode-test/
+drwxr-xr-x+ 1 Aragorn None  0 Mar 23 06:38 files-with-unicode-names/
+drwxr-xr-x+ 1 Aragorn None  0 Mar 18 05:23 filter-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 findfirst-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 for-each-dir-move-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 for-each-dir-move-test-raw/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 16  2015 gibberish-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 iso-iec-1539/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 Lighthouse/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 linkify-test/
+drwxr-xr-x+ 1 Aragorn None  0 Dec 23  2014 list-by-last-test/
+drwxr-xr-x+ 1 Aragorn None  0 Feb 13 16:01 merge-batches-test/
+drwxr-xr-x+ 1 Aragorn None  0 Feb 13 15:55 merge-batches-test-raw/
+drwxr-xr-x+ 1 Aragorn None  0 Feb 13 16:06 merge-files-test/
+drwxr-xr-x+ 1 Aragorn None  0 Feb 13 16:01 merge-files-test-raw/
+drwxr-xr-x+ 1 Aragorn None  0 Jul  7  2015 misc/
+drwxr-xr-x+ 1 Aragorn None  0 Feb 15  2015 Pathological-File-Names/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 ranfilnam-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 ranfilnam-test-raw/
+drwxr-xr-x+ 1 Aragorn None  0 Mar 22 17:26 rename-test/
+drwxr-xr-x+ 1 Aragorn None  0 Mar 22 17:23 rename-test-raw/
+drwxr-xr-x+ 1 Aragorn None  0 Jun  1  2015 rnf-test/
+drwxr-xr-x+ 1 Aragorn None  0 Nov 12  2014 sed-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 17  2015 set-ext-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 16  2015 set-ext-test-raw/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 sfn-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 sfn-test-raw/
+drwxr-xr-x+ 1 Aragorn None  0 Jun 18  2015 tarsier/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 test-documents/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 test-images/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 16  2015 trash-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 untilde-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 untilde-test-raw/
+drwxr-xr-x+ 1 Aragorn None  0 Apr 21  2014 Upside-Down-Test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 xxcopy-rs-test/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 10  2014 xxcopy-rs-test-raw/
+drwxr-xr-x+ 1 Aragorn None  0 Jul 20  2015 Олег-Газманов/
+-rwxr-xr-x  1 Aragorn None 99 Feb 12 08:27 color.html*
+
+Aragorn@Ketch
+/rhe/test-range
+%mv files-with-unicode-names unicode
+
+Aragorn@Ketch
+/rhe/test-range
+%cd unicode
+
+Aragorn@Ketch
+/rhe/test-range/unicode
+%ll
+total 53K
+drwxr-xr-x+ 1 Aragorn None   0 Mar 23 06:38 ./
+drwxr-xr-x+ 1 Aragorn None   0 Mar 26 04:52 ../
+-r-xr-xr-x  1 Aragorn None   6 Nov 26  2000 «file-name-starting-with-guillemotleft.txt*
+-r-xr-xr-x  1 Aragorn None   6 Nov 26  2000 'cô chạy xuống phố.txt'*
+-r-xr-xr-x  1 Aragorn None   6 Nov 26  2000 Ðis-File-Name-Starts-With-A-iso-8859-1-Edth-Character.txt*
+-rwxr-xr-x  1 Aragorn None 857 Mar 23 06:42 'সে রাস্তার নিচে দৌড়ে.txt'*
+-r-xr-xr-x  1 Aragorn None   6 Nov 26  2000 '그녀는 길을 달렸다.txt'*
+-r-xr-xr-x  1 Aragorn None   6 Nov 26  2000 麦藁雪、富士川町、山梨県.txt*
+
+Aragorn@Ketch
+/rhe/test-range/unicode
+%rhdir
+syntax error at /usr/lib/perl5/site_perl/5.22/RH/Dir.pm line 668, near "${wildcard}>"
+Compilation failed in require at /rhe/scripts/util/rhdir line 20.
+BEGIN failed--compilation aborted at /rhe/scripts/util/rhdir line 20.
+
+Aragorn@Ketch
+/rhe/test-range/unicode
+%rhdir
+
+
+Directory # 1:
+/rhe/test-range/unicode
+T: Date:       Time:        Size:     Name:
+F  2000-11-26  00:08:58PST  6.00E+00  «file-name-starting-with-guillemotleft.txt
+F  2000-11-26  00:08:58PST  6.00E+00  Ðis-File-Name-Starts-With-A-iso-8859-1-Edth-Character.txt
+F  2016-03-23  06:42:53PDT  8.57E+02  সে রাস্তার নিচে দৌড়ে.txt
+F  2000-11-26  00:08:58PST  6.00E+00  麦藁雪、富士川町、山梨県.txt
+F  2000-11-26  00:08:58PST  6.00E+00  그녀는 길을 달렸다.txt
+F  2000-11-26  00:08:58PST  6.00E+00  cô chạy xuống phố.txt
+
+Navigated 1 directories.
+Encountered 6 files.
+
+Aragorn@Ketch
+/rhe/test-range/unicode
+%rhdir
+syntax error at /usr/lib/perl5/site_perl/5.22/RH/Dir.pm line 93, near "my "
+Global symbol "@filerecords" requires explicit package name (did you forget to declare "my @filerecords"?) at /usr/lib/perl5/site_perl/5.22/RH/Dir.pm line 93.
+Global symbol "@filerecords" requires explicit package name (did you forget to declare "my @filerecords"?) at /usr/lib/perl5/site_perl/5.22/RH/Dir.pm line 218.
+Global symbol "@filerecords" requires explicit package name (did you forget to declare "my @filerecords"?) at /usr/lib/perl5/site_perl/5.22/RH/Dir.pm line 239.
+Compilation failed in require at /rhe/scripts/util/rhdir line 20.
+BEGIN failed--compilation aborted at /rhe/scripts/util/rhdir line 20.
+
+Aragorn@Ketch
+/rhe/test-range/unicode
+%rhdir
+Bareword "cwd_utf8" not allowed while "strict subs" in use at /rhe/scripts/util/rhdir line 147.
+Execution of /rhe/scripts/util/rhdir aborted due to compilation errors.
+
+Aragorn@Ketch
+/rhe/test-range/unicode
+%rhdir-utf8-all-test.perl
+Bareword "cwd" not allowed while "strict subs" in use at /rhe/scripts/test/rhdir-utf8-all-test.perl line 144.
+Execution of /rhe/scripts/test/rhdir-utf8-all-test.perl aborted due to compilation errors.
+
+Aragorn@Ketch
+/rhe/test-range/unicode
+%rhdir-utf8-all-test.perl
+
+
+Directory # 1:
+/rhe/test-range/unicode
+T: Date:       Time:        Size:     Name:
+F  2000-11-26  00:08:58PST  6.00E+00  Â«file-name-starting-with-guillemotleft.txt
+F  2000-11-26  00:08:58PST  6.00E+00  Ãis-File-Name-Starts-With-A-iso-8859-1-Edth-Character.txt
+F  2016-03-23  06:42:53PDT  8.57E+02  à¦¸à§ à¦°à¦¾à¦¸à§à¦¤à¦¾à¦° à¦¨à¦¿à¦à§ à¦¦à§à¦¡à¦¼à§.txt
+F  2000-11-26  00:08:58PST  6.00E+00  éº¦èéªãå¯å£«å·çºãå±±æ¢¨ç.txt
+F  2000-11-26  00:08:58PST  6.00E+00  ê·¸ëë ê¸¸ì ë¬ë ¸ë¤.txt
+F  2000-11-26  00:08:58PST  6.00E+00  cÃ´ cháº¡y xuá»ng phá».txt
+
+Navigated 1 directories.
+Encountered 6 files.
+
+Aragorn@Ketch
+/rhe/test-range/unicode
+%rhdir-utf8-all-test.perl
+
+
+Directory # 1:
+/rhe/test-range/unicode
+T: Date:       Time:        Size:     Name:
+D  2016-03-26  05:22:30PDT  0.00E+00  éº¦èéªà¦°à¦¾à¦¸à§à¦¤à¦¾à¦°ê·¸ëë
+D  2016-03-26  05:22:23PDT  0.00E+00  CÃ´-Cháº¡y-Xuá»ng-ë¬ë ¸-å¯å£«å·çº
+D  2016-03-26  05:22:26PDT  0.00E+00  UjFTxuá»ngå±±æ¢¨ç
+F  2000-11-26  00:08:58PST  6.00E+00  Â«file-name-starting-with-guillemotleft.txt
+F  2000-11-26  00:08:58PST  6.00E+00  Ãis-File-Name-Starts-With-A-iso-8859-1-Edth-Character.txt
+F  2016-03-23  06:42:53PDT  8.57E+02  à¦¸à§ à¦°à¦¾à¦¸à§à¦¤à¦¾à¦° à¦¨à¦¿à¦à§ à¦¦à§à¦¡à¦¼à§.txt
+F  2000-11-26  00:08:58PST  6.00E+00  éº¦èéªãå¯å£«å·çºãå±±æ¢¨ç.txt
+F  2000-11-26  00:08:58PST  6.00E+00  ê·¸ëë ê¸¸ì ë¬ë ¸ë¤.txt
+F  2000-11-26  00:08:58PST  6.00E+00  cÃ´ cháº¡y xuá»ng phá».txt
+
+Navigated 1 directories.
+Encountered 9 files.
+
+Aragorn@Ketch
+/rhe/test-range/unicode
+%rhdir-utf8-all-test.perl 麦藁雪*
+Error: Template takes at most 1 argument, which (if present) must be
+a Csh-style wildcard specifying which directories and/or files to process.
+
+Aragorn@Ketch
+/rhe/test-range/unicode
+%rhdir-utf8-all-test.perl '麦藁雪*'
+
+
+Directory # 1:
+/rhe/test-range/unicode
+T: Date:       Time:        Size:     Name:
+D  2016-03-26  05:22:30PDT  0.00E+00  éº¦èéªà¦°à¦¾à¦¸à§à¦¤à¦¾à¦°ê·¸ëë
+F  2000-11-26  00:08:58PST  6.00E+00  éº¦èéªãå¯å£«å·çºãå±±æ¢¨ç.txt
+
+Navigated 1 directories.
+Encountered 2 files.
+
+Aragorn@Ketch
+/rhe/test-range/unicode
+%perldoc utf8::all
+
+Aragorn@Ketch
+/rhe/test-range/unicode
+%

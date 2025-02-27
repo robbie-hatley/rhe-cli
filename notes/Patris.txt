@@ -1,0 +1,11 @@
+(As for why the pointer is named "Patris", other than the fact that
+that's Latin for "Father", I don't remember. I wrote that decades
+ago as a demo of the relationships between pointers and arrays.
+It could be worse; I could have called it "Filii", or even
+"Spiritus_Sancti". And I'm not even a Catholic. Or Christian.
+Or even religious. I just sometimes use bizarre variable names
+just to mess with people's heads. For example, when I'm writing
+in C++, instead of "argc" and "argv", I usually use "Beren" and
+"Luthien". LOTR is a better book than The Bible anyway.)
+
+

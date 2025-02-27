@@ -1,0 +1,137 @@
+ALLUSERSPROFILE='C:\ProgramData'
+APPDATA='C:\Users\Aragorn\AppData\Roaming'
+BASH=/bin/bash
+BASHOPTS=cmdhist:complete_fullquote:expand_aliases:extquote:force_fignore:hostcomplete:interactive_comments:login_shell:progcomp:promptvars:sourcepath
+BASH_ALIASES=()
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_CMDS=()
+BASH_LINENO=()
+BASH_SOURCE=()
+BASH_VERSINFO=([0]="4" [1]="4" [2]="12" [3]="3" [4]="release" [5]="x86_64-unknown-cygwin")
+BASH_VERSION='4.4.12(3)-release'
+COMMONPROGRAMFILES='C:\Program Files\Common Files'
+COMPUTERNAME=KETCH
+COMSPEC='C:\WINDOWS\system32\cmd.exe'
+CYG_SYS_BASHRC=1
+CommonProgramW6432='C:\Program Files\Common Files'
+DIRSTACK=()
+EUID=197611
+EXECIGNORE='*.dll'
+GMAXLOC='C:\Programs\Graphics\Gmax\'
+GROUPS=()
+HISTFILE=/cygdrive/d/rhe/.bash_history
+HISTFILESIZE=500
+HISTSIZE=500
+HOME=/cygdrive/d/rhe
+HOMEDRIVE=C:
+HOMEPATH='\Users\Aragorn'
+HOSTNAME=Ketch
+HOSTTYPE=x86_64
+IFS=$' \t\n'
+INFOPATH=/usr/local/info:/usr/share/info:/usr/info
+LANG=en_US.UTF-8
+LOCALAPPDATA='C:\Users\Aragorn\AppData\Local'
+LOGONSERVER='\\KETCH'
+MACHTYPE=x86_64-unknown-cygwin
+MAILCHECK=60
+NUMBER_OF_PROCESSORS=4
+OLDPWD=/cygdrive/d/rhe/src
+OPTERR=1
+OPTIND=1
+ORIGINAL_PATH='/cygdrive/c/ProgramData/Oracle/Java/javapath:/cygdrive/c/WINDOWS/system32:/cygdrive/c/WINDOWS:/cygdrive/c/WINDOWS/System32/Wbem:/cygdrive/c/WINDOWS/System32/WindowsPowerShell/v1.0:/cygdrive/c/Programs/Programming/Windows-SDK/Windows Performance Toolkit:/cygdrive/c/Programs/Document-Readers/Calibre:/cygdrive/c/Program Files (x86)/Skype/Phone:/cygdrive/c/Users/Aragorn/AppData/Local/Microsoft/WindowsApps'
+OS=Windows_NT
+OSTYPE=cygwin
+OneDrive='C:\Users\Aragorn\OneDrive'
+PATH='/cygdrive/d/rhe/perl5/bin:/usr/local/bin:/usr/bin:/cygdrive/c/ProgramData/Oracle/Java/javapath:/cygdrive/c/WINDOWS/system32:/cygdrive/c/WINDOWS:/cygdrive/c/WINDOWS/System32/Wbem:/cygdrive/c/WINDOWS/System32/WindowsPowerShell/v1.0:/cygdrive/c/Programs/Programming/Windows-SDK/Windows Performance Toolkit:/cygdrive/c/Programs/Document-Readers/Calibre:/cygdrive/c/Program Files (x86)/Skype/Phone:/cygdrive/c/Users/Aragorn/AppData/Local/Microsoft/WindowsApps:/usr/lib/lapack:/cygdrive/d/rhe/Euler:/cygdrive/d/rhe/scripts/util:/cygdrive/d/rhe/scripts/cryptography:/cygdrive/d/rhe/scripts/filters:/cygdrive/d/rhe/scripts/fractals:/cygdrive/d/rhe/scripts/games:/cygdrive/d/rhe/scripts/graphics:/cygdrive/d/rhe/scripts/humor:/cygdrive/d/rhe/scripts/math:/cygdrive/d/rhe/scripts/perl-internals:/cygdrive/d/rhe/scripts/sh:/cygdrive/d/rhe/scripts/test:/cygdrive/d/rhe/scripts/third-party:/cygdrive/d/rhe/scripts/perlmind:/cygdrive/d/rhe/bin/util:/cygdrive/d/rhe/bin/Euler:/cygdrive/d/rhe/bin/fractals:/cygdrive/d/rhe/bin/games:/cygdrive/d/rhe/bin/graphics:/cygdrive/d/rhe/bin/humor:/cygdrive/d/rhe/bin/jive:/cygdrive/d/rhe/bin/math:/cygdrive/d/rhe/bin/test:/cygdrive/d/rhe/bin/third-party'
+PATHEXT='.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC'
+PERL5LIB=/cygdrive/d/rhe/perl5/lib/perl5:/cygdrive/d/rhe/modules
+PERL_LOCAL_LIB_ROOT=/cygdrive/d/rhe/perl5
+PERL_MB_OPT='--install_base "/cygdrive/d/rhe/perl5"'
+PERL_MM_OPT=INSTALL_BASE=/cygdrive/d/rhe/perl5
+PIPESTATUS=([0]="0")
+PPID=3008
+PRINTER='Microsoft Print to PDF'
+PROCESSOR_ARCHITECTURE=AMD64
+PROCESSOR_IDENTIFIER='Intel64 Family 6 Model 58 Stepping 9, GenuineIntel'
+PROCESSOR_LEVEL=6
+PROCESSOR_REVISION=3a09
+PROFILEREAD=true
+PROGRAMFILES='C:\Program Files'
+PS1='\[\e]0;\w\a\]\n\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
+PS2='> '
+PS4='+ '
+PSModulePath='C:\Program Files (x86)\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules;C:\Programs\Macro-Interpreters\AutoIt3\AutoItX'
+PUBLIC='C:\Users\Public'
+PWD=/cygdrive/d/rhe
+ProgramData='C:\ProgramData'
+ProgramW6432='C:\Program Files'
+SHELL=/bin/bash
+SHELLOPTS=braceexpand:emacs:hashall:histexpand:history:interactive-comments:monitor
+SHLVL=1
+SYSTEMDRIVE=C:
+SYSTEMROOT='C:\WINDOWS'
+TEMP=/tmp
+TERM=xterm
+TMP=/tmp
+TZ=America/Los_Angeles
+UID=197611
+USER=Aragorn
+USERDOMAIN=KETCH
+USERDOMAIN_ROAMINGPROFILE=KETCH
+USERNAME=Aragorn
+USERPROFILE='C:\Users\Aragorn'
+WINDIR='C:\WINDOWS'
+_=-Fla
+gawklibpath_append () 
+{ 
+    [ -z "$AWKLIBPATH" ] && AWKLIBPATH=`gawk 'BEGIN {print ENVIRON["AWKLIBPATH"]}'`;
+    export AWKLIBPATH="$AWKLIBPATH:$*"
+}
+gawklibpath_default () 
+{ 
+    unset AWKLIBPATH;
+    export AWKLIBPATH=`gawk 'BEGIN {print ENVIRON["AWKLIBPATH"]}'`
+}
+gawklibpath_prepend () 
+{ 
+    [ -z "$AWKLIBPATH" ] && AWKLIBPATH=`gawk 'BEGIN {print ENVIRON["AWKLIBPATH"]}'`;
+    export AWKLIBPATH="$*:$AWKLIBPATH"
+}
+gawkpath_append () 
+{ 
+    [ -z "$AWKPATH" ] && AWKPATH=`gawk 'BEGIN {print ENVIRON["AWKPATH"]}'`;
+    export AWKPATH="$AWKPATH:$*"
+}
+gawkpath_default () 
+{ 
+    unset AWKPATH;
+    export AWKPATH=`gawk 'BEGIN {print ENVIRON["AWKPATH"]}'`
+}
+gawkpath_prepend () 
+{ 
+    [ -z "$AWKPATH" ] && AWKPATH=`gawk 'BEGIN {print ENVIRON["AWKPATH"]}'`;
+    export AWKPATH="$*:$AWKPATH"
+}
+profile_d () 
+{ 
+    _LC_ALL_SET_="${LC_ALL+set}";
+    _LC_SAVE_="${LC_ALL-null}";
+    LC_ALL=C;
+    if [ "${_LC_SAVE_}" = "null" ]; then
+        for file in /etc/profile.d/*.$1;
+        do
+            [ -e "${file}" ] && . "${file}";
+        done;
+        unset LC_ALL;
+    else
+        for file in /etc/profile.d/*.$1;
+        do
+            [ -e "${file}" ] && LC_ALL="${_LC_SAVE_}" . "${file}";
+        done;
+        LC_ALL="${_LC_SAVE_}";
+    fi;
+    unset file;
+    unset _LC_ALL_SET_;
+    unset _LC_SAVE_
+}

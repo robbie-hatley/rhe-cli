@@ -1,0 +1,54 @@
+
+######################
+# Perl UTF-8 Gotchas #
+######################
+
+Perl built-in functions which must be sent UTF-8-encoded
+versions of non-English (ord > 255) text, primarily due to
+being wrappers around system calls for file-access purposes:
+
+chdir    -> chdir_utf8    or chdir(e $filename)
+cwd      -> cwd_utf8      or d cwd()
+glob     -> glob_utf8     or glob e wildcard or glob_regex_utf8
+open     -> open_utf8     or use e if handle is bareword
+opendir  -> opendir_utf8  or use e if handle is bareword
+link     -> link_utf8     or link(e(targetname), e(linkname))
+mkdir    -> mkdir_utf8    or mkdir e $dirname
+readdir  -> readdir_utf8  or d readdir
+readlink -> readlink_utf8 or d readlink
+rmdir    -> rmdir_utf8    or rmdir e $dir
+symlink
+unlink
+
+(Note: the xxxx_utf8 functions mentioned above are my own:
+https://people.well.com/user/lonewolf/main/programming/modules/RH/Dir.pm
+The "e" is also a function I wrote, which is a wrapper
+around "encode" function from the "Encode" module.)
+
+Built-in functions which should NOT be sent UTF-8-encoded 
+versions of Unicode text (basically, anything not having
+to-do-with the file system, which is the primary thing
+Perl would need system calls for):
+
+ord      Must be sent the raw, unencoded Unicode codepoint,
+         else it gives 1-byte UTF-8 ordinals for pieces of
+         characters instead (begin, continue, or end bytes).
+         Unlike most Perl built-in functions, THIS function
+         absolutely RELISHES "wide characters" such as "麦藁有希".
+         This is probably because this function is "perl internal"
+         rather than being wrappers around system calls.
+
+Unicode::Normalize 'NFC', 'NFD';
+         Must be sent raw, unencoded Unicode codepoints.
+         Actually, this makes sense, because you can't do
+         Unicode operations on UTF-8 material; one needs
+         the raw Unicode codepoints for that. And again,
+         these functions must be internal to Perl,
+         rather than being wrappers around system calls.
+
+Built-in functions which can give "wide character" errors
+for reasons OTHER THAN needing UTF-8-encoded input:
+
+oct      Only feed this numbers! It can't handle characters
+         such as "看的星"; it gets all upset if you do that
+         and dies with "wide character in oct".

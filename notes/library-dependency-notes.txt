@@ -1,0 +1,58 @@
+# ============================================================================================================
+# NOTES REGARDING INDEPENDENCY OF OBJECTS IN LIBRARIES:
+
+# This maketail file used to describe dependencies between objects, but I
+# later removed those rules, because I came to realize that the whole concept 
+# of one object (say A.o) being dependent on another (say, B.o) is bogus.
+# Changing the source of one object never requires recompiling another, because
+# the machine-language code of an object A is determined purely by object A's
+# own source code, never by the source code of an object B. Two objects can see 
+# at most each other's headers, not each other's source. If a header included by
+# an object A changes, then rebuild object A; but even if object A includes 
+# object B's header, don't rebuild object A because object B's source changed,
+# because it accomplishes nothing and just wastes time.
+
+# If program argle uses object A, which uses object B, what happens is this:
+# The compiler compiles object argle.o and links it to objects A.o and B.o. 
+# Object argle.o is just another object as far as the linker is concerned, 
+# except for the fact that it has the "entry point" function main().
+# So if objects argle.o, A.o, and B.o are all pre-existing, and if B.c changes,
+# then the only actions needed are, B.o needs to be recompiled, and the three
+# objects need to be re-linked to form a new argle.exe. 
+
+# But the act of changing B.c will never require recompiling A.o, no matter
+# how heavily argle.o, A.o, and B.o call each other's functions. Rebuilding
+# A.o because B.c changed accomlishes NOTHING, because the new A.o file would 
+# be identical to the old A.o! As long as the interface (function signatures) 
+# stays the same, changing the source code of one module never require 
+# recompiling another module.
+
+# ============================================================================================================
+# NOTES ON HEADERS:
+
+# However, if A.o calls functions in B.o, and B.o's header B.h changes, 
+# then object A.o should be recompiled, because its source, A.c, has
+# effectively changed, because a file #include'd by it has changed.
+# Hence it's essential to let Make know of headers included by each 
+# source file, so that objects can be rebuild if headers they use change.
+
+# Headers are also problematic because the lack of compiler support for the 
+# "export" keyword means that if inline or template functions in A.h call
+# inline or template functions in B.h, and vice versa, that is a circular
+# dependency, which will cause Make to crash.
+
+# One could contrive that no library object uses any functions from any
+# other library object. However, that may involve a lot of duplication of 
+# code.
+
+# A better technique is to categorize modules into "Levels", and allow
+# headers at any one level to be dependent only on headers from lower levels.
+# That way the header inclusions are tree-structured and hierarchical,
+# which avoids Catch-22 situations (A.h is dependent on B.h but B.h is
+# dependent on A.h). 
+
+# With that in mind, I've split my library modules into two hierarchical
+# levels which I call "Level 0" and "Level 1". 
+# Level-1 modules depend only on Level-0 modules.
+# Level-0 modules must have no dependencies (self-sufficient).
+

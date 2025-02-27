@@ -1,0 +1,227 @@
+
+Test of the results returned by findfirst with different code pages.
+
+This is a 90-character-wide iso-8859-1 text file.
+123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Code Page 437:
+Correct Name:  Fíle-Nàme-Wíth-Måny-ïsõ-8859-1-Lëttêrs-And-Symbols_¿¼½¾×÷_Ìn-Ít.txt
+findfirst():   Fíle-Nàme-Wíth-Måny-ïso-8859-1-Lëttêrs-And-Symbols_¿¼½_x÷_In-It.txt
+Errors: 3 (three-quarters, multipy-sign, cap-I-acute, cap-I-grave)
+
+Code Page 1252:
+Correct Name:  Fíle-Nàme-Wíth-Måny-ïsõ-8859-1-Lëttêrs-And-Symbols_¿¼½¾×÷_Ìn-Ít.txt
+findfirst():   F¡le-N…me-W¡th-M†ny-‹so-8859-1-L‰ttˆrs-And-Symbols_¨¬«_xö_In-It.txt
+Errors: 16 (i-acute, a-grave, i-acute, a-uptips-semicirc, i-double-umlaut, o-tilde,
+e-double-umlaut, e-dwntips-angle, invert-quest, quarter, half, three-quarters,
+multipy, divide, cap-I-grave, cap-I-acute)
+
+
+
+
+
+wd=E:\RHE\src\test
+%cd ..
+
+wd=E:\RHE\src
+%d
+ Volume in drive E is Inquanok
+ Volume Serial Number is 700A-842D
+
+ Directory of E:\RHE\src
+
+2009-03-29  09:09p      <DIR>                          .
+2009-03-29  09:09p      <DIR>                          ..
+2007-12-18  05:00p      <DIR>                          fractals
+2007-12-18  05:00p      <DIR>                          games
+2009-03-29  08:16p      <DIR>                          graphics
+2007-12-18  04:58p      <DIR>                          jive
+2008-02-17  11:12p      <DIR>                          librh
+2009-03-29  05:01p      <DIR>                          math
+2010-03-02  08:54p      <DIR>                          test
+2009-03-29  08:23p      <DIR>          THIRD-~1        third-party
+2010-02-26  12:50a      <DIR>                          util
+2005-08-20  04:11p                  22                 makefile
+2005-08-20  04:11p              25,250                 makevars.txt
+               2 File(s)         25,272 bytes
+              11 Dir(s)  15,265,603,584 bytes free
+
+wd=E:\RHE\src
+%findfirst-test
+
+=================================================================
+Directory #1:
+e:\RHE\src
+
+makefile
+10997107101102105108101
+
+makevars.txt
+109971071011189711411546116120116
+
+
+Finished processing files in this tree.
+Directories processed:              1
+Files examined:                     2
+Files bypassed:                     0
+Errors encountered:                 0
+Files successfully processed:       0
+
+
+wd=E:\RHE\src
+%cd test
+
+wd=E:\RHE\src\test
+%make findfirst-test.exe
+Using pattern rule %.exe:%.cpp to compile findfirst-test.cpp to findfirst-test.e
+xe:
+gpp -I E:/RHE/include -Wall -Os -s findfirst-test.cpp -LE:/RHE/lib -lrh -lfl -ly
+ -lm -lname -o E:/bin-test/findfirst-test.exe
+findfirst-test.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+wd=E:\RHE\src\test
+%cd ..
+
+wd=E:\RHE\src
+%findfirst-test
+
+=================================================================
+Directory #1:
+e:\RHE\src
+
+makefile
+109, 97, 107, 101, 102, 105, 108, 101,
+
+makevars.txt
+109, 97, 107, 101, 118, 97, 114, 115, 46, 116, 120, 116,
+
+
+Finished processing files in this tree.
+Directories processed:              1
+Files examined:                     2
+Files bypassed:                     0
+Errors encountered:                 0
+Files successfully processed:       0
+
+
+wd=E:\RHE\src
+%cd E:\Test-Range\findfirst-test
+
+wd=E:\Test-Range\findfirst-test
+%d
+ Volume in drive E is Inquanok
+ Volume Serial Number is 700A-842D
+
+ Directory of E:\Test-Range\findfirst-test
+
+2010-03-03  03:46a      <DIR>                          .
+2010-03-03  03:46a      <DIR>                          ..
+2000-11-26  12:08a                   6 FLE-NM~1.TXT    Fíle-Nàme-Wíth-Måny-ïsõ-8
+859-1-Lëttêrs-And-Symbols_¿¼½¾×÷_Ìn-Ít.txt
+               1 File(s)              6 bytes
+               2 Dir(s)  15,265,603,584 bytes free
+
+wd=E:\Test-Range\findfirst-test
+%findfirst-test
+
+=================================================================
+Directory #1:
+e:\Test-Range\findfirst-test
+
+Fíle-Nàme-Wíth-Måny-ïso-8859-1-Lëttêrs-And-Symbols_¿¼½_x÷_In-It.txt
+70, 161, 108, 101, 45, 78, 133, 109, 101, 45, 87, 161, 116, 104, 45, 77, 134, 11
+0, 121, 45, 139, 115, 111, 45, 56, 56, 53, 57, 45, 49, 45, 76, 137, 116, 116, 13
+6, 114, 115, 45, 65, 110, 100, 45, 83, 121, 109, 98, 111, 108, 115, 95, 168, 172
+, 171, 95, 120, 246, 95, 73, 110, 45, 73, 116, 46, 116, 120, 116,
+
+
+Finished processing files in this tree.
+Directories processed:              1
+Files examined:                     1
+Files bypassed:                     0
+Errors encountered:                 0
+Files successfully processed:       0
+
+
+wd=E:\TEST-R~1\FINDFI~1
+%chcp 1252
+Active code page: 1252
+
+wd=E:\TEST-R~1\FINDFI~1
+%findfirst-test
+
+=================================================================
+Directory #1:
+e:\Test-Range\findfirst-test
+
+F¡le-N…me-W¡th-M†ny-‹so-8859-1-L‰ttˆrs-And-Symbols_¨¬«_xö_In-It.txt
+70, 161, 108, 101, 45, 78, 133, 109, 101, 45, 87, 161, 116, 104, 45, 77, 134, 11
+0, 121, 45, 139, 115, 111, 45, 56, 56, 53, 57, 45, 49, 45, 76, 137, 116, 116, 13
+6, 114, 115, 45, 65, 110, 100, 45, 83, 121, 109, 98, 111, 108, 115, 95, 168, 172
+, 171, 95, 120, 246, 95, 73, 110, 45, 73, 116, 46, 116, 120, 116,
+
+
+Finished processing files in this tree.
+Directories processed:              1
+Files examined:                     1
+Files bypassed:                     0
+Errors encountered:                 0
+Files successfully processed:       0
+
+
+wd=E:\TEST-R~1\FINDFI~1
+%chcp 437
+Active code page: 437
+
+wd=E:\TEST-R~1\FINDFI~1
+%findfirst-test
+
+=================================================================
+Directory #1:
+e:\Test-Range\findfirst-test
+
+Fíle-Nàme-Wíth-Måny-ïso-8859-1-Lëttêrs-And-Symbols_¿¼½_x÷_In-It.txt
+70, 161, 108, 101, 45, 78, 133, 109, 101, 45, 87, 161, 116, 104, 45, 77, 134, 11
+0, 121, 45, 139, 115, 111, 45, 56, 56, 53, 57, 45, 49, 45, 76, 137, 116, 116, 13
+6, 114, 115, 45, 65, 110, 100, 45, 83, 121, 109, 98, 111, 108, 115, 95, 168, 172
+, 171, 95, 120, 246, 95, 73, 110, 45, 73, 116, 46, 116, 120, 116,
+
+
+Finished processing files in this tree.
+Directories processed:              1
+Files examined:                     1
+Files bypassed:                     0
+Errors encountered:                 0
+Files successfully processed:       0
+
+
+wd=E:\TEST-R~1\FINDFI~1
+%chcp 1252
+Active code page: 1252
+
+wd=E:\TEST-R~1\FINDFI~1
+%findfirst-test
+
+=================================================================
+Directory #1:
+e:\Test-Range\findfirst-test
+
+F¡le-N…me-W¡th-M†ny-‹so-8859-1-L‰ttˆrs-And-Symbols_¨¬«_xö_In-It.txt
+70, 161, 108, 101, 45, 78, 133, 109, 101, 45, 87, 161, 116, 104, 45, 77, 134, 11
+0, 121, 45, 139, 115, 111, 45, 56, 56, 53, 57, 45, 49, 45, 76, 137, 116, 116, 13
+6, 114, 115, 45, 65, 110, 100, 45, 83, 121, 109, 98, 111, 108, 115, 95, 168, 172
+, 171, 95, 120, 246, 95, 73, 110, 45, 73, 116, 46, 116, 120, 116,
+
+
+Finished processing files in this tree.
+Directories processed:              1
+Files examined:                     1
+Files bypassed:                     0
+Errors encountered:                 0
+Files successfully processed:       0
+
+
+wd=E:\TEST-R~1\FINDFI~1
+%

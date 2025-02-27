@@ -1,0 +1,20 @@
+fruit-test.o(.text+0x25):fruit-test.cpp: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::compare(char const*) const'
+fruit-test.o(.text+0x36):fruit-test.cpp: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::compare(char const*) const'
+fruit-test.o(.text+0x47):fruit-test.cpp: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::compare(char const*) const'
+fruit-test.o(.text+0x8b):fruit-test.cpp: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::compare(char const*) const'
+fruit-test.o(.text+0x9c):fruit-test.cpp: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::compare(char const*) const'
+fruit-test.o(.text+0xad):fruit-test.cpp: more undefined references to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::compare(char const*) const' follow
+fruit-test.o(.text+0x107):fruit-test.cpp: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string[in-charge](char const*, std::allocator<char> const&)'
+fruit-test.o(.text+0x126):fruit-test.cpp: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)'
+fruit-test.o(.text+0x13d):fruit-test.cpp: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)'
+fruit-test.o(.text+0x149):fruit-test.cpp: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)'
+fruit-test.o(.text+0x153):fruit-test.cpp: undefined reference to `std::cout'
+fruit-test.o(.text+0x158):fruit-test.cpp: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+fruit-test.o(.text+0x160):fruit-test.cpp: undefined reference to `std::basic_ostream<char, std::char_traits<char> >::operator<<(std::basic_ostream<char, std::char_traits<char> >& (*)(std::basic_ostream<char, std::char_traits<char> >&))'
+fruit-test.o(.text+0x17e):fruit-test.cpp: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::_Rep::_M_destroy(std::allocator<char> const&)'
+fruit-test.o(.text+0x1a0):fruit-test.cpp: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::_Rep::_M_destroy(std::allocator<char> const&)'
+fruit-test.o(.text+0x1d3):fruit-test.cpp: undefined reference to `std::ios_base::Init::Init[in-charge]()'
+fruit-test.o(.text+0x1e8):fruit-test.cpp: undefined reference to `std::ios_base::Init::~Init [in-charge]()'
+fruit-test.o(.eh_frame+0x12):fruit-test.cpp: undefined reference to `___gxx_personality_v0'
+collect2: ld returned 1 exit status
+make.exe: *** [fruit-test] Error 1

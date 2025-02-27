@@ -1,0 +1,8 @@
+This directory is for sharable Perl scripts which do not make
+make any use of my "RH::xxxx" modules, contain whatever
+proprietary code they need within themselves, and call only
+commonly-used CPAN modules ("Scalar::Util", "List::Util", etc).
+These scripts are thus "stand-alone" in that one doesn't need
+to download or install anything else to use them; just put the
+scripts in a location in $PATH and evoke them by name and they
+just work.

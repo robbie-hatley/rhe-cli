@@ -1,0 +1,8 @@
+C++:
+-pedantic -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion \
+-Wunreachable-code -Winline -Wcomments -Wundef -Wunused-macros
+
+C:
+-pedantic -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual -Wcast-align -Wconversion \
+-Wunreachable-code -Winline -Wcomments -Wundef -Wunused-macros \
+-Wold-style-definition -Wmissing-prototypes -Wmissing-declarations -Wnested-externs

@@ -1,0 +1,62 @@
+#include <iostream.h>
+#include <math.h>
+
+double S(double x, double yin);
+double pi(double xin, double yin)
+{
+  return ((int)xin-S(xin,yin)-1);
+}
+
+double min(double x, double y)
+{
+  return x>y?y:x;
+}
+
+double S(double x, double yin)
+{
+  double sum=0, i, sum1, sum2, dx=1;
+
+  for(int i=2; i<=yin; i++)
+  {
+    sum1 = ( pi(x/i,min(i-dx,sqrt(x/i))) - pi(i-dx,sqrt(i-dx))) ;
+    sum2 = ( pi(i,sqrt(i)) - pi(i-dx,sqrt(i-dx)));
+    sum+=(sum1 * sum2);
+  }
+  return sum;
+}
+int main()
+{
+  int input;
+  cout <<"Input positive integer"<<endl;
+  cin>>input;
+  cout << pi(input,sqrt(input)) << endl;
+  return 0;
+}
+*********************************************************
+
+The code above comes almost directly from the math function, so yes,
+it's slow but that's not a surprise for that reason.  I discovered
+that math function last year.  While I've talked to mathematicians
+from leading researchers on prime numbers to people who argue with me
+on math newsgroups, they seem quite content with it not being
+published.  I think part of the problem is that I've also worked on
+finding a short proof of Fermat's Last Theorem and people seem to
+think that means you must be a nut.  Besides which I have made a lot
+of posts that might seem nutty, but that to me just gives an excuse,
+as the information is important, not the discoverer, even if he is
+nutty.  My work can be found at
+
+  http://www.msnusers.com/AmateurMath
+
+which is called that because I'm an amateur with math discoveries who
+has discovered the current mathematics system, which looks to me to be
+to exclude outsiders, no matter what they discover.
+
+You will also find the math function that the code above implements.
+
+Yup, I discovered it early last year, and mathematicians gave me
+misery for my troubles, when they bothered to pay much attention at
+all.
+
+
+James Harris

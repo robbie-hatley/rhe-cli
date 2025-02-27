@@ -1,0 +1,804 @@
+
+Aragorn@Ketch
+/rhe/src/util
+%ll
+total 1.1M
+drwxr-xr-x+ 1 Aragorn None    0 Jan 10 12:54 ./
+drwxr-xr-x+ 1 Aragorn None    0 Jan 10 12:54 ../
+-rwxr-xr-x  1 Aragorn None 3.0K Mar 29  2009 alphdirs.cpp*
+-rwxr-xr-x  1 Aragorn None  17K Feb 26  2010 boxify.cpp*
+-rwxr-xr-x  1 Aragorn None 1.9K Mar 24  2010 celsfahr.c*
+-rwxr-xr-x  1 Aragorn None 2.5K Mar 24  2010 celsfahrtable.c*
+-rwxr-xr-x  1 Aragorn None  13K Aug  6  2011 census.cpp*
+-rwxr-xr-x  1 Aragorn None 3.9K May  4  2003 clock.cpp*
+-rwxr-xr-x  1 Aragorn None 4.3K May  4  2003 clock2.cpp*
+-rwxr-xr-x  1 Aragorn None 1.3K Jul 10  2006 clock3.cpp*
+-rwxr-xr-x  1 Aragorn None 2.8K Feb  5  2010 day-dirs.cpp*
+-rwxr-xr-x  1 Aragorn None 2.8K Nov 15  2009 day-of-month-dirs.cpp*
+-rwxr-xr-x  1 Aragorn None  21K Aug 23  2012 dedup-files.cpp*
+-rwxr-xr-x  1 Aragorn None  60K Dec  1  2010 dedup-newsbin-files.cpp*
+-rwxr-xr-x  1 Aragorn None  43K Dec  1  2010 dedup-newsbin-multi.cpp*
+-rwxr-xr-x  1 Aragorn None  342 Dec 14  2011 dennis.c*
+-rwxr-xr-x  1 Aragorn None  15K Feb 26  2010 denumerate-file-names.cpp*
+-rwxr-xr-x  1 Aragorn None 4.4K Mar 29  2009 dir-names-to-capital.cpp*
+-rwxr-xr-x  1 Aragorn None  21K Dec 13  2013 encode.cpp*
+-rwxr-xr-x  1 Aragorn None 8.3K Dec 13  2013 encode-pad.cpp*
+-rwxr-xr-x  1 Aragorn None  17K Mar  3  2010 enumerate-file-names.cpp*
+-rwxr-xr-x  1 Aragorn None 2.2K Mar 19  2009 erase_ph.cpp*
+-rwxr-xr-x  1 Aragorn None  35K Dec  1  2010 erase-thumbs.cpp*
+-rwxr-xr-x  1 Aragorn None 1.7K Mar 24  2010 fahrcels.c*
+-rwxr-xr-x  1 Aragorn None 2.6K Mar 24  2010 fahrcelstable.c*
+-rwxr-xr-x  1 Aragorn None  575 Mar 29  2009 fexist.cpp*
+-rwxr-xr-x  1 Aragorn None 4.3K Mar 21  2009 file-access.cpp*
+-rwxr-xr-x  1 Aragorn None 5.5K Mar 29  2009 file-away.cpp*
+-rwxr-xr-x  1 Aragorn None  14K Feb  8  2011 file-compare.cpp*
+-rwxr-xr-x  1 Aragorn None 5.5K Mar 29  2009 file-names-to-capital.cpp*
+-rwxr-xr-x  1 Aragorn None 3.0K Mar 29  2009 file-names-to-lower.cpp*
+-rwxr-xr-x  1 Aragorn None 3.0K Mar 29  2009 file-names-to-upper.cpp*
+-rwxr-xr-x  1 Aragorn None  22K Dec 19  2010 find-bad-file-names.cpp*
+-rwxr-xr-x  1 Aragorn None  20K Feb  6  2011 find-bad-jpegs.cpp*
+-rwxr-xr-x  1 Aragorn None 7.2K Feb  6  2011 find-good-jpegs.cpp*
+-rwxr-xr-x  1 Aragorn None  18K Dec 19  2010 find-spacey-file-names.cpp*
+-rwxr-xr-x  1 Aragorn None  14K Jul 25  2011 flatten-directory-tree.cpp*
+-rwxr-xr-x  1 Aragorn None  15K Oct 15  2012 for-each-dir.cpp*
+-rwxr-xr-x  1 Aragorn None  140 Nov 23  2006 getfilelist.c*
+-rwxr-xr-x  1 Aragorn None  944 Nov 13  2009 keyclean.c*
+-rwxr-xr-x  1 Aragorn None  523 Apr  1  2009 lollygag.c*
+-rwxr-xr-x  1 Aragorn None 1.4K Jul 20  2007 longest-line.c*
+-rwxr-xr-x  1 Aragorn None 6.2K Mar 25 20:17 makefile*
+-rwxr-xr-x  1 Aragorn None 5.0K Dec 19  2010 makefile_OLD*
+-rwxr-xr-x  1 Aragorn None 9.5K Dec 19  2010 makefile_OLDER*
+-rwxr-xr-x  1 Aragorn None 7.7K Nov 24  2010 missing-files.cpp*
+-rwxr-xr-x  1 Aragorn None 2.7K Feb  5  2010 month-dirs.cpp*
+-rwxr-xr-x  1 Aragorn None  235 Apr 28  2012 myenv.c*
+-rwxr-xr-x  1 Aragorn None 2.3K Mar 29  2009 numdirs.cpp*
+-rwxr-xr-x  1 Aragorn None 2.4K Mar 29  2009 numdirs2.cpp*
+-rwxr-xr-x  1 Aragorn None 3.7K Nov 23  2006 numeric-limits.cpp*
+-rwxr-xr-x  1 Aragorn None 1.1K Nov 23  2006 pinderloy.cpp*
+-rwxr-xr-x  1 Aragorn None 9.9K Mar  8  2010 print-ascii.cpp*
+-rwxr-xr-x  1 Aragorn None 4.5K Jan  4  2010 processwww.cpp*
+-rwxr-xr-x  1 Aragorn None  312 Jun  5  2009 randip.c*
+-rwxr-xr-x  1 Aragorn None  338 Jun  5  2009 randmac.c*
+-rwxr-xr-x  1 Aragorn None 1.5K Mar 19  2009 randname.c*
+-rwxr-xr-x  1 Aragorn None 2.2K Mar 19  2009 randnames.c*
+-rwxr-xr-x  1 Aragorn None  16K Jan 15  2012 randomize-file-names.cpp*
+-rwxr-xr-x  1 Aragorn None 2.9K Dec  3  2006 recomb.c*
+-rwxr-xr-x  1 Aragorn None  34K Jul  6  2011 renamefiles.cpp*
+-rwxr-xr-x  1 Aragorn None  38K May 20  2010 renamefilesold.cpp*
+-rwxr-xr-x  1 Aragorn None  12K Feb 27  2010 rhdir.cpp*
+-rwxr-xr-x  1 Aragorn None 3.1K Mar 19  2009 rhmerge.cpp*
+-rwxr-xr-x  1 Aragorn None 3.1K May 16  2011 roman.cpp*
+-rwxr-xr-x  1 Aragorn None 4.7K Mar 19  2008 rot13.cpp*
+-rwxr-xr-x  1 Aragorn None  13K Aug 17  2012 same-size.cpp*
+-rwxr-xr-x  1 Aragorn None  24K Feb 26  2010 separate-jpeg-palimpsests.cpp*
+-rwxr-xr-x  1 Aragorn None  21K Feb  4  2012 set-extensions.cpp*
+-rwxr-xr-x  1 Aragorn None  14K Feb  6  2011 show-heads.cpp*
+-rwxr-xr-x  1 Aragorn None  49K Jul 21  2011 simplify-file-names.cpp*
+-rwxr-xr-x  1 Aragorn None 2.1K Apr  5  2008 sizeofc.c*
+-rwxr-xr-x  1 Aragorn None 2.1K Mar 29  2009 sizeofcpp.cpp*
+-rwxr-xr-x  1 Aragorn None 9.3K May 27  2010 sortdup.cpp*
+-rwxr-xr-x  1 Aragorn None 5.0K Mar 29  2009 source-clean.cpp*
+-rwxr-xr-x  1 Aragorn None 7.0K Mar 29  2009 source-lines.cpp*
+-rwxr-xr-x  1 Aragorn None  14K Mar 29  2009 spellchk.cpp*
+-rwxr-xr-x  1 Aragorn None  22K Jun  4  2007 spellchk.log*
+-rwxr-xr-x  1 Aragorn None  19K Aug 20  2012 template.cpp*
+-rwxr-xr-x  1 Aragorn None  170 Nov 23  2006 time1970.c*
+-rwxr-xr-x  1 Aragorn None  665 Nov 23  2006 timedelay.c*
+-rwxr-xr-x  1 Aragorn None 3.2K Mar 29  2009 tokenize.cpp*
+-rwxr-xr-x  1 Aragorn None  13K May 17  2009 undamage.cpp*
+-rwxr-xr-x  1 Aragorn None 7.3K Feb  5  2011 unique-file-names.cpp*
+-rwxr-xr-x  1 Aragorn None 5.0K Mar 29  2009 unmark.cpp*
+-rwxr-xr-x  1 Aragorn None 1.4K Mar 29  2009 unquote.cpp*
+-rwxr-xr-x  1 Aragorn None  13K Feb 26  2010 untilde.cpp*
+-rwxr-xr-x  1 Aragorn None 2.6K Feb 22  2010 wbztojpg.cpp*
+-rwxr-xr-x  1 Aragorn None 3.6K Mar 29  2009 zero-one.cpp*
+
+Aragorn@Ketch
+/rhe/src/util
+%make
+Using pattern rule %.exe:%.cpp to compile alphdirs.cpp to alphdirs.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s alphdirs.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/alphdirs.exe
+alphdirs.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile boxify.cpp to boxify.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s boxify.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/boxify.exe
+boxify.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile celsfahr.c to celsfahr.exe:
+gcc  -I /rhe/include -Wall -Os -s   celsfahr.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/celsfahr.exe
+celsfahr.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile celsfahrtable.c to celsfahrtable.exe:
+gcc  -I /rhe/include -Wall -Os -s   celsfahrtable.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/celsfahrtable.exe
+celsfahrtable.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile census.cpp to census.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s census.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/census.exe
+census.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile clock.cpp to clock.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s clock.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/clock.exe
+clock.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile clock2.cpp to clock2.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s clock2.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/clock2.exe
+clock2.cpp: In function ‘int main()’:
+clock2.cpp:119:26: warning: variable ‘c’ set but not used [-Wunused-but-set-variable]
+   double a=37.2, b=29.7, c=13.4;
+                          ^
+clock2.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile clock3.cpp to clock3.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s clock3.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/clock3.exe
+clock3.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile day-dirs.cpp to day-dirs.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s day-dirs.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/day-dirs.exe
+day-dirs.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile dedup-files.cpp to dedup-files.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s dedup-files.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/dedup-files.exe
+dedup-files.cpp:39:16: fatal error: pc.h: No such file or directory
+ #include <pc.h>
+                ^
+compilation terminated.
+/rhe/makehead:146: recipe for target 'dedup-files.exe' failed
+make: *** [dedup-files.exe] Error 1
+
+Aragorn@Ketch
+/rhe/src/util
+%make --help
+Usage: make [options] [target] ...
+Options:
+  -b, -m                      Ignored for compatibility.
+  -B, --always-make           Unconditionally make all targets.
+  -C DIRECTORY, --directory=DIRECTORY
+                              Change to DIRECTORY before doing anything.
+  -d                          Print lots of debugging information.
+  --debug[=FLAGS]             Print various types of debugging information.
+  -e, --environment-overrides
+                              Environment variables override makefiles.
+  --eval=STRING               Evaluate STRING as a makefile statement.
+  -f FILE, --file=FILE, --makefile=FILE
+                              Read FILE as a makefile.
+  -h, --help                  Print this message and exit.
+  -i, --ignore-errors         Ignore errors from recipes.
+  -I DIRECTORY, --include-dir=DIRECTORY
+                              Search DIRECTORY for included makefiles.
+  -j [N], --jobs[=N]          Allow N jobs at once; infinite jobs with no arg.
+  -k, --keep-going            Keep going when some targets can't be made.
+  -l [N], --load-average[=N], --max-load[=N]
+                              Don't start multiple jobs unless load is below N.
+  -L, --check-symlink-times   Use the latest mtime between symlinks and target.
+  -n, --just-print, --dry-run, --recon
+                              Don't actually run any recipe; just print them.
+  -o FILE, --old-file=FILE, --assume-old=FILE
+                              Consider FILE to be very old and don't remake it.
+  -O[TYPE], --output-sync[=TYPE]
+                              Synchronize output of parallel jobs by TYPE.
+  -p, --print-data-base       Print make's internal database.
+  -q, --question              Run no recipe; exit status says if up to date.
+  -r, --no-builtin-rules      Disable the built-in implicit rules.
+  -R, --no-builtin-variables  Disable the built-in variable settings.
+  -s, --silent, --quiet       Don't echo recipes.
+  -S, --no-keep-going, --stop
+                              Turns off -k.
+  -t, --touch                 Touch targets instead of remaking them.
+  --trace                     Print tracing information.
+  -v, --version               Print the version number of make and exit.
+  -w, --print-directory       Print the current directory.
+  --no-print-directory        Turn off -w, even if it was turned on implicitly.
+  -W FILE, --what-if=FILE, --new-file=FILE, --assume-new=FILE
+                              Consider FILE to be infinitely new.
+  --warn-undefined-variables  Warn when an undefined variable is referenced.
+
+This program built for x86_64-unknown-cygwin
+Report bugs to <bug-make@gnu.org>
+
+Aragorn@Ketch
+/rhe/src/util
+%make -i
+Using pattern rule %.exe:%.cpp to compile dedup-files.cpp to dedup-files.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s dedup-files.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/dedup-files.exe
+dedup-files.cpp:39:16: fatal error: pc.h: No such file or directory
+ #include <pc.h>
+                ^
+compilation terminated.
+/rhe/makehead:146: recipe for target 'dedup-files.exe' failed
+make: [dedup-files.exe] Error 1 (ignored)
+dedup-files.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile dedup-newsbin-files.cpp to dedup-newsbin-files.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s dedup-newsbin-files.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/dedup-newsbin-files.exe
+dedup-newsbin-files.cpp: In function ‘void ns_DedupNewsbin::LoadFileNameMap(ns_DedupNewsbin::FRM&, ns_DedupNewsbin::LS&, const string&)’:
+dedup-newsbin-files.cpp:763:4: error: ‘ffblk’ was not declared in this scope
+    ffblk              File_Block    = ffblk();
+    ^
+dedup-newsbin-files.cpp:778:25: error: ‘FA_RDONLY’ was not declared in this scope
+    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+                         ^
+dedup-newsbin-files.cpp:778:25: note: suggested alternative:
+In file included from dedup-newsbin-files.cpp:227:0:
+/rhe/include/rhdir.h:157:30: note:   ‘rhdir::FA_RDONLY’
+    const unsigned short int  FA_RDONLY  =  1;
+                              ^
+dedup-newsbin-files.cpp:778:37: error: ‘FA_HIDDEN’ was not declared in this scope
+    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+                                     ^
+dedup-newsbin-files.cpp:778:37: note: suggested alternative:
+In file included from dedup-newsbin-files.cpp:227:0:
+/rhe/include/rhdir.h:158:30: note:   ‘rhdir::FA_HIDDEN’
+    const unsigned short int  FA_HIDDEN  =  2;
+                              ^
+dedup-newsbin-files.cpp:778:49: error: ‘FA_SYSTEM’ was not declared in this scope
+    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+                                                 ^
+dedup-newsbin-files.cpp:778:49: note: suggested alternative:
+In file included from dedup-newsbin-files.cpp:227:0:
+/rhe/include/rhdir.h:159:30: note:   ‘rhdir::FA_SYSTEM’
+    const unsigned short int  FA_SYSTEM  =  4;
+                              ^
+dedup-newsbin-files.cpp:778:61: error: ‘FA_ARCH’ was not declared in this scope
+    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+                                                             ^
+dedup-newsbin-files.cpp:778:61: note: suggested alternative:
+In file included from dedup-newsbin-files.cpp:227:0:
+/rhe/include/rhdir.h:162:30: note:   ‘rhdir::FA_ARCH’
+    const unsigned short int  FA_ARCH    = 32;
+                              ^
+dedup-newsbin-files.cpp:785:32: error: ‘File_Block’ was not declared in this scope
+    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+                                ^
+dedup-newsbin-files.cpp:785:54: error: ‘findfirst’ was not declared in this scope
+    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+                                                      ^
+dedup-newsbin-files.cpp:785:96: error: ‘findnext’ was not declared in this scope
+    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+                                                                                                ^
+dedup-newsbin-files.cpp: In function ‘int ns_DedupNewsbin::EradicateDuplicates(ns_DedupNewsbin::FRM&, const string&, const ns_DedupNewsbin::Bools_t&, ns_DedupNewsbin::Stats_t&)’:
+dedup-newsbin-files.cpp:943:60: error: ‘__file_exists’ was not declared in this scope
+             if (!__file_exists(Current->second.name.c_str()))
+                                                            ^
+dedup-newsbin-files.cpp:965:60: error: ‘__file_exists’ was not declared in this scope
+             if (!__file_exists(Compare->second.name.c_str()))
+                                                            ^
+/rhe/makehead:146: recipe for target 'dedup-newsbin-files.exe' failed
+make: [dedup-newsbin-files.exe] Error 1 (ignored)
+dedup-newsbin-files.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile dedup-newsbin-multi.cpp to dedup-newsbin-multi.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s dedup-newsbin-multi.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/dedup-newsbin-multi.exe
+dedup-newsbin-multi.cpp: In member function ‘void ns_DedupNewsbin::TreeMap::operator()()’:
+dedup-newsbin-multi.cpp:587:4: error: ‘ffblk’ was not declared in this scope
+    ffblk              File_Block    = ffblk();
+    ^
+dedup-newsbin-multi.cpp:603:25: error: ‘FA_RDONLY’ was not declared in this scope
+    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+                         ^
+dedup-newsbin-multi.cpp:603:25: note: suggested alternative:
+In file included from dedup-newsbin-multi.cpp:183:0:
+/rhe/include/rhdir.h:157:30: note:   ‘rhdir::FA_RDONLY’
+    const unsigned short int  FA_RDONLY  =  1;
+                              ^
+dedup-newsbin-multi.cpp:603:37: error: ‘FA_HIDDEN’ was not declared in this scope
+    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+                                     ^
+dedup-newsbin-multi.cpp:603:37: note: suggested alternative:
+In file included from dedup-newsbin-multi.cpp:183:0:
+/rhe/include/rhdir.h:158:30: note:   ‘rhdir::FA_HIDDEN’
+    const unsigned short int  FA_HIDDEN  =  2;
+                              ^
+dedup-newsbin-multi.cpp:603:49: error: ‘FA_SYSTEM’ was not declared in this scope
+    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+                                                 ^
+dedup-newsbin-multi.cpp:603:49: note: suggested alternative:
+In file included from dedup-newsbin-multi.cpp:183:0:
+/rhe/include/rhdir.h:159:30: note:   ‘rhdir::FA_SYSTEM’
+    const unsigned short int  FA_SYSTEM  =  4;
+                              ^
+dedup-newsbin-multi.cpp:603:61: error: ‘FA_ARCH’ was not declared in this scope
+    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+                                                             ^
+dedup-newsbin-multi.cpp:603:61: note: suggested alternative:
+In file included from dedup-newsbin-multi.cpp:183:0:
+/rhe/include/rhdir.h:162:30: note:   ‘rhdir::FA_ARCH’
+    const unsigned short int  FA_ARCH    = 32;
+                              ^
+dedup-newsbin-multi.cpp:606:32: error: ‘File_Block’ was not declared in this scope
+    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+                                ^
+dedup-newsbin-multi.cpp:606:54: error: ‘findfirst’ was not declared in this scope
+    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+                                                      ^
+dedup-newsbin-multi.cpp:606:96: error: ‘findnext’ was not declared in this scope
+    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+                                                                                                ^
+/rhe/makehead:146: recipe for target 'dedup-newsbin-multi.exe' failed
+make: [dedup-newsbin-multi.exe] Error 1 (ignored)
+dedup-newsbin-multi.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile denumerate-file-names.cpp to denumerate-file-names.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s denumerate-file-names.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/denumerate-file-names.exe
+denumerate-file-names.cpp: In function ‘void ns_DFN::ProcessCurrentFile(ns_DFN::Stats_t&, const FR&)’:
+denumerate-file-names.cpp:324:41: error: ‘__file_exists’ was not declared in this scope
+    if (__file_exists(NewFileName.c_str()))
+                                         ^
+/rhe/makehead:146: recipe for target 'denumerate-file-names.exe' failed
+make: [denumerate-file-names.exe] Error 1 (ignored)
+denumerate-file-names.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile dir-names-to-capital.cpp to dir-names-to-capital.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s dir-names-to-capital.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/dir-names-to-capital.exe
+dir-names-to-capital.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile encode.cpp to encode.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s encode.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/encode.exe
+encode.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile encode-pad.cpp to encode-pad.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s encode-pad.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/encode-pad.exe
+encode-pad.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile enumerate-file-names.cpp to enumerate-file-names.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s enumerate-file-names.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/enumerate-file-names.exe
+enumerate-file-names.cpp: In function ‘void ns_EFN::ProcessCurrentFile(ns_EFN::Stats_t&, const FR&)’:
+enumerate-file-names.cpp:324:52: error: ‘__file_exists’ was not declared in this scope
+       bSuccess = !__file_exists(NewFileName.c_str());
+                                                    ^
+/rhe/makehead:146: recipe for target 'enumerate-file-names.exe' failed
+make: [enumerate-file-names.exe] Error 1 (ignored)
+enumerate-file-names.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile erase_ph.cpp to erase_ph.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s erase_ph.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/erase_ph.exe
+erase_ph.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile erase-thumbs.cpp to erase-thumbs.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s erase-thumbs.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/erase-thumbs.exe
+erase-thumbs.cpp: In member function ‘void ns_EraseThumbs::ProcessCurDirFunctor::operator()()’:
+erase-thumbs.cpp:657:4: error: ‘ffblk’ was not declared in this scope
+    ffblk              File_Block    = ffblk();
+    ^
+erase-thumbs.cpp:673:25: error: ‘FA_RDONLY’ was not declared in this scope
+    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+                         ^
+erase-thumbs.cpp:673:25: note: suggested alternative:
+In file included from erase-thumbs.cpp:88:0:
+/rhe/include/rhdir.h:157:30: note:   ‘rhdir::FA_RDONLY’
+    const unsigned short int  FA_RDONLY  =  1;
+                              ^
+erase-thumbs.cpp:673:37: error: ‘FA_HIDDEN’ was not declared in this scope
+    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+                                     ^
+erase-thumbs.cpp:673:37: note: suggested alternative:
+In file included from erase-thumbs.cpp:88:0:
+/rhe/include/rhdir.h:158:30: note:   ‘rhdir::FA_HIDDEN’
+    const unsigned short int  FA_HIDDEN  =  2;
+                              ^
+erase-thumbs.cpp:673:49: error: ‘FA_SYSTEM’ was not declared in this scope
+    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+                                                 ^
+erase-thumbs.cpp:673:49: note: suggested alternative:
+In file included from erase-thumbs.cpp:88:0:
+/rhe/include/rhdir.h:159:30: note:   ‘rhdir::FA_SYSTEM’
+    const unsigned short int  FA_SYSTEM  =  4;
+                              ^
+erase-thumbs.cpp:673:61: error: ‘FA_ARCH’ was not declared in this scope
+    uint8_t File_Flags ( FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_ARCH );
+                                                             ^
+erase-thumbs.cpp:673:61: note: suggested alternative:
+In file included from erase-thumbs.cpp:88:0:
+/rhe/include/rhdir.h:162:30: note:   ‘rhdir::FA_ARCH’
+    const unsigned short int  FA_ARCH    = 32;
+                              ^
+erase-thumbs.cpp:676:32: error: ‘File_Block’ was not declared in this scope
+    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+                                ^
+erase-thumbs.cpp:676:54: error: ‘findfirst’ was not declared in this scope
+    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+                                                      ^
+erase-thumbs.cpp:676:96: error: ‘findnext’ was not declared in this scope
+    for (done = findfirst("*", &File_Block, File_Flags) ; not done ; done = findnext(&File_Block))
+                                                                                                ^
+/rhe/makehead:146: recipe for target 'erase-thumbs.exe' failed
+make: [erase-thumbs.exe] Error 1 (ignored)
+erase-thumbs.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile fahrcels.c to fahrcels.exe:
+gcc  -I /rhe/include -Wall -Os -s   fahrcels.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/fahrcels.exe
+fahrcels.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile fahrcelstable.c to fahrcelstable.exe:
+gcc  -I /rhe/include -Wall -Os -s   fahrcelstable.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/fahrcelstable.exe
+fahrcelstable.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile fexist.cpp to fexist.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s fexist.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/fexist.exe
+fexist.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile file-away.cpp to file-away.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s file-away.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/file-away.exe
+file-away.cpp:27:17: fatal error: dir.h: No such file or directory
+ #include <dir.h>
+                 ^
+compilation terminated.
+/rhe/makehead:146: recipe for target 'file-away.exe' failed
+make: [file-away.exe] Error 1 (ignored)
+file-away.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile file-compare.cpp to file-compare.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s file-compare.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/file-compare.exe
+file-compare.cpp:28:17: fatal error: dir.h: No such file or directory
+ #include <dir.h>
+                 ^
+compilation terminated.
+/rhe/makehead:146: recipe for target 'file-compare.exe' failed
+make: [file-compare.exe] Error 1 (ignored)
+file-compare.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile file-names-to-capital.cpp to file-names-to-capital.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s file-names-to-capital.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/file-names-to-capital.exe
+file-names-to-capital.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile file-names-to-lower.cpp to file-names-to-lower.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s file-names-to-lower.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/file-names-to-lower.exe
+file-names-to-lower.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile file-names-to-upper.cpp to file-names-to-upper.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s file-names-to-upper.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/file-names-to-upper.exe
+file-names-to-upper.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile find-bad-file-names.cpp to find-bad-file-names.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s find-bad-file-names.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/find-bad-file-names.exe
+find-bad-file-names.cpp: In function ‘void ns_FindBadFileNames::ProcessCurrentFile(const ns_FindBadFileNames::Settings_t&, const VS&, ns_FindBadFileNames::Stats_t&, const FR&)’:
+find-bad-file-names.cpp:419:95: error: ‘__file_exists’ was not declared in this scope
+    if ( rhdir::FileNameIsInvalid(FileRecord.name) or not __file_exists(FileRecord.name.c_str()) )
+                                                                                               ^
+/rhe/makehead:146: recipe for target 'find-bad-file-names.exe' failed
+make: [find-bad-file-names.exe] Error 1 (ignored)
+find-bad-file-names.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile find-spacey-file-names.cpp to find-spacey-file-names.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s find-spacey-file-names.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/find-spacey-file-names.exe
+find-spacey-file-names.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile find-bad-jpegs.cpp to find-bad-jpegs.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s find-bad-jpegs.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/find-bad-jpegs.exe
+find-bad-jpegs.cpp: In function ‘int main(int, char**)’:
+find-bad-jpegs.cpp:160:29: error: ‘__file_exists’ was not declared in this scope
+    if (!__file_exists("/Bad")) mkdir("/Bad",  S_IWUSR);
+                             ^
+find-bad-jpegs.cpp: In member function ‘void ns_FndBadJpg::ProcessCurDirFunctor::operator()()’:
+find-bad-jpegs.cpp:374:43: error: ‘__file_exists’ was not declared in this scope
+          if (!__file_exists(BadDir.c_str()))
+                                           ^
+/rhe/makehead:146: recipe for target 'find-bad-jpegs.exe' failed
+make: [find-bad-jpegs.exe] Error 1 (ignored)
+find-bad-jpegs.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile find-good-jpegs.cpp to find-good-jpegs.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s find-good-jpegs.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/find-good-jpegs.exe
+find-good-jpegs.cpp: In function ‘int main(int, char**)’:
+find-good-jpegs.cpp:68:33: error: ‘__file_exists’ was not declared in this scope
+    if (!__file_exists("/Damaged")) mkdir("/Damaged",  S_IWUSR);
+                                 ^
+/rhe/makehead:146: recipe for target 'find-good-jpegs.exe' failed
+make: [find-good-jpegs.exe] Error 1 (ignored)
+find-good-jpegs.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile for-each-dir.cpp to for-each-dir.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s for-each-dir.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/for-each-dir.exe
+for-each-dir.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile getfilelist.c to getfilelist.exe:
+gcc  -I /rhe/include -Wall -Os -s   getfilelist.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/getfilelist.exe
+getfilelist.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile lollygag.c to lollygag.exe:
+gcc  -I /rhe/include -Wall -Os -s   lollygag.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/lollygag.exe
+lollygag.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile longest-line.c to longest-line.exe:
+gcc  -I /rhe/include -Wall -Os -s   longest-line.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/longest-line.exe
+longest-line.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile missing-files.cpp to missing-files.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s missing-files.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/missing-files.exe
+missing-files.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile month-dirs.cpp to month-dirs.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s month-dirs.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/month-dirs.exe
+month-dirs.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile myenv.c to myenv.exe:
+gcc  -I /rhe/include -Wall -Os -s   myenv.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/myenv.exe
+myenv.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile numdirs.cpp to numdirs.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s numdirs.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/numdirs.exe
+numdirs.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile numdirs2.cpp to numdirs2.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s numdirs2.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/numdirs2.exe
+numdirs2.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile numeric-limits.cpp to numeric-limits.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s numeric-limits.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/numeric-limits.exe
+numeric-limits.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile pinderloy.cpp to pinderloy.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s pinderloy.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/pinderloy.exe
+pinderloy.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile processwww.cpp to processwww.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s processwww.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/processwww.exe
+processwww.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile randip.c to randip.exe:
+gcc  -I /rhe/include -Wall -Os -s   randip.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/randip.exe
+randip.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile randmac.c to randmac.exe:
+gcc  -I /rhe/include -Wall -Os -s   randmac.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/randmac.exe
+randmac.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile randname.c to randname.exe:
+gcc  -I /rhe/include -Wall -Os -s   randname.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/randname.exe
+randname.c:31:21: fatal error: namegen.h: No such file or directory
+ #include <namegen.h>
+                     ^
+compilation terminated.
+/rhe/makehead:140: recipe for target 'randname.exe' failed
+make: [randname.exe] Error 1 (ignored)
+randname.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile randnames.c to randnames.exe:
+gcc  -I /rhe/include -Wall -Os -s   randnames.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/randnames.exe
+randnames.c:31:21: fatal error: namegen.h: No such file or directory
+ #include <namegen.h>
+                     ^
+compilation terminated.
+/rhe/makehead:140: recipe for target 'randnames.exe' failed
+make: [randnames.exe] Error 1 (ignored)
+randnames.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile randomize-file-names.cpp to randomize-file-names.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s randomize-file-names.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/randomize-file-names.exe
+randomize-file-names.cpp: In member function ‘void ns_RFN::ProcessCurDirFunctor::operator()()’:
+randomize-file-names.cpp:273:55: error: ‘__file_exists’ was not declared in this scope
+          bSuccess = !__file_exists(NewFileName.c_str());
+                                                       ^
+/rhe/makehead:146: recipe for target 'randomize-file-names.exe' failed
+make: [randomize-file-names.exe] Error 1 (ignored)
+randomize-file-names.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile recomb.c to recomb.exe:
+gcc  -I /rhe/include -Wall -Os -s   recomb.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/recomb.exe
+recomb.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile renamefiles.cpp to renamefiles.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s renamefiles.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/renamefiles.exe
+renamefiles.cpp:34:16: fatal error: pc.h: No such file or directory
+ #include <pc.h>
+                ^
+compilation terminated.
+/rhe/makehead:146: recipe for target 'renamefiles.exe' failed
+make: [renamefiles.exe] Error 1 (ignored)
+renamefiles.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile rhdir.cpp to rhdir.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s rhdir.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/rhdir.exe
+rhdir.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile roman.cpp to roman.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s roman.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/roman.exe
+roman.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile rot13.cpp to rot13.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s rot13.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/rot13.exe
+rot13.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile separate-jpeg-palimpsests.cpp to separate-jpeg-palimpsests.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s separate-jpeg-palimpsests.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/separate-jpeg-palimpsests.exe
+separate-jpeg-palimpsests.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile set-extensions.cpp to set-extensions.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s set-extensions.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/set-extensions.exe
+set-extensions.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile show-heads.cpp to show-heads.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s show-heads.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/show-heads.exe
+show-heads.cpp: In function ‘int main(int, char**)’:
+show-heads.cpp:154:29: error: ‘__file_exists’ was not declared in this scope
+    if (!__file_exists("/Bad")) mkdir("/Bad",  S_IWUSR);
+                             ^
+/rhe/makehead:146: recipe for target 'show-heads.exe' failed
+make: [show-heads.exe] Error 1 (ignored)
+show-heads.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile simplify-file-names.cpp to simplify-file-names.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s simplify-file-names.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/simplify-file-names.exe
+simplify-file-names.cpp: In function ‘void ns_SFN::ProcessCurrentFile(const char*, const ns_SFN::Bools_t&, ns_SFN::Stats_t&, const FR&)’:
+simplify-file-names.cpp:686:38: error: ‘__file_exists’ was not declared in this scope
+    if (!__file_exists(OldName.c_str()))
+                                      ^
+simplify-file-names.cpp:720:37: error: ‘__file_exists’ was not declared in this scope
+    if (__file_exists(NewName.c_str()))
+                                     ^
+/rhe/makehead:146: recipe for target 'simplify-file-names.exe' failed
+make: [simplify-file-names.exe] Error 1 (ignored)
+simplify-file-names.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile sizeofc.c to sizeofc.exe:
+gcc  -I /rhe/include -Wall -Os -s   sizeofc.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/sizeofc.exe
+sizeofc.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile sizeofcpp.cpp to sizeofcpp.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s sizeofcpp.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/sizeofcpp.exe
+sizeofcpp.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile sortdup.cpp to sortdup.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s sortdup.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/sortdup.exe
+sortdup.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile source-clean.cpp to source-clean.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s source-clean.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/source-clean.exe
+source-clean.cpp:25:17: fatal error: dir.h: No such file or directory
+ #include <dir.h>
+                 ^
+compilation terminated.
+/rhe/makehead:146: recipe for target 'source-clean.exe' failed
+make: [source-clean.exe] Error 1 (ignored)
+source-clean.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile source-lines.cpp to source-lines.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s source-lines.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/source-lines.exe
+source-lines.cpp:29:17: fatal error: dir.h: No such file or directory
+ #include <dir.h>
+                 ^
+compilation terminated.
+/rhe/makehead:146: recipe for target 'source-lines.exe' failed
+make: [source-lines.exe] Error 1 (ignored)
+source-lines.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile spellchk.cpp to spellchk.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s spellchk.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/spellchk.exe
+spellchk.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile template.cpp to template.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s template.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/template.exe
+template.cpp:47:19: fatal error: conio.h: No such file or directory
+ #include <conio.h>
+                   ^
+compilation terminated.
+/rhe/makehead:146: recipe for target 'template.exe' failed
+make: [template.exe] Error 1 (ignored)
+template.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile time1970.c to time1970.exe:
+gcc  -I /rhe/include -Wall -Os -s   time1970.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/time1970.exe
+time1970.c: In function ‘main’:
+time1970.c:8:4: warning: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘time_t’ [-Wformat=]
+    printf("Time since 1-1-1970:  %d seconds.\n", Ommm ) ;
+    ^
+time1970.c:8:4: warning: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘time_t’ [-Wformat=]
+time1970.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.c to compile timedelay.c to timedelay.exe:
+gcc  -I /rhe/include -Wall -Os -s   timedelay.c -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/timedelay.exe
+timedelay.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile tokenize.cpp to tokenize.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s tokenize.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/tokenize.exe
+tokenize.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile unique-file-names.cpp to unique-file-names.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s unique-file-names.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/unique-file-names.exe
+unique-file-names.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile unmark.cpp to unmark.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s unmark.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/unmark.exe
+unmark.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile unquote.cpp to unquote.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s unquote.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/unquote.exe
+unquote.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile untilde.cpp to untilde.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s untilde.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/untilde.exe
+untilde.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile wbztojpg.cpp to wbztojpg.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s wbztojpg.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/wbztojpg.exe
+wbztojpg.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pattern rule %.exe:%.cpp to compile zero-one.cpp to zero-one.exe:
+g++ -I /rhe/include -Wall -std=c++11 -Os -s zero-one.cpp -L/rhe/lib -lrh -lfl -ly -lm -o /rhe/bin/util/zero-one.exe
+zero-one.exe is up to date.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+utility program collection is up to date.
+
+Aragorn@Ketch
+/rhe/src/util
+%cd /rhe/bin/util
+
+Aragorn@Ketch
+/rhe/bin/util
+%ll
+total 1.3M
+drwxr-xr-x+ 1 Aragorn None    0 Mar 25 22:21 ./
+drwxr-xr-x+ 1 Aragorn None    0 Mar 25 21:11 ../
+-rwxr-xr-x  1 Aragorn None  18K Mar 25 22:19 alphdirs.exe*
+-rwxr-xr-x  1 Aragorn None  20K Mar 25 22:19 boxify.exe*
+-rwxr-xr-x  1 Aragorn None 9.5K Mar 25 22:19 celsfahr.exe*
+-rwxr-xr-x  1 Aragorn None 9.5K Mar 25 22:19 celsfahrtable.exe*
+-rwxr-xr-x  1 Aragorn None  40K Mar 25 22:19 census.exe*
+-rwxr-xr-x  1 Aragorn None  12K Mar 25 22:19 clock.exe*
+-rwxr-xr-x  1 Aragorn None  13K Mar 25 22:19 clock2.exe*
+-rwxr-xr-x  1 Aragorn None 9.5K Mar 25 22:19 clock3.exe*
+-rwxr-xr-x  1 Aragorn None  18K Mar 25 22:19 day-dirs.exe*
+-rwxr-xr-x  1 Aragorn None  36K Mar 25 22:20 dir-names-to-capital.exe*
+-rwxr-xr-x  1 Aragorn None  42K Mar 25 22:20 encode.exe*
+-rwxr-xr-x  1 Aragorn None  19K Mar 25 22:20 encode-pad.exe*
+-rwxr-xr-x  1 Aragorn None  35K Mar 25 22:20 erase_ph.exe*
+-rwxr-xr-x  1 Aragorn None 9.5K Mar 25 22:20 fahrcels.exe*
+-rwxr-xr-x  1 Aragorn None 9.5K Mar 25 22:20 fahrcelstable.exe*
+-rwxr-xr-x  1 Aragorn None  10K Mar 25 22:20 fexist.exe*
+-rwxr-xr-x  1 Aragorn None  36K Mar 25 22:20 file-names-to-capital.exe*
+-rwxr-xr-x  1 Aragorn None  35K Mar 25 22:20 file-names-to-lower.exe*
+-rwxr-xr-x  1 Aragorn None  35K Mar 25 22:20 file-names-to-upper.exe*
+-rwxr-xr-x  1 Aragorn None  42K Mar 25 22:20 find-spacey-file-names.exe*
+-rwxr-xr-x  1 Aragorn None  39K Mar 25 22:20 for-each-dir.exe*
+-rwxr-xr-x  1 Aragorn None 8.5K Mar 25 22:20 getfilelist.exe*
+-rwxr-xr-x  1 Aragorn None 8.5K Mar 25 22:20 lollygag.exe*
+-rwxr-xr-x  1 Aragorn None 9.0K Mar 25 22:20 longest-line.exe*
+-rwxr-xr-x  1 Aragorn None  38K Mar 25 22:20 missing-files.exe*
+-rwxr-xr-x  1 Aragorn None  18K Mar 25 22:20 month-dirs.exe*
+-rwxr-xr-x  1 Aragorn None 8.5K Mar 25 22:20 myenv.exe*
+-rwxr-xr-x  1 Aragorn None  18K Mar 25 22:20 numdirs.exe*
+-rwxr-xr-x  1 Aragorn None  18K Mar 25 22:20 numdirs2.exe*
+-rwxr-xr-x  1 Aragorn None  12K Mar 25 22:20 numeric-limits.exe*
+-rwxr-xr-x  1 Aragorn None 9.5K Mar 25 22:20 pinderloy.exe*
+-rwxr-xr-x  1 Aragorn None  37K Mar 25 22:20 processwww.exe*
+-rwxr-xr-x  1 Aragorn None 9.0K Mar 25 22:20 randip.exe*
+-rwxr-xr-x  1 Aragorn None 9.0K Mar 25 22:20 randmac.exe*
+-rwxr-xr-x  1 Aragorn None  11K Mar 25 22:21 recomb.exe*
+-rwxr-xr-x  1 Aragorn None  41K Mar 25 22:21 rhdir.exe*
+-rwxr-xr-x  1 Aragorn None  14K Mar 25 22:21 roman.exe*
+-rwxr-xr-x  1 Aragorn None  36K Mar 25 22:21 rot13.exe*
+-rwxr-xr-x  1 Aragorn None  47K Mar 25 22:21 separate-jpeg-palimpsests.exe*
+-rwxr-xr-x  1 Aragorn None  43K Mar 25 22:21 set-extensions.exe*
+-rwxr-xr-x  1 Aragorn None  10K Mar 25 22:21 sizeofc.exe*
+-rwxr-xr-x  1 Aragorn None  10K Mar 25 22:21 sizeofcpp.exe*
+-rwxr-xr-x  1 Aragorn None  22K Mar 25 22:21 sortdup.exe*
+-rwxr-xr-x  1 Aragorn None  43K Mar 25 22:21 spellchk.exe*
+-rwxr-xr-x  1 Aragorn None 8.5K Mar 25 22:21 time1970.exe*
+-rwxr-xr-x  1 Aragorn None 9.0K Mar 25 22:21 timedelay.exe*
+-rwxr-xr-x  1 Aragorn None  19K Mar 25 22:21 tokenize.exe*
+-rwxr-xr-x  1 Aragorn None  40K Mar 25 22:21 unique-file-names.exe*
+-rwxr-xr-x  1 Aragorn None  19K Mar 25 22:21 unmark.exe*
+-rwxr-xr-x  1 Aragorn None  18K Mar 25 22:21 unquote.exe*
+-rwxr-xr-x  1 Aragorn None  44K Mar 25 22:21 untilde.exe*
+-rwxr-xr-x  1 Aragorn None  35K Mar 25 22:21 wbztojpg.exe*
+-rwxr-xr-x  1 Aragorn None  19K Mar 25 22:21 zero-one.exe*
+
+Aragorn@Ketch
+/rhe/bin/util
+%clock
+                                   10:21:59PM PDT, Wednesday March 25, 2015
+Aragorn@Ketch
+/rhe/bin/util
+%zero-one
+asdf
+asdf asdf ert wetr ert
+10001000100010001000100010001000100010001000100010001000100010001000100010001000
+100010001000100010001000
+
+Aragorn@Ketch
+/rhe/bin/util
+%roman 73
+73=LXXIII
+
+Aragorn@Ketch
+/rhe/bin/util
+%

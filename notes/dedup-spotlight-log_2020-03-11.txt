@@ -1,0 +1,2242 @@
+
+Aragorn@Square-Rigger /cygdrive/d/test-range/dedup-files-test/spotlight
+$ ddf -s
+
+Now entering program "dedup-files.perl".
+
+item from @ARGV = -s
+item is an option
+
+
+Directory # 1:
+/cygdrive/d/test-range/dedup-files-test/spotlight
+
+These two files are identical:
+Anse Source D'Argent Beach, La Digue Island, Seychelles.jpg       Wed Mar 11, 2020  14:12:21  882248 bytes
+eb091ccf1a4e77c3a849555cbf453b2ee8535a5de55555fdae0f675026946c56  Wed Mar 11, 2020  06:38:53  882248 bytes
+Successfully annotated Anse Source D'Argent Beach, La Digue Island, Seychelles.jpg
+New name = Anse Source D'Argent Beach, La Digue Island, Seychelles(eb091ccf1a4e77c3a849555cbf453b2ee8535a5de55555fdae0f675026946c56).jpg
+
+Successfully unlinked eb091ccf1a4e77c3a849555cbf453b2ee8535a5de55555fdae0f675026946c56
+
+
+These two files are identical:
+e805d57f1dc01dfb487bd2b08dccb0b0c14290cf15d897b28c0120ccb7e0d1ac  Mon Mar  9, 2020  02:30:44  815921 bytes
+Water Mill, Saas Fee, Switzerland.jpg                             Tue Mar 10, 2020  15:20:54  815921 bytes
+Successfully annotated Water Mill, Saas Fee, Switzerland.jpg
+New name = Water Mill, Saas Fee, Switzerland(e805d57f1dc01dfb487bd2b08dccb0b0c14290cf15d897b28c0120ccb7e0d1ac).jpg
+
+Successfully unlinked e805d57f1dc01dfb487bd2b08dccb0b0c14290cf15d897b28c0120ccb7e0d1ac
+
+
+These two files are identical:
+07e2af9f9a094b9c047e1eb4c864d1c9351bd6ef94c4fceb70d65577fc1d284c  Wed Mar 11, 2020  06:38:53  803667 bytes
+Bonifacio Citadel, South Coast of Corsica Island, France.jpg      Wed Mar 11, 2020  14:12:20  803667 bytes
+Successfully annotated Bonifacio Citadel, South Coast of Corsica Island, France.jpg
+New name = Bonifacio Citadel, South Coast of Corsica Island, France(07e2af9f9a094b9c047e1eb4c864d1c9351bd6ef94c4fceb70d65577fc1d284c).jpg
+
+Successfully unlinked 07e2af9f9a094b9c047e1eb4c864d1c9351bd6ef94c4fceb70d65577fc1d284c
+
+
+These two files are identical:
+369da2c4e856e7a2cc2727444490c86cfde3c868c14ae337e6c778b6f3ddc86e  Mon Mar  9, 2020  02:30:43  727954 bytes
+Al-Khazneh, Petra, Jordan.jpg                                     Tue Mar 10, 2020  15:20:53  727954 bytes
+Successfully annotated Al-Khazneh, Petra, Jordan.jpg
+New name = Al-Khazneh, Petra, Jordan(369da2c4e856e7a2cc2727444490c86cfde3c868c14ae337e6c778b6f3ddc86e).jpg
+
+Successfully unlinked 369da2c4e856e7a2cc2727444490c86cfde3c868c14ae337e6c778b6f3ddc86e
+
+
+These two files are identical:
+a7f486724929fd764ec305db42e69c8e9dc7f03bff700079dfeacb2831689bc1  Wed Mar 11, 2020  06:38:52  491270 bytes
+Cape Flattery, Olympic Peninsula, Washington, USA.jpg             Wed Mar 11, 2020  14:12:20  491270 bytes
+Successfully annotated Cape Flattery, Olympic Peninsula, Washington, USA.jpg
+New name = Cape Flattery, Olympic Peninsula, Washington, USA(a7f486724929fd764ec305db42e69c8e9dc7f03bff700079dfeacb2831689bc1).jpg
+
+Successfully unlinked a7f486724929fd764ec305db42e69c8e9dc7f03bff700079dfeacb2831689bc1
+
+
+These two files are identical:
+f9714c5f7dd55b4846fdc04e61c8c6cd3789e6feb6f7a5b919bce3597b0cbf45  Mon Mar  9, 2020  02:30:43  481528 bytes
+lfsanjeo.jpg                                                      Mon Jan 20, 2020  19:33:56  481528 bytes
+Successfully unlinked lfsanjeo.jpg
+
+
+Files of size 2968276:
+White-Cliffs_Strait-Of-Dover_England_UK-03.jpg
+
+Files of size 2160400:
+Grand-Canyon_North-Rim_Cape-Royal_LARGE.jpg
+
+Files of size 2006525:
+Shanghai, China At Night With Spooky Clouds.jpg
+
+Files of size 1977365:
+Night landscape with Milky Way Galaxy above the Black sea, Bulgaria.jpg
+
+Files of size 1953289:
+Lago di Landro, Dolomites, South Tyrol, Italy.jpg
+
+Files of size 1948035:
+Milky Way over Hollow Rock on Lake Superior, Grand Portage, Minnesota, USA.jpg
+
+Files of size 1928709:
+nxqpduyu.jpg
+
+Files of size 1920036:
+Underwater Rock Formations, Probably In Lake Huron, Canada.jpg
+
+Files of size 1913931:
+Englemann Hedgehog cactus in bloom in Red Rock Canyon, Nevada, USA.jpg
+
+Files of size 1897532:
+suhtbqih.jpg
+
+Files of size 1887386:
+Inside Eiffel Tower, Champ de Mars, Paris, France.jpg
+
+Files of size 1871604:
+rdiebfrl.jpg
+
+Files of size 1805380:
+Echinoderm Skeletons, Salento, Apulia, Italy.jpg
+
+Files of size 1803689:
+Great Egret and Little Egret, Sialkot, Punjab, Pakistan.jpg
+
+Files of size 1788562:
+Avenue of the Baobabs, Madagascar.jpg
+
+Files of size 1775904:
+eubcccfo.jpg
+
+Files of size 1769201:
+Aerial view of Marlborough Sounds, South Island of New Zealand.jpg
+
+Files of size 1765876:
+twhniznw.jpg
+
+Files of size 1748915:
+Victoria Memorial, Calcutta, West Bengal, India.jpg
+
+Files of size 1724774:
+Petrified Forest National Park, Arizona, USA.jpg
+
+Files of size 1720951:
+Goats standing on rock formation in Zion National Park, Utah, USA.jpg
+
+Files of size 1715261:
+Manhattan bridge view from alley between two buildings, Brooklyn, New York City, USA.jpg
+
+Files of size 1697238:
+Detail of turbine close-up, UK.jpg
+
+Files of size 1678295:
+Rice Terrace, Mu Cang Chai, northern Vietnam.jpg
+
+Files of size 1662652:
+hznvnkzw.jpg
+
+Files of size 1652558:
+yhnoqyua.jpg
+
+Files of size 1628035:
+zzyxieml.jpg
+
+Files of size 1621643:
+Unknown-01 (flipped copy).jpg
+
+Files of size 1613391:
+Morning light at Lake Gosau with Dachstein Mountains, Salzkammergut, Austria.jpg
+
+Files of size 1609654:
+Fulton Center at Fulton Street Subway station in Lower Manhattan, New York City, USA.jpg
+
+Files of size 1561460:
+View with cactus from top of Pai Inacio hill near Lençóis, Bahia, Brazil.jpg
+
+Files of size 1561199:
+nspupyni.jpg
+
+Files of size 1556040:
+White-Cliffs_Strait-Of-Dover_England_UK-06.jpg
+
+Files of size 1535135:
+White-Cliffs_Strait-Of-Dover_England_UK-01.jpg
+
+Files of size 1526075:
+Rådhuset tunnelbana (subway, metro) station escalator, Stockholm, Sweden.jpg
+
+Files of size 1514507:
+xjuuupow.jpg
+
+Files of size 1512936:
+Mayakovskaya Moscow Metro Station, Russia.jpg
+
+Files of size 1512334:
+Falkirk wheel, Stirlingshire, Scotland, UK.jpg
+
+Files of size 1510696:
+xyrbsbzq.jpg
+
+Files of size 1469581:
+Dalian Cross-Sea Bridge at dusk, landmark of Dalian, China.jpg
+
+Files of size 1466349:
+Elektrozavodskaya Moscow Metro Station, Russia.jpg
+
+Files of size 1392338:
+zcgehefp.jpg
+
+Files of size 1370082:
+Val d’Orcia, Tuscany, Italy.jpg
+
+Files of size 1346612:
+Overhead view of classic camera, Rome, Italy.jpg
+
+Files of size 1295972:
+Arosa Express train across the bridge near Langwies in Arosa valley, Graubunden, Switzerland.jpg
+
+Files of size 1241329:
+aqeshfhg.jpg
+
+Files of size 1229128:
+zwohozuo.jpg
+
+Files of size 1202568:
+Blue Hen Falls, Cayuhoga National Park, Ohio, USA.jpg
+
+Files of size 1193773:
+Autumn trees in a mountain valley in Écrins National Park, France.jpg
+
+Files of size 1193165:
+Aerial view of Maui, Hawaii, USA.jpg
+
+Files of size 1158150:
+scsmeccq.jpg
+
+Files of size 1153352:
+Lightning strike over New York City skyline, USA.jpg
+
+Files of size 1142968:
+Spring wildflowers in Anza-Borrego Desert State Park, California, USA.jpg
+
+Files of size 1142788:
+xavpldms.jpg
+
+Files of size 1135542:
+Tea plantation, Munnar, Kerala, India, 2.jpg
+
+Files of size 1134120:
+bhzneiga.jpg
+
+Files of size 1131071:
+Rainbow eucalyptus trees forest at Hana Road, Maui, Hawaii, USA.jpg
+
+Files of size 1129912:
+nbeankfa.jpg
+
+Files of size 1129116:
+epxrkjnp.jpg
+
+Files of size 1122192:
+Sequoia National Park, California, USA.jpg
+
+Files of size 1113640:
+arortrzf.jpg
+
+Files of size 1090583:
+vuuoibjg.jpg
+
+Files of size 1075277:
+Bluebonnets at sunrise, at Muleshoe Bend near Austin, Texas, USA.jpg
+
+Files of size 1073949:
+The Great Orion Nebula M42 with the Running Man Nebula.jpg
+
+Files of size 1070104:
+Westerkerk (Western Church) with water canal view, Amsterdam, Netherlands.jpg
+
+Files of size 1052948:
+Manta Bay or Kelingking Beach on Nusa Penida Island, Bali, Indonesia.jpg
+
+Files of size 1050824:
+vpikkgzx.jpg
+
+Files of size 1043621:
+Japanese maple tree (Acer palmatum), Dublin, Ireland.jpg
+
+Files of size 1042855:
+nhrbtdkf.jpg
+
+Files of size 1015049:
+ikgpsuzf.jpg
+
+Files of size 1006523:
+Niue.jpg
+
+Files of size 1005467:
+lalnossy.jpg
+
+Files of size 997071:
+Shibazakura (Moss Phlox) fields during Fuji Shiba Sakura Festival in Yamanashi, Japan.jpg
+
+Files of size 996001:
+Jutland, Denmark.jpg
+
+Files of size 995732:
+View of Mount Fuji from Kawaguchiko Natural Living Center, Yamanshi-ken.jpg
+
+Files of size 995377:
+zuububzl.jpg
+
+Files of size 993465:
+Panorama of Czarny Staw Gąsienicowy in Tatra Mountains, Poland.jpg
+
+Files of size 983972:
+The winter sun rises over the Snake River and Teton Range, Grand Teton National Park, Wyoming, USA.jpg
+
+Files of size 980671:
+pcjqpupd.jpg
+
+Files of size 974881:
+Lower Yosemite fall, Yosemite National Park, California, USA.jpg
+
+Files of size 970030:
+tmnenfia.jpg
+
+Files of size 969871:
+Guoliang Tunnel in Taihang mountains, Shanxi, China.jpg
+
+Files of size 957165:
+Ross Fountain at Butchart Gardens in Victoria, Canada.jpg
+
+Files of size 954161:
+zjoakwyb.jpg
+
+Files of size 953197:
+qasyubsu.jpg
+
+Files of size 947140:
+unlnbnro.jpg
+
+Files of size 947135:
+Wild lupine flowers in Aoraki Mount Cook National Park, New Zealand.jpg
+
+Files of size 946168:
+Unknown-01 (autumn trees).jpg
+
+Files of size 945015:
+Cherry blossom lined river in Hakone, Kanagawa, Japan.jpg
+
+Files of size 943508:
+Lingmoor Fell (Side Pike) with Langdale Pikes behind, Lake District, Cumbria, England, UK.jpg
+
+Files of size 943012:
+Bluebonnet-Field, Texas, USA.jpg
+
+Files of size 942195:
+Rio Itamambuca reflecting rainforest at sunset, Serra do Mar State Park, São Paulo, Brazil.jpg
+
+Files of size 941002:
+acjlhaus.jpg
+
+Files of size 940677:
+quggucjw.jpg
+
+Files of size 939596:
+oenxxsvu.jpg
+
+Files of size 939023:
+Balloons-Mountains-Fields.jpg
+
+Files of size 937407:
+View of Hamilton Pool Preserve, Austin, Texas, USA.jpg
+
+Files of size 937198:
+wtojxxma.jpg
+
+Files of size 936236:
+Hesse, Germany.jpg
+
+Files of size 931309:
+rllkitbl.jpg
+
+Files of size 929739:
+Waterfall at Yosemite framed by pine trees, California, USA.jpg
+
+Files of size 926410:
+tlytrogg.jpg
+
+Files of size 925548:
+xrrurlcv.jpg
+
+Files of size 921392:
+dvqdfhfq.jpg
+
+Files of size 913852:
+Mormon Canyon, Arizona, USA.jpg
+
+Files of size 912522:
+Wainibau Waterfall on Taveuni Island, Fiji .jpg
+
+Files of size 904426:
+Mysterious Forest In Mountains Of Wakayama, Japan.jpg
+
+Files of size 902364:
+Jungfrau railway, Jungfraujoch, Bernese Highlands, Switzerland.jpg
+
+Files of size 902319:
+Montana de Siete Colores or Rainbow Mountain, Vinicunca, Cusco Region, Peru.jpg
+
+Files of size 901437:
+lgwnfpfw.jpg
+
+Files of size 898029:
+nitfxjtc.jpg
+
+Files of size 897455:
+xidjfvmq.jpg
+
+Files of size 896765:
+hxwiwtcm.jpg
+
+Files of size 894976:
+vuwolxji.jpg
+
+Files of size 894946:
+woupoikw.jpg
+
+Files of size 894870:
+uxygurjx.jpg
+
+Files of size 885182:
+blloaheg.jpg
+
+Files of size 882376:
+Rocks and Acheshboki (Devils Gates) mountains, Bolshoy Thach (Big Thach) Nature Park, Caucasian Mountains, Adygea, Russia.jpg
+
+Files of size 882248:
+Anse Source D'Argent Beach, La Digue Island, Seychelles.jpg
+***DELETED***
+
+Files of size 881636:
+mhrbrjdf.jpg
+
+Files of size 880953:
+badikfmq.jpg
+
+Files of size 879686:
+Seven Coloured Earth geological formation in Chamarel, Mauritius.jpg
+
+Files of size 877761:
+ljhjjbxw.jpg
+
+Files of size 876359:
+dmmkmmub.jpg
+
+Files of size 870528:
+Hoodoos in winter, Bryce Canyon National Park, Utah, USA.jpg
+
+Files of size 868089:
+Plitvice Lakes National Park, Plitvički Ljeskovac, Croatia.jpg
+
+Files of size 865976:
+ipsewzfb.jpg
+
+Files of size 865506:
+gknmacdm.jpg
+
+Files of size 863045:
+tdwmvsol.jpg
+
+Files of size 857784:
+uxbosniv.jpg
+
+Files of size 856771:
+Wakatipu Lake Lagoon, Glenorchy, New Zealand.jpg
+
+Files of size 855458:
+Canyon in Taroko Gorge National Park, Taiwan.jpg
+
+Files of size 852770:
+fuylefsi.jpg
+
+Files of size 850848:
+Carrick-a-Rede rope bridge near Ballintoy in County Antrim, Northern Ireland, UK.jpg
+
+Files of size 849335:
+Cliffs and sea stacks of Ponta da Piedade, Lagos, Algarve, Portugal.jpg
+
+Files of size 847652:
+yekcywkb.jpg
+
+Files of size 844763:
+Rapa Valley at fall in Sarek National Park, Jokkmokk, Lapland, Sweden.jpg
+
+Files of size 842112:
+Portimão, Algarve, Portugal.jpg
+
+Files of size 841585:
+lohxhxli.jpg
+
+Files of size 840261:
+matqkebz.jpg
+
+Files of size 838240:
+Arco de Santa Catalina, Antigua, Guatemala.jpg
+
+Files of size 834437:
+Horses and riders crossing the river on a foggy morning in the Ozarks, Eminence, Missouri, USA.jpg
+
+Files of size 833981:
+eclvibcc.jpg
+
+Files of size 830061:
+xopgyvtj.jpg
+
+Files of size 829460:
+Sunrise at Over Owler Tor above Surprise View in the Peak District National Park, Derbyshire, England, UK.jpg
+
+Files of size 829198:
+Gardens at Nijo Castle, Kyoto, Japan.jpg
+
+Files of size 828526:
+szwrzsrz.jpg
+
+Files of size 824237:
+zvpjfvhq.jpg
+
+Files of size 821289:
+ivzohadf.jpg
+
+Files of size 821155:
+crtiwjtv.jpg
+
+Files of size 818127:
+tnwozadt.jpg
+
+Files of size 817569:
+tgooplxh.jpg
+
+Files of size 816663:
+Biwako fireworks festival at Lake Biwa in summer, Otsu, Shiga, Japan.jpg
+
+Files of size 815988:
+Twisted wisteria tree in Ashikaga Flower Park, Tochigi Prefecture, Japan.jpg
+
+Files of size 815921:
+***DELETED***
+Water Mill, Saas Fee, Switzerland.jpg
+
+Files of size 814618:
+Giant’s Causeway in County Antrim near Bushmills, Northern Ireland, UK.jpg
+
+Files of size 813490:
+Natural Bridge in Bryce Canyon National Park, Utah, USA.jpg
+
+Files of size 809150:
+Wind Sculpted Rocks, Kangaroo Island, South Australia.jpg
+
+Files of size 803667:
+***DELETED***
+Bonifacio Citadel, South Coast of Corsica Island, France.jpg
+
+Files of size 803053:
+nixsiqrx.jpg
+
+Files of size 796970:
+Curved Road And Cypress At Sunset, Crete Senesi, Tuscany, Italy.jpg
+
+Files of size 796218:
+Island of Skellig Michael, off the coast of County Kerry, Ireland.jpg
+
+Files of size 795411:
+Los Flamencos National Reserve, Chile.jpg
+
+Files of size 794486:
+5d7bf81781c3871feec5ca8fcb020594474b043bae509ac2702e63dab64dacd4
+
+Files of size 794363:
+ivtutlvg.jpg
+
+Files of size 791409:
+Path Through Bamboo Forest, Arashiyama, Kyoto, Japan.jpg
+
+Files of size 791348:
+tzuiafvf.jpg
+
+Files of size 789500:
+ugutooxq.jpg
+
+Files of size 788712:
+Sunset view from hydrangea hills, Matsuzaki, Shizuoka, Japan.jpg
+
+Files of size 787006:
+myykualr.jpg
+
+Files of size 785808:
+gwyvmapy.jpg
+
+Files of size 785502:
+Plitvice Lakes National Park, Croatia.jpg
+
+Files of size 785070:
+mbngdcch.jpg
+
+Files of size 782638:
+Lord Howe Island, NSW, Australia (located in Pacific Ocean, halfway between Australia and New Zealand).jpg
+
+Files of size 781842:
+zbjevujx.jpg
+
+Files of size 781587:
+Multnomah Falls waterfall bridge in autumn red, Portland, Oregon, USA.jpg
+
+Files of size 781260:
+ea5ef89f589607a143ce44128d4c23544f605aded88f3c8ddd3ad14131095ebb
+
+Files of size 780527:
+Swift River, Kancamagus Highway, White Mountain National Forest, New Hampshire, USA.jpg
+
+Files of size 779872:
+Early winter morning in Zermatt with Matterhorn in background, Switzerland.jpg
+
+Files of size 778924:
+Grand-Canyon_North-Rim_Cape-Royal.jpg
+
+Files of size 778497:
+Vinicuna, Peru.jpg
+
+Files of size 777658:
+Plants growing on field against sky, Plateau de Valensole, France.jpg
+
+Files of size 777227:
+qnpwkihl.jpg
+
+Files of size 777056:
+Tokyo Tower, Minato-ku, Tokyo-to, Nippon.jpg
+
+Files of size 776669:
+himjgvkk.jpg
+
+Files of size 775855:
+Caño Cristales River, Colombia.jpg
+
+Files of size 775631:
+yraxeusd.jpg
+
+Files of size 773158:
+Painted Hills, Wheeler County, Oregon, USA.jpg
+
+Files of size 770812:
+Landscape of Guilin, Li River and Karst mountains, Yangshuo, Guangxi, China.jpg
+
+Files of size 768895:
+uzixwmaz.jpg
+
+Files of size 766957:
+Mount Timpanogos, Uinta-Wasatch-Cache National Forest, Utah, USA.jpg
+
+Files of size 766708:
+hkgriqml.jpg
+
+Files of size 764261:
+hdumegaz.jpg
+
+Files of size 761840:
+regnkssc.jpg
+
+Files of size 760422:
+wqdcutwc.jpg
+
+Files of size 760128:
+yivjcwow.jpg
+
+Files of size 756765:
+zxdanulx.jpg
+
+Files of size 755713:
+yfaszeza.jpg
+
+Files of size 755021:
+Marble Caves, Lago General Carrera, Patagonia, Chile.jpg
+
+Files of size 753909:
+pllycjrb.jpg
+
+Files of size 753328:
+yvxwpdei.jpg
+
+Files of size 750226:
+Porto Venere, Italia.jpg
+
+Files of size 749928:
+ztkfhnjt.jpg
+
+Files of size 749903:
+prkoynsz.jpg
+
+Files of size 749392:
+Autumn Sunrise in Carpathian Mountains, Ukraine.jpg
+
+Files of size 747904:
+eghvcrfn.jpg
+
+Files of size 743273:
+Sunrise in the San Rafael Swell desert, Utah, USA.jpg
+
+Files of size 742312:
+yxlxkjft.jpg
+
+Files of size 742213:
+Fall trees with misty mountain and river, New Hampshire, USA.jpg
+
+Files of size 739270:
+Warwick Long Bay, Bermuda.jpg
+
+Files of size 738974:
+Sunset at The Wall, Badlands National Park, South Dakota, USA.jpg
+
+Files of size 738344:
+yllnpnpv.jpg
+
+Files of size 734992:
+zxgmiqzl.jpg
+
+Files of size 732605:
+wrryjqxz.jpg
+
+Files of size 731444:
+Schooner, Pulau Wayag Islands, Raja Ampat Islands, Indonesia.jpg
+
+Files of size 731358:
+Sunrise at Bow Lake in Banff National Park, Alberta, Canada.jpg
+
+Files of size 730283:
+zzfkdtco.jpg
+
+Files of size 728842:
+ufcphcxi.jpg
+
+Files of size 727954:
+***DELETED***
+Al-Khazneh, Petra, Jordan.jpg
+
+Files of size 727823:
+Belogradchik Fortress bulwark and Belogradchik Rocks, Bulgaria.jpg
+
+Files of size 727789:
+xobiaokw.jpg
+
+Files of size 727312:
+yureuhcz.jpg
+
+Files of size 726292:
+yukgoqhi.jpg
+
+Files of size 726080:
+Windjana Gorge, WA, Australia.jpg
+
+Files of size 725853:
+Possibly-Mediterranian-Coast-Of-Turkey.jpg
+
+Files of size 724154:
+ykqqpuxl.jpg
+
+Files of size 721551:
+ecvqqetl.jpg
+
+Files of size 721299:
+zupmnlzf.jpg
+
+Files of size 720999:
+Taro Fields, Hanalei, Kauai, Hawaii, USA.jpg
+
+Files of size 720297:
+Cave and Waterfall, Johnston Canyon, Banff National Park, Alberta, Canada.jpg
+
+Files of size 720230:
+xsgwbwtj.jpg
+
+Files of size 719546:
+Avalanche Falls, The Flume, Franconia Notch State Park, New Hampshire, USA.jpg
+
+Files of size 718735:
+ulinykad.jpg
+
+Files of size 717273:
+Mount Assiniboine, Sunburst Peak and Lake Magog, Canada.jpg
+
+Files of size 716014:
+jptzuvvt.jpg
+
+Files of size 714330:
+Round Tower surrounded by Moat garden, Windsor Castle, Berkshire, England, UK.jpg
+
+Files of size 712897:
+yzmlfysx.jpg
+
+Files of size 712651:
+waiwjdss.jpg
+
+Files of size 712197:
+Octopus moving along the seabed, Cabo de Gata, Andalusia, Spain.jpg
+
+Files of size 711506:
+yxtjakmg.jpg
+
+Files of size 710769:
+Miami.jpg
+
+Files of size 710591:
+Manarola night, the second smallest of Cinque Terre towns, Italy.jpg
+
+Files of size 709719:
+Sunset light over the wide open landscape of the Namib-Naukluft National Park, Namibia.jpg
+
+Files of size 709050:
+ykzkhgsu.jpg
+
+Files of size 708985:
+Shipwreck on Navagio beach, Smugglers Cove, Zakynthos island, Greece.jpg
+
+Files of size 708546:
+stsrqhnd.jpg
+
+Files of size 708536:
+wxsxwjwe.jpg
+
+Files of size 708043:
+Temple of the Moon in the Cathedral Valley District of Capitol Reef National Park, Utah, USA.jpg
+
+Files of size 707872:
+Eagle Rock in Namib Desert, near Wüstenquell Guestfarm, Erongo, Namibia.jpg
+
+Files of size 707562:
+radtxqlr.jpg
+
+Files of size 707362:
+London view of Tower Bridge, River Thames and Canary Wharf, England, UK.jpg
+
+Files of size 706157:
+zyppahwz.jpg
+
+Files of size 704292:
+Aerial view of H-3 Interstate highway (John A. Burns Freeway), Kaneohe, Oʻahu, Hawaii, USA.jpg
+
+Files of size 703652:
+Campelo beach at sunset in Valdovino, Galicia, Spain.jpg
+
+Files of size 702411:
+zsfgpgza.jpg
+
+Files of size 702295:
+tqhebptz.jpg
+
+Files of size 702193:
+cixbvmqu.jpg
+
+Files of size 702175:
+mazfaxjk.jpg
+
+Files of size 702123:
+Colosseum at dusk, Rome, Italy.jpg
+
+Files of size 699537:
+Grand Teton view from Grand Targhee, Alta, Wyoming, USA.jpg
+
+Files of size 699352:
+Zhuoer Mountain, Qilian, Qinghai, China.jpg
+
+Files of size 698774:
+iyccecwa.jpg
+
+Files of size 698631:
+f1d5cf35f64e26201012d90f6f8ff85ff47c18ca08922b89fc5673e98818ae20
+
+Files of size 697923:
+Mountain village Foppolo near Bergamo illuminated by moon light, Italy.jpg
+
+Files of size 697794:
+akxjjzsm.jpg
+
+Files of size 696757:
+Piano Grande Plateau, Monti Sibillini National Park, Italy.jpg
+
+Files of size 695695:
+Häggvik, Ångermanland, Sweden.jpg
+
+Files of size 694597:
+Castelmezzano village in Lucan Dolomites, Potenza, Basilicata, Italy.jpg
+
+Files of size 694285:
+zpldptvx.jpg
+
+Files of size 694196:
+Path with fence leading to a beach at sunset near Provincetown on Cape Cod, Massachusetts, USA.jpg
+
+Files of size 694001:
+wvtxmmny.jpg
+
+Files of size 693369:
+Fuessen, Lake Forggensee, and Alps in Bavaria, Germany.jpg
+
+Files of size 692213:
+fbrceuyb.jpg
+
+Files of size 690119:
+bolygjfi.jpg
+
+Files of size 689681:
+Geothermal eruption of Gullfoss Geysir after sunset, Iceland.jpg
+
+Files of size 688408:
+Cantabrian Brown Brown Bears, Cantabrian Mountains, Spain.jpg
+
+Files of size 688308:
+aqldwnbq.jpg
+
+Files of size 688261:
+Autumn, Sherando Lake Recreation Area, George Washington National Forest, Virginia, USA.jpg
+
+Files of size 687302:
+sommkkki.jpg
+
+Files of size 686409:
+qboujmjx.jpg
+
+Files of size 685245:
+vrwhuaex.jpg
+
+Files of size 684814:
+ujnillgq.jpg
+
+Files of size 684634:
+Lighthouse of Cap de Formentor around sunset, Mallorca, Pollença, Balearic Islands, Spain.jpg
+
+Files of size 684587:
+Lago Bianco, Switzerland.jpg
+
+Files of size 683472:
+Raja Ampat Islands, West Papua, New Guinea, Indonesia.jpg
+
+Files of size 683468:
+Broken Ice, Lake Baikal, eastern Russia.jpg
+
+Files of size 683012:
+ppamptlq.jpg
+
+Files of size 682327:
+qbtihcaa.jpg
+
+Files of size 681646:
+Tea plantation, Munnar, Kerala, India, 1.jpg
+
+Files of size 681157:
+Beech tree with sunny beams at mountain valley, Carpathian mountains, Ukraine.jpg
+
+Files of size 679620:
+Del Toro Lake, Torres Del Paine National Park, Chile.jpg
+
+Files of size 678911:
+Yosemite National Park with El Capitan and Bridalveil Falls behind Merced River, California, USA.jpg
+
+Files of size 677821:
+wppfjhnw.jpg
+
+Files of size 677674:
+Haviland Lake, Durango, Colorado, USA.jpg
+
+Files of size 676719:
+iveglxii.jpg
+
+Files of size 675471:
+Footpath in Lennox forest just north of Glasgow, Lennoxtown, Scotland, UK (1a6e1389adac0b89c26c06bac0e0b27c).jpg
+
+Files of size 674539:
+Skyline view of Mellieha town after sunset with Paris Church and Mellieha beach, Malta.jpg
+
+Files of size 673610:
+uzpkkkec.jpg
+
+Files of size 672785:
+mvqjlhvq.jpg
+
+Files of size 672757:
+zljucgnb.jpg
+
+Files of size 671519:
+Karst Mountains, Guilin, China.jpg
+
+Files of size 670462:
+Trollaskagi Peninsula, Iceland.jpg
+
+Files of size 670238:
+rrbvzwba.jpg
+
+Files of size 669439:
+Gordes, Provence, France.jpg
+
+Files of size 668189:
+fxsfistv.jpg
+
+Files of size 666422:
+Murlough Bay at dusk, County Antrim, Northern Ireland, UK.jpg
+
+Files of size 666410:
+Otzarreta beech wood covered by fog, Zeanuri, Vizcaya, Spain.jpg
+
+Files of size 664182:
+Sunset over Fisherman’s Cove, Dartmouth, Nova Scotia, Canada.jpg
+
+Files of size 664013:
+Rock steady, Lewisville Lake Toll Bridge in Denton County, Texas, USA.jpg
+
+Files of size 661876:
+Hintersee, Ramsau, Bavaria, Germany.jpg
+
+Files of size 661648:
+rxyzvjex.jpg
+
+Files of size 661449:
+tgrqjlly.jpg
+
+Files of size 660888:
+Farmland, Palouse region, Washington, USA, from Steptoe Butte.jpg
+
+Files of size 660189:
+Bridge over the Merced River in Yosemite National Park, California Sierra Nevada, USA.jpg
+
+Files of size 660036:
+Aspens and Mono Lake, California, USA.jpg
+
+Files of size 658693:
+Starry night sky over swamp, Okavango Delta, Botswana, Limpopo, South Africa.jpg
+
+Files of size 658069:
+The village, the cliff and the sand grain rock, Bonifacio, Corse du Sud, France.jpg
+
+Files of size 657857:
+Rainbow over a green field, Poland.jpg
+
+Files of size 657575:
+Lofoten Islands, Norway.jpg
+
+Files of size 656746:
+vwdoacfr.jpg
+
+Files of size 656715:
+rhjvakzw.jpg
+
+Files of size 656539:
+Golden evening sun over Orta san Giulio town next to Orta Lake (Lago d’Orta), Lombardia, Italy.jpg
+
+Files of size 655486:
+zvvedayb.jpg
+
+Files of size 655373:
+vfuvonim.jpg
+
+Files of size 653996:
+Guanajuato, Guanajuato, Mexico.jpg
+
+Files of size 653761:
+Bridge in Zhenyuan, Kaili, Guizhou, China.jpg
+
+Files of size 652480:
+clzvkxks.jpg
+
+Files of size 652443:
+ndeomnis.jpg
+
+Files of size 651997:
+Rho Ophiuchus complex set of nebulas, dust and molecular clouds near the bright star Antares in Scorpius.jpg
+
+Files of size 651487:
+Mussenden temple near Castlerock, County Londonderry, Ulster region, northern Ireland, UK.jpg
+
+Files of size 649347:
+Glarus, Switzerland.jpg
+
+Files of size 647952:
+42ce02c8219a24a11d1f0e697b6546fdf9bca49f2d60a65a2382ac0cfb2dc324
+
+Files of size 647283:
+laxsrgdc.jpg
+
+Files of size 646738:
+Cala Tarida Beach, Ibiza, Balearic islands, Spain.jpg
+
+Files of size 644593:
+twnkiefx.jpg
+
+Files of size 643709:
+Castillo de Almodovar, Almodovar del Rio, Cordoba, Spain.jpg
+
+Files of size 641266:
+Aerial View, Fernando de Noronha, Brazil.jpg
+
+Files of size 640157:
+Ko Phi Phi Le, Thailand (near Strait of Malaca).jpg
+
+Files of size 639499:
+bfqyibqq.jpg
+
+Files of size 639464:
+bfqyibqq - Copy.jpg
+
+Files of size 638670:
+hzauqfcd.jpg
+
+Files of size 638545:
+brjahbxn.jpg
+
+Files of size 636970:
+tiwpqeor.jpg
+
+Files of size 636497:
+Eibsee in autumn, Werdenfelser Land, Bavaria, Germany.jpg
+
+Files of size 635966:
+Eibsee Lake, Alps, Germany.jpg
+
+Files of size 635192:
+Deep Valley.jpg
+
+Files of size 634559:
+Colorful circles of agriculture viewed from an airplane, Pretoria, South Africa.jpg
+
+Files of size 633125:
+ifwjednn.jpg
+
+Files of size 632816:
+dpoebyfy.jpg
+
+Files of size 632639:
+Inks Lake, Burnet County, Texas, USA.jpg
+
+Files of size 631931:
+Evening view of Ama Dablam on the way to Everest Base Camp, Nepal (Paramount).jpg
+
+Files of size 631901:
+Gigi Hiu rock formation at Kelumbayan beach, Lampung, Sumatra, Indonesia.jpg
+
+Files of size 630299:
+sezsanub.jpg
+
+Files of size 629930:
+Baseball field, housing and waterside highway, East River and Brooklyn Bridge of Lower Manhattan, New York, USA.jpg
+
+Files of size 629698:
+Sunrise at the lighthouse of Rubjerg Knude near Hjørring, Denmark.jpg
+
+Files of size 629453:
+fukaxklu.jpg
+
+Files of size 628540:
+Biogradska Gora National Park, Montenegro.jpg
+
+Files of size 628536:
+Spring Point Lighthouse on foggy evening, South Portland, Maine, USA.jpg
+
+Files of size 628233:
+zimaznqa.jpg
+
+Files of size 627432:
+ztvpivqr.jpg
+
+Files of size 626146:
+eeoxaeei.jpg
+
+Files of size 625937:
+zynxznzg.jpg
+
+Files of size 624487:
+awcwhwaz.jpg
+
+Files of size 623239:
+lmylcfjx.jpg
+
+Files of size 622042:
+Curves, Wisconsin Highway 42, Door County, Wisconsin, USA.jpg
+
+Files of size 621774:
+White-Cliffs_Strait-Of-Dover_England_UK-02.jpg
+
+Files of size 621285:
+Agüero village at sunrise, Huesca, Aragon, Spain.jpg
+
+Files of size 621159:
+pjrcfhxy.jpg
+
+Files of size 620379:
+World Financial Center, Shanghai, China.jpg
+
+Files of size 619375:
+shmrpliv.jpg
+
+Files of size 618558:
+tistydqq.jpg
+
+Files of size 617507:
+Red Rocks, Valley Of Fire State Park, Overton, Nevada, USA.jpg
+
+Files of size 615522:
+Göreme, Cappadocia, Turkey.jpg
+
+Files of size 614715:
+vjmjmjgl.jpg
+
+Files of size 614182:
+Venice early morning view from the Academy bridge, Italy.jpg
+
+Files of size 613216:
+Stuben am Arlberg with mountain pass at night, Klösterle, Austria.jpg
+
+Files of size 613076:
+Laderdinger Gamskarspitz, Dorfgastein, Gasteinertal, Pongau, Salzburg, Austria.jpg
+
+Files of size 611955:
+UK_Lake-District.jpg
+
+Files of size 611285:
+Kalsoy Island, Faroe Islands, Between Iceland and Norway.jpg
+
+Files of size 611171:
+urersbsf.jpg
+
+Files of size 610996:
+Trees and sky seen through cave at sunset, Red Rock State Park, Sedona, Arizona, USA.jpg
+
+Files of size 610209:
+Under Pont de la Concorde over river Seine in Paris, France.jpg
+
+Files of size 609187:
+ormrffmm.jpg
+
+Files of size 607779:
+Mountain village Wengen in Switzerland Alps, Lauterbrunnen.jpg
+
+Files of size 607013:
+xdhrmyrw.jpg
+
+Files of size 605753:
+View over lake Pehoe and the Torres del Paine, Patagonia, Chile.jpg
+
+Files of size 605721:
+gvpfggfa.jpg
+
+Files of size 604989:
+tvopgjso.jpg
+
+Files of size 604882:
+jstpeqeu.jpg
+
+Files of size 604437:
+Ponte Dos Ingleses 01, Fortaleza, Ceara, Brazil.jpg
+
+Files of size 603888:
+tskvhbsz.jpg
+
+Files of size 603145:
+Milky Way over the Raven’s Nest at Acadia National Park, Maine, USA.jpg
+
+Files of size 602816:
+ssjxibvs.jpg
+
+Files of size 602736:
+Skyline from Southbank towards Flinders St Station in Melbourne, Victoria, Australia.jpg
+
+Files of size 601963:
+gktczfto.jpg
+
+Files of size 601267:
+Colourful houses in the village of Burano, Venice, Italy.jpg
+
+Files of size 600417:
+Joshua Trees Under The Milky Way, Death Valley, California, USA.jpg
+
+Files of size 598235:
+Stawa Młyny lighthouse and windmill, Świnoujście, Poland.jpg
+
+Files of size 596536:
+aiarezmr.jpg
+
+Files of size 595878:
+Colorful winter sunrise on Lake Palù, Malenco Valley, Valtellina, Lombardy, Italy.jpg
+
+Files of size 595321:
+Giant’s Causeway 15 minutes after sunset in Co.Antrim, Northern Ireland.jpg
+
+Files of size 594427:
+The red rock spires of the Garden of the Gods against blue mountains, Colorado Springs, USA.jpg
+
+Files of size 594404:
+Mountain range view on Lofoten islands during sunset, Norway.jpg
+
+Files of size 592875:
+ybvqfebm.jpg
+
+Files of size 592393:
+Masked Boobies, Phillip Island, Norfolk, Australia.jpg
+
+Files of size 591080:
+Collégiale Notre-Dame de Dinant, seen over the river Meuse, Dinant, Wallonia, Belgium, angle 2.jpg
+
+Files of size 591024:
+Unknown-02(Red Lupine Flowers).jpg
+
+Files of size 590011:
+ymrnbywg.jpg
+
+Files of size 588264:
+Rio.jpg
+
+Files of size 587150:
+Marina Corricella on Procida Island at dusk, Bay of Naples, Campania, Italy.jpg
+
+Files of size 585073:
+The way to the stars, Milky Way on the volcano, Guatemala.jpg
+
+Files of size 584696:
+ymytcghf.jpg
+
+Files of size 584606:
+aiywgccj.jpg
+
+Files of size 584017:
+Moss on the rock at Nyanyi Beach at low tide, Bali, Indonesia.jpg
+
+Files of size 583675:
+wohagfkn.jpg
+
+Files of size 582499:
+mswcbava.jpg
+
+Files of size 580727:
+Ancient ruins of Fountains Abbey during Christmas season at dusk, Ripon, Yorkshire, UK.jpg
+
+Files of size 580282:
+View through North Window to Turret Arch, Arches National Park, Utah, USA.jpg
+
+Files of size 579995:
+Alpe di Siusi, Seiser Alm, Dolomites, South Tyrol, Italy.jpg
+
+Files of size 578843:
+tcqevdyh.jpg
+
+Files of size 578594:
+wpgajybk.jpg
+
+Files of size 578446:
+qesremia.jpg
+
+Files of size 576683:
+zxlfbnno.jpg
+
+Files of size 576597:
+ixnxqnak.jpg
+
+Files of size 576526:
+Drangamir, Faroe Islands.jpg
+
+Files of size 575900:
+ztixqfxr.jpg
+
+Files of size 575325:
+wbnegiog.jpg
+
+Files of size 574518:
+Tulum Ruins, Tulum, Quintana Roo, Mexico.jpg
+
+Files of size 573942:
+Town of Torbole at early morning, Lake Garda (Lago di Garda) at twilight, Trentino, Italy.jpg
+
+Files of size 572463:
+iuqjjksy.jpg
+
+Files of size 572313:
+daftikwx.jpg
+
+Files of size 571279:
+Tulip fields around Hillegom and Keukenhof at sunset, Netherlands.jpg
+
+Files of size 569905:
+Sunset, Kao Kwai Beach, Payam Island, Ko Phayam, Ranong, Thailand.jpg
+
+Files of size 569751:
+Moraine Lake at night, snowy landscape in the mountains, Canada.jpg
+
+Files of size 569033:
+Sculptures of Guardian Angles on bridge at Castel Sant’Angelo, Rome, Italy.jpg
+
+Files of size 568941:
+ofobcztq.jpg
+
+Files of size 568220:
+Blue Moon Valley, Jade Dragon Snow Mountain, Lijiang, Yunnan, China.jpg
+
+Files of size 567745:
+White-Cliffs_Strait-Of-Dover_England_UK-08.jpg
+
+Files of size 567589:
+Old Man Of Storr, The Storr, Trotternish Peninsula, Isle of Skye, Scotland, United Kingdom.jpg
+
+Files of size 567456:
+tqdnwqjn.jpg
+
+Files of size 565732:
+lmmcbxuj.jpg
+
+Files of size 563822:
+saueibvy.jpg
+
+Files of size 562836:
+mhiqdcon.jpg
+
+Files of size 562457:
+wptrvpzp.jpg
+
+Files of size 562336:
+hzpcgdzq.jpg
+
+Files of size 560199:
+Civita di Bagnoregio at blue hour, Lazio, Italy.jpg
+
+Files of size 559110:
+hjykubfl.jpg
+
+Files of size 558517:
+zovkjmxi.jpg
+
+Files of size 558392:
+Leavenworth, Washington, USA, In The Winter, At Dusk.jpg
+
+Files of size 558182:
+Full Moon over Roman Forum, Rome, Italy.jpg
+
+Files of size 557472:
+iponyfxc.jpg
+
+Files of size 556807:
+xusgpqrq.jpg
+
+Files of size 556357:
+lscngceo.jpg
+
+Files of size 555124:
+Butte in Monument Valley, Arizona, USA.jpg
+
+Files of size 554630:
+eqigzert.jpg
+
+Files of size 554144:
+Winter sunset on Horse Tail Falls from Taft Point, Yosemite National Park, California, USA.jpg
+
+Files of size 553638:
+nldvsllg.jpg
+
+Files of size 553291:
+jlbyichh.jpg
+
+Files of size 552619:
+lvkfmaym.jpg
+
+Files of size 552535:
+Kynance Cove, Cornwall, UK.jpg
+
+Files of size 552508:
+Very Large Array satellite dishes at sunset, Plains of San Agustin, New Mexico, USA.jpg
+
+Files of size 548911:
+Rocks framing Golden Gate Bridge, San Francisco, California, USA.jpg
+
+Files of size 548527:
+Saint Michel chapel on Lake Serre-Ponçon at dawn, Hautes Alpes, France.jpg
+
+Files of size 546470:
+Erawan Waterfall, Kanchanaburi, Thailand.jpg
+
+Files of size 545826:
+reizmimm.jpg
+
+Files of size 541369:
+Sea house at Åland island archipelago, Finland.jpg
+
+Files of size 540098:
+oyebrrhv.jpg
+
+Files of size 539273:
+jbxvrvra.jpg
+
+Files of size 539210:
+Dutch Antilles cityscape at the Great Salt Pond, Philipsburg, Saint Maarten.jpg
+
+Files of size 539108:
+vcidogtc.jpg
+
+Files of size 538460:
+fgssxvwu.jpg
+
+Files of size 537958:
+uodauajv.jpg
+
+Files of size 537269:
+Erfurt with Ferris wheel, Cathedral and St. Severus Church at Oktoberfest, Thuringia, Germany.jpg
+
+Files of size 534543:
+Illuminated footbridge at night, Venice, Italy.jpg
+
+Files of size 532827:
+Aqueduct Park, Rome, Italy.jpg
+
+Files of size 532323:
+xzcfebhc.jpg
+
+Files of size 532149:
+Light House, Hiiumaa, Estonia.jpg
+
+Files of size 532081:
+Crescent Beach in Ecola State Park, Oregon, USA.jpg
+
+Files of size 529269:
+Koh Lipe, Thailand.jpg
+
+Files of size 525884:
+xmkymarb.jpg
+
+Files of size 524833:
+aztdpyxr.jpg
+
+Files of size 523258:
+iwxanmdt.jpg
+
+Files of size 522789:
+rmahvnxp.jpg
+
+Files of size 522417:
+zrtxqzds.jpg
+
+Files of size 520608:
+tbkzmnbl.jpg
+
+Files of size 516730:
+xgnnejis.jpg
+
+Files of size 516538:
+Downtown, Sheikh Zayed Road, Dubai, UAE.jpg
+
+Files of size 515722:
+The polar lights, Ersfjord, Tromsø, Norway.jpg
+
+Files of size 514922:
+Caves on Lake Superior, Pictured Rocks National Lakeshore, Munising, Michigan, USA.jpg
+
+Files of size 513848:
+Nuuk Old Town Northern Light, Greenland.jpg
+
+Files of size 510093:
+Uchisar castle view from Pigeon Valley, Cappadocia, Turkey.jpg
+
+Files of size 509022:
+yoffmopb.jpg
+
+Files of size 508846:
+jltacojs.jpg
+
+Files of size 506754:
+Cannon Beach, Oregon, USA.jpg
+
+Files of size 505395:
+jtcwtmea.jpg
+
+Files of size 505264:
+wzsxgedf.jpg
+
+Files of size 503883:
+uzetruex.jpg
+
+Files of size 502437:
+Tindhólmur-08.jpg
+
+Files of size 502381:
+Dovestone reservoir in Peak District National Park, Greenfield, Greater Manchester, England, UK.jpg
+
+Files of size 502379:
+Collégiale Notre-Dame de Dinant, seen over the river Meuse, Dinant, Wallonia, Belgium, angle 1.jpg
+
+Files of size 501721:
+Todd Lake, Bend, Oregon, USA.jpg
+
+Files of size 499039:
+kaguggbo.jpg
+
+Files of size 498038:
+phnudiri.jpg
+
+Files of size 495437:
+Ponta Delgada Island, Azores Islands, North Atlantic.jpg
+
+Files of size 495380:
+fhnxmigm.jpg
+
+Files of size 492993:
+Eight arch footbridge connecting Sanxiantai Island to Taitung, Taiwan.jpg
+
+Files of size 491643:
+jtxiqweg.jpg
+
+Files of size 491270:
+***DELETED***
+Cape Flattery, Olympic Peninsula, Washington, USA.jpg
+
+Files of size 489447:
+awpumrzj.jpg
+
+Files of size 489224:
+zcquaqxg.jpg
+
+Files of size 488806:
+fzajacya.jpg
+
+Files of size 487079:
+Sunrise over Truckee Meadows, near Reno, Nevada, USA.jpg
+
+Files of size 486387:
+ebnuofsx.jpg
+
+Files of size 482940:
+The tropical seascape in the morning, Haiti.jpg
+
+Files of size 481653:
+Fisherman’s house at sunset, Adriatic Sea, Italy.jpg
+
+Files of size 481528:
+f9714c5f7dd55b4846fdc04e61c8c6cd3789e6feb6f7a5b919bce3597b0cbf45
+***DELETED***
+
+Files of size 481020:
+owwwbvge.jpg
+
+Files of size 479767:
+Landscape over Calascio fortress, ancient village of Abruzzo, Italy.jpg
+
+Files of size 478534:
+fqtnjnye.jpg
+
+Files of size 477741:
+Lighthouse by sea against sky at sunset, Landsort, Öja island, Stockholm archipelago, Sweden.jpg
+
+Files of size 477699:
+pelzwvlz.jpg
+
+Files of size 477544:
+Western Area, Sierra Leon.jpg
+
+Files of size 476845:
+Young female runner running over Mesa Arch rock formation at sunset, Moab, Utah, USA.jpg
+
+Files of size 473961:
+Glacial Flow in Iceland.jpg
+
+Files of size 472079:
+koptnfkn.jpg
+
+Files of size 470399:
+1ce02817d4ed26dc6ef80da8bb6e74cdce24171c5c7dc3f075501f6371d6a8bc
+
+Files of size 470260:
+eftwaqlz.jpg
+
+Files of size 469525:
+zvuxgxrr.jpg
+
+Files of size 469268:
+A colorful night suspended in time on lake Garda, Riva del Garda, Italy.jpg
+
+Files of size 467820:
+digovezd.jpg
+
+Files of size 465016:
+vdxgjufg.jpg
+
+Files of size 464781:
+feavcdnm.jpg
+
+Files of size 463534:
+rpvhrwje.jpg
+
+Files of size 463351:
+tlylqjly.jpg
+
+Files of size 463288:
+znfgekrh.jpg
+
+Files of size 463149:
+5fc6f50de6affc81b205b405998a586027a7970e8c35af2dd63bd79d4cbea7da
+
+Files of size 462912:
+Surfer getting barreled at Pupukea Sandbar, Hawaii Islands, USA.jpg
+
+Files of size 460944:
+zsudtrgc.jpg
+
+Files of size 460025:
+cvyeywea.jpg
+
+Files of size 459765:
+Jupiter.jpg
+
+Files of size 459422:
+sennudse.jpg
+
+Files of size 457892:
+dfvriyzu.jpg
+
+Files of size 457804:
+yrvzyehg.jpg
+
+Files of size 457601:
+tagavtti.jpg
+
+Files of size 457423:
+wsjsyxot.jpg
+
+Files of size 456988:
+A river channel running through Ofu Island, American Samoa.jpg
+
+Files of size 456680:
+Sumidero Canyon, Chiapas, Mexico.jpg
+
+Files of size 455672:
+Puente Nuevo, Ronda, Spain.jpg
+
+Files of size 455386:
+Singapore city skyline and Singapore Flyer at Marina Bay.jpg
+
+Files of size 450913:
+Historic city of Salzburg with Salzach river in winter during blue hour, Salzburger Land, Austria.jpg
+
+Files of size 449933:
+tuiflcaf.jpg
+
+Files of size 449785:
+tuhplrzy.jpg
+
+Files of size 449545:
+tsvtqood.jpg
+
+Files of size 448592:
+vjetmvtc.jpg
+
+Files of size 445431:
+Beach with boats near Dubai Marina with view on the skyline, UAE.jpg
+
+Files of size 444768:
+llnpngxi.jpg
+
+Files of size 444319:
+The hills of Tuscany at dawn, Val d’Orcia, Italy.jpg
+
+Files of size 441264:
+View of Mu Koh Ang Thong marine park from Koh Wua Talap, Thailand.jpg
+
+Files of size 440389:
+jvrniavr.jpg
+
+Files of size 440161:
+Sea Birds at Fernando de Noronha, Brazil.jpg
+
+Files of size 439885:
+Utakleiv Beach, Vestvågøy, Lofoten, Nordland, Norway.jpg
+
+Files of size 439053:
+Na Mokulua Islets As Seen From Lanikai Beach, Oahu, Hawaii.jpg
+
+Files of size 438406:
+Wharariki Beach Cave, Archway Islands, South Island of New Zealand.jpg
+
+Files of size 437300:
+White-Cliffs_Strait-Of-Dover_England_UK-05.jpg
+
+Files of size 436816:
+Sunset, Praia da Conceição beach and Morro do Pico, Fernando De Noronha, Brazil.jpg
+
+Files of size 436401:
+brrzqrfl.jpg
+
+Files of size 433968:
+Bukhansan National Park covered by morning fog and sunrise at Seoul, South Korea.jpg
+
+Files of size 432862:
+dfrflvfk.jpg
+
+Files of size 430863:
+flfbczul.jpg
+
+Files of size 430718:
+xtrmopst.jpg
+
+Files of size 429836:
+Lighthouse, North Island, New Zealand.jpg
+
+Files of size 427147:
+nkrpkpwu.jpg
+
+Files of size 426486:
+Senja, Norway.jpg
+
+Files of size 426181:
+eeuaiatb.jpg
+
+Files of size 426056:
+vmmgupwp.jpg
+
+Files of size 425113:
+xqzitjnj.jpg
+
+Files of size 420786:
+Moremi Game Reserve, Botswana.jpg
+
+Files of size 417925:
+Vestrahorn, Iceland.jpg
+
+Files of size 414633:
+nyydptgs.jpg
+
+Files of size 414520:
+White-Cliffs_Strait-Of-Dover_England_UK-10.jpg
+
+Files of size 413215:
+zpgqkfvg.jpg
+
+Files of size 412766:
+wkeobxkn.jpg
+
+Files of size 408445:
+ynwetkqe.jpg
+
+Files of size 408218:
+ohrlkdbj.jpg
+
+Files of size 406671:
+yzrbxxpv.jpg
+
+Files of size 406432:
+Milky way and mountain range view from the peak of Phu Chi Fa hill, Chiang Rai, Thailand.jpg
+
+Files of size 402500:
+Autumn colours on still morning at Craig Goch Dam in the Elan Valley, Powis, Wales, UK.jpg
+
+Files of size 400589:
+Winter Paradise – sunrise at Alpe di Siusi, Seiser Alm, Dolomites, South Tyrol, Italy.jpg
+
+Files of size 400442:
+Pink flamingos with heart shaped necks, Miami, Florida, USA.jpg
+
+Files of size 398570:
+quyiegbz.jpg
+
+Files of size 397604:
+Indian Head Cove, Bruce Peninsula National Park, Ontario, Canada.jpg
+
+Files of size 397538:
+btubpulk.jpg
+
+Files of size 397029:
+mkqvhsih.jpg
+
+Files of size 395309:
+Two Zebras (Equus quagga) walk beneath storm clouds in Masai Mara National Reserve, Kenya.jpg
+
+Files of size 394881:
+ylgvayuy.jpg
+
+Files of size 394384:
+Highway 136 to Lone Pine, Alabama Hills, California, USA.jpg
+
+Files of size 392940:
+Houses-Of-Parliament-and-Big-Ben-with-Rainbow-Lights_London_England_UK.jpg
+
+Files of size 392849:
+kqjodiao.jpg
+
+Files of size 392448:
+Town of Vieste with San Francesco church, Foggia, Apulia, Italy.jpg
+
+Files of size 389026:
+Lesser flamingo colony at Lake Nakuru National Park, Kenya.jpg
+
+Files of size 384018:
+xqhvocul.jpg
+
+Files of size 382323:
+tkyfdvik.jpg
+
+Files of size 378056:
+Hippopotamuses (Hippopotamus amphibius) at lake Tana in Bahir Dar, Ethiopia.jpg
+
+Files of size 377063:
+lthmetyw.jpg
+
+Files of size 377047:
+xvlfyqqn.jpg
+
+Files of size 376185:
+ieaaomhn.jpg
+
+Files of size 376138:
+Red Fox In Snow.jpg
+
+Files of size 376022:
+htuohekh.jpg
+
+Files of size 375367:
+xzbtbnrl.jpg
+
+Files of size 372386:
+Bridge, Lisboa, Portugal.jpg
+
+Files of size 371504:
+yuttagcx.jpg
+
+Files of size 370650:
+Cloud patterns cast eerie shadows on landscape of southern Egypt in satellite image.jpg
+
+Files of size 367738:
+zdlyhcxb.jpg
+
+Files of size 365333:
+vbctvxkp.jpg
+
+Files of size 364795:
+Sunset fog behind trees at Bangben Lake, Ranong, Thailand.jpg
+
+Files of size 363738:
+iwvsumkg.jpg
+
+Files of size 351076:
+Industrial pipes in warehouse.jpg
+
+Files of size 350773:
+tvolvzho.jpg
+
+Files of size 349727:
+galsnsxz.jpg
+
+Files of size 340514:
+bqlpxjie.jpg
+
+Files of size 337712:
+xeelvhzb.jpg
+
+Files of size 336800:
+Summer night at beach side campsite, Catalina Island, California, USA.jpg
+
+Files of size 335352:
+nsocrhhb.jpg
+
+Files of size 334085:
+Sunrise over ocean and cliffs, Étretat, France.jpg
+
+Files of size 332996:
+wvsmbzua.jpg
+
+Files of size 331778:
+cknbzxij.jpg
+
+Files of size 330629:
+tsvaxtsm.jpg
+
+Files of size 330592:
+jytxyoql.jpg
+
+Files of size 325306:
+Castle of Holy Angel and Holy Angel Bridge over the Tiber River at dawn, Rome, Italy.jpg
+
+Files of size 322020:
+Herbert Lake, Banf National Park, Alberta, Canada.jpg
+
+Files of size 321372:
+rgqeezxb.jpg
+
+Files of size 321274:
+krzmficz.jpg
+
+Files of size 320660:
+Spooky moonrise over lake, super moon at night.jpg
+
+Files of size 319355:
+A great egret skims the water surface in early morning, Essex, Massachusetts, USA.jpg
+
+Files of size 317013:
+itmjqwjy.jpg
+
+Files of size 316693:
+Winter ski resort Hintertux by night, Tirol, Austria.jpg
+
+Files of size 313454:
+zsxkwenq.jpg
+
+Files of size 313112:
+jswhtylp.jpg
+
+Files of size 306973:
+Kilauea erupting, Volcanoes National Park, Hawaii, USA.jpg
+
+Files of size 306526:
+hvqitavl.jpg
+
+Files of size 304482:
+The Whirlpool Galaxy M51 - pair of galaxies locked in a gravitational embrace.jpg
+
+Files of size 297514:
+khseonqb.jpg
+
+Files of size 296040:
+Sunset-Mountains-Fields.jpg
+
+Files of size 295984:
+vvjcklox.jpg
+
+Files of size 284722:
+Sunset thunderstorm clouds over desert, Gila Bend, Arizona, USA.jpg
+
+Files of size 279761:
+kmnckhzi.jpg
+
+Files of size 276005:
+Summer sunrise with pony in fog on pasture and windmill, Groningen, Netherlands.jpg
+
+Files of size 272476:
+puhwqjah.jpg
+
+Files of size 267743:
+Kenya.jpg
+
+Files of size 263140:
+Mountain Orohena at sunset, Tahiti, French Polynesia.jpg
+
+Files of size 257298:
+bnibdzoy.jpg
+
+Files of size 255082:
+Colorful Toco Toucan (Ramphastos toco) on a branch, Pantanal wetlands, Brazil.jpg
+
+Files of size 250955:
+Umhlanga pier, Durban, South Africa.jpg
+
+Files of size 247470:
+zhpqqdxf.jpg
+
+Files of size 245089:
+Shelf cloud storm, Lamar, Colorado, USA.jpg
+
+Files of size 239572:
+Beauty in nature, Nha Trang, Khánh Hòa, Vietnam.jpg
+
+Files of size 232669:
+ojyapdfv.jpg
+
+Files of size 216291:
+dyewdwgr.jpg
+
+Files of size 208712:
+jjkpydhp.jpg
+
+Files of size 205416:
+White-Cliffs_Strait-Of-Dover_England_UK-07.jpg
+
+Files of size 201073:
+Green-headed tanager (Tangara seledon), Serra do Mar State Park, São Paulo, Brazil.jpg
+
+Files of size 186107:
+txheeydm.jpg
+
+Files of size 180340:
+185ab3202b49de3f384174e1e694075f36e4ad3c0ca8bdc5bcca26804267085d
+
+Files of size 178405:
+nompmpjv.jpg
+
+Files of size 177065:
+White-Cliffs_Strait-Of-Dover_England_UK-04.jpg
+
+Files of size 175826:
+olsbxqpz.jpg
+
+Files of size 172524:
+00ea61376d2d355b3aa856ec355e754fef0f93dad2abc6680536f48b9798a9b7
+
+Files of size 168989:
+xkngknab.jpg
+
+Files of size 166534:
+Ponte Dos Ingleses 03, Fortaleza, Ceara, Brazil.jpg
+
+Files of size 165000:
+psl-log_2020-02-25.txt
+
+Files of size 158718:
+zigoqdeq.jpg
+
+Files of size 155091:
+147e3ef74b7d92b27b83cfa946692109fdb529b845656181e3bccc38d447c0b6
+
+Files of size 153680:
+Harbour Bridge with climbers at sunset, Sydney, Australia.jpg
+
+Files of size 137585:
+9d97c0789c1a62b14031c0918cbc04eaebf6046b4c3ea9f0874d1346929b6889
+
+Files of size 137165:
+1bc7240aa77373ba4f0a2425fb0dcc6d5cbf362058c61a14e9d3eb21736221b4
+
+Files of size 136723:
+75800b892892ad13df227e3d30b2fd67f1c1dd42c212061f33a38882f8a3d64e
+
+Files of size 136263:
+Italy_View-Of-Moon-Over-Tyrrhenian-Sea-From-San-Felice-Circeo.jpg
+
+Files of size 110901:
+af28bfad1d2453d6e6164e368422cb60cf07dd2ea1e6a7201c827c8343199cef
+
+Files of size 97306:
+White-Cliffs_Strait-Of-Dover_England_UK-09.jpg
+
+Files of size 86336:
+Ponte Dos Ingleses 02, Fortaleza, Ceara, Brazil.jpg
+
+Files of size 81114:
+c42a666b0c1d247404522b46d0f28cd1de112e682bcabe2e3f1ab2dd190cb584
+
+Files of size 58813:
+c759c9ac141062ad967789f90f9d77f4e8aea5b8bde6a8b013177e90228589b9
+
+Files of size 48046:
+ad0579a1ba0536a292cbead6528a341da421cae0c79905ddf90f7545293ec78b
+
+Files of size 44606:
+b0171ae60867fc799a193d8e33943f22d9313abc784dd9e048f9083640dc252a
+
+Files of size 44039:
+9ea30248c4aaa7307fb592ed9e380e1aabe168319cb9382464714fb9307eb908
+
+Files of size 42123:
+0bfb6f414d22b5f7fc1fb8c87b0219721db470f61612e478332bfe5a9165551e
+
+Files of size 42114:
+86fc62a1e99acc4454450f2490f4856e441038f02fee0044141e97605c9f1da7
+
+Files of size 41179:
+1f62949917a89fe3582ca38abeb3097304984e39f6a5aca89acbf40d83115fc8
+
+Files of size 39890:
+fd7dab39d9018bb708095f898f20fa7b496da0a29ce060c1e674a99e3d820b58
+
+Files of size 38051:
+ec969cbd12ca43794fa5cea965e3c673dee5a7d7f1011f556961012c62662ea9
+
+Files of size 37732:
+452119801329f0197cb56c377d5ebcc07e4e388c13cb2e24524f1d89614ca5d1
+
+Files of size 36764:
+4fafc7ca4af50c9817053f2233923fd73a47d6aa6c64c3b3ab9bf39f79984d62
+
+Files of size 34800:
+b09ec6ec44372585e8fb7e12228e3357cef2beb6678beaaa813c474fc2ac2c63
+
+Files of size 28020:
+e9ddb8e9ad7ba1c94bfda88bf8007716d3c245d9fecbd6c8efb88c601df1cf2a
+
+Files of size 22837:
+33f0e90fd378d46b07549a90da51d6d29f4644380ad48a9e707de80ffd9c234e
+
+Files of size 17049:
+6781e9976b4840410d71031fb008ce3314b3ceda7b5bd12215264f41567d4679
+
+Files of size 12298:
+be2b786bcce71cd60ab282fe703829b1c2f9fa947389ee3505353d9a90a11b2b
+
+Files of size 12281:
+e1b35638f6a723e593cba61bd3575494a4c2fa072995f2c860836c996baf40d8
+
+Files of size 11607:
+0f66c96c82de6d1862845d4bdfe4339cb5e57f1e16a47847175e0e93f0935d63
+
+Files of size 8582:
+620112b90e7b357a329775792266aba0cb9c9881da5fb0972970d8a654a619c3
+
+Files of size 6688:
+2f3f200650471d762c51baf6ebe68d697bf22ceb67aa12fb43358563adea8b9d
+
+Files of size 5787:
+2625221192c134d5d0dc95a1cbaf856dac2756d2e56cd0890eacb6b29f2bc5e7
+
+Files of size 5767:
+b5f6d04e51aff23557224db3113c1f623d1702e57cc65c3bb91274bcc06ea7b8
+
+Files of size 5630:
+2cad6ab7697cb65703b03d91bec75d97376d32ba16c27beadf4ecd2e83d31dc3
+
+Files of size 3485:
+e1166800c15d066fc5b816a9115d68ee80417ef6d4c82eb45d9c96749644b820
+
+Files of size 2906:
+2233b17545f9368dfa1a320669fdf992d6c77431441acefa6356f72d83d4597c
+
+Files of size 2697:
+291c0ee32e0df140e7f7b1627ddcb2a36f83aff9b3ae671439bf7e345af264e7
+
+Files of size 2685:
+a22b3b8f29a4c2ae6fac0b0dd9268e8fa42f44317b21c04540e371828846dbad
+
+Files of size 2630:
+96db593ab80922a29e69b8962de3500d13db0713ecfd27cc83176669a9323e9a
+
+Files of size 2141:
+7a8b41c91c91b76377df117fdb0d6ac877c178fc26b4075ab3d1c2340ac6b65a
+
+Files of size 1793:
+819d1d8123094ed3144d46a47af1447f5fec821a213e543fcdcf285a87548069
+
+Files of size 1368:
+871991655f2dc1d3a8768d754fbf3c59d4f0edb901b9743eb37ebb7a3661f672
+
+Files of size 1244:
+96930684d242048e9ee8ffee9637d3e5f7134ca9f9edcacfffd0d1b5f3f69417
+
+Files of size 1045:
+bd76008df5f79219e5e94336c18c9eda1016f07d4d2ba56533fc675b1389e5f0
+
+Files of size 794:
+d5c60f5d9f7e9a51551b809b693b04ddb0416b55532932aaa95eec1ab9b11c97
+
+Files of size 583:
+4f01076b2fc16be43468a7a1d331bf0fc5fefcd80a1a927ad0fb3a609bc8e60b
+
+Files of size 500:
+46dd2eace740bf21c65cb32325cfe028524c66c576bff3c920bcf2a45b3cc67f
+
+Files of size 46:
+desktop.ini
+
+
+Statistics for program "dedup-files.perl":
+Navigated        1 directories.
+Encountered    726 total files.
+Found          724 regular files.
+Compaired        6 pairs of files.
+Found            6 pairs of duplicate files.
+Ignored          0 pairs of duplicate files.
+Deleted          6 files.
+Failed           0 file deletion attempts.
+Annotated        5 files.
+Failed           0 file annotation attempts.
+
+Now exiting program "dedup-files.perl".
+
+
+Aragorn@Square-Rigger /cygdrive/d/test-range/dedup-files-test/spotlight
+$

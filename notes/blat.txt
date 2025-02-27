@@ -1,0 +1,2 @@
+This is a test of the feof() function.
+The last character should be a period.

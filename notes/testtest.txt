@@ -1,0 +1,394 @@
+
+zero size
+ Volume in drive C is NIR        
+leading space
+ Volume Serial Number is 3FDE-5E53
+leading space
+ Directory of C:\C\math
+leading space
+
+zero size
+2357     CPP           246  01-27-03 11:26p 2357.cpp
+DOS root      = 2357
+DOS extention = CPP
+DOS name      = 2357.CPP
+Size          = 246
+Date          = 01-27-03
+Time          = 11:26p
+Name          = 2357.cpp
+
+
+BINARY   CPP         1,476  07-24-01  9:00p binary.cpp
+DOS root      = BINARY
+DOS extention = CPP
+DOS name      = BINARY.CPP
+Size          = 1476
+Date          = 07-24-01
+Time          = 9:00p
+Name          = binary.cpp
+
+
+BLAT     TXT            81  05-04-03  1:46a blat.txt
+DOS root      = BLAT
+DOS extention = TXT
+DOS name      = BLAT.TXT
+Size          = 81
+Date          = 05-04-03
+Time          = 1:46a
+Name          = blat.txt
+
+
+COMPLEX  CPP         2,873  01-27-02 12:07a complex.cpp
+DOS root      = COMPLEX
+DOS extention = CPP
+DOS name      = COMPLEX.CPP
+Size          = 2873
+Date          = 01-27-02
+Time          = 12:07a
+Name          = complex.cpp
+
+
+COMPLE~1 TXT           737  07-06-01 10:14p complex-arithmetic.txt
+DOS root      = COMPLE~1
+DOS extention = TXT
+DOS name      = COMPLE~1.TXT
+Size          = 737
+Date          = 07-06-01
+Time          = 10:14p
+Name          = complex-arithmetic.txt
+
+
+FAC100~1 TXT       164,380  01-30-03 12:46a fac10000test.txt
+DOS root      = FAC100~1
+DOS extention = TXT
+DOS name      = FAC100~1.TXT
+Size          = 164380
+Date          = 01-30-03
+Time          = 12:46a
+Name          = fac10000test.txt
+
+
+FAC100~2 TXT        13,954  01-30-03 12:45a fac1000test.txt
+DOS root      = FAC100~2
+DOS extention = TXT
+DOS name      = FAC100~2.TXT
+Size          = 13954
+Date          = 01-30-03
+Time          = 12:45a
+Name          = fac1000test.txt
+
+
+FAC100~3 TXT         1,124  01-30-03 12:45a fac100test.txt
+DOS root      = FAC100~3
+DOS extention = TXT
+DOS name      = FAC100~3.TXT
+Size          = 1124
+Date          = 01-30-03
+Time          = 12:45a
+Name          = fac100test.txt
+
+
+FACTOR   CPP         1,265  05-04-03  2:06a factor.cpp
+DOS root      = FACTOR
+DOS extention = CPP
+DOS name      = FACTOR.CPP
+Size          = 1265
+Date          = 05-04-03
+Time          = 2:06a
+Name          = factor.cpp
+
+
+FACTORS  CPP         1,600  05-04-03  1:38a factors.cpp
+DOS root      = FACTORS
+DOS extention = CPP
+DOS name      = FACTORS.CPP
+Size          = 1600
+Date          = 05-04-03
+Time          = 1:38a
+Name          = factors.cpp
+
+
+FCTR-OLD C           1,745  08-05-01 11:32p fctr-old.c
+DOS root      = FCTR-OLD
+DOS extention = C
+DOS name      = FCTR-OLD.C
+Size          = 1745
+Date          = 08-05-01
+Time          = 11:32p
+Name          = fctr-old.c
+
+
+FIB      C             337  05-20-00  9:40p fib.c
+DOS root      = FIB
+DOS extention = C
+DOS name      = FIB.C
+Size          = 337
+Date          = 05-20-00
+Time          = 9:40p
+Name          = fib.c
+
+
+FIB      TXT         3,261  05-20-00  9:41p fib.txt
+DOS root      = FIB
+DOS extention = TXT
+DOS name      = FIB.TXT
+Size          = 3261
+Date          = 05-20-00
+Time          = 9:41p
+Name          = fib.txt
+
+
+FIB2     C             234  06-24-01  3:59p fib2.c
+DOS root      = FIB2
+DOS extention = C
+DOS name      = FIB2.C
+Size          = 234
+Date          = 06-24-01
+Time          = 3:59p
+Name          = fib2.c
+
+
+FIBFILE  TXT         1,012  06-24-01  3:59p fibfile.txt
+DOS root      = FIBFILE
+DOS extention = TXT
+DOS name      = FIBFILE.TXT
+Size          = 1012
+Date          = 06-24-01
+Time          = 3:59p
+Name          = fibfile.txt
+
+
+FIRST-~1 TXT       120,000  06-30-02 10:53a first-10000-primes.txt
+DOS root      = FIRST-~1
+DOS extention = TXT
+DOS name      = FIRST-~1.TXT
+Size          = 120000
+Date          = 06-30-02
+Time          = 10:53a
+Name          = first-10000-primes.txt
+
+
+FIRST-~2 TXT     1,200,000  06-30-02 10:53a first-100000-primes.txt
+DOS root      = FIRST-~2
+DOS extention = TXT
+DOS name      = FIRST-~2.TXT
+Size          = 1200000
+Date          = 06-30-02
+Time          = 10:53a
+Name          = first-100000-primes.txt
+
+
+FIRST-~3 TXT     9,000,000  08-04-01 11:37p first-750000-primes.txt
+DOS root      = FIRST-~3
+DOS extention = TXT
+DOS name      = FIRST-~3.TXT
+Size          = 9000000
+Date          = 08-04-01
+Time          = 11:37p
+Name          = first-750000-primes.txt
+
+
+GOLDBACH C           2,277  05-27-00 11:13p goldbach.c
+DOS root      = GOLDBACH
+DOS extention = C
+DOS name      = GOLDBACH.C
+Size          = 2277
+Date          = 05-27-00
+Time          = 11:13p
+Name          = goldbach.c
+
+
+INFINITY CPP           568  08-06-01  7:52a infinity.cpp
+DOS root      = INFINITY
+DOS extention = CPP
+DOS name      = INFINITY.CPP
+Size          = 568
+Date          = 08-06-01
+Time          = 7:52a
+Name          = infinity.cpp
+
+
+MAKECHNG CPP         1,823  07-28-01  3:30p makechng.cpp
+DOS root      = MAKECHNG
+DOS extention = CPP
+DOS name      = MAKECHNG.CPP
+Size          = 1823
+Date          = 07-28-01
+Time          = 3:30p
+Name          = makechng.cpp
+
+
+MAKEFA~1 BAT            58  01-29-03  7:48p makefactor.bat
+DOS root      = MAKEFA~1
+DOS extention = BAT
+DOS name      = MAKEFA~1.BAT
+Size          = 58
+Date          = 01-29-03
+Time          = 7:48p
+Name          = makefactor.bat
+
+
+MAKEFA~2 BAT            58  01-30-03 12:29a makefactors.bat
+DOS root      = MAKEFA~2
+DOS extention = BAT
+DOS name      = MAKEFA~2.BAT
+Size          = 58
+Date          = 01-30-03
+Time          = 12:29a
+Name          = makefactors.bat
+
+
+MAKEPR~1 BAT            64  01-28-03  8:53p makeprimesupto.bat
+DOS root      = MAKEPR~1
+DOS extention = BAT
+DOS name      = MAKEPR~1.BAT
+Size          = 64
+Date          = 01-28-03
+Time          = 8:53p
+Name          = makeprimesupto.bat
+
+
+NTHPRIME C             763  06-30-02 11:10a nthprime.c
+DOS root      = NTHPRIME
+DOS extention = C
+DOS name      = NTHPRIME.C
+Size          = 763
+Date          = 06-30-02
+Time          = 11:10a
+Name          = nthprime.c
+
+
+PI       C             826  06-24-01  2:25a pi.c
+DOS root      = PI
+DOS extention = C
+DOS name      = PI.C
+Size          = 826
+Date          = 06-24-01
+Time          = 2:25a
+Name          = pi.c
+
+
+PI-1     C             568  06-24-01  1:04a pi-1.c
+DOS root      = PI-1
+DOS extention = C
+DOS name      = PI-1.C
+Size          = 568
+Date          = 06-24-01
+Time          = 1:04a
+Name          = pi-1.c
+
+
+PRIMES1  CPP         2,181  06-30-02 10:40a primes1.cpp
+DOS root      = PRIMES1
+DOS extention = CPP
+DOS name      = PRIMES1.CPP
+Size          = 2181
+Date          = 06-30-02
+Time          = 10:40a
+Name          = primes1.cpp
+
+
+PRIMES1  O          23,149  06-30-02 11:07a primes1.o
+DOS root      = PRIMES1
+DOS extention = O
+DOS name      = PRIMES1.O
+Size          = 23149
+Date          = 06-30-02
+Time          = 11:07a
+Name          = primes1.o
+
+
+PRIMES2  CPP         2,143  06-30-02  3:06a primes2.cpp
+DOS root      = PRIMES2
+DOS extention = CPP
+DOS name      = PRIMES2.CPP
+Size          = 2143
+Date          = 06-30-02
+Time          = 3:06a
+Name          = primes2.cpp
+
+
+PRIMES2  O           2,800  06-30-02  3:07a primes2.o
+DOS root      = PRIMES2
+DOS extention = O
+DOS name      = PRIMES2.O
+Size          = 2800
+Date          = 06-30-02
+Time          = 3:07a
+Name          = primes2.o
+
+
+PRIMES~1 CPP         2,812  01-28-03 10:21p primesupto.cpp
+DOS root      = PRIMES~1
+DOS extention = CPP
+DOS name      = PRIMES~1.CPP
+Size          = 2812
+Date          = 01-28-03
+Time          = 10:21p
+Name          = primesupto.cpp
+
+
+PRIMES~1 TXT       616,964  01-28-03 10:21p primes-up-to-1000000.txt
+DOS root      = PRIMES~1
+DOS extention = TXT
+DOS name      = PRIMES~1.TXT
+Size          = 616964
+Date          = 01-28-03
+Time          = 10:21p
+Name          = primes-up-to-1000000.txt
+
+
+PRIMES~2 CPP         1,462  01-27-03 10:48p primesupto2.cpp
+DOS root      = PRIMES~2
+DOS extention = CPP
+DOS name      = PRIMES~2.CPP
+Size          = 1462
+Date          = 01-27-03
+Time          = 10:48p
+Name          = primesupto2.cpp
+
+
+PRIMET~1 TXT           446  01-28-03  9:03p primetest.txt
+DOS root      = PRIMET~1
+DOS extention = TXT
+DOS name      = PRIMET~1.TXT
+Size          = 446
+Date          = 01-28-03
+Time          = 9:03p
+Name          = primetest.txt
+
+
+SERIES   C             453  06-23-01  1:45p series.c
+DOS root      = SERIES
+DOS extention = C
+DOS name      = SERIES.C
+Size          = 453
+Date          = 06-23-01
+Time          = 1:45p
+Name          = series.c
+
+
+SQRT     CPP         2,262  01-26-02 11:50p sqrt.cpp
+DOS root      = SQRT
+DOS extention = CPP
+DOS name      = SQRT.CPP
+Size          = 2262
+Date          = 01-26-02
+Time          = 11:50p
+Name          = sqrt.cpp
+
+
+TESTTEST TXT             0  01-10-04 12:57a testtest.txt
+DOS root      = TESTTEST
+DOS extention = TXT
+DOS name      = TESTTEST.TXT
+Size          = 0
+Date          = 01-10-04
+Time          = 12:57a
+Name          = testtest.txt
+
+
+        38 file(s)     11,176,002 bytes
+leading space
+         0 dir(s)       11,398.55 MB free
+leading space

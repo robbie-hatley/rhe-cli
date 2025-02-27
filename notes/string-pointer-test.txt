@@ -1,0 +1,12 @@
+int main(void)
+{
+    char *p = NULL;
+    p = "A String Literal";//the compiler isuues no error/warning here
+// but ideally it should...as p is a non-const 
+// pointer and the string literal has the type
+// const char *
+// So, a conversion from const-ptr TO non-const
+// should elicite warning/error from the compiler !!
+
+    return 0;
+}

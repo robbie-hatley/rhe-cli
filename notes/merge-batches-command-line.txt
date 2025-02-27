@@ -1,0 +1,1 @@
+merge-batches /cygdrive/c/D/Studio/Photography/2016/2016-02-07_Los-Angeles_Sunset-Blvd/Batch-1 /cygdrive/c/D/Studio/Photography/2016/2016-02-07_Los-Angeles_Sunset-Blvd/Batch-2

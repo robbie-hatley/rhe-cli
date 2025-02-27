@@ -1,0 +1,150 @@
+Type a text string, 80 characters or less:
+Entering recursion level 1, partition number 1.
+entry = 0  size = 80
+string on entry:
+76 trombones led the big parade, while Jane mewled sweetly on her big bassoon!!!
+Entering recursion level 2, partition number 2.
+entry = 0  size = 20
+string on entry:
+76 !!!       J   ,  aaaapgridebewhilehtdneemewledlsweetlysonehernbigobbssoonmort
+Entering recursion level 3, partition number 3.
+entry = 0  size = 7
+string on entry:
+J!!,!67aaaapgridebewhilehtdneemewledlsweetlysonehernbigobbssoonmort
+Entering recursion level 4, partition number 4.
+entry = 0  size = 3
+string on entry:
+!!!,J67aaaapgridebewhilehtdneemewledlsweetlysonehernbigobbssoonmort
+Returning to recursion level 3.
+String on exit:
+  !!!,J67aaaapgridebewhilehtdneemewledlsweetlysonehernbigobbssoonmort
+Entering recursion level 4, partition number 5.
+entry = 0  size = 3
+string on entry:
+J67aaaapgridebewhilehtdneemewledlsweetlysonehernbigobbssoonmort
+Entering recursion level 5, partition number 6.
+entry = 0  size = 2
+string on entry:
+J7aaaapgridebewhilehtdneemewledlsweetlysonehernbigobbssoonmort
+Returning to recursion level 4.
+String on exit:
+  7Jaaaapgridebewhilehtdneemewledlsweetlysonehernbigobbssoonmort
+Returning to recursion level 3.
+String on exit:
+  67Jaaaapgridebewhilehtdneemewledlsweetlysonehernbigobbssoonmort
+Returning to recursion level 2.
+String on exit:
+  !!!,67Jaaaapgridebewhilehtdneemewledlsweetlysonehernbigobbssoonmort
+Returning to recursion level 1.
+String on exit:
+               !!!,67Jaaaapgridebewhilehtdneemewledlsweetlysonehernbigobbssoonmort
+Entering recursion level 2, partition number 7.
+entry = 0  size = 56
+string on entry:
+pgridebewhilehtdneemewledlsweetlysonehernbigobbssoonmort
+Entering recursion level 3, partition number 8.
+entry = 0  size = 7
+string on entry:
+bbbdbddeeeeeeeeeeemnwlthlswlitlysonhhwrniigorgpssoonmort
+Entering recursion level 4, partition number 9.
+entry = 0  size = 4
+string on entry:
+bbbbdddeeeeeeeeeeemnwlthlswlitlysonhhwrniigorgpssoonmort
+Returning to recursion level 3.
+String on exit:
+  bbbbdddeeeeeeeeeeemnwlthlswlitlysonhhwrniigorgpssoonmort
+Returning to recursion level 2.
+String on exit:
+  bbbbdddeeeeeeeeeeemnwlthlswlitlysonhhwrniigorgpssoonmort
+Entering recursion level 3, partition number 10.
+entry = 0  size = 38
+string on entry:
+mnwlthlswlitlysonhhwrniigorgpssoonmort
+Entering recursion level 4, partition number 11.
+entry = 0  size = 34
+string on entry:
+mnlthlslitltsonhhrniigorgpssoonmorwwwy
+Entering recursion level 5, partition number 12.
+entry = 0  size = 24
+string on entry:
+mnlhlolimlnoonhhniigogporrrsssttstwwwy
+Entering recursion level 6, partition number 13.
+entry = 0  size = 18
+string on entry:
+mnlhllimlnnhhniiggoooooprrrsssttstwwwy
+Entering recursion level 7, partition number 14.
+entry = 0  size = 14
+string on entry:
+mlhllimlhhiiggnnnnoooooprrrsssttstwwwy
+Entering recursion level 8, partition number 15.
+entry = 0  size = 8
+string on entry:
+ghighhiillllmmnnnnoooooprrrsssttstwwwy
+Entering recursion level 9, partition number 16.
+entry = 0  size = 2
+string on entry:
+gghhhiiillllmmnnnnoooooprrrsssttstwwwy
+Returning to recursion level 8.
+String on exit:
+  gghhhiiillllmmnnnnoooooprrrsssttstwwwy
+Entering recursion level 9, partition number 17.
+entry = 0  size = 3
+string on entry:
+iiillllmmnnnnoooooprrrsssttstwwwy
+Returning to recursion level 8.
+String on exit:
+  iiillllmmnnnnoooooprrrsssttstwwwy
+Returning to recursion level 7.
+String on exit:
+  gghhhiiillllmmnnnnoooooprrrsssttstwwwy
+Entering recursion level 8, partition number 18.
+entry = 0  size = 2
+string on entry:
+mmnnnnoooooprrrsssttstwwwy
+Returning to recursion level 7.
+String on exit:
+  mmnnnnoooooprrrsssttstwwwy
+Returning to recursion level 6.
+String on exit:
+  gghhhiiillllmmnnnnoooooprrrsssttstwwwy
+Returning to recursion level 5.
+String on exit:
+  gghhhiiillllmmnnnnoooooprrrsssttstwwwy
+Returning to recursion level 4.
+String on exit:
+  gghhhiiillllmmnnnnoooooprrrsssttstwwwy
+Entering recursion level 5, partition number 19.
+entry = 0  size = 7
+string on entry:
+sssttstwwwy
+Entering recursion level 6, partition number 20.
+entry = 0  size = 4
+string on entry:
+sssstttwwwy
+Returning to recursion level 5.
+String on exit:
+  sssstttwwwy
+Returning to recursion level 4.
+String on exit:
+  sssstttwwwy
+Returning to recursion level 3.
+String on exit:
+  gghhhiiillllmmnnnnoooooprrrsssstttwwwy
+Returning to recursion level 2.
+String on exit:
+  gghhhiiillllmmnnnnoooooprrrsssstttwwwy
+Returning to recursion level 1.
+String on exit:
+  bbbbdddeeeeeeeeeeegghhhiiillllmmnnnnoooooprrrsssstttwwwy
+Returning to recursion level 0.
+Final exit point reached after 20 partitions.
+String on exit:
+               !!!,67Jaaaabbbbdddeeeeeeeeeeegghhhiiillllmmnnnnoooooprrrsssstttwwwy
+
+string length: 80
+
+input  string:
+76 trombones led the big parade, while Jane mewled sweetly on her big bassoon!!!
+
+output string:
+             !!!,67Jaaaabbbbdddeeeeeeeeeeegghhhiiillllmmnnnnoooooprrrsssstttwwwy
