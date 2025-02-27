@@ -7,12 +7,12 @@ elif test "Square-Rigger" = $HOSTNAME ; then
    umount-EX
    umount-KE
    umount-CA
-elif test "Ketch" = $HOSTNAME ; then
-   echo "Error in disnet: Ketch doesn't use cifs mounts."
-elif test "Avalon" = $HOSTNAME ; then
+elif test "Catalina" = $HOSTNAME ; then
    umount-EX
    umount-SR
    umount-KE
+elif test "Ketch" = $HOSTNAME ; then
+   echo "Error in disnet: Ketch doesn't use cifs mounts."
 else
-   echo "Can't umount anything because this is an unknown computer."
+   echo "Error in disnet: Unknown computer."
 fi

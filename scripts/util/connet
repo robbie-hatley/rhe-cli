@@ -7,12 +7,12 @@ elif test "Square-Rigger" = $HOSTNAME ; then
    mount-EX
    mount-KE
    mount-CA
-elif test "Ketch" = $HOSTNAME ; then
-   echo "Error in connet: Ketch doesn't use cifs mounts."
-elif test "Avalon" = $HOSTNAME ; then
+elif test "Catalina" = $HOSTNAME ; then
    mount-EX
    mount-SR
    mount-KE
+elif test "Ketch" = $HOSTNAME ; then
+   echo "Error in connet: Ketch doesn't use cifs mounts."
 else
-   echo "Can't mount anything because this is an unknown computer."
+   echo "Error in connet: Unknown computer."
 fi

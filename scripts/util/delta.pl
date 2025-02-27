@@ -15,6 +15,7 @@
 #                   now using "common::sense" and "Sys::Binmode".
 # Thu Aug 15, 2024: Narrowed from 120 to 110, upgraded from "v5.32" to "v5.36,
 #                   and removed unnecessary "use" statements.
+# Wed Feb 26, 2025: Trimmed one horizontal divider.
 ##############################################################################################################
 
 use v5.36;
@@ -73,7 +74,7 @@ our @Options;    # CL args starting with '-'
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS =======================================================================================
+# ======= SUBROUTINE DEFINITIONS =============================================================================
 
 sub argv :prototype() () {
    foreach (@ARGV) {

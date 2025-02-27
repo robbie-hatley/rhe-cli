@@ -18,6 +18,7 @@
 # Sun Dec 25, 2022: Corrected comments and changed min size from 175x175 to 201x201.
 # Thu Aug 15, 2024: Narrowed from 120 to 110, "use v5.36", and removed unnecessary "use" statements.
 #                   Changed name from "erase-small-images.pl" to "delete-small-images.pl".
+# Wed Feb 26, 2025: Got rid of all prototypes and empty signatures.
 ##############################################################################################################
 
 use v5.36;
@@ -27,7 +28,7 @@ use Cwd 'cwd';
 use File::Type;
 use Image::Size;
 
-sub help :prototype() () {
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    Welcome to "delete-small-images.pl". This program deletes all image files in the

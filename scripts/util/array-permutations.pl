@@ -13,6 +13,7 @@
 # Sat Jun 05, 2021: Wrote it.
 # Sat Sep 09, 2023: Brought formatting up to my current standards.
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
+# Wed Feb 26, 2025: Uncommented printing of permutations.
 ##############################################################################################################
 
 use v5.36;
@@ -43,10 +44,10 @@ sub permutations ( @array ) {
    say "Array = " . "(" . join(', ', map {"\"$_\""} @array) . ")";
    my @permutations = permutations(@array);
    say "Number of permutations = ", scalar(@permutations);
-   #say "Permutations:";
-   #for my $aref ( @permutations ) {
-   #   say "(", join(', ', map {"\"$_\""} @$aref), ")";
-   #}
+   say "Permutations:";
+   for my $aref ( @permutations ) {
+      say "(", join(', ', map {"\"$_\""} @$aref), ")";
+   }
    my $t1 = time; my $te = $t1 - $t0;
    say "\nExecution time was $te seconds.";
    exit 0;

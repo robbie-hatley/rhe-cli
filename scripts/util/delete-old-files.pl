@@ -25,6 +25,7 @@
 # Thu Aug 15, 2024: Narrowed from 120 to 110; upgraded from "v5.32" to "v5.36"; restructured all prototypes;
 #                   added signatures to all subroutines; got rid of unnecessary "use" statements;
 #                   got rid of "$Db"; changed simulation option from "-e"/"--emulate "to "-s"/"--simulate".
+# Wed Feb 26, 2025: Trimmed horizontal dividers.
 ##############################################################################################################
 
 use v5.36;
@@ -35,7 +36,7 @@ use Time::HiRes 'time';
 use RH::Util;
 use RH::Dir;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
 sub argv    :prototype()  ; # Process @ARGV.
 sub curdire :prototype()  ; # Process current directory.
@@ -44,7 +45,7 @@ sub stats   :prototype()  ; # Print statistics.
 sub error   :prototype($) ; # Print error message.
 sub help    :prototype()  ; # Print help  message.
 
-# ======= VARIABLES: ===================================================================================================
+# ======= VARIABLES: =========================================================================================
 
 # Settings:                   Meaning:                         Range:    Default:
 my $Recurse  = 0          ; # Recurse subdirectories?          bool      0 (don't recurse)
@@ -62,7 +63,7 @@ my $attecount = 0; # Count of file deletion attempts.
 my $delecount = 0; # Count of file deletion successes.
 my $failcount = 0; # Count of file deletion failures.
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
    my $t0 = time;
@@ -97,7 +98,7 @@ my $failcount = 0; # Count of file deletion failures.
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
 # Process @ARGV :
 sub argv :prototype() () {

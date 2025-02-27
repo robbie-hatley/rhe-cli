@@ -16,6 +16,7 @@
 #
 # Edit history:
 # Thu Aug 15, 2024: Wrote it, based heavily on existing program "delete-old-files.pl".
+# Wed Feb 26, 2025: Trimmed horizontal dividers. Got rid of all prototypes and empty signatures.
 ##############################################################################################################
 
 use v5.36;
@@ -26,16 +27,16 @@ use Time::HiRes 'time';
 use RH::Util;
 use RH::Dir;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv    :prototype()  ; # Process @ARGV.
-sub curdire :prototype()  ; # Process current directory.
-sub curfile :prototype($) ; # Process current file.
-sub stats   :prototype()  ; # Print statistics.
-sub error   :prototype($) ; # Print error message.
-sub help    :prototype()  ; # Print help  message.
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub stats   ; # Print statistics.
+sub error   ; # Print error message.
+sub help    ; # Print help  message.
 
-# ======= VARIABLES: ===================================================================================================
+# ======= VARIABLES: =========================================================================================
 
 # Settings:                   Meaning:                         Range:    Default:
 my $Recurse  = 0          ; # Recurse subdirectories?          bool      0 (don't recurse)
@@ -53,7 +54,7 @@ my $attecount = 0; # Count of file deletion attempts.
 my $delecount = 0; # Count of file deletion successes.
 my $failcount = 0; # Count of file deletion failures.
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
    my $t0 = time;
@@ -88,10 +89,10 @@ my $failcount = 0; # Count of file deletion failures.
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
 # Process @ARGV :
-sub argv :prototype() () {
+sub argv {
    # Get options and arguments:
    my @opts = ();            # options
    my @args = ();            # arguments
@@ -135,7 +136,7 @@ sub argv :prototype() () {
 } # end sub argv
 
 # Process current directory:
-sub curdire :prototype() () {
+sub curdire {
    # Increment directory counter:
    ++$direcount;
 
@@ -154,7 +155,7 @@ sub curdire :prototype() () {
 } # end sub curdire
 
 # Process current file:
-sub curfile :prototype($) ($file) {
+sub curfile ($file) {
    # Increment file counter:
    ++$filecount;
 
@@ -204,7 +205,7 @@ sub curfile :prototype($) ($file) {
    and return 0;
 } # end sub curfile
 
-sub stats :prototype() () {
+sub stats {
    print STDOUT "\nStatistics for program \"delete-young-files.pl\":\n";
    if ($Simulate)
    {
@@ -227,7 +228,7 @@ sub stats :prototype() () {
    return 1;
 } # end sub stats
 
-sub error :prototype($) ($NA) {
+sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
    Error: you typed $NA arguments, but this program takes at most 1 argument,
    which, if present, must be a Perl-Compliant Regular Expression specifying
@@ -237,7 +238,7 @@ sub error :prototype($) ($NA) {
    return 1;
 } # end sub error
 
-sub help :prototype() () {
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

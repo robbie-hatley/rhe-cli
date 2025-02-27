@@ -15,9 +15,11 @@
 # Sun Jul 21, 2024: Wrote it.
 # Mon Jul 22, 2024: Improved error() and help().
 # Thu Aug 15, 2024: -C63; improved comments and help().
+# Wed Feb 26, 2025: Added missing "use utf8;".
 ##############################################################################################################
 
 use v5.36;
+use utf8;
 use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
@@ -43,13 +45,14 @@ my $Count     = 0  ; # Count of files processed.
    argv;
    say "\$Command = $Command" if $Db;
 
-   for my $FilePath (<STDIN>) { # DON'T decode here! (-C63 already does that for us.)
+   foreach (<STDIN>) {
+      my $FilePath = e($_);
       $FilePath =~ s/[\r\n]+$//;
       say "\$FilePath = \"$FilePath\"" if $Db;
       my $command  = $Command; # Capitalized version is template.
       $command =~ s/FilePath/$FilePath/g;
       say "\$command = \"$command\"" if $Db;
-      system e $command; # DO encode here! (-C63 doesn't help with system calls.)
+      system(e($command)); # DO encode here! (-C63 doesn't help with system calls.)
       ++$Count;
    }
 

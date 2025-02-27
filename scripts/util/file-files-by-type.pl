@@ -26,6 +26,7 @@
 # Tue Jul 30, 2024: Fixed many new bugs which cropped-up due to changes from Perl v5.32 to Perl v5.36.
 # Wed Jul 31, 2024: Added both :prototype() and signatures () to all subroutines.
 # Thu Aug 15, 2024: -C63; Width 120->110; erased unnecessary "use ..."; added protos & sigs to all subs.
+# Wed Feb 26, 2025: Got rid of all prototypes and empty signatures. Commented subroutine predeclarations.
 ##############################################################################################################
 
 use v5.36;
@@ -36,11 +37,11 @@ use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS ========================================================================
 
-sub argv    :prototype()  ;
-sub curdire :prototype()  ;
-sub curfile :prototype($) ;
-sub stats   :prototype()  ;
-sub help    :prototype()  ;
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub stats   ; # Print stats.
+sub help    ; # Print help.
 
 # ======= GLOBAL VARIABLES ===================================================================================
 
@@ -77,7 +78,7 @@ my $failcount = 0;     # Count of files we couldn't file-away.
 # ======= SUBROUTINE DEFINITIONS =============================================================================
 
 # Process arguments:
-sub argv :prototype() () {
+sub argv {
    # Get options and arguments:
    my @opts = ();            # options
    my @args = ();            # arguments
@@ -128,7 +129,7 @@ sub argv :prototype() () {
 } # end sub argv
 
 # Process current directory:
-sub curdire :prototype() () {
+sub curdire {
    my $curdir = d getcwd;
    my @paths = glob_regexp_utf8($curdir, 'F', $Regexp);
    for my $path (@paths) {
@@ -139,7 +140,7 @@ sub curdire :prototype() () {
 } # end sub curdire
 
 # Process current file:
-sub curfile :prototype($) ($path) {
+sub curfile ($path) {
    # Increment file counter:
    ++$filecount;
 
@@ -183,7 +184,7 @@ sub curfile :prototype($) ($path) {
 } # end sub curfile
 
 # Print statistics:
-sub stats :prototype() () {
+sub stats {
    print("\nStats for \"file-files-by-type.pl\":\n");
    printf("Processed %5d files.\n",                   $filecount);
    printf("Filed     %5d files.\n",                   $succcount);
@@ -192,7 +193,7 @@ sub stats :prototype() () {
 } # end sub stats
 
 # Handle errors:
-sub error :prototype($) ($NA) {
+sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
    Error: you typed $NA arguments, but this program takes at most
@@ -202,7 +203,7 @@ sub error :prototype($) ($NA) {
    return 1;
 } # end sub error
 
-sub help :prototype() () {
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
