@@ -1,36 +1,46 @@
 // comp-char-test.cpp
 #include <iostream>
-using namespace std;
-int main ()
-{
-   char     ac  = '\0';  // character a
-   char     bc  = '\0';  // character b
-   uint8_t  a   = 0;     // int version of a
-   uint8_t  b   = 0;     // int version of b
+#include <string>
+#include <cstdint>
+using std::cin;
+using std::cout;
+using std::endl;
+using std::flush;
+using std::string;
+using std::getline;
+int main (void) {
+   string  st = ""   ; // string   ab
+   char    ca = '\0' ; // char     a
+   char    cb = '\0' ; // char     b
+   int16_t ia = 0    ; // integer  a
+   int16_t ib = 0    ; // integer  b
+   int16_t df = 0    ; // integer  ib-ia
 
    // Prompt user to input two characters:
-   cout << "Enter two characters." << endl;
+   cout << "Type two characters then hit enter:" << endl;
+   getline(cin, st);
+   cout << "st now contains " << st.length() << " characters." << endl;
+   cout << "st = " << st << endl;
 
-   // Input two characters:
-   cin >> ac;
-   cin >> bc;
+   // Get characters from string:
+   ca = st.c_str()[0];
+   cb = st.c_str()[1];
+   cout << "ca = " << ca << endl;
+   cout << "cb = " << cb << endl;
 
-   // Cast chars to uint8_t so that ISO-8859-1 characters will
-   // always be > ASCII characters, even on systems which use
-   // a signed "char" type:
-   a = static_cast<uint8_t>(ac);
-   b = static_cast<uint8_t>(bc);
+   // Get the integer versions of ca and ca:
+   ia = static_cast<int16_t>(static_cast<uint8_t>(ca));
+   ib = static_cast<int16_t>(static_cast<uint8_t>(cb));
+
+   // Compute difference ib-ia:
+   df = ib - ia;
 
    // Compare characters and print results:
-   if (a < b)
-      cout << "a < b" << endl;
-   if (a == b)
-      cout << "a == b" << endl;
-   if (a > b)
-      cout << "a > b" << endl;
-
-   uint8_t Bob = static_cast<uint8_t>(-47);
-   cout << static_cast<int16_t>(Bob) << endl;
-   
+   if (ia <  ib) {cout << "a <  b" << endl;}
+   if (ia == ib) {cout << "a == b" << endl;}
+   if (ia >  ib) {cout << "a >  b" << endl;}
+   cout << "ia = " << ia << endl;
+   cout << "ib = " << ib << endl;
+   cout << "df = " << df << endl;
    return 0;
 }

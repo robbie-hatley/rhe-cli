@@ -1,8 +1,8 @@
-/* char-array-test.c */
+/* char-array-pointer-c-2-test.c */
 
 #include <stdio.h>
 
-char Func(char* blat) 
+char Func(char* blat)
 {
    return *(blat+1);
 }

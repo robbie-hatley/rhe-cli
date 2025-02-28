@@ -1,3 +1,10 @@
+// comb-test.cpp
+#include <iostream>
+#include "rhmath.hpp"
+using std::cout;
+using std::endl;
+using rhmath::Comb;
+int main (void) {
    cout << "52-comb-5:        " << Comb(52, 5)                 << endl;
    cout << "0-comb-0:         " << Comb( 0, 0)                 << endl;
    cout << "1-comb-0:         " << Comb( 1, 0)                 << endl;
@@ -35,3 +42,5 @@
    cout << "7-comb-5:         " << Comb( 7, 5)                 << endl;
    cout << "7-comb-6:         " << Comb( 7, 6)                 << endl;
    cout << "7-comb-7:         " << Comb( 7, 7)                 << endl;
+   return 0;
+}

@@ -1,6 +1,7 @@
 // fib-rec-test.c
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 int main (int Beren, char **Luthien)
 {
    uint32_t   n    = 40;
@@ -20,7 +21,7 @@ int main (int Beren, char **Luthien)
    for (uint32_t i = 2 ; i < n ; ++i)
    {
       vals[i] = vals[i-1] + vals[i-2];
-      printf("%25lu\n", vals[i]); 
+      printf("%25lu\n", vals[i]);
       fflush(stdout);
    }
    exit(EXIT_SUCCESS);

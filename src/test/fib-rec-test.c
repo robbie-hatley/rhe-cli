@@ -1,6 +1,7 @@
 // fib-rec-test.c
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 uint64_t fib_rec (int index)
 {
    if (0 == index) {return 1ul;}
@@ -13,7 +14,7 @@ int main (int Beren, char **Luthien)
    if (Beren > 1) {n = (int)strtoul(Luthien[1], NULL, 10);}
    for (int i = 0 ; i < n ; ++i)
    {
-      printf("%lu ", fib_rec(i)); 
+      printf("%lu ", fib_rec(i));
       fflush(stdout);
    }
    return 0;
