@@ -26,10 +26,10 @@
 # Tue Nov 30, 2021: Fixed wide-character bug due to bad use of d and readdir in while loop (again!!!).
 # Tue Nov 30, 2021: Fixed "finds no files" bug due to not coupling appropriate variable to m//. Tested: Now works.
 # Sat Dec 04, 2021: Reformatted and corrected titlecard.
+# Mon Mar 03, 2025: Got rid of "common::sense".
 ########################################################################################################################
 
 use v5.32;
-use common::sense;
 use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS ==================================================================================

@@ -182,6 +182,12 @@ sub argv {
 
    # Process arguments:
    my $NA = scalar @args;      # Get number of arguments.
+   if ( ($NA < 2 || $NA > 4)   # If number of arguments < 2 or > 4
+      && !$Db ) {              # and we're not debugging,
+      error($NA);              # print error message,
+      help;                    # and print help message,
+      exit 666;                # and exit, returning The Number Of The Beast.
+   }
    if ( $NA >= 1 ) {           # If number of arguments >= 1,
       $RegExp = qr/$args[0]/;  # set $RegExp to $args[0].
    }
@@ -194,12 +200,6 @@ sub argv {
    if ( $NA >= 4 ) {           # If number of arguments >= 4,
       $Predicate = $args[3];   # set $Predicate to $args[3]
       $Target = 'A';           # and set $Target to 'A' to avoid conflicts with $Predicate.
-   }
-   if ( ($NA < 2 || $NA > 4)   # If number of arguments < 2 or > 4
-      && !$Db ) {              # and we're not debugging,
-      error($NA);              # print error message,
-      help;                    # and print help message,
-      exit 666;                # and exit, returning The Number Of The Beast.
    }
 
    # Return success code 1 to caller:

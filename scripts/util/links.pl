@@ -19,10 +19,10 @@
 # Sun Jul 25, 2021: Added help.
 # Sat Jul 31, 2021: Now 120 characters wide.
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
+# Mon Mar 03, 2025: Got rid of "common::sense".
 ########################################################################################################################
 
 use v5.32;
-use common::sense;
 
 use RH::Dir;
 

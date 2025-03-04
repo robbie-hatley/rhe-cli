@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -33,6 +33,7 @@
 #                   STDERR = "stats and serious errors". STDOUT = "file permissions set, and dirs if verbose".
 # Wed Sep 06, 2023: Predicate now overrides target and forces it to 'A' to avoid conflicts with predicate.
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
+# Tue Mar 04, 2025: Shebang is now "#!/usr/bin/env -S perl -C63". Nixed "__END__" marker.
 ##############################################################################################################
 
 use v5.36;
@@ -479,4 +480,3 @@ sub help
    END_OF_HELP
    return 1;
 } # end sub help
-__END__

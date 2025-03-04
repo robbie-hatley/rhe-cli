@@ -27,135 +27,153 @@
 # Tue Oct 03, 2023: Reduced width from 120 to 110. Upgraded from "v5.32" to "v5.36". Got rid of CPAN module
 #                   "common::sense" (antiquated). Now using "d getcwd" instead of "cwd_utf8".
 # Thu Aug 15, 2024: -C63; erased unnecessary "use" statements; put protos & sigs on all subs.
+# Tue Mar 04, 2025: Got rid of prototypes and empty sigs. Added comments to subroutine predeclarations.
+#                   Now using "BEGIN" to initialize timer. Added "begin" and "end" subs.
 ##############################################################################################################
 
+# ======= PRAGMAS AND MODULES: ===============================================================================
 use v5.36;
 use utf8;
 use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 
+# ======= GLOBAL VARIABLES: ==================================================================================
+
+our $t0   ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program entry.
+our $t1   ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program exit.
+
+# ======= BEGIN BLOCK: =======================================================================================
+
+# NOTE: Don't try to call this directly; it's automatically ran when the program begins:
+BEGIN {
+   $t0 = time;
+   my $pname = get_name_from_path($0);
+   print STDERR "\nNow entering program \"$pname\" at timestamp $t0.\n";
+}
+
+# ======= PROGRAM-SETTINGS VARIABLES: ========================================================================
+
+# Setting:    Default:   Meaning of setting:            Range:    Meaning of default:
+   $"         = ', ' ;   # Quoted-array formatting.     string    Comma space.
+my $Db        = 0    ;   # Debug?                       bool      Don't debug.
+my $src       = ''   ;   # Srce directory.              string    empty
+my $dst       = ''   ;   # Dest directory.              string    empty
+my $cur       = ''   ;   # Curr directory.              string    empty
+my @copy_args = ()   ;   # Arguments for copy_files().  array     empty
+
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv  :prototype()  ;
-sub error :prototype($) ;
-sub help  :prototype()  ;
-
-# ======= PAGE-GLOBAL LEXICAL VARIABLES: =====================================================================
-
-# Debugging:
-my $db = 0; # Print diagnostics?
-
-# Settings:
-my $src       = ''; # Srce directory.
-my $dst       = ''; # Dest directory.
-my $cur       = ''; # Curr directory.
-my @CopyArgs  = (); # Arguments for copy_files().
+sub argv  ; # Process @ARGV.
+sub help  ; # Print help.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   say "\nNow entering program \"" . get_name_from_path($0) . "\".\n";
-   my $t0 = time;
+   # Process argv:
    argv;
-   if ($db) {
-      warn "In main body of program \"copy-files.pl\"\n",
-           "Just ran argv().\n",
-           "\$src = \"$src\"\n",
-           "\$dst = \"$dst\"\n",
-           "\@CopyArgs = \n",
-           join("\n", @CopyArgs) . "\n";
-      exit(84);
-   }
-
-   # Get FULLY-QUALIFIED versions of current, source, and destination directories:
 
    # Get current working directory:
    $cur = d getcwd;
 
-   # CD to src, grab full path, then CD back to cur:
-   chdir e $src;
-   $src = d getcwd;
-   chdir e $cur;
+   # Get FULLY-QUALIFIED versions of source and destination directories by CDing to each, running getcwd,
+   # then CDing back to $cur. WARNING: ALWAYS CD BACK TO $cur BEFORE TRYING TO CD ELSEWHERE, BECUASE
+   # $src AND $dst ARE RELATIVE TO $cur!!!
+   chdir e $src; $src = d getcwd; chdir e $cur;
+   chdir e $dst; $dst = d getcwd; chdir e $cur;
 
-   # CD to dst, grab full path, then CD back to cur:
-   chdir e $dst;
-   $dst = d getcwd;
-   chdir e $cur;
 
-   # Copy files:
-   copy_files($src, $dst, @CopyArgs);
+   # If debugging, just emulate:
+   if ( $Db ) {
+      warn "\nEMULATING!!!\n";
+      warn "At bottom of main body of \"copy-files.pl\", after qualifying dir names.\n".
+           "Fully-qualified \$src = \"$src\"\n".
+           "Fully-qualified \$dst = \"$dst\"\n";
+   }
 
-   # We're done, so exit:
-   my $t1 = time; my $te = $t1 - $t0;
-   say "\nNow exiting program \"" . get_name_from_path($0) . "\". Execution time was $te seconds.\n";
+   # Otherwise, copy files:
+   else {
+      warn "\nCOPYING!!!\n";
+      copy_files($src, $dst, @copy_args);
+   }
+
+   # We're done, so exit program, returning success code 0 to caller:
    exit 0;
 } # end main
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-sub argv :prototype() () {
-   my @CLArgs   = ();     # Command-Line Arguments from @ARGV (not including options).
-
-   if ($db)
+# Process @ARGV:
+sub argv {
+   # If debugging, print raw @ARGV:
+   if ($Db)
    {
-      warn "In program \"copy-files.pl\", in sub process_argv().\n",
-           "\@ARGV = \n",
+      my $NV = scalar(@ARGV);
+      warn "In copy-files.pl, at top of sub argv.\n".
+           "\@ARGV $NV elements:\n".
            join("\n", @ARGV) . "\n";
    }
 
-   foreach (@ARGV)
-   {
-      if (/^-[\pL\pN]{1}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/)
-      {
-            if ( '-h' eq $_ || '--help'   eq $_ ) {help ; exit(777)        ;}
-         elsif ( '-S' eq $_ || '--sl'     eq $_ ) {push @CopyArgs, 'sl'    ;}
-         elsif ( '-s' eq $_ || '--sha1'   eq $_ ) {push @CopyArgs, 'sha1'  ;}
-         elsif ( '-u' eq $_ || '--unique' eq $_ ) {push @CopyArgs, 'unique';}
-         elsif ( '-l' eq $_ || '--large'  eq $_ ) {push @CopyArgs, 'large' ;}
-      }
-      else
-      {
-         push @CLArgs, $_;
-      }
-   }
-   my $NA = scalar(@CLArgs);
-   if ( $NA < 2 || $NA > 3 ) {error($NA) ; help ; exit(666)}
-   $src = $CLArgs[0];
-   $dst = $CLArgs[1];
-   if ( ! -e e $src ) {die "Error: $src doesn't exist.    \n";}
-   if ( ! -d e $src ) {die "Error: $src isn't a directory.\n";}
-   if ( ! -e e $dst ) {die "Error: $dst doesn't exist.    \n";}
-   if ( ! -d e $dst ) {die "Error: $dst isn't a directory.\n";}
-   if ( $NA > 2 ) {push @CopyArgs, 'regexp=' . $CLArgs[2];}
-
-   if ($db)
-   {
-      warn "In copy-files.pl, in process_argv, at bottom.\n",
-           "scalar(\@CLArgs) = " . scalar(@CLArgs) . "\n",
-           "\@CLArgs = \n",
-           join("\n", @CLArgs) . "\n",
-           "scalar(\@CopyArgs) = " . scalar(@CopyArgs) . "\n",
-           "\@CopyArgs = \n",
-           join("\n", @CopyArgs) . "\n";
+   # Get options and arguments:
+   my @opts = ();
+   my @args = ();
+   my $end = 0;              # end-of-options flag
+   my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
+   my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
+   for ( @ARGV ) {           # For each element of @ARGV,
+      /^--$/                 # "--" = end-of-options marker = construe all further CL items as arguments,
+      and $end = 1           # so if we see that, then set the "end-of-options" flag
+      and push @opts, $_     # and push the "--" to @opts
+      and next;              # and skip to next element of @ARGV.
+      !$end                  # If we haven't yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we get a valid short option
+      ||  /^--(?!-)$d+$/ )   # or a valid long option,
+      and push @opts, $_     # then push item to @opts
+      or  push @args, $_;    # else push item to @args.
    }
 
+   # Get numbers of options and arguments:
+   my $NO = scalar(@opts);
+   my $NA = scalar(@args);
+
+   # Process options:
+   for ( @opts ) {
+      /^-$s*h/ || /^--help$/    and help and exit(777)       ;
+      /^-$s*e/ || /^--emulate$/ and $Db = 1                  ;
+      /^-$s*S/ || /^--sl$/      and push @copy_args, 'sl'    ;
+      /^-$s*s/ || /^--sha1$/    and push @copy_args, 'sha1'  ;
+      /^-$s*u/ || /^--unique$/  and push @copy_args, 'unique';
+      /^-$s*l/ || /^--large$/   and push @copy_args, 'large' ;
+   }
+
+   # Set settings and check their validity:
+   if ($NA < 2 || $NA > 3)
+                      {say STDERR "Error: Must have 2 or 3 arguments. ".
+                                  "Use -h or --help to get help."                        ; exit(666) }
+   $src = $args[0];
+   if ( ! -e e $src ) {say STDERR "Error: source directory $src doesn't exist."          ; exit(666) }
+   if ( ! -d e $src ) {say STDERR "Error: source directory $src isn't a directory."      ; exit(666) }
+   $dst = $args[1];
+   if ( ! -e e $dst ) {say STDERR "Error: destination directory $dst doesn't exist."     ; exit(666) }
+   if ( ! -d e $dst ) {say STDERR "Error: destination directory $dst isn't a directory." ; exit(666) }
+   if ( 3 == $NA ) {push @copy_args, 'regexp=' . $args[2];}
+
+   # If debugging, print @opts, @args, and @copy_args:
+   if ($Db) {
+      my $NC = scalar(@copy_args);
+      warn "\nIn copy-files.pl, at bottom of sub argv.\n".
+           "\$Db = $Db\n".
+           "\@copy_args has $NC elements: " . join(" ", @copy_args) . "\n".
+           "Raw \$src = \"$src\"\n".
+           "Raw \$dst = \"$dst\"\n";
+   }
+
+   # We're finished, so return success code 1 to caller:
    return 1;
 } # end sub argv
 
-sub error :prototype($) ($NA) {
-   print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
-
-   Error: \"copy-files.pl\" takes 2 mandatory arguments (which must be paths to
-   a source directory and a destination directory), and 1 optional argument
-   (which, if present, must be a regular expression specifying which files to
-   copy), but you typed $NA arguments. Help follows:
-
-   END_OF_ERROR
-   return 1;
-} # end sub error
-
-sub help :prototype() () {
+# Print help:
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    Welcome to "copy-files.pl", Robbie Hatley's nifty file-copying utility.
@@ -173,16 +191,21 @@ sub help :prototype() () {
    Description of options:
    Option:             Meaning:
    "-h" or "--help"    Print help and exit.
+   "-e" or "--emulate" Print diagnostics, emulate file copying, and exit.
    "-S" or "--sl"      Shorten names for when processing Windows Spotlight images.
    "-s" or "--sha1"    Change name root of each file to its own hash.
    "-u" or "--unique"  Don't copy files for which duplicates exist in destination.
    "-l" or "--large"   Move only large image files (W=1200+, H=600+).
+   "--"                All items to right are arguments, not options.
    All other options will be ignored.
+   Multiple single-letter options can be stacked after a single hypen.
+   To use arguments that look like options, first use a "--" option; all further
+   command-line arguments will be construed as arguments rather than options.
 
    Description of arguments:
-   "copy-files.pl" takes two mandatory arguments which must be paths to existing
-   directories; dir1 is the source directory and dir2 is the destination
-   directory.
+   "copy-files.pl" takes two mandatory arguments, "dir1" and "dir2", which must be
+   paths to existing directories; dir1 is the source directory and dir2 is the
+   destination directory.
 
    Additionally, "copy-files.pl" can take a third, optional argument which,
    if present, must be a Perl-Compliant Regular Expression describing which files
@@ -206,3 +229,13 @@ sub help :prototype() () {
    END_OF_HELP
    return 1;
 } # end sub help
+
+# ======= END BLOCK: =========================================================================================
+
+# NOTE: Don't try to call this directly; it's automatically ran when the program ends:
+END {
+   $t1 = time; my $te = $t1 - $t0; my $ms = 1000*$te;
+   my $pname = get_name_from_path($0);
+   print  STDERR "\nNow exiting program \"$pname\" at timestamp $t1.\n";
+   printf STDERR "Execution time was %.3fms.\n", $ms;
+}

@@ -13,9 +13,10 @@
 # Tue Oct 03, 2023: Got rid of "common::sense" (who needs it, anyway?). Corrected broken variable inits.
 #                   Decreased width from 120 to 110. Upgraged to "v5.36".
 # Thu Aug 15, 2024: -C63; Erased unnecessary "use" statements.
+# Tue Mar 04, 2025: Added help; reduced minimum version from "5.36" to "5.16"; put blank line before "Line #".
 ##############################################################################################################
 
-use v5.36;
+use v5.16;
 use utf8;
 use Unicode::Normalize 'NFD';
 use RH::Dir;
@@ -27,9 +28,17 @@ my $chr_num = 0  ; # Character number.
 my $rep     = '' ; # Glyphical representation.
 my $ord     = 0  ; # Unicode ordinal.
 my $type    = '' ; # Character type.
+foreach (@ARGV) {
+   /^-h$/ || /^--help$/
+   and warn "Welcome to Robbie Hatley's nifty character information program.\n".
+            "This program prints detailed information for every character of\n".
+            "every line of its input. Input is from files given as arguments,\n".
+            "or from STDIN if no files are given.\n"
+   and exit(777);
+}
 foreach $line (<>) {
    ++$lin_num;
-   say "Line #$lin_num:\n$line";
+   print "\nLine #$lin_num: $line\n";
    my @chars = split '',$line;
    foreach $char (@chars) {
       ++$chr_num;

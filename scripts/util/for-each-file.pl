@@ -1,10 +1,10 @@
 #!/usr/bin/env -S perl -CSDA
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
-########################################################################################################################
+##############################################################################################################
 # for-each-file.pl
 # Does some command for each file in current directory.
 #
@@ -15,30 +15,30 @@
 # Fri Jul 17, 2015: Upgraded for utf8. Still a STUB.
 # Sat Apr 16, 2016: Now using -CSDA. Also gave it some functionality. No longer a complete stub, but not
 #                   yet ready for prime time. Still very buggy.
-# Fri Jan 15, 2021: Refactored.
-# Wed Feb 17, 2021: Refactored to use the new GetFiles(), which now requires a fully-qualified directory as its first
-#                   argument, target as second, and regexp (instead of wildcard) as third.
-# Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
-# Sat Nov 27, 2021: Shortened sub names, fixed wide character error (due to missing e), and now printing each command
-#                   line immediately before executing it. Tested: Works.
+# Wed Feb 17, 2021: Refactored to use the new GetFiles(), which now requires a fully-qualified directory as
+#                   its first argument, target as second, and regexp (instead of wildcard) as third.
+# Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
+# Sat Nov 27, 2021: Shortened sub names, fixed wide character error (due to missing e), and now printing each
+#                   command line immediately before executing it. Tested: Works.
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
-########################################################################################################################
+# Mon Mar 03, 2025: Changed shebang to "#!/usr/bin/env -S perl -C63". Reduced width from 120 to 110.
+#                   Increased min ver from "5.32" to "5.36" to get signatures. Removed all prototypes.
+##############################################################################################################
 
-use v5.32;
+use v5.36;
 use utf8;
-
 use RH::Dir;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv    ()  ; # Process @ARGV.
-sub curdire ()  ; # Process current directory.
-sub curfile ($) ; # Process current file.
-sub stats   ()  ; # Print statistics.
-sub error   ($) ; # Handle errors.
-sub help    ()  ; # Print help and exit.
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub stats   ; # Print statistics.
+sub error   ; # Handle errors.
+sub help    ; # Print help and exit.
 
-# ======= VARIABLES: ===================================================================================================
+# ======= VARIABLES: =========================================================================================
 
 # Turn on debugging?
 my $db = 0; # Set to 1 for debugging, 0 for no debugging.
@@ -54,7 +54,7 @@ my $Command   = ''         ; # Command to be executed.  (string)   none
 my $direcount = 0; # Count of directories processed by curdire().
 my $filecount = 0; # Count of    files    processed by curfile().
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
    say "\nNow entering \"for-each-file.pl\".\n";
@@ -65,10 +65,9 @@ my $filecount = 0; # Count of    files    processed by curfile().
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-sub argv ()
-{
+sub argv {
    my $help   = 0;  # Just print help and exit?
    my @CLArgs = (); # Command-Line Arguments (not including options).
    foreach (@ARGV)
@@ -96,10 +95,9 @@ sub argv ()
       default  {error($NA)             ;} # if $NA  > 2, print error & help messages and exit 666.
    }
    return 1;
-} # end sub argv ()
+} # end sub argv
 
-sub curdire ()
-{
+sub curdire {
    ++$direcount;
    my $curdir = cwd_utf8;
    say "\nDir # $direcount: $curdir\n";
@@ -109,29 +107,24 @@ sub curdire ()
       curfile($file);
    }
    return 1;
-} # end sub curdire ()
+} # end sub curdire
 
-sub curfile ($)
-{
+sub curfile ($file) {
    ++$filecount;
-   my $file = shift;
    say '';
    say      "$Command '$file->{Path}'";
    system e "$Command '$file->{Path}'";
    return 1;
-} # end sub curfile ($)
+} # end sub curfile
 
-sub stats ()
-{
+sub stats {
    print("\nStatistics for \"for-each-file.pl\":\n");
    say "Navigated $direcount directories.";
    say "Processed $filecount files.";
    return 1;
-} # end sub stats ()
+} # end sub stats
 
-sub error ($)
-{
-   my $NA = shift;
+sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
    Error: You typed $NA arguments, but this program takes 1 or 2 arguments.
    Argument 1 (mandatory) is a command to be executed on each file.
@@ -141,10 +134,9 @@ sub error ($)
    END_OF_ERROR
    help;
    exit 666;
-} # end sub error ($)
+} # end sub error
 
-sub help ()
-{
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
    Welcome to "for-each-file.pl", Robbie Hatley's nifty program for applying
    a command to each file in the current directory (and all subdirectories if
@@ -189,4 +181,4 @@ sub help ()
    programmer.
    END_OF_HELP
    return 1;
-} # end sub help ()
+} # end sub help

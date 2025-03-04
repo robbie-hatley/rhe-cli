@@ -15,10 +15,10 @@
 # Mon Nov 01, 2021: Wrote it.
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
 # Mon Jun 05, 2023: Renamed from "p1-to-p2.pl" (cryptic!) to "reindent.pl".
+# Mon Mar 03, 2025: Got rid of "common::sense".
 ########################################################################################################################
 
 use v5.32;
-use common::sense;
 use Time::HiRes 'time';
 use POSIX 'floor', 'ceil';
 use RH::Util;

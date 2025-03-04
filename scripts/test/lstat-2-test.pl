@@ -4,7 +4,6 @@ use v5.32;
 use utf8;
 use Cwd;
 use Encode;
-use Sys::Binmode;
 # STUPID ERROR #1 ON NEXT LINE (CAN YOU SEE IT?):
 # (HINT: "DECODE IN, ENCODE OUT")
 my $dir = encode_utf8 getcwd;

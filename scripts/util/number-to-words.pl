@@ -28,10 +28,10 @@
 #                   made $number a global varible; fixed "number_to_words" so that it prints its own own result;
 #                   removed unnecessary error checking of string representation of $number in "number_to_words";
 #                   and drastically simplified main body of script so that it only has 3 short, simple lines.
+# Mon Mar 03, 2025: Got rid of "common::sense".
 ########################################################################################################################
 
 use v5.32;
-use common::sense;
 use bignum;
 use List::Util 'sum';
 

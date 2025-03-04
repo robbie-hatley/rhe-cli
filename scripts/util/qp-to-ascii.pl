@@ -15,10 +15,10 @@
 # Sat Apr 16, 2016: Now using -CSDA.
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
 # Tue Nov 30, 2021: Fixed list-context bug in FILE loop (added "scalar" to force scalar context).
+# Mon Mar 03, 2025: Got rid of "common::sense" and "Sys::Binmode".
 ########################################################################################################################
 
 use v5.32;
-use common::sense;
 use MIME::QuotedPrint;
 use RH::WinChomp;
 use RH::Dir;

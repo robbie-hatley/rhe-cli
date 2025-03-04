@@ -16,10 +16,10 @@
 # Wed Feb 17, 2021: Refactored to use the new GetFiles(), which now requires a fully-qualified directory as
 #                   its first argument, target as second, and regexp (instead of wildcard) as third.
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
+# Mon Mar 03, 2025: Got rid of "common::sense" and "Sys::Binmode".
 ########################################################################################################################
 
 use v5.32;
-use common::sense;
 use RH::Util;
 use RH::Dir;
 

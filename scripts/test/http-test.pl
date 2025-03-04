@@ -22,7 +22,6 @@
 
 use v5.32;
 use utf8;
-use Sys::Binmode;
 use experimental 'switch';
 use strict;
 use warnings;

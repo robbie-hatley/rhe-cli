@@ -32,6 +32,7 @@
 #                   are to STDOUT. $direcount, $filecount, and $gigacount now count only directories and files
 #                   which obey the restrictions imposed by $RegExp, $Empty, $GB, and $Files. Improved help.
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
+# Tue Mar 04, 2025: Added comments to subroutine predeclarations.
 ##############################################################################################################
 
 use v5.36;
@@ -42,16 +43,14 @@ use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv       ;
-sub curdire    ;
-sub dire_stats ;
-sub tree_stats ;
-sub error      ;
-sub help       ;
+sub argv       ; # Process @ARGV.
+sub curdire    ; # Process current directory.
+sub dire_stats ; # Print directory statistics.
+sub tree_stats ; # Print tree statistics.
+sub error      ; # Handle errors.
+sub help       ; # Print help.
 
 # ======= LEXICAL VARIABLES: =================================================================================
-
-# Debug?
 
 # Settings:     Default:   # Meaning of setting:                   Range:        Meaning of default:
 my $Db        = 0        ; # Print diagnostics?                    bool          Don't print diagnostics.

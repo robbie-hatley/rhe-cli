@@ -20,6 +20,7 @@
 #                   Shortened subroutine names. Added time stamping.
 # Wed Feb 08, 2023: Forked a copy of "clone-directory-structure.pl" to "/d/rhe/PWCC/203/ch-2.pl".
 # Wed Aug 14, 2024: Removed unnecessary "use" statements; -C63; width from 120 to 110.
+# Tue Mar 04, 2025: Got rid of unnecessary encodings (conflict with "-C63").
 ##############################################################################################################
 
 # ============================================================================================================
@@ -28,13 +29,6 @@
 # Pragmas:
 use v5.36;
 use utf8;
-
-# Encodings:
-use open ':std', IN  => ':encoding(UTF-8)';
-use open ':std', OUT => ':encoding(UTF-8)';
-use open         IN  => ':encoding(UTF-8)';
-use open         OUT => ':encoding(UTF-8)';
-# NOTE: these may be over-ridden later. Eg, "open($fh, '< :raw', e $path)".
 
 # CPAN modules:
 use Cwd;

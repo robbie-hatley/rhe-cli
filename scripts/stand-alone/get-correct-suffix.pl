@@ -1,13 +1,7 @@
-#! /bin/perl -CSDA
+#!/usr/bin/env -S perl -C63
 # get_correct_suffix.pl
-
 use v5.36;
-use strict;
-use warnings;
 use utf8;
-use warnings FATAL => "utf8";
-use Sys::Binmode;
-
 use Cwd;
 use Encode        qw( :DEFAULT encode decode :fallbacks :fallback_all );
 use File::Type;
@@ -15,8 +9,8 @@ use List::Util    qw( sum0 );
 use Time::HiRes   qw( time );
 
 sub is_ascii               :prototype($)    ; # Is a given text string encoded in ASCII?
-sub is_iso_8859_1          :prototype($)    ; # Is a given text string encoded in ASCII?
-sub is_utf8                :prototype($)    ; # Is a given text string encoded in ASCII?
+sub is_iso_8859_1          :prototype($)    ; # Is a given text string encoded in iso-8859-1?
+sub is_utf8                :prototype($)    ; # Is a given text string encoded in UTF-8?
 sub d                                       ; # utf8-decode.
 sub e                                       ; # utf8-encode.
 sub is_data_file           :prototype($)    ; # Is a file a regular, non-link, non-dir file?

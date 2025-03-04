@@ -22,10 +22,10 @@
 #                   a regular expression instead of a wildcard to specify files to move. Also, now subsumes
 #                   the script "move-large-images.pl".
 # Tue Nov 23, 2021: Fixed "won't handle relative directories" bug by using the chdir & cwd trick.
+# Mon Mar 03, 2025: Got rid of "common::sense".
 ########################################################################################################################
 
 use v5.32;
-use common::sense;
 use Time::HiRes 'time';
 use RH::Dir;
 

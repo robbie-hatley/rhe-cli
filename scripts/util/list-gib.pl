@@ -12,10 +12,10 @@
 # Wed Nov 11, 2020: Wrote first draft.
 # Fri Feb 26, 2021: Heavily refactored. Now fully functional.
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
+# Mon Mar 03, 2025: Got rid of "common::sense" and "Sys::Binmode".
 ########################################################################################################################
 
 use v5.32;
-use common::sense;
 
 use RH::Util;
 use RH::Dir;

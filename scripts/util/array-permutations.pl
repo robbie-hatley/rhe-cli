@@ -14,6 +14,7 @@
 # Sat Sep 09, 2023: Brought formatting up to my current standards.
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
 # Wed Feb 26, 2025: Uncommented printing of permutations.
+# Tue Mar 04, 2025: Simplified main body. Got rid of parents, quotes, and commas in output for now.
 ##############################################################################################################
 
 use v5.36;
@@ -38,18 +39,18 @@ sub permutations ( @array ) {
    return @permutations;
 }
 
-{ # begin main
-   my $t0 = time;
-   my @array = (@ARGV);
-   say "Array = " . "(" . join(', ', map {"\"$_\""} @array) . ")";
-   my @permutations = permutations(@array);
-   say "Number of permutations = ", scalar(@permutations);
-   say "Permutations:";
-   for my $aref ( @permutations ) {
-      say "(", join(', ', map {"\"$_\""} @$aref), ")";
-   }
-   my $t1 = time; my $te = $t1 - $t0;
-   say "\nExecution time was $te seconds.";
-   exit 0;
-} # end main
-__END__
+#$" = ', ';
+my $t0 = time;
+#my @quoted = map {"\"$_\""} @ARGV;
+say "Array = @ARGV";
+my @permutations = permutations(@ARGV);
+my $n = scalar(@permutations);
+say "Number of permutations = $n";
+say "Permutations:";
+for my $aref ( @permutations ) {
+   # my @quoted = map {"\"$_\""} @$aref;
+   say "@$aref";
+}
+my $t1 = time;
+my $te = $t1 - $t0;
+say "\nExecution time was $te seconds.";

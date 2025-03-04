@@ -1,21 +1,21 @@
 #!/usr/bin/env -S perl -CSDA
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
-########################################################################################################################
+##############################################################################################################
 # cwd-glob-readdir-test-2.pl
-# Tests using cwd, glob, and readdir with unicode directory and file names, using my utf8 versions of various funcitons.
+# Tests using cwd, glob, and readdir with unicode directory and file names, using my utf8 versions of various
+# funcitons.
 #
 # Edit history:
 # Thu Jan 21, 2021: Wrote it.
 # Thu Dec 02, 2021: Updated it.
-########################################################################################################################
+# Mon Mar 03, 2025: Reduced width from 120 to 110. Got rid of "common::sense", "Sys::Binmode"
+##############################################################################################################
 
 use v5.32;
-use common::sense;
-use Sys::Binmode;
 use Cwd;
 use RH::Dir;
 
@@ -31,7 +31,7 @@ say for glob_utf8('* .*');
 say '';
 say 'readdir test:';
 my $dh;
-opendir_utf8($dh, ".") || die "serious dainbramage: $!";
+opendir($dh, ".") || die "serious dainbramage: $!";
 my @allfiles = readdir_utf8 $dh;
 closedir $dh;
 say for @allfiles;

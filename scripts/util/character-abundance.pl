@@ -15,12 +15,13 @@
 #                   "Sys::Binmode".
 # Tue Oct 03, 2023: Updated to "use v5.36". Got rid of "common::sense". Reduced width from 120 to 110.
 # Thu Aug 15, 2024: Deleted unnecessary "use" statements, -C63, moved help() above main.
+# Tue Mar 04, 2025: Got rid of prototypes and empty signatures.
 ##############################################################################################################
 
 use v5.36;
 use utf8;
 
-sub help :prototype() () {
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    Welcome to "character-abundance.pl", Robbie Hatley's nifty program for

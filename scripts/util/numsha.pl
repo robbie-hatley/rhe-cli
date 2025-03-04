@@ -14,10 +14,10 @@
 # Fri Jun 18, 2021: Wrote it.
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
 # Wed Nov 24, 2021: Refactored. Now using a regexp instead of wildcard, and tested in harsh UTF-8 environment. Works.
+# Mon Mar 03, 2025: Got rid of "common::sense".
 ########################################################################################################################
 
 use v5.32;
-use common::sense;
 use Time::HiRes 'time';
 
 use RH::Dir;

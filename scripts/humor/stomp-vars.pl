@@ -18,8 +18,7 @@ no warnings;
 
 no warnings 'numeric';
 
-foreach my $symname (sort keys %main::)
-{
+foreach my $symname (sort keys %main::) {
    ${$main::{$symname}} = "asdf";
    say "\${\$main::{$symname}} = ${$main::{$symname}}";
 }
