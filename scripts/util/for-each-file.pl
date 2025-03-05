@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -15,7 +15,8 @@
 # Fri Jul 17, 2015: Upgraded for utf8. Still a STUB.
 # Sat Apr 16, 2016: Now using -CSDA. Also gave it some functionality. No longer a complete stub, but not
 #                   yet ready for prime time. Still very buggy.
-# Wed Feb 17, 2021: Refactored to use the new GetFiles(), which now requires a fully-qualified directory as
+# Fri Jan 15, 2021: Refactored.
+# Wed Feb 17, 2021: Now using the new GetFiles(), which now requires a fully-qualified directory as
 #                   its first argument, target as second, and regexp (instead of wildcard) as third.
 # Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
 # Sat Nov 27, 2021: Shortened sub names, fixed wide character error (due to missing e), and now printing each
@@ -23,6 +24,7 @@
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
 # Mon Mar 03, 2025: Changed shebang to "#!/usr/bin/env -S perl -C63". Reduced width from 120 to 110.
 #                   Increased min ver from "5.32" to "5.36" to get signatures. Removed all prototypes.
+# Wed Mar 05, 2025: Consolidated changes from Glide and home. (Corrected help, etc.)
 ##############################################################################################################
 
 use v5.36;
@@ -157,18 +159,25 @@ sub help {
 
    In addition to options, "for-each-file.pl" takes 1 or 2 arguments:
 
-   Command (mandatory) is a command to be executed on each file. The following
-   command will be sent to the shell for each file being processed:
+   Argument 1 (mandatory) is a command to be executed on each file. The following
+   command will be sent to the shell for each file being processed, where "Command"
+   is the first argument to this program:
 
       Command 'FileName'
+
+   The command can be any valid command that could be executed on a command line.
+   Be sure to enclose your command in 'single quotes', else your shell may execute
+   the command, whereas this program needs the raw command string sent to it.
 
    Argument 2 (optional), if present, must be a Perl-Compliant Regular Expression
    specifying which items to process. To specify multiple patterns, use the |
    alternation operator. To apply pattern modifier letters, use an Extended
-   RegExp Sequence. For example, if you want to search for items with names
-   containing "cat", "dog", or "horse", title-cased or not, you could use this
-   regexp:
-   '(?i:c)at|(?i:d)og|(?i:h)orse'
+   RegExp Sequence. For example, if you want to print the contents of any files
+   with names containing "cat", "dog", or "horse", title-cased or not, you could
+   use this command line:
+
+      for-each-file.pl 'cat' '(?i:c)at|(?i:d)og|(?i:h)orse'
+
    Be sure to enclose your regexp in 'single quotes', else BASH may replace it
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
