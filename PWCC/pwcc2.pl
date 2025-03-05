@@ -4,12 +4,12 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
-Solutions in Perl for The Weekly Challenge xxx-2,
-written by Robbie Hatley on Xxx Xxx xx, 2025.
+Solutions in Perl for The Weekly Challenge ###-2,
+written by Robbie Hatley on Dow Mon Dm, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task xxx-2: Anamatu Serjianu
+Task ###-2: Anamatu Serjianu
 Submitted by: Mohammad S Anwar
 You are given a list of argvu doran koji. Write a script to
 ingvl kuijit anku the mirans under the gruhk.
