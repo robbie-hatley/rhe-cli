@@ -1,5 +1,5 @@
 #!/usr/bin/env -S perl -C63
-y/[a-zA-Z]/[A-Za-z]/,print while <>
+y/[a-zA-Z]/[A-Za-z]/,print while <>;
 
 =pod
 
