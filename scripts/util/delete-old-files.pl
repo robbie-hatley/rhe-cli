@@ -26,11 +26,12 @@
 #                   added signatures to all subroutines; got rid of unnecessary "use" statements;
 #                   got rid of "$Db"; changed simulation option from "-e"/"--emulate "to "-s"/"--simulate".
 # Wed Feb 26, 2025: Trimmed horizontal dividers.
+# Tue Mar 04, 2025: Got rid of all prototypes and empty sigs.
 ##############################################################################################################
 
 use v5.36;
 use utf8;
-use Cwd 'getcwd';
+use Cwd;
 use POSIX 'floor', 'ceil';
 use Time::HiRes 'time';
 use RH::Util;
@@ -38,12 +39,12 @@ use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv    :prototype()  ; # Process @ARGV.
-sub curdire :prototype()  ; # Process current directory.
-sub curfile :prototype($) ; # Process current file.
-sub stats   :prototype()  ; # Print statistics.
-sub error   :prototype($) ; # Print error message.
-sub help    :prototype()  ; # Print help  message.
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub stats   ; # Print statistics.
+sub error   ; # Print error message.
+sub help    ; # Print help  message.
 
 # ======= VARIABLES: =========================================================================================
 
@@ -101,7 +102,7 @@ my $failcount = 0; # Count of file deletion failures.
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
 # Process @ARGV :
-sub argv :prototype() () {
+sub argv {
    # Get options and arguments:
    my @opts = ();            # options
    my @args = ();            # arguments
@@ -145,7 +146,7 @@ sub argv :prototype() () {
 } # end sub argv
 
 # Process current directory:
-sub curdire :prototype() () {
+sub curdire {
    # Increment directory counter:
    ++$direcount;
 
@@ -164,7 +165,7 @@ sub curdire :prototype() () {
 } # end sub curdire
 
 # Process current file:
-sub curfile :prototype($) ($file) {
+sub curfile ($file) {
    # Increment file counter:
    ++$filecount;
 
@@ -214,7 +215,7 @@ sub curfile :prototype($) ($file) {
    and return 0;
 } # end sub curfile
 
-sub stats :prototype() () {
+sub stats {
    print STDOUT "\nStatistics for program \"delete-old-files.pl\":\n";
    if ($Simulate)
    {
@@ -237,7 +238,7 @@ sub stats :prototype() () {
    return 1;
 } # end sub stats
 
-sub error :prototype($) ($NA) {
+sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
    Error: you typed $NA arguments, but this program takes at most 1 argument,
    which, if present, must be a Perl-Compliant Regular Expression specifying
@@ -247,7 +248,7 @@ sub error :prototype($) ($NA) {
    return 1;
 } # end sub error
 
-sub help :prototype() () {
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

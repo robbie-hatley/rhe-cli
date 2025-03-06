@@ -17,6 +17,7 @@
 # Edit history:
 # Thu Aug 15, 2024: Wrote it, based heavily on existing program "delete-old-files.pl".
 # Wed Feb 26, 2025: Trimmed horizontal dividers. Got rid of all prototypes and empty signatures.
+# Tue Mar 04, 2025: Tweaked help ("max" to "min" age).
 ##############################################################################################################
 
 use v5.36;
@@ -270,7 +271,7 @@ sub help {
    "-l" or "--local"        DON'T recurse subdirectories. (default)
    "-r" or "--recurse"      DO recurse subdirectories.
    "-y" or "--yes"          Delete all old files without prompting.
-   "--age=###"              Set max age (where "###" is any positive real number)
+   "--age=###"              Set min age (where "###" is any positive real number)
    Defaults are: no help, no simulate, no recurse, no yes, age = "365.2422 days".
    Multiple single-letter options may be piled after a single hyphen. Eg, "-yr".
    All other options are ignored.

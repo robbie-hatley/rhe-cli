@@ -90,6 +90,8 @@
 #                   many bits of tech from "age.pl", but I decided to keep "extra arguments" a fatal error
 #                   (instead of just a warning as in "age.pl"), because this template may be used to make
 #                   programs which are more dangerous than "age.pl" is.
+# Tue Mar 04, 2025: Got rid of prototypes and empty sigs. Added comments to subroutine predeclarations.
+#                   Now using "BEGIN" and "END" blocks to print entry and exit messages.
 ##############################################################################################################
 
 ##############################################################################################################
@@ -120,6 +122,30 @@ use RH::RegTest;
 use RH::Util;
 use RH::WinChomp;
 
+# ======= GLOBAL VARIABLES: ==================================================================================
+
+our $t0   ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program entry.
+our $t1   ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program exit.
+
+# ======= BEGIN AND END BLOCKS: ==============================================================================
+
+# NOTE: Don't try to call this directly; it's automatically ran when the program begins:
+BEGIN {
+   $t0 = time;
+   # NOTE: Uncomment these lines to make this code run irrespective of verbosity level:
+   # my $pname = get_name_from_path($0);
+   # say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
+}
+
+# NOTE: Don't try to call this directly; it's automatically ran when the program ends:
+END {
+   # NOTE: Uncomment these lines to make this code run irrespective of verbosity level:
+   # $t1 = time; my $te = $t1 - $t0; my $ms = 1000*$te;
+   # my $pname = get_name_from_path($0);
+   # say    STDERR "\nNow exiting program \"$pname\" at timestamp $t1.";
+   # printf STDERR "Execution time was %.3fms.\n", $ms;
+}
+
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
 sub argv    ; # Process @ARGV.
@@ -128,15 +154,6 @@ sub curfile ; # Process current file.
 sub stats   ; # Print statistics.
 sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
-
-# ======= GLOBAL VARIABLES: ==================================================================================
-
-our $t0     ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program entry.
-our $t1     ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program exit.
-
-# ======= START TIMER: =======================================================================================
-
-BEGIN {$t0 = time}
 
 # ======= LEXICAL VARIABLES: =================================================================================
 
@@ -206,8 +223,7 @@ my $unkncount = 0 ; # Count of all unknown files.
 
    # Print exit message if being terse or verbose:
    if ( $Verbose >= 1 ) {
-      $t1 = time;
-      my $ms = 1000 * ($t1-$t0);
+      $t1 = time; my $te = $t1 - $t0; my $ms = 1000 * $te;
       say    STDERR '';
       say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
       printf STDERR "Execution time was %.3fms.", $ms;

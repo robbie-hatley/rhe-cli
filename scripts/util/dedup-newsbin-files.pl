@@ -41,6 +41,7 @@
 #                   Removed "no debug" option as that's already default in all of my programs.
 #                   Changed short option for debugging from "-e" to "-d".
 # Wed Aug 14, 2024: Removed unnecessary "use" statements. Changed short option for debug from "-d" to "-e".
+# Tue Mar 04, 2025: Now using global "t0" and "BEGIN" block to start timer.
 ##############################################################################################################
 
 use v5.36;
@@ -48,6 +49,16 @@ use utf8;
 use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
+
+# ======= GLOBAL VARIABLES: ==================================================================================
+
+our $t0;
+
+# ======= BEGIN AND END BLOCKS: ==============================================================================
+
+BEGIN {
+   $t0 = time;
+}
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -78,7 +89,6 @@ my $simucount = 0;
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   my $t0 = time;
    argv;
    my $pname = get_name_from_path($0);
    if ( $Verbose >= 1 ) {

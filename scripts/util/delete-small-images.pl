@@ -18,7 +18,7 @@
 # Sun Dec 25, 2022: Corrected comments and changed min size from 175x175 to 201x201.
 # Thu Aug 15, 2024: Narrowed from 120 to 110, "use v5.36", and removed unnecessary "use" statements.
 #                   Changed name from "erase-small-images.pl" to "delete-small-images.pl".
-# Wed Feb 26, 2025: Got rid of all prototypes and empty signatures.
+# Wed Feb 26, 2025: Got rid of all prototypes and empty signatures. Added missing encoding.
 ##############################################################################################################
 
 use v5.36;
@@ -62,10 +62,10 @@ my @paths = map {decode_utf8 $_} <*>;
 # Loop through @paths and erase all small images (x<201 or y<201):
 foreach my $path (@paths) {
    # Skip this path if it doesn't point to something that actually exists:
-   next if !-e $path;
+   next if !-e encode_utf8 $path;
 
    # Stat this path to load its stats into Perl's internal file-info buffer (so we can use "_" to save time):
-   lstat $path;
+   lstat encode_utf8 $path;
 
    # Skip this file if it's a non-file, link, dir, blk-spc, chr-spc, pipe, socket, or tty:
    next if !-f _ || -d _ || -l _ || -b _ || -c _ || -p _ || -S _ || -t _ ;

@@ -16,18 +16,19 @@
 # Thu Aug 15, 2024: Narrowed from 120 to 110, upgraded from "v5.32" to "v5.36,
 #                   and removed unnecessary "use" statements.
 # Wed Feb 26, 2025: Trimmed one horizontal divider.
+# Tue Mar 04, 2025: Got rid of unnecessary prototypes and sigs.
 ##############################################################################################################
 
 use v5.36;
 use utf8;
-use Encode 'encode_utf8';
+use Encode;
 
 # ======= SUBROUTINE PRE-DECLARATIONS ========================================================================
 
-sub argv     :prototype()    ;
+sub argv                     ;
 sub in_array :prototype($\@) ;
-sub error    :prototype($)   ;
-sub help     :prototype()    ;
+sub error                    ;
+sub help                     ;
 
 # ======= GLOBAL VARIABLES ===================================================================================
 
@@ -42,12 +43,12 @@ our @Options;    # CL args starting with '-'
 
    my $fh1;
    open($fh1, '<', encode_utf8 $Arguments[0]) or die "Can't open first file.\n$!\n";
-   my @First = <$fh1>;
+   my @First = <$fh1>; # Don't decode here; that's handled by the "-C63" in the shebang.
    close($fh1);
 
    my $fh2;
    open($fh2, '<', encode_utf8 $Arguments[1]) or die "Can't open second file.\n$!\n";
-   my @Second = <$fh2>;
+   my @Second = <$fh2>; # Don't decode here; that's handled by the "-C63" in the shebang.
    close($fh2);
 
    my @Added;
@@ -76,7 +77,7 @@ our @Options;    # CL args starting with '-'
 
 # ======= SUBROUTINE DEFINITIONS =============================================================================
 
-sub argv :prototype() () {
+sub argv {
    foreach (@ARGV) {
       if (/^-[\pL\pN]{1}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/) {
          push(@Options, $_);
@@ -107,7 +108,7 @@ sub in_array :prototype($\@) ($Element, $ArrayRef) {
    return 0;
 } # end in_array
 
-sub error :prototype($) ($NA) {
+sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
    Error: you typed $NA arguments, but delta.pl takes exactly 2 arguments,
@@ -116,7 +117,7 @@ sub error :prototype($) ($NA) {
    return 1;
 } # end error
 
-sub help :prototype() () {
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    Welcome to "delta.pl". This program presents "added" lines which are in

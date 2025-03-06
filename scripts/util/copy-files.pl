@@ -28,7 +28,7 @@
 #                   "common::sense" (antiquated). Now using "d getcwd" instead of "cwd_utf8".
 # Thu Aug 15, 2024: -C63; erased unnecessary "use" statements; put protos & sigs on all subs.
 # Tue Mar 04, 2025: Got rid of prototypes and empty sigs. Added comments to subroutine predeclarations.
-#                   Now using "BEGIN" to initialize timer. Added "begin" and "end" subs.
+#                   Now using "BEGIN" and "END" blocks to print entry and exit messages.
 ##############################################################################################################
 
 # ======= PRAGMAS AND MODULES: ===============================================================================
@@ -43,13 +43,21 @@ use RH::Dir;
 our $t0   ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program entry.
 our $t1   ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program exit.
 
-# ======= BEGIN BLOCK: =======================================================================================
+# ======= BEGIN AND END BLOCKS: ==============================================================================
 
 # NOTE: Don't try to call this directly; it's automatically ran when the program begins:
 BEGIN {
    $t0 = time;
    my $pname = get_name_from_path($0);
-   print STDERR "\nNow entering program \"$pname\" at timestamp $t0.\n";
+   say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
+}
+
+# NOTE: Don't try to call this directly; it's automatically ran when the program ends:
+END {
+   $t1 = time; my $te = $t1 - $t0; my $ms = 1000*$te;
+   my $pname = get_name_from_path($0);
+   say    STDERR "\nNow exiting program \"$pname\" at timestamp $t1.";
+   printf STDERR "Execution time was %.3fms.\n", $ms;
 }
 
 # ======= PROGRAM-SETTINGS VARIABLES: ========================================================================
@@ -77,23 +85,22 @@ sub help  ; # Print help.
    $cur = d getcwd;
 
    # Get FULLY-QUALIFIED versions of source and destination directories by CDing to each, running getcwd,
-   # then CDing back to $cur. WARNING: ALWAYS CD BACK TO $cur BEFORE TRYING TO CD ELSEWHERE, BECUASE
+   # then CDing back to $cur. WARNING: ALWAYS CD BACK TO $cur BEFORE TRYING TO CD TO $src or $dst, BECAUSE
    # $src AND $dst ARE RELATIVE TO $cur!!!
    chdir e $src; $src = d getcwd; chdir e $cur;
    chdir e $dst; $dst = d getcwd; chdir e $cur;
 
-
    # If debugging, just emulate:
    if ( $Db ) {
-      warn "\nEMULATING!!!\n";
-      warn "At bottom of main body of \"copy-files.pl\", after qualifying dir names.\n".
-           "Fully-qualified \$src = \"$src\"\n".
-           "Fully-qualified \$dst = \"$dst\"\n";
+      say STDERR  "\nEMULATING!!!\n".
+                  "At bottom of main body of \"copy-files.pl\", after qualifying dir names.\n".
+                  "Fully-qualified \$src = \"$src\"\n".
+                  "Fully-qualified \$dst = \"$dst\"";
    }
 
    # Otherwise, copy files:
    else {
-      warn "\nCOPYING!!!\n";
+      say STDERR  "\nCOPYING!!!\n";
       copy_files($src, $dst, @copy_args);
    }
 
@@ -158,7 +165,7 @@ sub argv {
    if ( ! -d e $dst ) {say STDERR "Error: destination directory $dst isn't a directory." ; exit(666) }
    if ( 3 == $NA ) {push @copy_args, 'regexp=' . $args[2];}
 
-   # If debugging, print @opts, @args, and @copy_args:
+   # If debugging, print @Db, @copy_args, $src, $dst:
    if ($Db) {
       my $NC = scalar(@copy_args);
       warn "\nIn copy-files.pl, at bottom of sub argv.\n".
@@ -229,13 +236,3 @@ sub help {
    END_OF_HELP
    return 1;
 } # end sub help
-
-# ======= END BLOCK: =========================================================================================
-
-# NOTE: Don't try to call this directly; it's automatically ran when the program ends:
-END {
-   $t1 = time; my $te = $t1 - $t0; my $ms = 1000*$te;
-   my $pname = get_name_from_path($0);
-   print  STDERR "\nNow exiting program \"$pname\" at timestamp $t1.\n";
-   printf STDERR "Execution time was %.3fms.\n", $ms;
-}

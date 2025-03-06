@@ -38,8 +38,9 @@ Step 1: "1000", "1212", "1001" => "162"
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-I'll use a while loop that performs the described operation while the string length is greater than the
-given integer.
+The "...otherwise continue the process" in the Problem Description is a big clue that recursion will be useful
+here, so I'll make a recursive subroutine that performs the described summing and concatenation steps, then
+"continues the process" (by recursing) until the length of the string is no more than the given integer.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
@@ -51,53 +52,45 @@ digits in "double quotes" followed by an integer which is less than the length o
 For example:
 ./ch-2.pl '(["2940673", 3], ["305846253401", 4], ["00000000000", 5])'
 
-Output is to STDOUT and will be a each pair of input integers followed by a version of the first integer
-which has been "condensed" according to the Problem Description above.
+Output is to STDOUT and will be a each string/integer pair followed by a version of the string which has been
+"condensed" by repeatedly summing groups and concatenating until the length of the string is no greater than
+the given integer.
 
 =cut
 
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use List::Util qw( sum0 );
+   use v5.36;
+   use List::Util qw( sum0 );
 
-# What is the sum of a string of digits?
-sub digit_sum ($x) {
-   my $sum = 0;
-   foreach my $idx (0..length($x)-1) {
-      $sum += (0 + substr $x, $idx, 1);
+   # Condense a string $x of digits by chopping it into groups of
+   # $y digits, summing those groups, concatenating the sums, and
+   # repeating until the length of the result is no more than $y:
+   sub group_digit_sum ($x, $y) {
+      my @groups = ();
+      my @sums   = ();
+      my $cat    = '';
+
+      # Get digit groups:
+      while (length($x) > 0) {
+         push @groups, substr $x, 0, $y, '';
+      }
+
+      # Compute sums of groups:
+      foreach my $idx (0..$#groups) {
+         $sums[$idx] = sum0 split //, $groups[$idx];
+      }
+
+      # Concatenate sums:
+      $cat .= $_ for @sums;
+
+      # If $cat has no more than $y digits, return $cat:
+      if (length($cat) <= $y) {return $cat}
+
+      # Otherwise, recurse:
+      else {return group_digit_sum($cat, $y)}
    }
-   return $sum;
-}
-
-# Condense a string $x of digits by chopping it into groups of $y digits,
-# summing those groups, concatenating the sums, and repeating until the
-# length of the result is no more than $y:
-sub group_digit_sum ($x, $y) {
-   my @groups = ();
-   my @sums   = ();
-   my $cat    = '';
-
-   # Get digit groups:
-   while (length($x) > 0) {
-      push @groups, substr $x, 0, $y, '';
-   }
-
-   # Compute sums of groups:
-   foreach my $idx (0..$#groups) {
-      $sums[$idx] = digit_sum($groups[$idx]);
-   }
-
-   # Concatenate sums:
-   $cat .= $_ for @sums;
-
-   # If $cat has no more than $y digits, return $cat:
-   if (length($cat) <= $y) {return $cat}
-
-   # Otherwise, RECURSE!!!
-   else {return group_digit_sum($cat, $y)}
-}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:

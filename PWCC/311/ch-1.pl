@@ -1,4 +1,5 @@
 #!/usr/bin/env -S perl -C63
+y/[a-zA-Z]/[A-Za-z]/,print while <>
 
 =pod
 
@@ -30,29 +31,22 @@ Output: "pYtHoN"
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
 This can be easily done with a one-liner using Perl's "transpose" operator, "tr", aka "y":
-print $_ =~ y/[a-zA-Z]/[A-Za-z]/r while <>
+y/[a-zA-Z]/[A-Za-z]/,print while <>
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 
-Input  is from STDIN and can consist of any number of Unicode UTF-8 strings of any lengths.
+Input is from STDIN and can consist of any number of Unicode UTF-8 strings of any lengths.
 
-Output is  to  STDOUT and will be a version of the input with the cases of the English letters reversed.
+Output is to STDOUT and will be a version of the input with the cases of the English letters reversed.
 
 Example using a pipe:
-echo -ne "pERl\nrakU\nPyThOn\n" | ./ch-1.pl
+echo -ne "pERl rakU PyThOn\n" | ./ch-1.pl
 which would produce this output:
-PerL
-RAKu
-pYtHoN
+PerL RAKu pYtHoN
 
 Example using direct keyboard input:
 ./ch-1.pl
 (Then type lines of text on command line, ending each line with Enter and ending input with Ctrl-d.)
 
 =cut
-
-# ------------------------------------------------------------------------------------------------------------
-# MAIN BODY OF PROGRAM:
-
-while (<>) {y/[a-zA-Z]/[A-Za-z]/;print}

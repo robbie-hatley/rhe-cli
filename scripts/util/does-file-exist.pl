@@ -18,15 +18,16 @@
 #                   Got rid of "common::sense". Shortened sub names. Added prototypes. Added "use utf8".
 #                   Allowed checking of multiple paths at once (because, why not?).
 # Thu Aug 15, 2024: -C63; got rid of "Sys::Binmode".
+# Tue Mar 04, 2025: Got rid of all prototypes and empty sigs.
 ##############################################################################################################
 
 use v5.36;
 use utf8;
-use Encode 'encode_utf8';
+use Encode;
 
 my @paths; # Paths of files to check for existence.
 
-sub help :prototype() () {
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    Welcome to "does-file-exist.pl", Robbie Hatley's nifty program for determining
@@ -49,7 +50,7 @@ sub help :prototype() () {
    return 1;
 } # end sub help
 
-sub argv :prototype() () {
+sub argv {
    # If user wants help, give help and exit:
    /^-h$|^--help$/ and help and exit 777 for @ARGV;
 

@@ -19,6 +19,7 @@
 #                   are no verbosity controls, as the whole purpose of this program is to print statistics.
 # Wed Sep 06, 2023: Predicate now overrides target and forces it to 'A' to avoid conflicts with predicate.
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
+# Tue Mar 04, 2025: Got rid of all prototypes and empty sigs.
 ##############################################################################################################
 
 use v5.36;
@@ -29,12 +30,12 @@ use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv       :prototype()  ;
-sub curdire    :prototype()  ;
-sub dire_stats :prototype()  ;
-sub tree_stats :prototype()  ;
-sub error      :prototype($) ;
-sub help       :prototype()  ;
+sub argv       ;
+sub curdire    ;
+sub dire_stats ;
+sub tree_stats ;
+sub error      ;
+sub help       ;
 
 # ======= LEXICAL VARIABLES: =================================================================================
 
@@ -108,7 +109,7 @@ my @deadpaths = ();
 
 # ======= SUBROUTINE DEFINITIONS =============================================================================
 
-sub argv :prototype() () {
+sub argv {
    # Get options and arguments:
    my @opts = ();            # options
    my @args = ();            # arguments
@@ -163,7 +164,7 @@ sub argv :prototype() () {
 } # end sub argv
 
 # Process current directory:
-sub curdire :prototype() () {
+sub curdire {
    # Increment directory counter.
    ++$direcount;
 
@@ -222,7 +223,7 @@ sub curdire :prototype() () {
    return 1;
 } # end sub curdire
 
-sub dire_stats :prototype() () {
+sub dire_stats {
    say '';
    say "Entries encountered in this directory included:";
    printf "%7u total files.\n",                           $RH::Dir::totfcount;
@@ -243,7 +244,7 @@ sub dire_stats :prototype() () {
    return 1;
 } # end sub dire_stats
 
-sub tree_stats :prototype() () {
+sub tree_stats {
    say '';
    say "Statistics for this directory tree:";
    say "Navigated $direcount directories.";
@@ -284,7 +285,7 @@ sub tree_stats :prototype() () {
    return 1;
 } # end sub tree_stats
 
-sub error :prototype($) ($NA) {
+sub error ($NA) {
    print ((<<'   END_OF_ERROR') =~ s/^   //gmr);
 
    Error: you typed $NA arguments, but this program takes 0, 1, or 2 arguments.
@@ -293,7 +294,7 @@ sub error :prototype($) ($NA) {
    return 1;
 } # end sub error
 
-sub help :prototype() () {
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------

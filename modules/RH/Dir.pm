@@ -365,7 +365,7 @@ sub GetFiles :prototype(;$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$'
             elsif (   -d _       ) {$type = 'R'; ++$slkdcount;} # Symbolic link to directory.
             elsif (   -f _       ) {$type = 'L'; ++$linkcount;} # Symbolic link to file.
             else                   {$type = 'W'; ++$weircount;} # Symbolic link to weirdness.
-            $l_targ = readlink_utf8 $path;
+            $l_targ = d(readlink(e($path)));
             if (not defined $l_targ) {
                $l_targ = 'UNDEFINED TARGET';
             }

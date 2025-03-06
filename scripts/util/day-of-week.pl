@@ -77,9 +77,10 @@
 #                   in 100 million BC, humans existed, though at that time we were small furry rodents.
 # Sat Sep 30, 2023: Converted back to UTF-8, and added-in a few more pieces of poetry.
 # Thu Aug 15, 2024: -C63.
+# Tue Mar 04, 2025: Reduced min ver from "5.38" to "5.36".
 ##############################################################################################################
 
-use v5.38;
+use v5.36;
 use utf8;
 
 # ======= SUBROUTINE PRE-DECLARATIONS ========================================================================

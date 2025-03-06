@@ -10,9 +10,10 @@
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and
 #                   "Sys::Binmode".
 # Thu Aug 15, 2024: Narrowed from 120 to 110, "use v5.36", -C63, and removed unnecessary "use" statements.
+# Tue Mar 04, 2025: Reduced min ver from "5.36" to "5.16".
 ##############################################################################################################
 
-use v5.36;
+use v5.16;
 use utf8;
 my $i = 0;
 map {++$i} <>;
