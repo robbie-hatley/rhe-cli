@@ -92,6 +92,7 @@
 #                   programs which are more dangerous than "age.pl" is.
 # Tue Mar 04, 2025: Got rid of prototypes and empty sigs. Added comments to subroutine predeclarations.
 #                   Now using "BEGIN" and "END" blocks to print entry and exit messages.
+# Fri Mar 06, 2025: Got rid of all BEGIN and END blocks (too problematic). Got rid of all global variables.
 ##############################################################################################################
 
 ##############################################################################################################
@@ -102,9 +103,11 @@
 # Sat Jun 05, 2021: Wrote it.
 ##############################################################################################################
 
+# Pragmas:
 use v5.36;
 use utf8;
 
+# CPAN modules:
 use Cwd;
 use Time::HiRes 'time';
 use charnames qw( :full :short );
@@ -116,49 +119,18 @@ use List::AllUtils;
 use Hash::Util;
 use Regexp::Common;
 
+# RH modules:
 use RH::Dir;
 use RH::Math;
 use RH::RegTest;
 use RH::Util;
 use RH::WinChomp;
 
-# ======= GLOBAL VARIABLES: ==================================================================================
-
-our $t0   ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program entry.
-our $t1   ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program exit.
-
-# ======= BEGIN AND END BLOCKS: ==============================================================================
-
-# NOTE: Don't try to call this directly; it's automatically ran when the program begins:
-BEGIN {
-   $t0 = time;
-   # NOTE: Uncomment these lines to make this code run irrespective of verbosity level:
-   # my $pname = get_name_from_path($0);
-   # say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
-}
-
-# NOTE: Don't try to call this directly; it's automatically ran when the program ends:
-END {
-   # NOTE: Uncomment these lines to make this code run irrespective of verbosity level:
-   # $t1 = time; my $te = $t1 - $t0; my $ms = 1000*$te;
-   # my $pname = get_name_from_path($0);
-   # say    STDERR "\nNow exiting program \"$pname\" at timestamp $t1.";
-   # printf STDERR "Execution time was %.3fms.\n", $ms;
-}
-
-# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
-
-sub argv    ; # Process @ARGV.
-sub curdire ; # Process current directory.
-sub curfile ; # Process current file.
-sub stats   ; # Print statistics.
-sub error   ; # Handle errors.
-sub help    ; # Print help and exit.
-
-# ======= LEXICAL VARIABLES: =================================================================================
+# ======= TOP-OF-PAGE LEXICAL VARIABLES: =====================================================================
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
    $"         = ', '      ; # Quoted-array formatting.  string    Comma space.
+my $pname     = ''        ; # Name of program.          string    Empty.
 my @opts      = ()        ; # options                   array     Options.
 my @args      = ()        ; # arguments                 array     Arguments.
 my $Db        = 0         ; # Debug?                    bool      Don't debug.
@@ -191,13 +163,27 @@ my $hlnkcount = 0 ; # Count of all regular files with multiple hard links.
 my $regfcount = 0 ; # Count of all regular files.
 my $unkncount = 0 ; # Count of all unknown files.
 
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
+
+# NOTE: These alert the compiler that these names, when encountered in subroutine definitions and in the main
+# body of the program, are subroutines, so it needs to find, compile, and link their definitions:
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub stats   ; # Print statistics.
+sub error   ; # Handle errors.
+sub help    ; # Print help and exit.
+
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
+   # Start timer:
+   my $t0 = time;
+
    # Process @ARGV:
    argv;
 
-   # Set program name:
+   # Get program name:
    my $pname = substr $0, 1 + rindex $0, '/';
 
    # Print program entry message if being terse or verbose:
@@ -221,9 +207,12 @@ my $unkncount = 0 ; # Count of all unknown files.
    # unless user requested help, in which case just print help:
    $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
 
+   # Stop timer:
+   my $t1 = time;
+
    # Print exit message if being terse or verbose:
    if ( $Verbose >= 1 ) {
-      $t1 = time; my $te = $t1 - $t0; my $ms = 1000 * $te;
+      my $te = $t1 - $t0; my $ms = 1000 * $te;
       say    STDERR '';
       say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
       printf STDERR "Execution time was %.3fms.", $ms;
@@ -363,6 +352,7 @@ sub curfile ($file) {
 
 # Print statistics for this program run:
 sub stats {
+   # If being terse or verbose, print basic stats to STDERR:
    if ( $Verbose >= 1 ) {
       say    STDERR '';
       say    STDERR 'Statistics for this directory tree:';
@@ -371,6 +361,7 @@ sub stats {
       say    STDERR "Found $predcount files which also match predicate \"$Predicate\".";
    }
 
+   # If being verbose, also print extended stats to STDERR:
    if ( $Verbose >= 2) {
       say    STDERR '';
       say    STDERR 'Directory entries encountered in this tree included:';
@@ -513,4 +504,3 @@ sub help {
    END_OF_HELP
    return 1;
 } # end sub help
-__END__
