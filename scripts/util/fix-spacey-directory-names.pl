@@ -158,16 +158,17 @@ sub cursubd ($cwd, $oldpath) {
    my $newname = $oldname;
 
    # Clean garbage from newname:
-   $newname = tc $newname;
+   $newname =~ s/\`/‘/g;
    $newname =~ s/\'/’/g;
-   $newname =~ s/\`/’/g;
    $newname =~ s/\s+-+|-+\s+|\s+-+\s+/_/g;
    $newname =~ s/\s*,\s*/_/g;
    $newname =~ s/\s*\.\s*/_/g;
-   $newname =~ s/\s*&\s*/-And-/g;
+   $newname =~ s/\s*&\s*/-and-/g;
+   $newname =~ s/^\s*\(\s*//;
    $newname =~ s/\s*\(\s*/_/g;
    $newname =~ s/\s*\)\s*$//;
    $newname =~ s/\s*\)\s*/_/g;
+   $newname =~ s/^\s*\[\s*//;
    $newname =~ s/\s*\[\s*/_/g;
    $newname =~ s/\s*\]\s*$//;
    $newname =~ s/\s*\]\s*/_/g;

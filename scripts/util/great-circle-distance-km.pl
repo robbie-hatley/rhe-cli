@@ -5,11 +5,10 @@
 
 ##############################################################################################################
 # great-circle-distance-km.pl
-# Calculates the great-circle distance between two locations on Earth, given their geographic coordinates,
-# L
+# Calculates the great-circle distance between two locations on Earth, given their geographic coordinates.
 # Written by Robbie Hatley.
 # Edit history:
-# Sat Jun 05, 2021: Wrote it.
+# Wed Mar 05, 2025: Wrote it.
 ##############################################################################################################
 
 use Scalar::Util qw( looks_like_number        );

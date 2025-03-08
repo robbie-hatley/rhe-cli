@@ -22,6 +22,7 @@
 #                   fix bug in which some "equivalent" names were not being found. Renamed program from
 #                   "find-duplicate-names.pl" to "find-equivalent-names.pl". Shebang now uses "-C63".
 #                   Got rid of all prototypes and empty signatures.
+# Fri Mar 07, 2025: Corrected help.
 ##############################################################################################################
 
 use v5.36;
@@ -95,7 +96,7 @@ sub curdire {
    $filecount += $RH::Dir::totfcount;
    my @sortedfiles = sort { fc($a->{Name}) cmp fc($b->{Name}) } @{$curdirfiles};
    for    ( my $i =    0   ; $i <= $#sortedfiles - 1 ; ++$i ) {
-      for ( my $j = $i + 1 ; $j <= $#sortedfiles && $j <= $i + 25 ; ++$j ) {
+      for ( my $j = $i + 1 ; $j <= $#sortedfiles && $j <= $i + 100 ; ++$j ) {
          if ( equiv($sortedfiles[$i]->{Name},$sortedfiles[$j]->{Name}) ) {
             ++$equicount;
             say '';
@@ -134,15 +135,15 @@ sub error ($NA) {
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
-   Welcome to "find-duplicate-names.pl". This program finds directory entries
+   Welcome to "find-equivalent-names.pl". This program finds directory entries
    (files and/or directories) in the current directory (and all subdirectories if
    a -r or --recurse option is used) which have names which are the same if all
-   of the non-alpha-numeric characters are removed. For example, this program
-   would consider "Josh Bell.mp3", "Josh-Bell.mp3", and "Josh_Bell.mp3" to have
-   "duplicate" names.
+   of the non-alpha-numeric characters are removed and the cases of the letters
+   are folded. For example, this program would consider "Josh Bell.mp3",
+   "Josh-Bell.mp3", and "JoSh_bEll.mp3" to have "equivalent" names.
 
    Command line:
-   find-duplicate-names.pl [options and/or arguments]
+   find-equivalent-names.pl [options and/or arguments]
 
    Description of options:
    Option:                      Meaning:
