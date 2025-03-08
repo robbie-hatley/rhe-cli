@@ -1,6 +1,6 @@
 #!/usr/bin/env -S perl -CSDA
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
@@ -27,14 +27,12 @@
 #                   Got rid of $Verbose (not necessary). Now always printing entry and exit messages and stats
 #                   to STDERR and file header to STDOUT. Fixed some errors in comments and help.
 # Thu Oct 03, 2024: Got rid of Sys::Binmode.
+# Thu Feb 06, 2025: Got rid of "strict" and "warnings". Corrected "120" to "110" above. help -> STDERR.
 ##############################################################################################################
 
 # Pragmas:
 use v5.36;
-use strict;
-use warnings;
 use utf8;
-use warnings FATAL => 'utf8';
 
 # CPAN modules:
 use Cwd;
@@ -194,7 +192,7 @@ sub curfile ($path) {                          # Enter subroutine "curfile".
 } # end sub curfile ($path)                    # Finished with current file.
 
 sub help {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print STDERR ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Intro:

@@ -23,13 +23,11 @@
 #                   (Program was hiding those differences, but that's a mistake, as we need to see what
 #                   non-cannonical file-name extensions are being used, so we can fix them.)
 # Thu Oct 03, 2024: Got rid of Sys::Binmode.
+# Thu Mar 06, 2025: Nixed "strict" and "warnings".
 ##############################################################################################################
 
 use v5.36;
-use strict;
-use warnings;
 use utf8;
-use warnings FATAL => 'utf8';
 
 use Cwd;
 
@@ -123,7 +121,7 @@ sub stats {
 
 sub help
 {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print STDERR ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Introduction:

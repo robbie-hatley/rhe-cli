@@ -282,7 +282,7 @@ sub argv {
       $Target = 'A';           # and set $Target to 'A' to avoid conflicts with $Predicate.
    }
 
-   # If user types more than 3 arguments, and we're not debugging, print error and help messages and exit:
+   # If user types more than 2 arguments, and we're not debugging, print error and help messages and exit:
    if ( $NA >= 3 && !$Db ) {   # If number of arguments >= 3 and we're not debugging,
       error($NA);              # print error message,
       help;                    # and print help message,

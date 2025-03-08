@@ -1,7 +1,6 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
-# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
-# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
+# This is a 110-character-wide ASCII Perl-source-code text file with hard Unix line breaks ("\x0A").
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
@@ -19,54 +18,43 @@
 #                   Allowed checking of multiple paths at once (because, why not?).
 # Thu Aug 15, 2024: -C63; got rid of "Sys::Binmode".
 # Tue Mar 04, 2025: Got rid of all prototypes and empty sigs.
+# Thu Mar 06, 2025: Dramatically simplified. Got rid of all subs. Reduced min ver from "5.36" to "5.00".
+#                   Also, got rid of "-C63", "use utf8", and "use Encode". Now "feeding through" UTF-8
+#                   file and directory names, NOT decoded to Unicode codepoints, so no need to encode them
+#                   when using file-test operators, print statements, etc. We only need decoding & encoding
+#                   when using Unicode semantics, and this program doesn't do that.
 ##############################################################################################################
 
-use v5.36;
-use utf8;
-use Encode;
+use v5.00;
 
-my @paths; # Paths of files to check for existence.
+# If user wants help, give help and exit:
+for (@ARGV) {
+   if (/^-h$|^--help$/) {
+      print STDERR ((<<'      END_OF_HELP') =~ s/^      //gmr);
+      Welcome to "does-file-exist.pl", Robbie Hatley's nifty program for determining
+      whether files exists at the paths given as command-line arguments.
 
-sub help {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+      Note: I'm using the word "file" in the broadest-possible Linux interpretation,
+      to include regular data files, links, directories, pipes, sockets, devices,
+      etc. In Linux, every item in a storage medium (and some items that AREN'T in a
+      storage medium) is a "file". This program can determine the existence
+      (or non-existence) of all of them.
 
-   Welcome to "does-file-exist.pl", Robbie Hatley's nifty program for determining
-   whether files exists at the paths given as command-line arguments.
+      Command lines:
+      does-file-exist.pl [-h|--help]           (to get help)
+      does-file-exist.pl path1 path2 path3...  (to check file existence)
 
-   Note: I'm using the word "file" in the broadest-possible Linux interpretation,
-   to include regular data files, links, directories, pipes, sockets, devices,
-   etc. In Linux, every item in a storage medium (and some times that AREN'T in a
-   storage medium) is a "file". This program can determine the existence
-   (or non-existence) of all of them.
+      Cheers,
+      Robbie Hatley,
+      programmer.
+      END_OF_HELP
+      exit 777;
+   }
+}
 
-   Command lines:
-   does-file-exist.pl [-h|--help]           (to get help)
-   does-file-exist.pl path1 path2 path3...  (to check file existence)
-
-   Cheers,
-   Robbie Hatley,
-   programmer.
-   END_OF_HELP
-   return 1;
-} # end sub help
-
-sub argv {
-   # If user wants help, give help and exit:
-   /^-h$|^--help$/ and help and exit 777 for @ARGV;
-
-   # If we get to here, store all arguments in @paths:
-   @paths = @ARGV;
-
-   # Return success code 1 to caller:
-   return 1;
-} # end sub argv
-
-# Process @ARGV:
-argv;
-
-# Determine and print the existence or nonexistence of files at paths in @paths:
-for my $path (@paths) {
-   -e encode_utf8($path)
-   and say "File exists:  \"$path\""
-   or  say "No such file: \"$path\""
+# Determine and print the existence or nonexistence of files at paths in @ARGV:
+for my $path (@ARGV) {
+   -e $path
+   and print "File exists:  \"$path\"\n"
+   or  print "No such file: \"$path\"\n";
 }

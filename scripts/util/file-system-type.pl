@@ -7,24 +7,26 @@
 ##############################################################################################################
 # file-system-type.pl
 # Prints the type of the file system on the partition on which the current directory is located.
-# Written by Robbie Hatley, date unknown, but probably circa February 2024.
+# Written by Robbie Hatley.
 # Edit history:
-# Thu Feb 01, 2024: I wrote this file on this date, give-or-take a few years.
-# Thu Aug 15, 2024: -C63, width to 110, got rid of unnecessary "use" statements, added colophon, and added
-#                   this title card.
+# Thu Aug 16, 2024: Wrote program (possibly based on earlier version with different name).
+# Thu Mar 06, 2024: Simplified. Reduced min ver from "5.36" to "5.00".
 ##############################################################################################################
 
-use v5.36;
+use v5.00;
 use utf8;
-use Encode 'decode_utf8';
-use Cwd 'getcwd';
-use Filesys::Type 'fstype';
+use Encode        qw( decode_utf8 );
+use Cwd           qw( getcwd      );
+use Filesys::Type qw( fstype      );
 
 sub help {
-   say 'This program prints the file-system type of the current working directory.';
-   say 'All arguments are ignored (except for "-h" or "--help", which print this help).';
+   print STDERR ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   This program prints the file-system type of the current working directory.
+   All options and arguments are ignored (except for "-h" or "--help", which
+   print this help and exit).
+   END_OF_HELP
 }
 
 /^-h$|^--help$/ and help and exit 777 for @ARGV;
 my $cwd = decode_utf8 getcwd;
-say fstype $cwd;
+print fstype($cwd), "\n";

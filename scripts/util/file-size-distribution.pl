@@ -29,13 +29,11 @@
 # Thu Sep 07, 2023: No-longer printing directories (no point, just spams scrollback). Entry, exit, error,
 #                   debug, and help messages are to STDERR, but size distribution is now to STDOUT.
 # Thu Oct 03, 2024: Got rid of Sys::Binmode.
+# Thu Feb 06, 2025: Got rid of "strict" and "warnings".
 ##############################################################################################################
 
 use v5.36;
-use strict;
-use warnings;
 use utf8;
-use warnings FATAL => 'utf8';
 
 use Cwd;
 use Time::HiRes 'time';
