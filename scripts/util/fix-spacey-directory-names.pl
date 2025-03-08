@@ -4,14 +4,21 @@
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
-########################################################################################################################
+##############################################################################################################
 # fix-spacey-directory-names.pl
 # Converts spaces (and other troublesome characters) in directory names to BASH-safe characters.
+# Processes subdirectories of current working directory (infinite levels deep if recursing, or just 1 level
+# deep if NOT recursing). Does NOT attempt to rename current working directory itself, as that would cause
+# errors in BASH.
 # Written by Robbie Hatley.
 # Edit history:
 # Sat Mar 18, 2023: Wrote it.
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
-########################################################################################################################
+# Fri Mar 07, 2025: Trimmed dividers and wrapped over-length lines to 110. Changed from using "GetFiles" to
+#                   using "glob_regexp_utf8" (faster, as we only need paths, not other info). Fixed bug which
+#                   attempted to rename current working directory (causes errors in BASH). Now sending all
+#                   error, help, stats, and debug messages to STDERR; only renaming messages go to STDOUT.
+##############################################################################################################
 
 use v5.36;
 use utf8;
@@ -20,81 +27,106 @@ use Cwd 'getcwd';
 use RH::Dir;
 use RH::Util;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
 sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
-sub curfile ; # Process current file.
+sub cursubd ; # Process current subdirectory
 sub stats   ; # Print statistics.
 sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
 
-# ======= VARIABLES: ===================================================================================================
+# ======= VARIABLES: =========================================================================================
 
-# Settings:                    Meaning:                     Range:    Default:
-my $db        = 0          ; # Debug (print diagnostics)?   bool      0 (don't print diagnostics)
-my $RegExp    = qr/^.+$/o  ; # Regular Expression.          regexp    qr/^.+$/o (matches all strings)
-my $Recurse   = 1          ; # Recurse subdirectories?      bool      1 (recurse)
-my $Verbose   = 1          ; # Be wordy?                    bool      1 (blab)
+# Settings:                    Meaning:                    Range:    Default:
+   $"         = ', '      ; # Quoted-array formatting.  string    Comma space.
+my $pname     = ''        ; # Name of program.          string    Empty.
+my @opts      = ()        ; # options                   array     Options.
+my @args      = ()        ; # arguments                 array     Arguments.
+my $Db        = 0         ; # Debug?                    bool      Don't debug.
+my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
+my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
+my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 
 # Counters:
-my $direcount = 0          ; # Count of directories processed by curdire().
-my $renacount = 0          ; # Count of directories renamed   by curfile().
-my $failcount = 0          ; # Count of failed directory rename attempts.
+my $direcount = 0         ; # Count of directories processed by curdire().
+my $renacount = 0         ; # Count of directories renamed   by curfile().
+my $failcount = 0         ; # Count of failed directory rename attempts.
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   # Preliminaries:
+   # Start timer:
    my $t0 = time;
+
+   # Process @ARGV and set settings:
    argv;
-   say "\nNow entering program \"" . get_name_from_path($0) . "\"." if $Verbose;
-   say "RegExp  = $RegExp" if $Verbose;
-   say "Recurse = $Recurse" if $Verbose;
-   say "Verbose = $Verbose" if $Verbose;
 
-   # Process subdirectories of cwd if recursing:
-   RecurseDirs {curdire} if $Recurse;
+   # Get program name:
+   $pname = substr $0, 1 + rindex $0, '/';
 
-   # Process cwd:
-   curfile(d getcwd);
+   # Print entry message if being verbose:
+   if ($Verbose) {
+      print STDERR "\nNow entering program \"$pname\".\n".
+                   "RegExp  = $RegExp\n".
+                   "Recurse = $Recurse\n".
+                   "Verbose = $Verbose\n";
+   }
 
-   # Print stats and elapsed time and exit:
-   stats if $Verbose;
-   my $t1 = time; my $te = $t1 - $t0;
-   say "\nNow exiting program \"" . get_name_from_path($0) . "\". Execution time was $te seconds." if $Verbose;
+   # Process current directory (and all subdirectories if recursing) and print stats,
+   # unless user requested help, in which case just print help:
+   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+
+
+   # NOTE: Do NOT attempt to rename current working directory!!!
+   # NO!!! curfile(d getcwd); NO!!!
+   # That will cause errors in BASH. Just rename it manually if needed.
+
+   # Stop timer:
+   my $t1 = time; my $te = $t1 - $t0; my $ms = 1000.0 * $te;
+
+   # Print exit message if being verbose:
+   if ($Verbose) {say "\nNow exiting program \"$pname\". Execution time was ${ms}ms."}
+
+   # We're finished, so exit program and return success code 0 to caller:
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
 # Process @ARGV :
-sub argv
-{
-   for ( my $i = 0 ; $i < @ARGV ; ++$i )
-   {
-      $_ = $ARGV[$i];
-      if (/^-[\pL]{1,}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/)
-      {
-            if ( $_ eq '-h' || $_ eq '--help'    ) {help; exit 777;}
-         elsif ( $_ eq '-q' || $_ eq '--quiet'   ) {$Verbose =  0 ;}
-         elsif ( $_ eq '-v' || $_ eq '--verbose' ) {$Verbose =  1 ;} # DEFAULT
-         elsif ( $_ eq '-l' || $_ eq '--local'   ) {$Recurse =  0 ;}
-         elsif ( $_ eq '-r' || $_ eq '--recurse' ) {$Recurse =  1 ;} # DEFAULT
-
-         # Remove option from @ARGV:
-         splice @ARGV, $i, 1;
-
-         # Move the index 1-left, so that the "++$i" above
-         # moves the index back to the current @ARGV element,
-         # but with the new content which slid-in from the right
-         # due to deletion of previous element contents:
-         --$i;
-      }
+sub argv {
+   # Get options and arguments:
+   my $end = 0;              # end-of-options flag
+   my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
+   my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
+   for ( @ARGV ) {           # For each element of @ARGV,
+      /^--$/                 # "--" = end-of-options marker = construe all further CL items as arguments,
+      and $end = 1           # so if we see that, then set the "end-of-options" flag
+      and push @opts, $_     # and push the "--" to @opts
+      and next;              # and skip to next element of @ARGV.
+      !$end                  # If we haven't yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we get a valid short option
+      ||  /^--(?!-)$d+$/ )   # or a valid long option,
+      and push @opts, $_     # then push item to @opts
+      or  push @args, $_;    # else push item to @args.
    }
-   my $NA = scalar(@ARGV);
+
+   # Process options:
+   for ( @opts ) {
+      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
+      /^-$s*e/ || /^--debug$/   and $Db      =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
+      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
+      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
+      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
+   }
+
+   # Get number of arguments:
+   my $NA = scalar(@args);
    if    ( 0 == $NA ) {                                  } # Do nothing.
-   elsif ( 1 == $NA ) {$RegExp = qr/$ARGV[0]/o           } # Set $RegExp.
+   elsif ( 1 == $NA ) {$RegExp = qr/$args[0]/o           } # Set $RegExp.
    else               {error($NA); say ''; help; exit 666} # Print error and help messages then exit 666.
    return 1;
 } # end sub argv
@@ -104,31 +136,28 @@ sub curdire
 {
    # Get list of subdirectory-info packets in cwd matching $RegExp:
    my $cwd = d getcwd;
-   my $curdirfiles = GetFiles($cwd, 'D', $RegExp);
+   my @subdirs = glob_regexp_utf8($cwd, 'D', $RegExp);
 
-   # Iterate through $curdirfiles and send each file to curfile():
-   foreach my $dire (@{$curdirfiles})
-   {
-      curfile($dire->{Path});
+   # Iterate through @subdirs and send each file to curfile():
+   foreach my $subdir (@subdirs) {
+      cursubd($cwd, $subdir);
    }
    return 1;
 } # end sub curdire
 
 # Process current file:
-sub curfile ($oldpath)
-{
+sub cursubd ($cwd, $oldpath) {
    # Increment file counter:
    ++$direcount;
 
-   # Announce directory if being verbose:
+   # Announce current subdirectory if being verbose:
    say "\nDirectory # $direcount: \"$oldpath\"." if $Verbose;
 
-   # Get cwd and names:
-   my $cwd     = get_dir_from_path($oldpath);
+   # Get oldname and make newname:
    my $oldname = get_name_from_path($oldpath);
    my $newname = $oldname;
 
-   # Clean name:
+   # Clean garbage from newname:
    $newname = tc $newname;
    $newname =~ s/\'/’/g;
    $newname =~ s/\`/’/g;
@@ -145,31 +174,39 @@ sub curfile ($oldpath)
    $newname =~ s/\s+/-/g;
    $newname =~ s/_{2,}/_/g;
 
-   # If new name is different from old name, clean-up directory name:
-   if ($newname ne $oldname){
-      say "Renaming \"$oldname\" => \"$newname\"";
-      my $newpath = path($cwd,$newname);
-      rename_file($oldpath,$newpath) and ++$renacount
-      or ++$failcount and warn "Rename failed.\n$!\n";}
+   # If newname is different from oldname, rename this subdirectory:
+   if ($newname ne $oldname) {
+      # If debugging, just emulate:
+      if ($Db) {
+         say "Emulated rename: \"$oldname\" => \"$newname\"";
+      }
+      else {
+         say "Renaming \"$oldname\" => \"$newname\"";
+         my $newpath = path($cwd,$newname);
+         rename_file($oldpath,$newpath) and ++$renacount
+         or ++$failcount and say "Rename failed.\n$!";
+      }
+   }
 
    # We're done, so scram:
    return 1;
 } # end sub curfile
 
 # Print statistics for this program run:
-sub stats
-{
-   say "\nStatistics for this directory tree:";
-   say "Examined $direcount directory names.";
-   say "Renamed  $renacount troublesome directory names.";
-   say "Failed   $failcount renamed attempts.";
+sub stats {
+   if ($Verbose) {
+      print STDERR "\nStatistics for \"fix-spacey-directory-names.pl\":\n".
+                   "Examined $direcount directory names.\n".
+                   "Renamed  $renacount troublesome directory names.\n".
+                   "Failed   $failcount renamed attempts.\n";
+   }
    return 1;
 } # end sub stats
 
 # Handle errors:
 sub error ($err_msg)
 {
-   print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+   print STDERR ((<<"   END_OF_ERROR") =~ s/^   //gmr);
    Error: you typed $err_msg arguments, but this program takes at most 1 argument,
    which, if present, must be a Perl-Compliant Regular Expression specifying
    which directories to process.
@@ -179,12 +216,14 @@ sub error ($err_msg)
 # Print help:
 sub help
 {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print STDERR ((<<'   END_OF_HELP') =~ s/^   //gmr);
    Welcome to "fix-spacey-directory-names.pl". This program converts spaces and
-   other BASH-unfriendly characters in the name of the current directory
-   (and in the names of all subdirectories if a -r or --recurse option is used)
-   to BASH-safe characters, so that directory names do not require quoting when
-   used in BASH commands.
+   other BASH-unfriendly characters in the name of the subdirectories of the
+   current working directory (infinite levels deep if a "-r" or "--recurse" option
+   is used, otherwise just 1 level deep) to BASH-safe characters, so that directory
+   names do not require quoting when used in BASH commands. NOTE: this program does
+   NOT attempt to rename the current working directory itself, as that would cause
+   errors in BASH. Rename it manually if needed, after "cd ..".
 
    Command lines:
    program-name.pl -h | --help            (to print this help and exit)
@@ -210,7 +249,7 @@ sub help
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
 
-   Happy directory-name cleaning!
+   Happy directory name cleaning!
    Cheers,
    Robbie Hatley,
    programmer.
