@@ -92,7 +92,7 @@
 #                   programs which are more dangerous than "age.pl" is.
 # Tue Mar 04, 2025: Got rid of prototypes and empty sigs. Added comments to subroutine predeclarations.
 #                   Now using "BEGIN" and "END" blocks to print entry and exit messages.
-# Fri Mar 06, 2025: Got rid of all BEGIN and END blocks (too problematic). Got rid of all global variables.
+# Fri Mar 07, 2025: Got rid of all BEGIN and END blocks (too problematic). Got rid of all global variables.
 ##############################################################################################################
 
 ##############################################################################################################
@@ -130,7 +130,6 @@ use RH::WinChomp;
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
    $"         = ', '      ; # Quoted-array formatting.  string    Comma space.
-my $pname     = ''        ; # Name of program.          string    Empty.
 my @opts      = ()        ; # options                   array     Options.
 my @args      = ()        ; # arguments                 array     Arguments.
 my $Db        = 0         ; # Debug?                    bool      Don't debug.
@@ -260,6 +259,13 @@ sub argv {
    # Get number of arguments:
    my $NA = scalar(@args);
 
+   # If user typed more than 2 arguments, and we're not debugging, print error and help messages and exit:
+   if ( $NA > 2 && !$Db ) {   # If number of arguments >= 3 and we're not debugging,
+      error($NA);              # print error message,
+      help;                    # and print help message,
+      exit 666;                # and exit, returning The Number Of The Beast.
+   }
+
    # First argument, if present, is a file-selection regexp:
    if ( $NA >= 1 ) {           # If number of arguments >= 1,
       $RegExp = qr/$args[0]/o; # set $RegExp to $args[0].
@@ -269,13 +275,6 @@ sub argv {
    if ( $NA >= 2 ) {           # If number of arguments >= 2,
       $Predicate = $args[1];   # set $Predicate to $args[1]
       $Target = 'A';           # and set $Target to 'A' to avoid conflicts with $Predicate.
-   }
-
-   # If user types more than 2 arguments, and we're not debugging, print error and help messages and exit:
-   if ( $NA >= 3 && !$Db ) {   # If number of arguments >= 3 and we're not debugging,
-      error($NA);              # print error message,
-      help;                    # and print help message,
-      exit 666;                # and exit, returning The Number Of The Beast.
    }
 
    # Return success code 1 to caller:
@@ -504,3 +503,7 @@ sub help {
    END_OF_HELP
    return 1;
 } # end sub help
+
+__END__
+
+Hmmm. I wonder what this text will do?
