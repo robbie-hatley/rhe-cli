@@ -25,6 +25,16 @@ $" = ', ' ; # Quoted-array element separator = ", ".
 # Timers:
 our $t0 = 0; # Time in seconds since 00:00:00 UTC on Jan 01, 1970, at time of program entry
 our $t1 = 0; # Time in seconds since 00:00:00 UTC on Jan 01, 1970, at time of program exit
+# WARNING: The "=0" part of the above two lines don't do what you think! That part is eventually executed,
+# but not until AFTER all "BEGIN{}" blocks are run and the program is compiled. The order is like this:
+# 1. All "our" declarations are obeyed but the part from "=" to end of line is deferred to Step 3.
+# 2. All "BEGIN{}" blocks are run. They can only see subroutines DEFINED lexically above them on the page.
+# 3. All top-level "our" and "my" assignments using "=" are performed.
+# 4. All subroutines are compiled.
+# 5. The main body of the script (all coded to-be-executed whic is not in any subroutine) is compiled.
+# 6. The main body of the script is executed.
+# 7. The script is exited and the values of all top-level "my" and "our" variables is reset to '' or 0.
+# 8. All "END{}" blocks are run.
 
 # Settings:      Default:      Meaning of setting:       Range:    Meaning of default:
 our $pname     = ''        ; # Name of this program.
@@ -195,6 +205,7 @@ sub stats {
 # ======= BEGIN BLOCK: =======================================================================================
 
 BEGIN {
+   say "\nNow entering BEGIN block.\n";
    # Start timer:
    $t0 = time;
 
@@ -220,6 +231,7 @@ BEGIN {
       say STDERR "RegExp    = $RegExp";
       say STDERR "Predicate = $Predicate";
    }
+   say "\nNow exiting BEGIN block.\n";
 }
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
@@ -237,10 +249,16 @@ BEGIN {
 # ======= END BLOCK: =========================================================================================
 
 END {
-   $t1 = time;
-   say "\$Verbose = $Verbose";
-   my $te = $t1 - $t0; my $ms = 1000 * $te;
-   say    STDERR '';
-   say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
-   printf STDERR "Execution time was %.3fms.", $ms;
+   say "\nNow entering END block.\n";
+   if (!defined $Db     ) {say "\"$Db\" is not defined."     }
+   else                   {say "\$Db = $Db"                  }
+   if (!defined $Verbose) {say "\"$Verbose\" is not defined."}
+   else                   {say "\$Verbose = $Verbose"        }
+   if (!defined $pname  ) {say "\"$pname\" is not defined."  }
+   else                   {say "\$pname = $pname"            }
+   if (!defined $t0     ) {say "\"$t0\" is not defined."     }
+   else                   {say "\$t0 = $t0"                  }
+   if (!defined $t1     ) {say "\"$t1\" is not defined."     }
+   else                   {say "\$t1 = $t1"                  }
+   say "\nNow entering END block.\n";
 }

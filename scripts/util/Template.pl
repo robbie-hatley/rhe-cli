@@ -179,16 +179,6 @@ sub stats   ; # Print statistics.
 sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
 
-# ======= BEGIN: =============================================================================================
-# NOTE: This is not a subroutine. Do not try to "call" this. This runs automatically before program compiles:
-BEGIN {
-   # Start timer before program is even compiled, to include compile time in run time:
-   $t0=time;
-
-   # Set program name, so subroutines and main body all know what the name of this program is:
-   $pname = substr $0, 1 + rindex $0, '/';
-}
-
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
@@ -514,6 +504,24 @@ sub help {
    return 1;
 } # end sub help
 
-__END__
+# ======= BEGIN BLOCKS: ======================================================================================
+# NOTE: This is not a subroutine. Do not try to "call" this. This runs automatically before program compiles:
+BEGIN {
+   # Start timer before program is even compiled, to include compile time in run time:
+   $t0=time;
 
-Hmmm. I wonder what this text will do?
+   # Set program name, so subroutines and main body all know what the name of this program is:
+   $pname = substr $0, 1 + rindex $0, '/';
+}
+# WARNING: BEGIN blocks cannot see variable initializations because those only happen after they run.
+#          Also, BEGIN blocks can only use subroutines which are DEFINED lexically above them on the page,
+#          so ironically, it pays dividends to put all "BEGIN" blocks at the lexical END of your program.
+
+# ======= END BLOCKS: ======================================================================================
+# NOTE: This is not a subroutine. Do not try to "call" this. This runs automatically after program exits.
+END {
+   # Do whatever needs done after program exits here:
+   ;
+}
+# WARNING: Program has already exited, and all variables are reset to '' or 0, before any END blocks are run;
+#          so, don't expect to be able to read the left-over content of any top-level variables here.
