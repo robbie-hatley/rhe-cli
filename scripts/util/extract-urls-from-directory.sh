@@ -1,3 +1,3 @@
 #!/usr/bin/bash
 # extract-urls-from-directory.sh
-/usr/bin/grep -PsI --color=never 'https?://' */* | substitute.pl '=22' ' ' 'g' | extract-urls.pl | sort | uniq
+/usr/bin/grep -PsIr --color=never 'https?://' * | extract-urls.pl | sort | uniq

@@ -126,10 +126,16 @@ use RH::RegTest;
 use RH::Util;
 use RH::WinChomp;
 
-# ======= TOP-OF-PAGE LEXICAL VARIABLES: =====================================================================
+# ======= VARIABLES: =========================================================================================
+
+# System Variables:
+$" = ', ' ; # Quoted-array element separator = ", ".
+
+# Early-initialization Variables (these get initialized before this program is even COMPILED, much less ran):
+my $t0    ; # Time in seconds since 00:00:00 UTC on Jan 01, 1970, at time of program entry.
+my $pname ; # The name of this program.
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
-   $"         = ', '      ; # Quoted-array formatting.  string    Comma space.
 my @opts      = ()        ; # options                   array     Options.
 my @args      = ()        ; # arguments                 array     Arguments.
 my $Db        = 0         ; # Debug?                    bool      Don't debug.
@@ -173,20 +179,24 @@ sub stats   ; # Print statistics.
 sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
 
+# ======= BEGIN: =============================================================================================
+# NOTE: This is not a subroutine. Do not try to "call" this. This runs automatically before program compiles:
+BEGIN {
+   # Start timer before program is even compiled, to include compile time in run time:
+   $t0=time;
+
+   # Set program name, so subroutines and main body all know what the name of this program is:
+   $pname = substr $0, 1 + rindex $0, '/';
+}
+
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   # Start timer:
-   my $t0 = time;
-
    # Process @ARGV:
    argv;
 
-   # Get program name:
-   my $pname = substr $0, 1 + rindex $0, '/';
-
    # Print program entry message if being terse or verbose:
-   if ( $Verbose >= 1 ) {
+   if ( 1 == $Verbose || 2 == $Verbose ) {
       say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
    }
 
@@ -206,11 +216,11 @@ sub help    ; # Print help and exit.
    # unless user requested help, in which case just print help:
    $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
 
-   # Stop timer:
+   # Note time of program exit:
    my $t1 = time;
 
    # Print exit message if being terse or verbose:
-   if ( $Verbose >= 1 ) {
+   if ( 1 == $Verbose || 2 == $Verbose ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
       say    STDERR '';
       say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
