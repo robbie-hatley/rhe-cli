@@ -63,31 +63,31 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
+   use v5.36;
 
-# does a given scalar consist purely of letters a-z?
-sub is_lower_case_english ($word) {
-   $word =~ m/^[a-z]+$/;
-}
-
-# What is the minimum time to type a given word?
-sub minimum_time ($word) {
-   my $mt = 0;       # minimum time
-   my $pc = ord 'a'; # previous character's ord
-   for my $idx (0..length($word)-1) {
-      # Get current character's ord:
-      my $cc = ord substr $word, $idx, 1;
-      # Get "right" (clockwise) move time:
-      my $r = ($cc-$pc)%26;
-      # Get shortest move time:
-      my $s = ($r < 14) ? $r : 26-$r;
-      # Add shortest move time, plus 1 for typing, to $mt:
-      $mt += ($s+1);
-      # Set previous character to current character:
-      $pc = $cc;
+   # does a given scalar consist purely of letters a-z?
+   sub is_lower_case_english ($word) {
+      $word =~ m/^[a-z]+$/;
    }
-   return $mt;
-}
+
+   # What is the minimum time to type a given word?
+   sub minimum_time ($word) {
+      my $mt = 0;       # minimum time
+      my $pc = ord 'a'; # previous character's ord
+      for my $idx (0..length($word)-1) {
+         # Get current character's ord:
+         my $cc = ord substr $word, $idx, 1;
+         # Get "right" (clockwise) move time:
+         my $r = ($cc-$pc)%26;
+         # Get shortest move time:
+         my $s = ($r < 14) ? $r : 26-$r;
+         # Add shortest move time, plus 1 for typing, to $mt:
+         $mt += ($s+1);
+         # Set previous character to current character:
+         $pc = $cc;
+      }
+      return $mt;
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:

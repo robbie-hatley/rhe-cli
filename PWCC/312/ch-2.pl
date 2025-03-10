@@ -48,7 +48,7 @@ string for each letter/number pair, then count Frecce Tricolori strings (that is
 colors). All apparent allusions to Malvina Reynolds' song "Little Boxes", and to "313° Gruppo Addestramento
 Acrobatico Pattuglia Acrobatica Nazionale Frecce Tricolori", and to The Ramstein Airshow Disaster, are purely
 intentional. Some history should not be forgotten. (EG, we forgot Hitler then did it all over again on
-5 November 2024, and now USA is controlled by a pair of mentally-unstable billionare oligarchs. Oops.)
+5 November 2024, and now USA is controlled by a pair of mentally-unstable billionare oligarch fascists. Oops.)
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
@@ -64,48 +64,48 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
+   use v5.36;
 
-# Does a given scalar contain a valid descriptor?
-sub is_valid_descriptor($x) {
-   my $l = length($x);
-   return 0 if 0 != $l%2;
-   for my $idx (0..$l-1) {
-      my $c = substr $x, $idx, 1;
-      if (0 == $idx%2) {
-         return 0 if $c !~ m/^[RGB]$/;
+   # Does a given scalar contain a valid descriptor?
+   sub is_valid_descriptor($x) {
+      my $l = length($x);
+      return 0 if 0 != $l%2;
+      for my $idx (0..$l-1) {
+         my $c = substr $x, $idx, 1;
+         if (0 == $idx%2) {
+            return 0 if $c !~ m/^[RGB]$/;
+         }
+         else {
+            return 0 if $c !~ m/^\d$/;
+         }
       }
-      else {
-         return 0 if $c !~ m/^\d$/;
-      }
+      return 1;
    }
-   return 1;
-}
 
-# How many tricolor boxes are implied by a given descriptor?
-sub Frecce_Tricolori ($x) {
-   # Little boxes on the hillside
-   # Little boxes made of ticky tacky
-   # Little boxes on the hillside
-   # Little boxes all the same
-   # There's a green one and a pink one
-   # And a blue one and a yellow one
-   # And they're all made out of ticky tacky
-   # And they all look just the same
-   my @boxes = ('','','','','','','','','','');
-   for my $idx (0..length($x)/2-1) {
-      $boxes[substr($x,2*$idx+1,1)] .= substr($x,2*$idx,1);
-   }
-   my $Ramstein = 0;
-   for my $idx (0..9) {
-      if ($boxes[$idx] =~ m/R/
-       && $boxes[$idx] =~ m/G/
-       && $boxes[$idx] =~ m/B/) {
-          ++$Ramstein;
+   # How many tricolor boxes are implied by a given descriptor?
+   sub Frecce_Tricolori ($x) {
+      # Little boxes on the hillside
+      # Little boxes made of ticky tacky
+      # Little boxes on the hillside
+      # Little boxes all the same
+      # There's a green one and a pink one
+      # And a blue one and a yellow one
+      # And they're all made out of ticky tacky
+      # And they all look just the same
+      my @boxes = ('','','','','','','','','','');
+      for my $idx (0..length($x)/2-1) {
+         $boxes[substr($x,2*$idx+1,1)] .= substr($x,2*$idx,1);
       }
+      my $Ramstein = 0;
+      for my $idx (0..9) {
+         if ($boxes[$idx] =~ m/R/
+          && $boxes[$idx] =~ m/G/
+          && $boxes[$idx] =~ m/B/) {
+             ++$Ramstein;
+         }
+      }
+      return $Ramstein;
    }
-   return $Ramstein;
-}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
