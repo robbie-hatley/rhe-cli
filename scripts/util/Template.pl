@@ -92,7 +92,8 @@
 #                   programs which are more dangerous than "age.pl" is.
 # Tue Mar 04, 2025: Got rid of prototypes and empty sigs. Added comments to subroutine predeclarations.
 #                   Now using "BEGIN" and "END" blocks to print entry and exit messages.
-# Fri Mar 07, 2025: Got rid of all BEGIN and END blocks (too problematic). Got rid of all global variables.
+# Sun Mar 09, 2025: Got rid of all BEGIN and END blocks, as they're too unreliable in their variable access.
+#                   The only global variables are now $cmpl_beg, $cmpl_end, and $pname.
 ##############################################################################################################
 
 ##############################################################################################################
@@ -131,9 +132,36 @@ use RH::WinChomp;
 # System Variables:
 $" = ', ' ; # Quoted-array element separator = ", ".
 
-# Early-initialization Variables (these get initialized before this program is even COMPILED, much less ran):
-my $t0    ; # Time in seconds since 00:00:00 UTC on Jan 01, 1970, at time of program entry.
-my $pname ; # The name of this program.
+# Global Variables:
+our $pname ; # The name of this program. (Do NOT initialize here!!! That would wipe-out name set by BEGIN!!!)
+BEGIN {
+   # Set program name, so that all parts of this program know what the name of this program is:
+   $pname = substr $0, 1 + rindex $0, '/';
+}
+our $cmpl_beg; # Compilation begin. (Do NOT initialize here!!! That would wipe-out time set by BEGIN!!!)
+our $cmpl_end; # Compilation end.   (Do NOT initialize here!!! That would wipe-out time set by INIT !!!)
+BEGIN {$cmpl_beg = time}
+INIT  {$cmpl_end = time}
+
+# NOTE: Always remember, if using BEGIN blocks, only the declaration half of any "my|our $varname = value;"
+# statement is executed before the begin blocks; the "= value;" part is executed AFTER all BEGIN blocks!!!
+# So, THIS code:
+#    my $dog = 'Spot';
+#    BEGIN {defined $dog ? print("defined\n") : print("undefined\n");}
+#    print("My dog's name is $dog.\n");
+#    END   {print("$dog is a nice dog.\n");}
+# Is the same as THIS code:
+#    my $dog;
+#    defined $dog ? print("defined\n") : print("undefined\n");
+#    $dog = 'Spot';
+#    print("My dog's name is $dog.\n");
+#    print("$dog is a nice dog.\n");
+# And EITHER of those code blocks will print:
+#    undefined
+#    My dog's name is Spot.
+#    Spot is a nice dog.
+
+# Local variables:
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
 my @opts      = ()        ; # options                   array     Options.
@@ -170,8 +198,9 @@ my $unkncount = 0 ; # Count of all unknown files.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-# NOTE: These alert the compiler that these names, when encountered in subroutine definitions and in the main
-# body of the program, are subroutines, so it needs to find, compile, and link their definitions:
+# NOTE: These alert the compiler that these names, when encountered (whether in subroutine definitions,
+# BEGIN, CHECK, UNITCHECK, INIT, END, other subroutines, or in the main body of the program), are subroutines,
+# so it needs to find, compile, and link their definitions:
 sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
 sub curfile ; # Process current file.
@@ -182,16 +211,20 @@ sub help    ; # Print help and exit.
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   # Process @ARGV:
+   # Start execution timer:
+   my $t0 = time;
+
+   # Process @ARGV and set settings:
    argv;
 
    # Print program entry message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
       say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
+      printf(STDERR "Compilation took %.3fms\n",1000*($cmpl_end-$cmpl_beg));
    }
 
    # Print the values of the settings variables if debugging:
-   if ( $Db ) {
+   if ( 1 == $Db ) {
       say STDERR '';
       say STDERR "Options   = (", join(', ', map {"\"$_\""} @opts), ')';
       say STDERR "Arguments = (", join(', ', map {"\"$_\""} @args), ')';
@@ -206,7 +239,7 @@ sub help    ; # Print help and exit.
    # unless user requested help, in which case just print help:
    $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
 
-   # Note time of program exit:
+   # Stop execution timer:
    my $t1 = time;
 
    # Print exit message if being terse or verbose:
@@ -260,21 +293,21 @@ sub argv {
    my $NA = scalar(@args);
 
    # If user typed more than 2 arguments, and we're not debugging, print error and help messages and exit:
-   if ( $NA > 2 && !$Db ) {   # If number of arguments >= 3 and we're not debugging,
-      error($NA);              # print error message,
-      help;                    # and print help message,
-      exit 666;                # and exit, returning The Number Of The Beast.
+   if ( $NA > 2 && !$Db ) {      # If number of arguments >= 3 and we're not debugging,
+      error($NA);                # print error message,
+      help;                      # and print help message,
+      exit 666;                  # and exit, returning The Number Of The Beast.
    }
 
    # First argument, if present, is a file-selection regexp:
-   if ( $NA >= 1 ) {           # If number of arguments >= 1,
-      $RegExp = qr/$args[0]/o; # set $RegExp to $args[0].
+   if ( 1 == $NA || 2 == $NA ) { # If number of arguments >= 1,
+      $RegExp = qr/$args[0]/o;   # set $RegExp to $args[0].
    }
 
    # Second argument, if present, is a file-selection predicate:
-   if ( $NA >= 2 ) {           # If number of arguments >= 2,
-      $Predicate = $args[1];   # set $Predicate to $args[1]
-      $Target = 'A';           # and set $Target to 'A' to avoid conflicts with $Predicate.
+   if ( 2 == $NA ) {             # If number of arguments >= 2,
+      $Predicate = $args[1];     # set $Predicate to $args[1]
+      $Target = 'A';             # and set $Target to 'A' to avoid conflicts with $Predicate.
    }
 
    # Return success code 1 to caller:
@@ -290,7 +323,7 @@ sub curdire {
    my $cwd = d getcwd;
 
    # Announce current working directory if being at-least-somewhat-verbose:
-   if ( $Verbose >= 1) {
+   if ( 1 == $Verbose || 2 == $Verbose) {
       say "\nDirectory # $direcount: $cwd\n";
    }
 
@@ -336,7 +369,7 @@ sub curfile ($file) {
    my $path = $file->{Path};
 
    # Announce path:
-   if ( $Db ) {
+   if ( 1 == $Db ) {
       say STDOUT "Simulate: $path";
       # (Don't actually DO anything to file at $path.)
    }
@@ -352,7 +385,7 @@ sub curfile ($file) {
 # Print statistics for this program run:
 sub stats {
    # If being terse or verbose, print basic stats to STDERR:
-   if ( $Verbose >= 1 ) {
+   if ( 1 == $Verbose || 2 == $Verbose ) {
       say    STDERR '';
       say    STDERR 'Statistics for this directory tree:';
       say    STDERR "Navigated $direcount directories.";
@@ -361,7 +394,7 @@ sub stats {
    }
 
    # If being verbose, also print extended stats to STDERR:
-   if ( $Verbose >= 2) {
+   if ( 2 == $Verbose ) {
       say    STDERR '';
       say    STDERR 'Directory entries encountered in this tree included:';
       printf STDERR "%7u total files\n",                            $totfcount;
@@ -503,25 +536,3 @@ sub help {
    END_OF_HELP
    return 1;
 } # end sub help
-
-# ======= BEGIN BLOCKS: ======================================================================================
-# NOTE: This is not a subroutine. Do not try to "call" this. This runs automatically before program compiles:
-BEGIN {
-   # Start timer before program is even compiled, to include compile time in run time:
-   $t0=time;
-
-   # Set program name, so subroutines and main body all know what the name of this program is:
-   $pname = substr $0, 1 + rindex $0, '/';
-}
-# WARNING: BEGIN blocks cannot see variable initializations because those only happen after they run.
-#          Also, BEGIN blocks can only use subroutines which are DEFINED lexically above them on the page,
-#          so ironically, it pays dividends to put all "BEGIN" blocks at the lexical END of your program.
-
-# ======= END BLOCKS: ======================================================================================
-# NOTE: This is not a subroutine. Do not try to "call" this. This runs automatically after program exits.
-END {
-   # Do whatever needs done after program exits here:
-   ;
-}
-# WARNING: Program has already exited, and all variables are reset to '' or 0, before any END blocks are run;
-#          so, don't expect to be able to read the left-over content of any top-level variables here.
