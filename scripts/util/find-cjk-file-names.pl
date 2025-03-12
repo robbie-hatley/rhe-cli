@@ -1,52 +1,57 @@
 #!/usr/bin/env -S perl -CSDA
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
-########################################################################################################################
+##############################################################################################################
 # find-cjk-file-names.pl
 # Written by Robbie Hatley.
 #
 # Edit history:
 # Mon Mar 15, 2021: Wrote it.
-# Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
+# Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
-########################################################################################################################
+# Mon Mar 10, 2025: Got rid of all given/when. Got rid of all prototypes and empty subs. Added signatures.
+#                   Increased min ver from "5.32" to "5.36". Reduced width from 120 to 110. Added stackable
+#                   single-letter options.
+##############################################################################################################
 
-use v5.32;
+use v5.36;
 use utf8;
 
 use Time::HiRes 'time';
 
 use RH::Dir;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv    ()  ; # Process @ARGV.
-sub curdire ()  ; # Process current directory.
-sub curfile ($) ; # Process current file.
-sub stats   ()  ; # Print statistics.
-sub error   ($) ; # Handle errors.
-sub help    ()  ; # Print help.
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub stats   ; # Print statistics.
+sub error   ; # Handle errors.
+sub help    ; # Print help.
 
-# ======= VARIABLES: ===================================================================================================
+# ======= VARIABLES: =========================================================================================
 
-# Use debugging? (Ie, print extra diagnostics?)
-my $db = 0; # Set to 1 for debugging, 0 for no debugging.
-
-# Settings:                  Meaning:                  Range:    Default:
-my $Recurse = 0          ; # Recurse subdirectories?   bool      0
-my $Target  = 'A'        ; # Target                    F|D|B|A   'A'
-my $Verbose = 0          ; # Verbose                   bool      0
-my $RegExp  = qr/^.+$/o  ; # Regular Expression.       regexp    qr/^.+$/o (matches all strings)
+# Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
+my @opts      = ()        ; # options                   array     Options.
+my @args      = ()        ; # arguments                 array     Arguments.
+my $Db        = 0         ; # Debug?                    bool      Don't debug.
+my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
+my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
+my $Target    = 'A'       ; # Target                    F|D|B|A   All directory entries.
+my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 
 # Counters:
 my $direcount = 0; # Count of directories processed by curdire.
 my $filecount = 0; # Count of    files    processed by curfile.
 my $findcount = 0; # Count of dir entries matching regexps.
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
    my $t0 = time;
@@ -58,50 +63,61 @@ my $findcount = 0; # Count of dir entries matching regexps.
    if ($Verbose) {say "Target  = $Target"  ;}
    if ($Verbose) {say "RegExp  = $RegExp"  ;}
 
-   $Recurse and RecurseDirs {curdire} or curdire;
-
-   if ($Verbose) {stats;}
+   # Process current directory (and all subdirectories if recursing) and print stats,
+   # unless user requested help, in which case just print help:
+   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
 
    my $t1 = time;
    my $te = $t1 - $t0;
 
-   if ($Verbose) {say "\nNow exiting program \"" . get_name_from_path($0) . "\". Execution time was $te seconds.";}
+   if ($Verbose) {
+      say "\nNow exiting program \"" . get_name_from_path($0) . "\". Execution time was $te seconds.";
+   }
 
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-sub argv ()
-{
-   for ( my $i = 0 ; $i < @ARGV ; ++$i )
-   {
-      $_ = $ARGV[$i];
-      if (/^-[\pL]{1,}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/)
-      {
-            if ( $_ eq '-h' || $_ eq '--help'         ) {help; exit 777;}
-         elsif ( $_ eq '-r' || $_ eq '--recurse'      ) {$Recurse =  1 ;}
-         elsif ( $_ eq '-f' || $_ eq '--target=files' ) {$Target  = 'F';}
-         elsif ( $_ eq '-d' || $_ eq '--target=dirs'  ) {$Target  = 'D';}
-         elsif ( $_ eq '-b' || $_ eq '--target=both'  ) {$Target  = 'B';}
-         elsif ( $_ eq '-a' || $_ eq '--target=all'   ) {$Target  = 'A';}
-         elsif ( $_ eq '-v' || $_ eq '--verbose'      ) {$Verbose =  1 ;}
-         splice @ARGV, $i, 1;
-         --$i;
-      }
+sub argv {
+   # Get options and arguments:
+   my $end = 0;              # end-of-options flag
+   my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
+   my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
+   for ( @ARGV ) {           # For each element of @ARGV,
+      /^--$/                 # "--" = end-of-options marker = construe all further CL items as arguments,
+      and $end = 1           # so if we see that, then set the "end-of-options" flag
+      and push @opts, $_     # and push the "--" to @opts
+      and next;              # and skip to next element of @ARGV.
+      !$end                  # If we haven't yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we get a valid short option
+      ||  /^--(?!-)$d+$/ )   # or a valid long option,
+      and push @opts, $_     # then push item to @opts
+      or  push @args, $_;    # else push item to @args.
    }
-   my $NA = scalar(@ARGV);
-   given ($NA)
-   {
-      when (0) {                       ;} # Do nothing.
-      when (1) {$RegExp = qr/$ARGV[0]/o;} # Set $RegExp.
-      default  {error($NA)             ;} # Print error and help messages then exit 666.
+
+   # Process options:
+   for ( @opts ) {
+      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
+      /^-$s*e/ || /^--debug$/   and $Db      =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
+      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
+      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
+      /^-$s*f/ || /^--files$/   and $Target  = 'F' ;
+      /^-$s*d/ || /^--dirs$/    and $Target  = 'D' ;
+      /^-$s*b/ || /^--both$/    and $Target  = 'B' ;
+      /^-$s*a/ || /^--all$/     and $Target  = 'A' ; # Default.
    }
+
+   my $NA = scalar(@args);
+   if ( $NA > 1 ) { error($NA); help; exit(666); }
+   if ( $NA > 0 ) { $RegExp = qr/$args[0]/o;     }
    return 1;
-} # end sub argv ()
+} # end sub argv
 
-sub curdire ()
-{
+sub curdire {
    # Increment directory counter:
    ++$direcount;
 
@@ -113,52 +129,47 @@ sub curdire ()
    my $curdirfiles = GetFiles($cwd, $Target, $RegExp);
 
    # Iterate through $curdirfiles and send each file to curfile():
-   foreach my $file (@{$curdirfiles})
-   {
+   foreach my $file (@{$curdirfiles}) {
       curfile($file);
    }
    return 1;
-} # end sub curdire ()
+} # end sub curdire
 
 # Process current file:
-sub curfile ($)
-{
-   my $file = shift;
+sub curfile ($file) {
    ++$filecount;
    # Print paths of all files with names containing at least one CJK (Chinese, Japanese, or Korean) character:
-   if ( $file->{Name} =~ m/\p{Block: CJK}/ )
-   {
+   if ( $file->{Name} =~ m/\p{Block: CJK}/ ) {
       ++$findcount; # Count of all files which also match both regexps.
       say $file->{Path};
    }
    return 1;
-} # end sub curfile ()
+} # end sub curfile
 
-sub stats ()
-{
-   warn "Statistics for this directory tree:\n";
-   warn "Navigated $direcount directories.\n";
-   warn "Processed $filecount files.\n";
-   warn "Found $findcount paths with names containing CJK ideographic characters.\n";
+sub stats {
+   if ( 1 == $Verbose || 2 == $Verbose ) {
+      warn "Statistics for this directory tree:\n";
+      warn "Navigated $direcount directories.\n";
+      warn "Processed $filecount files.\n";
+      warn "Found $findcount paths with names containing CJK ideographic characters.\n";
+   }
    return 1;
-} # end sub stats ()
+} # end sub stats
 
-sub error ($)
-{
-   my $NA = shift;
+sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+
    Error: you typed $NA arguments, but this program takes at most 1 argument,
    which, if present, must be a Perl-Compliant Regular Expression specifying
    which directory entries to process. Help follows:
-
    END_OF_ERROR
-   help;
-   exit 666;
-} # end sub error ($)
+   return 1;
+} # end sub error
 
-sub help ()
+sub help
 {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+
    Welcome to "find-cjk-file-names.pl". This program finds all files
    in the current directory (and all subdirectories if a -r or --recurse
    option is used) which have names containing Chinese, Japanese, or
@@ -197,4 +208,4 @@ sub help ()
    programmer.
    END_OF_HELP
    return 1;
-} # end sub help ()
+} # end sub help

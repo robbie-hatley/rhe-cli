@@ -86,7 +86,7 @@
 # Fri Feb 14, 2025: Got rid of Sys::Binmode and made other minor tweaks.
 # Tue Feb 18, 2025: Added timestamps to program entry and exit messages; decoupled debug, verbosity, and help;
 #                   consolidated debug variable printing; consolidated recursion, stats, and help on one line;
-#                   made "@opts"and "@args" file-lexical; and "--" is now stored in "@opts". I incorporated
+#                   made "@Opts"and "@Args" file-lexical; and "--" is now stored in "@Opts". I incorporated
 #                   many bits of tech from "age.pl", but I decided to keep "extra arguments" a fatal error
 #                   (instead of just a warning as in "age.pl"), because this template may be used to make
 #                   programs which are more dangerous than "age.pl" is.
@@ -164,8 +164,8 @@ INIT  {$cmpl_end = time}
 # Local variables:
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
-my @opts      = ()        ; # options                   array     Options.
-my @args      = ()        ; # arguments                 array     Arguments.
+my @Opts      = ()        ; # options                   array     Options.
+my @Args      = ()        ; # arguments                 array     Arguments.
 my $Db        = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
@@ -226,8 +226,8 @@ sub help    ; # Print help and exit.
    # Print the values of the settings variables if debugging:
    if ( 1 == $Db ) {
       say STDERR '';
-      say STDERR "Options   = (", join(', ', map {"\"$_\""} @opts), ')';
-      say STDERR "Arguments = (", join(', ', map {"\"$_\""} @args), ')';
+      say STDERR "Options   = (", join(', ', map {"\"$_\""} @Opts), ')';
+      say STDERR "Arguments = (", join(', ', map {"\"$_\""} @Args), ')';
       say STDERR "Verbose   = $Verbose";
       say STDERR "Recurse   = $Recurse";
       say STDERR "Target    = $Target";
@@ -265,17 +265,17 @@ sub argv {
    for ( @ARGV ) {           # For each element of @ARGV,
       /^--$/                 # "--" = end-of-options marker = construe all further CL items as arguments,
       and $end = 1           # so if we see that, then set the "end-of-options" flag
-      and push @opts, $_     # and push the "--" to @opts
+      and push @Opts, $_     # and push the "--" to @Opts
       and next;              # and skip to next element of @ARGV.
       !$end                  # If we haven't yet reached end-of-options,
       && ( /^-(?!-)$s+$/     # and if we get a valid short option
       ||  /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @opts, $_     # then push item to @opts
-      or  push @args, $_;    # else push item to @args.
+      and push @Opts, $_     # then push item to @Opts
+      or  push @Args, $_;    # else push item to @Args.
    }
 
    # Process options:
-   for ( @opts ) {
+   for ( @Opts ) {
       /^-$s*h/ || /^--help$/    and $Help    =  1  ;
       /^-$s*e/ || /^--debug$/   and $Db      =  1  ;
       /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
@@ -290,23 +290,24 @@ sub argv {
    }
 
    # Get number of arguments:
-   my $NA = scalar(@args);
+   my $NA = scalar(@Args);
 
    # If user typed more than 2 arguments, and we're not debugging, print error and help messages and exit:
-   if ( $NA > 2 && !$Db ) {      # If number of arguments >= 3 and we're not debugging,
+   if ( $NA > 2                  # If number of arguments > 2
+        && !$Db && !$Help ) {    # and we're not debugging and not getting help,
       error($NA);                # print error message,
       help;                      # and print help message,
       exit 666;                  # and exit, returning The Number Of The Beast.
    }
 
    # First argument, if present, is a file-selection regexp:
-   if ( 1 == $NA || 2 == $NA ) { # If number of arguments >= 1,
-      $RegExp = qr/$args[0]/o;   # set $RegExp to $args[0].
+   if ( $NA > 0 ) {              # If number of arguments > 0,
+      $RegExp = qr/$Args[0]/o;   # set $RegExp to $args[0].
    }
 
    # Second argument, if present, is a file-selection predicate:
-   if ( 2 == $NA ) {             # If number of arguments >= 2,
-      $Predicate = $args[1];     # set $Predicate to $args[1]
+   if ( $NA > 1 ) {              # If number of arguments >= 2,
+      $Predicate = $Args[1];     # set $Predicate to $args[1]
       $Target = 'A';             # and set $Target to 'A' to avoid conflicts with $Predicate.
    }
 

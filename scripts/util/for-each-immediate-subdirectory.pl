@@ -19,6 +19,7 @@
 #                   Now using GetFiles instead of glob_utf8, so as to more-easily get fully-qualified directory names.
 #                   Also added time-stamping.
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
+# Mon Mar 10, 2025: Got rid of given/when.
 ########################################################################################################################
 
 use v5.32;
@@ -75,12 +76,9 @@ sub argv ()
          --$i;
       }
    }
-   my $NA = scalar(@ARGV);            # Get number of arguments.
-   given ($NA)
-   {                                  # Given the number of arguments,
-      when (1) {$Command = $ARGV[0];} # if 1, set $Command;
-      default  {error($NA);}          # else, print error and help messages and exit.
-   }
+   my $NA = scalar(@ARGV);
+   if ( 1 != $NA ) {error($NA); help; exit(666);}
+   $Command = $ARGV[0];
    return 1;
 } # end sub argv ()
 
@@ -116,18 +114,17 @@ sub stats ()
 sub error ($)
 {
    my $NA = shift;
+
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
    Error: You typed $NA arguments, but this program requires exactly 1 argument.
    Help follows:
-
    END_OF_ERROR
-   help;
-   exit(666);
 } # end sub error ($)
 
 sub help ()
 {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+
    Welcome to "for-each-subdir.pl", Robbie Hatley's nifty program for
    executing a given command once in each immediate subdirectory of
    the current directory (but NOT the current directory or any lower-level

@@ -24,6 +24,7 @@
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
 # Sat Nov 27, 2021: Renamed to "find-bad-jpgs.pl". Fixed wide character error (due to sending unencrypted name to open).
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
+# Mon Mar 10, 2025: Got rid of given/when.
 ########################################################################################################################
 
 use v5.32;
@@ -88,21 +89,8 @@ sub argv ()
       }
    }
    my $NA = scalar(@ARGV);
-   given ($NA)
-   {
-      when (0)
-      {
-         ; # Do nothing.
-      }
-      when (1)
-      {
-         $Regexp = $ARGV[0];
-      }
-      default
-      {
-         error($NA);
-      }
-   }
+   if ( $NA > 1 ) {error($NA); help; exit(666);}
+   if ( $NA > 0 ) {$Regexp = $ARGV[0]}
    return 1;
 } # end sub argv ()
 
@@ -166,18 +154,17 @@ sub error ($)
 {
    my $NA = shift;
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+
    Error: you typed $NA arguments, but this program takes at most one argument,
    which, if present, must be a regular expression specifying which files names
-   to process. Help follows:
-
+   to process. Help follows.
    END_OF_ERROR
-   help;
-   exit 666;
 } # end sub error ($)
 
 sub help ()
 {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+
    Welcome to "find-bad-jpegs.pl".
    This program examines all files in the current directory (and all of its
    subdirectories if an -r or --recurse option is used) which have one of the

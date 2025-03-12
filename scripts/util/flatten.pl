@@ -12,6 +12,8 @@
 # Edit history:
 # Fri Jun 14, 2024: Wrote it.
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
+# Mon Mar 10, 2025: Removed extended stats. Removed recursion (results in partial flattening, only 1 level,
+#                   rather than the full flattening one might expect). Fixed errors in error().
 ##############################################################################################################
 
 use v5.36;
@@ -43,7 +45,6 @@ BEGIN {$t0 = time}
 # Setting:      Default Value:   Meaning of Setting:         Range:     Meaning of Default:
 my $Db        = 0            ; # Debug?                      bool       Don't debug.
 my $Verbose   = 0            ; # Be wordy?                   0,1,2      Be quiet.
-my $Recurse   = 0            ; # Recurse subdirectories?     bool       Be local.
 my $Target    = 'A'          ; # Files, dirs, both, all?     F|D|B|A    Process all file types.
 my $RegExp    = qr/^.+$/     ; # Regular expression.         regexp     Process all file names.
 my $Predicate = 1            ; # Boolean predicate.          bool       Process all file types.
@@ -52,23 +53,6 @@ my $Predicate = 1            ; # Boolean predicate.          bool       Process 
 my $direcount = 0 ; # Count of directories processed by curdire().
 my $filecount = 0 ; # Count of files found which match file-type target and file-name regexp.
 my $predcount = 0 ; # Count of files found which also match file-type predicate.
-
-# Accumulations of counters from RH::Dir::GetFiles():
-my $totfcount = 0 ; # Count of all directory entries encountered.
-my $noexcount = 0 ; # Count of all nonexistent files encountered.
-my $ottycount = 0 ; # Count of all tty files.
-my $cspccount = 0 ; # Count of all character special files.
-my $bspccount = 0 ; # Count of all block special files.
-my $sockcount = 0 ; # Count of all sockets.
-my $pipecount = 0 ; # Count of all pipes.
-my $brkncount = 0 ; # Count of all symbolic links to nowhere
-my $slkdcount = 0 ; # Count of all symbolic links to directories.
-my $linkcount = 0 ; # Count of all symbolic links to regular files.
-my $weircount = 0 ; # Count of all symbolic links to weirdness (things other than files or dirs).
-my $sdircount = 0 ; # Count of all directories.
-my $hlnkcount = 0 ; # Count of all regular files with multiple hard links.
-my $regfcount = 0 ; # Count of all regular files.
-my $unkncount = 0 ; # Count of all unknown files.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
@@ -79,26 +63,25 @@ my $unkncount = 0 ; # Count of all unknown files.
    # Process @ARGV:
    argv;
 
-   # Print entry message if being terse or verbose:
-   if ( $Verbose >= 1 ) {
+   # Print entry message if being verbose:
+   if ( 2 == $Verbose ) {
       say    STDERR '';
       say    STDERR "Now entering program \"$pname\"." ;
       say    STDERR "\$Db        = $Db"        ;
       say    STDERR "\$Verbose   = $Verbose"   ;
-      say    STDERR "\$Recurse   = $Recurse"   ;
       say    STDERR "\$Target    = $Target"    ;
       say    STDERR "\$RegExp    = $RegExp"    ;
       say    STDERR "\$Predicate = $Predicate" ;
    }
 
-   # Process current directory (and all subdirectories if recursing):
-   $Recurse and RecurseDirs {curdire} or curdire;
+   # Process current directory only:
+   curdire;
 
    # Print stats:
    stats;
 
    # Print exit message if being terse or verbose:
-   if ( $Verbose >= 1 ) {
+   if ( 2 == $Verbose ) {
       say    STDERR '';
       say    STDERR "Now exiting program \"$pname\".";
       printf STDERR "Execution time was %.3f seconds.", time - $t0;
@@ -136,8 +119,6 @@ sub argv {
       /^-$s*q/ || /^--quiet$/   and $Verbose =  0     ;
       /^-$s*t/ || /^--terse$/   and $Verbose =  1     ;
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2     ;
-      /^-$s*l/ || /^--local$/   and $Recurse =  0     ;
-      /^-$s*r/ || /^--recurse$/ and $Recurse =  1     ;
       /^-$s*f/ || /^--files$/   and $Target  = 'F'    ;
       /^-$s*d/ || /^--dirs$/    and $Target  = 'D'    ;
       /^-$s*b/ || /^--both$/    and $Target  = 'B'    ;
@@ -181,40 +162,21 @@ sub curdire {
    # Get current working directory:
    my $cwd = d getcwd;
 
-   # Announce current working directory if being at-least-somewhat-verbose:
-   if ( $Verbose >= 1) {
+   # Announce current working directory if being terse or verbose:
+   if ( 1 == $Verbose || 2 == $Verbose ) {
       say "\nDirectory # $direcount: $cwd\n";
    }
 
-   # Get list of file-info packets in $cwd matching $Target and $RegExp:
-   my $curdirfiles = GetFiles($cwd, $Target, $RegExp);
-
-   # If being very-verbose, also accumulate all counters from RH::Dir:: to main:
-   if ( $Verbose >= 2 ) {
-      $totfcount += $RH::Dir::totfcount; # all directory entries found
-      $noexcount += $RH::Dir::noexcount; # nonexistent files
-      $ottycount += $RH::Dir::ottycount; # tty files
-      $cspccount += $RH::Dir::cspccount; # character special files
-      $bspccount += $RH::Dir::bspccount; # block special files
-      $sockcount += $RH::Dir::sockcount; # sockets
-      $pipecount += $RH::Dir::pipecount; # pipes
-      $brkncount += $RH::Dir::slkdcount; # symbolic links to nowhere
-      $slkdcount += $RH::Dir::slkdcount; # symbolic links to directories
-      $linkcount += $RH::Dir::linkcount; # symbolic links to regular files
-      $weircount += $RH::Dir::weircount; # symbolic links to weirdness
-      $sdircount += $RH::Dir::sdircount; # directories
-      $hlnkcount += $RH::Dir::hlnkcount; # regular files with multiple hard links
-      $regfcount += $RH::Dir::regfcount; # regular files
-      $unkncount += $RH::Dir::unkncount; # unknown files
-   }
+   # Get list of paths in $cwd matching $Target and $RegExp:
+   my @paths = glob_regexp_utf8($cwd, $Target, $RegExp);
 
    # Process each path that matches $RegExp, $Target, and $Predicate:
-   foreach my $file (sort {$a->{Name} cmp $b->{Name}} @$curdirfiles) {
+   foreach my $path (@paths) {
       ++$filecount;
-      local $_ = e $file->{Path};
+      local $_ = e $path;
       if (eval($Predicate)) {
          ++$predcount;
-         curfile($file);
+         curfile($path);
       }
    }
 
@@ -223,10 +185,10 @@ sub curdire {
 } # end sub curdire
 
 # Process current file:
-sub curfile ($file) {
-   # Get dirname from path:
-   my $dirname = get_dirname_from_path($file->{Path});
-   my $oldname = get_name_from_path($file->{Path});
+sub curfile ($path) {
+   # Get the name of the immediate parent directory of the file at this path:
+   my $dirname = get_dirname_from_path($path);
+   my $oldname = get_name_from_path($path);
    my $newname = $dirname . '_' . $oldname;
 
    # Announce path:
@@ -242,7 +204,9 @@ sub curfile ($file) {
       say STDOUT 'Attempting to rename file:';
       say STDOUT "\$oldname = $oldname";
       say STDOUT "\$newname = $newname";
-      rename_file($oldname, $newname);
+      rename_file($oldname, $newname)
+      and say STDOUT "Rename succeeded."
+      or  say STDOUT "Rename failed.";
    }
 
    # Return success code 1 to caller:
@@ -251,42 +215,23 @@ sub curfile ($file) {
 
 # Print statistics for this program run:
 sub stats {
-   if ( $Verbose >= 1 ) {
+   if ( 1 == $Verbose || 2 == $Verbose ) {
       say    STDERR '';
       say    STDERR 'Statistics for this directory tree:';
       say    STDERR "Navigated $direcount directories.";
       say    STDERR "Found $filecount files matching regexp \"$RegExp\" and target \"$Target\".";
       say    STDERR "Found $predcount files which also match predicate \"$Predicate\".";
    }
-
-   if ( $Verbose >= 2) {
-      say    STDERR '';
-      say    STDERR 'Directory entries encountered in this tree included:';
-      printf STDERR "%7u total files\n",                            $totfcount;
-      printf STDERR "%7u nonexistent files\n",                      $noexcount;
-      printf STDERR "%7u tty files\n",                              $ottycount;
-      printf STDERR "%7u character special files\n",                $cspccount;
-      printf STDERR "%7u block special files\n",                    $bspccount;
-      printf STDERR "%7u sockets\n",                                $sockcount;
-      printf STDERR "%7u pipes\n",                                  $pipecount;
-      printf STDERR "%7u symbolic links to nowhere\n",              $brkncount;
-      printf STDERR "%7u symbolic links to directories\n",          $slkdcount;
-      printf STDERR "%7u symbolic links to non-directories\n",      $linkcount;
-      printf STDERR "%7u symbolic links to weirdness\n",            $weircount;
-      printf STDERR "%7u directories\n",                            $sdircount;
-      printf STDERR "%7u regular files with multiple hard links\n", $hlnkcount;
-      printf STDERR "%7u regular files\n",                          $regfcount;
-      printf STDERR "%7u files of unknown type\n",                  $unkncount;
-   }
    return 1;
 } # end sub stats
 
 # Handle errors:
-sub error ($err_msg) {
+sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
-   Error: you typed $err_msg arguments, but this program takes at most
-   # arguments, which must be blah blah blah. Help follows:
+   Error: you typed $NA arguments, but this program takes at most
+   2 optional arguments, which, if present, must be a file-selection
+   regexp and a file-type predicate, in that order. Help follows.
    END_OF_ERROR
    return 1;
 } # end sub error
@@ -299,8 +244,18 @@ sub help {
    Introduction:
 
    Welcome to "flatten". This program appends the name of the current directory
-   to all files in the current directory (and all subdirectories if a -r or
-   --recurse option is used).
+   to all items in the current directory using a "_". For example, if the current
+   directly is "/apple/orange/banana", containing items "peach", "plum", and
+   "pear", then this program would rename those 3 items to "banana_peach",
+   "banana_plum", and "banana_pear".
+
+   By default this program renames ALL items in the current directory, but this
+   can be modified by using A|F|D|B switches, regexps, and predicates; see
+   "options" and "arguments" below.
+
+   Processing of the contents of subdirectories must be done separately, because
+   recursing this program wouldn't do what you want (it would only result in
+   flattening 1 level deep instead of full flattening).
 
    -------------------------------------------------------------------------------
    Command lines:
@@ -317,8 +272,6 @@ sub help {
    -q or --quiet      Be quiet.                         (DEFAULT)
    -t or --terse      Be terse.
    -v or --verbose    Be verbose.
-   -l or --local      DON'T recurse subdirectories.     (DEFAULT)
-   -r or --recurse    DO    recurse subdirectories.
    -f or --files      Target Files.
    -d or --dirs       Target Directories.
    -b or --both       Target Both.
@@ -330,11 +283,11 @@ sub help {
 
    If multiple conflicting separate options are given, later overrides earlier.
    If multiple conflicting single-letter options are piled after a single hyphen,
-   the result is determined by this descending order of precedence: heabdfrlvtq.
+   the result is determined by this descending order of precedence: heabdfvtq.
 
    If you want to use an argument that looks like an option (say, you want to
-   search for files which contain "--recurse" as part of their name), use a "--"
-   option; that will force all command-line entries to its right to be considered
+   flatten files with names starting with "--dirs"), use a "--" option; that
+   will force all command-line entries to its right to be considered
    "arguments" rather than "options".
 
    All options not listed above are ignored.
@@ -382,17 +335,7 @@ sub help {
    A number of arguments greater than 2 will cause this program to print an error
    message and abort.
 
-   A number of arguments less than 0 will likely rupture our spacetime manifold
-   and destroy everything. But if you DO somehow manage to use a negative number
-   of arguments without destroying the universe, please send me an email at
-   "Hatley.Software@gmail.com", because I'd like to know how you did that!
-
-   But if you somehow manage to use a number of arguments which is an irrational
-   or complex number, please keep THAT to yourself. Some things would be better
-   for my sanity for me not to know. I don't want to find myself enthralled to
-   Cthulhu.
-
-   Happy item processing!
+   Happy file name flattening!
 
    Cheers,
    Robbie Hatley,

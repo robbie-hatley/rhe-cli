@@ -1880,7 +1880,7 @@ sub get_dir_from_path :prototype($) ($path) {
    }
 } # end sub get_dir_from_path
 
-# Return the name of the directory part of a file path:
+# Return the name of the immediate parent directory of the file at a given path:
 sub get_dirname_from_path :prototype($) ($path) {
    # If $path contains no "/", we have no idea of what directory we're in, so return "ERROR":
    if (-1 == rindex($path,'/')) {
@@ -1893,18 +1893,17 @@ sub get_dirname_from_path :prototype($) ($path) {
       return 'fsroot';
    }
 
-   # Otherwise return the part of $path to the right of the second-right-most "/" and  to the left of the
-   # right-most "/", whether $path starts with '/' or not:
+   # Otherwise return the immediate parent directory of the file at $path:
    else {
       # Put a copy of $path in $dirname:
       my $dirname = $path;
-      # Get rid of the file part:
+      # Get rid of the file part of the path:
       $dirname =~ s/\/[^\/]+$//;
-      # Get rid of all ancestors:
+      # Get rid of any ancestors of the immediate parent directory:
       while ($dirname =~ m/\//) {
          $dirname =~ s/^[^\/]*\///;
       }
-      # Return dirname:
+      # Return immediate parent directory name:
       return $dirname;
    }
 } # end sub get_dir_from_path

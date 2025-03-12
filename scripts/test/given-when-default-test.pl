@@ -1,15 +1,13 @@
 #!/usr/bin/perl
 # given-when-default-test.pl
-use v5.36;
-use experimental "switch";
+use v5.24;
+no warnings qw( deprecated::smartmatch );
 $_ = "he tapped with his whip on the shutters";
 say "global dollscor = $_";
-while (<>)
-{
+while (<>) {
    chomp;
    say "local dollscor = $_";
-   given ( $_ . $_ )
-   {
+   given ( $_ . $_ ) {
       say "localer dollscor = $_";
       when (/(?i:cat)/) {say "cat";}
       when (/(?i:dog)/) {say "dog";}

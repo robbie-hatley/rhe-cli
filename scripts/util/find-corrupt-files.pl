@@ -23,6 +23,7 @@
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
 # Sat Nov 27, 2021: Shortened sub names. Tested: Works.
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
+# Mon Mar 10, 2025: Got rid of given/when.
 ########################################################################################################################
 
 use v5.32;
@@ -86,21 +87,8 @@ sub argv ()
       }
    }
    my $NA = scalar(@ARGV);
-   given ($NA)
-   {
-      when (0)
-      {
-         ; # Do nothing.
-      }
-      when (1)
-      {
-         $Regexp = shift(@ARGV);
-      }
-      default
-      {
-         error($NA);
-      }
-   }
+   if ( $NA > 1 ) {error($NA); help; exit(666);}
+   if ( $NA > 0 ) {$Regexp = shift(@ARGV);}
    return 1;
 } # end sub argv ()
 
@@ -159,20 +147,17 @@ sub error ($)
 {
    my $NA = shift;
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+
    Error: you typed $NA arguments, but this program takes at most one argument,
    which, if present, must be a regular expression specifying which files names
-   to process.
-
-   Help follows:
-
+   to process. Help follows.
    END_OF_ERROR
-   help;
-   exit 666;
 } # end sub error ($)
 
 sub help ()
 {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+
    Welcome to "find-corrupt-files.pl". This program searches for any files
    modified in October 2014 which contain the following as their first 16 bytes:
    BB 1A E3 1E 3C 26 C2 62 57 E2 63 F3 27 4F 7C A3
