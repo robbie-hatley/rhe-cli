@@ -77,6 +77,9 @@
 #                   are different, and fc($OldName) eq fc($NewName)".
 # Thu Oct 03, 2024: Dramatically-simplified RecurseDirs (got rid of unnecessary restrictions on directories
 #                   and removed personal identifying information). Got rid of Sys::Binmode.
+# Fri Mar 14, 2025: Changed settings for "e" and "e" so that they leave source intact, use substitution
+#                   characters, warn on error, and continue until encoding or decoding is FINISHED.
+#                   (They now don't "return on error"). Also, trimmed all dividers and lines to 110 max.
 ##############################################################################################################
 
 # ======= PACKAGE: ===========================================================================================
@@ -113,17 +116,17 @@ use List::Util    qw( sum0 );
 use Time::HiRes   qw( time sleep );
 use Filesys::Type qw( fstype );
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
 # Section 1, Major Subroutines (code is long and complex):
 sub GetFiles               :prototype(;$$$) ; # Get array of filerecords.
 sub GetRegularFilesBySize  :prototype(;$)   ; # Get hash of arrays of same-size filerecords.
 sub FilesAreIdentical      :prototype($$)   ; # Are two files identical?
 sub RecurseDirs            :prototype(&)    ; # Recursively walk directory tree.
-sub copy_file              :prototype($$;@) ; # Copy a file from a source path to a destination directory.
-sub move_file              :prototype($$;@) ; # Move a file from a source path to a destination directory.
-sub copy_files             :prototype($$;@) ; # Copy files  from a source directory to a destination directory.
-sub move_files             :prototype($$;@) ; # Move files  from a source directory to a destination directory.
+sub copy_file              :prototype($$;@) ; # Copy a file from source path to destination directory.
+sub move_file              :prototype($$;@) ; # Move a file from source path to destination directory.
+sub copy_files             :prototype($$;@) ; # Copy files  from source directory to destination directory.
+sub move_files             :prototype($$;@) ; # Move files  from source directory to destination directory.
 
 # Section 2, Private subroutines (NOT exported):
 sub rand_int               :prototype($$)   ; # Get a random integer in closed interval [arg1, arg2].
@@ -140,8 +143,9 @@ sub cwd_utf8               :prototype()     ; # utf8 version of "get curr dir".
 sub glob_utf8              :prototype($)    ; # utf8 version of "glob".
 sub link_utf8              :prototype($$)   ; # utf8 version of "unlink".
 sub mkdir_utf8             :prototype($;$)  ; # utf8 version of "mkdir".
-# sub open_utf8              :prototype($$$)  ; # utf8 version of "open".    ECHIDNA RH 2024-02-06: doesn't work with modern Perl.
-# sub opendir_utf8           :prototype($$)   ; # utf8 version of "opendir". ECHIDNA RH 2024-02-06: doesn't work with modern Perl.
+# ECHIDNA RH 2024-02-06: the following two items don't work with modern Perl:
+# sub open_utf8              :prototype($$$)  ; # utf8 version of "open".
+# sub opendir_utf8           :prototype($$)   ; # utf8 version of "opendir".
 sub readdir_utf8           :prototype($)    ; # utf8 version of "readdir".
 sub readlink_utf8          :prototype($)    ; # utf8 version of "unlink".
 sub rmdir_utf8             :prototype($)    ; # utf8 version of "rmdir".
@@ -161,7 +165,7 @@ sub get_name_from_path     :prototype($)    ; # Get name from file path.
 sub denumerate_file_name   :prototype($)    ; # Remove all numerators from a file name.
 sub enumerate_file_name    :prototype($)    ; # Add a random numerator to a file name.
 sub annotate_file_name     :prototype($$)   ; # Annotate a file name (with a note).
-sub find_avail_enum_name   :prototype($;$)  ; # Find available enumerated file name for given name root and directory.
+sub find_avail_enum_name   :prototype($;$)  ; # Find available enumerated file name for given name root & dir.
 sub find_avail_rand_name   :prototype($$$)  ; # Find available   random   file name for given dir & suffix.
 sub is_large_image         :prototype($)    ; # Does a file contain a large image?
 sub get_correct_suffix     :prototype($)    ; # Return correct file-name suffix for file at given path.
@@ -169,11 +173,11 @@ sub cyg2win                :prototype($)    ; # Convert Cygwin  path to Windows 
 sub win2cyg                :prototype($)    ; # Convert Windows path to Cygwin  path.
 sub hash                   :prototype($$;$) ; # Return hash or hash-based file-name of a file.
 sub shorten_sl_names       :prototype($$$$) ; # Shorten directory and file names for Spotlight.
-sub is_data_file           :prototype($)    ; # Return 1 if a given string is a path to a non-link non-dir regular file.
+sub is_data_file           :prototype($)    ; # Return 1 if a given string is a path to a -f !-l !-d file.
 sub is_meta_file           :prototype($)    ; # Return 1 if a given string is a path to a meta-data file.
-sub is_valid_qual_dir      :prototype($)    ; # Is a given string a fully-qualified path to an existing directory?
+sub is_valid_qual_dir      :prototype($)    ; # Is a given string a fully-qualified path to an existing dir?
 
-# ======= VARIABLES: ===================================================================================================
+# ======= VARIABLES: =========================================================================================
 
 # Symbols exported by default:
 # ECHIDNA RH 2024-02-06: open_utf8 and opendir_utf8 doen't work with modern Perl,
@@ -237,7 +241,7 @@ our $hlnkcount = 0; # Count of all regular files with multiple hard links.
 our $regfcount = 0; # Count of all regular files.
 our $unkncount = 0; # Count of all unknown files.
 
-# ======= SECTION 1, MAJOR SUBROUTINES: ================================================================================
+# ======= SECTION 1, MAJOR SUBROUTINES: ======================================================================
 
 # GetFiles returns a reference to an array of filerecords for all files in a user-specified directory.
 # Optionally, user can also specify a regular expression to match names against and a single-letter "target"
@@ -1513,7 +1517,7 @@ sub move_files :prototype($$;@)
    return 1;
 } # end sub move_files
 
-# ======= SECTION 2, PRIVATE SUBROUTINES: ==============================================================================
+# ======= SECTION 2, PRIVATE SUBROUTINES: ====================================================================
 
 # Is a line of text encoded in ASCII?
 sub is_ascii :prototype($) ($text) {
@@ -1584,10 +1588,16 @@ sub eight_rand_lc_letters :prototype() {
    return join '', map {chr(rand_int(97, 122))} (1..8);
 }
 
-# ======= SECTION 3, UTF-8 SUBROUTINES: ================================================================================
+# ======= SECTION 3, UTF-8 SUBROUTINES: ======================================================================
 
 # Prepare constant "EFLAGS" which contains bitwise-OR'd flags for Encode::encode and Encode::decode :
-use constant EFLAGS => RETURN_ON_ERR | WARN_ON_ERR | LEAVE_SRC;
+
+# Should we warn and return? No, let's NOT do that, because it will cause loss of remaining data:
+# use constant EFLAGS => LEAVE_SRC | WARN_ON_ERR | RETURN_ON_ERR;
+# That would be useful for use with buffers, but we're usually not doing that in my programs. So for my
+# "d" and "e" subroutines, let's leave the source intact, use substitute characters, warn user on errors,
+# and continue (don't return until encoding or decoding is complete):
+use constant EFLAGS => LEAVE_SRC | WARN_ON_ERR;
 
 # Decode from UTF-8 to Unicode:
 sub d :prototype(@) (@args) {
@@ -1760,7 +1770,7 @@ sub glob_regexp_utf8 :prototype(;$$$) ($dir = d(getcwd), $target = 'A', $regexp 
    return @paths;
 } # end sub glob_regexp_utf8 (;$$$)
 
-# ======= SECTION 4, MINOR SUBROUTINES: ================================================================================
+# ======= SECTION 4, MINOR SUBROUTINES: ======================================================================
 
 # Rename a file, with more error-checking than unwrapped rename() :
 sub rename_file :prototype($$) ($OldPath, $NewPath) {

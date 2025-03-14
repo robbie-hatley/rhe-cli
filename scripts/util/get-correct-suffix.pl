@@ -17,6 +17,7 @@
 # Mon Aug 28, 2023: Changed "$db" to $Db". Got rid of prototypes. Now using Signatures. Improved formatting.
 # Wed Sep 06, 2023: Added & edited some comments.
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
+# Fri Mar 14, 2024: Got rid of "return on error".
 ##############################################################################################################
 
 use v5.36;
@@ -29,7 +30,7 @@ use List::Util  qw( sum0 );
 my $Db = 0; # Debug?
 
 # Prepare constant "EFLAGS" which contains bitwise-OR'd flags for Encode::encode and Encode::decode :
-use constant EFLAGS => RETURN_ON_ERR | WARN_ON_ERR | LEAVE_SRC;
+use constant EFLAGS => LEAVE_SRC | WARN_ON_ERR | ;
 
 # Decode from UTF-8 to Unicode:
 sub d {
