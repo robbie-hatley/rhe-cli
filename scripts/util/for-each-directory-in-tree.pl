@@ -18,6 +18,7 @@
 # Thu Nov 25, 2021: Renamed "for-each-directory-in-tree.pl" to avoid confusion with other programs. Shortened subroutine
 #                   names. Added time stamping.
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
+# Wed Mar 12, 2025: Changed double-quotes to single in help().
 ########################################################################################################################
 
 use v5.32;
@@ -109,9 +110,8 @@ sub error ($)
    END_OF_ERROR
 } # end sub error ($)
 
-sub help ()
-{
-   print ((<<"   END_OF_HELP") =~ s/^   //gmr);
+sub help {
+   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    Welcome to "for-each-dir.pl", Robbie Hatley's nifty program for
    executing a given command once for each directory of the current

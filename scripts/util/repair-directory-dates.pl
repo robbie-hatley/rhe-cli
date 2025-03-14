@@ -13,14 +13,46 @@
 # Edit history:
 # Sat Mar 23, 2024: Wrote it.
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
+# Wed Mar 12, 2025: Now using BEGIN and INIT blocks and global vars for pname, cmpl_beg, cmpl_end.
+#                   No-longer announces directories on entry, but now does announce successful and failed
+#                   directory rename attempts. stats() now prints totals of successful and failed renames.
 ##############################################################################################################
 
 use v5.36;
 use utf8;
-use Cwd 'getcwd';
-use Time::HiRes 'time';
+
+use Cwd          qw( cwd getcwd );
+use Time::HiRes  qw( time       );
+
 use RH::Dir;
 use RH::Util;
+
+# ======= GLOBAL VARIABLES: ==================================================================================
+
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+our    $cmpl_beg;                              # Declare compilation begin time.
+BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
+our    $cmpl_end;                              # Declare compilation end   time.
+INIT  {$cmpl_end = time}                       # Set     compilation end   time.
+
+# ======= LEXICAL VARIABLES: =================================================================================
+
+# Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
+my @Opts      = ()        ; # options                   array     Options.
+my @Args      = ()        ; # arguments                 array     Arguments.
+my $Debug     = 0         ; # Debug?                    bool      Don't debug.
+my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
+my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
+
+# Counts of events in this program:
+my $direcount = 0 ; # Count of directories processed by curdire.
+my $filecount = 0 ; # Count of files processed by curdire loop.
+my $hidncount = 0 ; # Count of hidden files.
+my $opencount = 0 ; # Count of non-hidden files.
+my $datecount = 0 ; # Count of dates set.
+my $failcount = 0 ; # Count of failed attempts to set dates.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -31,60 +63,45 @@ sub stats   ; # Print statistics.
 sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
 
-# ======= GLOBAL VARIABLES: ==================================================================================
-
-our $t0     ; # Seconds since 00:00:00 on Thu Jan 1, 1970.
-
-# ======= START TIMER: =======================================================================================
-
-BEGIN {$t0 = time}
-
-# ======= LEXICAL VARIABLES: =================================================================================
-
-# Setting:      Default Value:   Meaning of Setting:         Range:     Meaning of Default:
-my $Db        = 0            ; # Debug?                      bool       Don't debug.
-my $Verbose   = 1            ; # Be wordy?                   0,1,2      Be quiet.
-my $Recurse   = 0            ; # Recurse subdirectories?     bool       Be local.
-
-# Counts of events in this program:
-my $direcount = 0 ; # Count of directories processed by curdire.
-my $filecount = 0 ; # Count of files processed by curdire loop.
-my $hidncount = 0 ; # Count of hidden files.
-my $opencount = 0 ; # Count of non-hidden files.
-
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   # Set program name:
-   my $pname = substr $0, 1 + rindex $0, '/';
+   # Start execution timer:
+   my $t0 = time;
 
-   # Process @ARGV:
+   # Process @ARGV and set settings:
    argv;
 
-   # Print program-entry message if being terse or verbose:
-   if ( $Verbose >= 1 ) {
-      say    STDERR '';
-      say    STDERR "Now entering program \"$pname\"." ;
+   # Print program entry message if being verbose:
+   if ( 2 == $Verbose ) {
+      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
+      printf(STDERR "Compilation took %.3fms\n",1000*($cmpl_end-$cmpl_beg));
    }
 
-   # Print global settings if being verbose:
-   if ( $Verbose >= 2 ) {
-      say    STDERR "\$Db        = $Db";
-      say    STDERR "\$Verbose   = $Verbose";
-      say    STDERR "\$Recurse   = $Recurse";
+   # Print the values of all 6 settings variables if debugging:
+   if ( 1 == $Debug ) {
+      say STDERR '';
+      say STDERR "Options   = (@Opts)";
+      say STDERR "Arguments = (@Args)";
+      say STDERR "Debug     = $Debug";
+      say STDERR "Help      = $Help";
+      say STDERR "Verbose   = $Verbose";
+      say STDERR "Recurse   = $Recurse";
    }
 
-   # Process current directory (and all subdirectories if recursing):
-   $Recurse and RecurseDirs {curdire} or curdire;
+   # Process current directory (and all subdirectories if recursing) and print stats,
+   # unless user requested help, in which case just print help:
+   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
 
-   # Print stats:
-   stats;
+   # Stop execution timer:
+   my $t1 = time;
 
-   # Print exit message if being terse or verbose:
-   if ( $Verbose >= 1 ) {
+   # Print exit message if being verbose:
+   if ( 2 == $Verbose ) {
+      my $te = $t1 - $t0; my $ms = 1000 * $te;
       say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\".";
-      printf STDERR "Execution time was %.3f seconds.", time - $t0;
+      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
+      printf STDERR "Execution time was %.3fms.", $ms;
    }
 
    # Exit program, returning success code "0" to caller:
@@ -96,30 +113,30 @@ my $opencount = 0 ; # Count of non-hidden files.
 # Process @ARGV :
 sub argv {
    # Get options and arguments:
-   my @opts = ();            # options
    my $end = 0;              # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
    for ( @ARGV ) {           # For each element of @ARGV,
-         ( /^-(?!-)$s+$/     # if we get a valid short option
+      /^--$/                 # "--" = end-of-options marker = construe all further CL items as arguments,
+      and $end = 1           # so if we see that, then set the "end-of-options" flag
+      and push @Opts, $_     # and push the "--" to @Opts
+      and next;              # and skip to next element of @ARGV.
+      !$end                  # If we haven't yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we get a valid short option
       ||  /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @opts, $_;    # then push item to @opts
+      and push @Opts, $_     # then push item to @Opts
+      or  push @Args, $_;    # else push item to @Args.
    }
 
-   # Process options:
-   for ( @opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit 777 ;
-      /^-$s*n/ || /^--ndebug$/  and $Db      =  0     ; # Default is "don't debug".
-      /^-$s*e/ || /^--debug$/   and $Db      =  1     ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0     ;
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1     ; # Default is "verbosity level 1".
-      /^-$s*v/ || /^--verbose$/ and $Verbose =  2     ;
-      /^-$s*l/ || /^--local$/   and $Recurse =  0     ; # Default is "don't recurse".
-      /^-$s*r/ || /^--recurse$/ and $Recurse =  1     ;
-   }
-   if ( $Db ) {
-      say STDERR '';
-      say STDERR "\$opts = (", join(', ', map {"\"$_\""} @opts), ')';
+  # Process options:
+   for ( @Opts ) {
+      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
+      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
+      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
+      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
    }
 
    # (Non-option arguments are ignored.)
@@ -135,11 +152,6 @@ sub curdire {
 
    # Get current working directory:
    my $cwd = d getcwd;
-
-   # Announce current working directory if being terse or verbose:
-   if ( $Verbose >= 1) {
-      say "\nDirectory # $direcount: $cwd\n";
-   }
 
    # Try to open, read, and close $cwd; if any of those operations fail, die:
    my $dh = undef;
@@ -170,20 +182,26 @@ sub curdire {
       }
       if ( $stats[9] > $max_Mtime ) { $max_Mtime = $stats[9] }
    }
-   utime $max_Mtime, $max_Mtime, e($cwd);
+   utime $max_Mtime, $max_Mtime, e($cwd)
+   and say STDOUT "Set date on directory \"$cwd\"."
+   and ++$datecount
+   or  say STDOUT "Error: couldn't set date on directory \"$cwd\"."
+   and ++$failcount;
 
    # Return success code 1 to caller:
    return 1;
 } # end sub curdire
 
-# Print statistics for this program run:
+# Print statistics for this program run, if being terse or verbose:
 sub stats {
-   if ( $Verbose >= 1 ) {
-      say    STDERR '';
-      say    STDERR 'Statistics for this directory tree:';
-      say    STDERR "Navigated $direcount directories.";
-      say    STDERR "Found $hidncount hidden files.";
-      say    STDERR "Found $opencount non-hidden files.";
+   if ( 1 == $Verbose || 2 == $Verbose ) {
+      say STDERR '';
+      say STDERR 'Statistics for this directory tree:';
+      say STDERR "Navigated $direcount directories.";
+      say STDERR "Found $hidncount hidden files.";
+      say STDERR "Found $opencount non-hidden files.";
+      say STDERR "Set $datecount directory dates.";
+      say STDERR "Failed $failcount date-set attempts.";
    }
    return 1;
 } # end sub stats

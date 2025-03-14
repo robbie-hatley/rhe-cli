@@ -16,7 +16,7 @@
 # Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
 # Wed Nov 24, 2021: Now using a regexp instead of wildcard, and tested in harsh UTF-8 environment. Works.
 # Mon Mar 03, 2025: Got rid of "common::sense".
-# Tue Mar 11, 2025: Major refactor. Got rid of given/when from argv. Reduced width from 120 to 110. Increased
+# Wed Mar 12, 2025: Major refactor. Got rid of given/when from argv. Reduced width from 120 to 110. Increased
 #                   min ver from "5.32" to "5.36". Got rid of prototypes. Added signatures. Changed bracing to
 #                   C-style. Deleted pre-existing program "list-sha1.pl" and changed name of program from
 #                   "numsha.pl" to "list-sha1.pl". Upgraded argv, main, error, help. Added many options. Now
@@ -192,7 +192,7 @@ sub curdire {
       say "\nDirectory # $direcount: $cwd\n";
    }
 
-   # Get list of file-info packets in $cwd matching $Target and $RegExp:
+   # Get list of paths in $cwd matching $Target and $RegExp:
    my @paths = glob_regexp_utf8($cwd, $Target, $RegExp);
 
    # Process each path that matches $RegExp, $Target, and $Predicate:

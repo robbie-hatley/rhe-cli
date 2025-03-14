@@ -11,13 +11,16 @@
 # Edit history:
 # Sat Mar 23, 2024: Wrote it.
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
+# Wed Mar 12, 2025: Now using global vars and BEGIN for pname, cmpl_beg, cmpl_end.
 ##############################################################################################################
 
 use v5.36;
 use utf8;
-use Cwd 'getcwd';
-use Time::HiRes 'time';
-use POSIX 'strftime';
+
+use Cwd          qw( cwd getcwd );
+use Time::HiRes  qw( time       );
+use POSIX        qw( strftime );
+
 use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
@@ -31,16 +34,20 @@ sub help    ; # Print help and exit.
 
 # ======= GLOBAL VARIABLES: ==================================================================================
 
-our $t0     ; # Seconds since 00:00:00 on Thu Jan 1, 1970.
-
-# ======= START TIMER: =======================================================================================
-
-BEGIN {$t0 = time}
+our $pname;                                      # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/';}  # Set program name.
+our $cmpl_beg;                                   # Declare compilation begin time.
+our $cmpl_end;                                   # Declare compilation end   time.
+BEGIN {$cmpl_beg = time}                         # Set compilation begin time.
+INIT  {$cmpl_end = time}                         # Set compilation end   time.
 
 # ======= LEXICAL VARIABLES: =================================================================================
 
 # Setting:      Default Value:   Meaning of Setting:         Range:     Meaning of Default:
-my $Db        = 0            ; # Debug?                      bool       Don't debug.
+my @Opts      = ()           ; # options                     array      Options.
+my @Args      = ()           ; # arguments                   array      Arguments.
+my $Debug     = 0            ; # Debug?                      bool       Don't debug.
+my $Help      = 0            ; # Just print help and exit?   bool       Don't print-help-and-exit.
 my $Verbose   = 1            ; # Be wordy?                   0,1,2      Be quiet.
 my $Recurse   = 0            ; # Recurse subdirectories?     bool       Be local.
 
@@ -52,36 +59,36 @@ my $dlphcount = 0 ; # Count of Dolphin ".directory" files encountered.
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   # Set program name:
-   my $pname = substr $0, 1 + rindex $0, '/';
+   # Start timer:
+   my $t0 = time;
 
    # Process @ARGV:
    argv;
 
-   # Print program-entry message if being terse or verbose:
-   if ( $Verbose >= 1 ) {
-      say    STDERR '';
+   # Print program-entry message if being verbose:
+   if ( 2 == $Verbose ) {
       say    STDERR "Now entering program \"$pname\"." ;
+      printf STDERR "Compilation took %.3fms.\n", 1000 * ($cmpl_end-$cmpl_beg);
    }
 
-   # Print global settings if being verbose:
-   if ( $Verbose >= 2 ) {
-      say    STDERR "\$Db        = $Db";
+   # Print global settings if debugging:
+   if ( 1 == $Debug ) {
+      say    STDERR "\@Opts      = (@Opts)";
+      say    STDERR "\@Args      = (@Args)";
+      say    STDERR "\$Debug     = $Debug";
       say    STDERR "\$Verbose   = $Verbose";
       say    STDERR "\$Recurse   = $Recurse";
    }
 
-   # Process current directory (and all subdirectories if recursing):
-   $Recurse and RecurseDirs {curdire} or curdire;
+   # Process current directory (and all subdirectories if recursing) and print stats,
+   # unless user requested help, in which case just print help:
+   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
 
-   # Print stats:
-   stats;
-
-   # Print exit message if being terse or verbose:
-   if ( $Verbose >= 1 ) {
+   # Print exit message if being verbose:
+   if ( 2 == $Verbose ) {
       say    STDERR '';
       say    STDERR "Now exiting program \"$pname\".";
-      printf STDERR "Execution time was %.3f seconds.", time - $t0;
+      printf STDERR "Execution time was %.3fms.", 1000 * (time - $t0);
    }
 
    # Exit program, returning success code "0" to caller:
@@ -93,30 +100,30 @@ my $dlphcount = 0 ; # Count of Dolphin ".directory" files encountered.
 # Process @ARGV :
 sub argv {
    # Get options and arguments:
-   my @opts = ();            # options
    my $end = 0;              # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
    for ( @ARGV ) {           # For each element of @ARGV,
-         ( /^-(?!-)$s+$/     # if we get a valid short option
+      /^--$/                 # "--" = end-of-options marker = construe all further CL items as arguments,
+      and $end = 1           # so if we see that, then set the "end-of-options" flag
+      and push @Opts, $_     # and push the "--" to @Opts
+      and next;              # and skip to next element of @ARGV.
+      !$end                  # If we haven't yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we get a valid short option
       ||  /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @opts, $_;    # then push item to @opts
+      and push @Opts, $_     # then push item to @Opts
+      or  push @Args, $_;    # else push item to @Args.
    }
 
    # Process options:
-   for ( @opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit 777 ;
-      /^-$s*n/ || /^--ndebug$/  and $Db      =  0     ; # Default is "don't debug".
-      /^-$s*e/ || /^--debug$/   and $Db      =  1     ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0     ;
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1     ; # Default is "verbosity level 1".
-      /^-$s*v/ || /^--verbose$/ and $Verbose =  2     ;
-      /^-$s*l/ || /^--local$/   and $Recurse =  0     ; # Default is "don't recurse".
-      /^-$s*r/ || /^--recurse$/ and $Recurse =  1     ;
-   }
-   if ( $Db ) {
-      say STDERR '';
-      say STDERR "\$opts = (", join(', ', map {"\"$_\""} @opts), ')';
+   for ( @Opts ) {
+      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
+      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
+      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
+      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
    }
 
    # (Non-option arguments are ignored.)
@@ -133,55 +140,71 @@ sub curdire {
    # Get current working directory:
    my $cwd = d getcwd;
 
-   # Announce current working directory if being terse or verbose:
-   if ( $Verbose >= 1) {
+   # Announce current working directory if being verbose:
+   if ( 2 == $Verbose ) {
       say "\nDirectory # $direcount: $cwd\n";
    }
 
    # Try to open, read, and close $cwd; die if any of these fail:
    my $dh = undef;
    opendir $dh, e $cwd or die "Fatal error: Couldn't open  directory \"$cwd\".\n$!\n";
-   my @names = sort {$a cmp $b} d(readdir($dh));
+   my @names = d(readdir($dh));
    scalar(@names) >= 2 or die "Fatal error: Couldn't read  directory \"$cwd\".\n$!\n";
    closedir $dh or die "Fatal Error: Couldn't close directory \"$cwd\".\n$!\n";
+   $filecount += scalar(@names);
 
    # Set the time stamp of the ".directory" file (if any) in this directory to current time:
-   my $dlph = 0;     # We haven't found any Dolphin files yet.
+   my $dlph = 0; # We haven't found any local ".directory" file yet.
    foreach my $name (@names) {
-      ++$filecount;
       next if '.directory' ne $name;
       # If we get to here, file ".directory" exists in this directory:
-      ++$dlphcount;last;
+      $dlph = 1;    # We found a local ".directory" file.
+      ++$dlphcount; # Increment the global ".directory" file counter.
+      last;
    }
 
-   # Return 0 if no Dolphin file was found:
-   return 0 unless $dlphcount;
+   # Return 1 (indicating "success" to RecurseDirs) if no Dolphin file was found in this directory
+   # (but don't print any warnings,as it's quite normal for many directories to not have a ".directory" file):
+   if (!$dlph) {
+      return 1;
+   }
 
-   # Refresh date in ".directory":
+   # Try to open ".directory" file; warn user and return if we fail:
    my $dfh = undef;
-   open $dfh, '+<', '.directory'
-   or warn "Couldn't open \".directory\" file in directory \"$cwd\"."
-   and return 0;
+   if (!open $dfh, '+<', '.directory') {
+      warn "Couldn't open \".directory\" file in directory \"$cwd\".\n";
+      return 1;
+   }
+
+   # Get the lines of the ".directory" file:
    my @lines = <$dfh>;
+
+   # Make a time stamp at the current time:
    my @LocalTimeFields = localtime(time);
    my $TimeStamp = strftime('%Y,%m,%d,%H,%M,%S', @LocalTimeFields);
+
+   # Write the time stamp to the appropriate line of @lines:
    for ( my $i = 0 ; $i <= $#lines ; ++$i ) {
       next if $lines[$i] !~ m/^Timestamp=/;
       $lines[$i] =~ s/^(Timestamp=).+$/${1}$TimeStamp/;
       last;
    }
-   say "\$TimeStamp = $TimeStamp";
+
+   # Overwrite ".directory" with @lines:
    seek  $dfh, 0, 0;
    print $dfh $_ for @lines;
    close $dfh;
+
+   # State what we've done to STDOUT:
+   printf STDOUT "Time stamp set to \"%s\" in \"%s\".\n", $TimeStamp, path($cwd,".directory");
 
    # Return success code 1 to caller:
    return 1;
 } # end sub curdire
 
-# Print statistics for this program run:
+# Print statistics for this program run, if being terse or verbose:
 sub stats {
-   if ( $Verbose >= 1 ) {
+   if ( 1 == $Verbose || 2 == $Verbose ) {
       say    STDERR '';
       say    STDERR 'Statistics for this directory tree:';
       say    STDERR "Navigated $direcount directories.";

@@ -20,9 +20,9 @@
 # Thu Sep 07, 2023: Reduced width from 120 to 110. Upgraded from "v5.32" to "v5.36". Got rid of CPAN module
 #                   "common::sense" (antiquated). Can now run RecurseDirs once for each argument.
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
+# Thu Mar 13, 2024: Reduced min ver from "5.36" to (tacit) "5.00".
 ##############################################################################################################
 
-use v5.36;
 use utf8;
 use Cwd;
 use RH::Dir;

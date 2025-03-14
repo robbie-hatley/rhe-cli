@@ -73,27 +73,19 @@ sub is_leap_year ($)
    else                                     {return 0;}
 } # end sub is_leap_year
 
-sub days_per_month ($$)
-{
-   my $Year   = shift;
-   my $Month  = shift;
-   given ($Month)
-   {
-      when ( 1) {return 31;}
-      when ( 2) {return is_leap_year($Year) ? 29 : 28;}
-      when ( 3) {return 31;}
-      when ( 4) {return 30;}
-      when ( 5) {return 31;}
-      when ( 6) {return 30;}
-      when ( 7) {return 31;}
-      when ( 8) {return 31;}
-      when ( 9) {return 30;}
-      when (10) {return 31;}
-      when (11) {return 30;}
-      when (12) {return 31;}
-      default   {die "Illegal month.";}
+sub days_per_month ($$) {
+   my $Year  = shift;
+   my $Month = shift;
+   if ($Month < 1 || $Month > 12) {
+      die "Illegal month.\n";
    }
-} # end sub days_per_month
+   elsif (2 == $Month) {
+      return (is_leap_year($Year) ? 29 : 28);
+   }
+   else {
+      return $days_in_month[$Month-1];
+   }
+}
 
 sub print_elapsed_time ($$$$$$)
 {
@@ -173,14 +165,14 @@ sub help ()
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
    To use this program, feed it two command-line arguments, which must be
    dates in the format YYYY-MM-DD, like so:
-   
+
    ./pwc-183b-date-difference-rh.pl 1854-10-07 1972-02-27
-   
+
    The dates must be valid dates from 0001-01-01 to 9999-12-31 Gregorian,
    and the first date must not be earlier than the second date. This program
    will then print the time difference in years and days from the first date
    to second date.
-   
+
    Warning: The Gregorian calendar was not created until Oct 15, 1582,
    and was not adopted in the English-speaking world until Sept 14, 1752,
    so any date calculations before those dates may be off by up to two weeks

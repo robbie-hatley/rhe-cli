@@ -17,6 +17,11 @@ use strict;
 use warnings;
 no  warnings 'experimental::smartmatch';
 
+
+# ======= VARIABLES: ==========================================================
+
+my @days_in_month = (31,28,31,30,31,30,31,31,30,31,30,31);
+
 # ================ SUBROUTINE PRE-DECLARATIONS ================================
 
 sub days_per_year  ($);   # How many days in given whole year?
@@ -40,7 +45,7 @@ sub day_of_week    ($$$); # What day of week is current date?
    }
 
    say $Sundays;
-   
+
    # We be done, so scram:
    exit 0;
 } # end main
@@ -67,26 +72,17 @@ sub days_per_year ($)
    }
 }
 
-sub days_per_month ($$)
-{
+sub days_per_month ($$) {
    my $Year  = shift;
    my $Month = shift;
-
-   given ($Month)
-   {
-      when ( 1) {return 31;}
-      when ( 2) {return is_leap_year($Year) ? 29 : 28;}
-      when ( 3) {return 31;}
-      when ( 4) {return 30;}
-      when ( 5) {return 31;}
-      when ( 6) {return 30;}
-      when ( 7) {return 31;}
-      when ( 8) {return 31;}
-      when ( 9) {return 30;}
-      when (10) {return 31;}
-      when (11) {return 30;}
-      when (12) {return 31;}
-      default   {die "Illegal month.";}
+   if ($Month < 1 || $Month > 12) {
+      die "Illegal month.\n";
+   }
+   elsif (2 == $Month) {
+      return (is_leap_year($Year) ? 29 : 28);
+   }
+   else {
+      return $days_in_month[$Month-1];
    }
 }
 
@@ -111,7 +107,6 @@ sub elapsed_time ($$$)
 
    # ==========================================================================
    # FIRST, ADD IN DAYS FROM WHOLE YEARS WHICH HAVE ELAPSED SINCE DEC 31, 1899.
-
 
    # (But that depends very much on what $Year is relative to 1899,
    # because I'm choosing Sun Dec 31 1899 as "baseline", because it's the
@@ -141,12 +136,12 @@ sub elapsed_time ($$$)
    }
 
    # Otherwise, $Year > 1899, so add-in all days from any whole years
-   # which have elapsed, from 1899 up to (but NOT including)  year. 
-   # Bear in mind that days_per_year will return 1 for the year 1899, 
+   # which have elapsed, from 1899 up to (but NOT including)  year.
+   # Bear in mind that days_per_year will return 1 for the year 1899,
    # 365 or 366 for years after 1899, or will die if fed a year prior to 1899.
    else
    {
-      # Add-in days from 
+      # Add-in days from
       foreach my $PassingYear( 1899 .. $Year - 1 )
       {
          $Elapsed += days_per_year($PassingYear);

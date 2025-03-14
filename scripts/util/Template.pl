@@ -71,7 +71,7 @@
 #                   Got rid of "/...|.../" in favor of "/.../ || /.../" (speeds-up program).
 #                   Simplified way in which options and arguments are printed if debugging.
 #                   Removed "$" = ', '" and "$, = ', '". Got rid of "/o" from all instances of qr().
-#                   Changed all "$db" to $Db". Debugging now simulates renames instead of exiting in main.
+#                   Changed all "$db" to $Debug". Debugging now simulates renames instead of exiting in main.
 #                   Removed "no debug" option as that's already default in all of my programs.
 # Fri Sep 01, 2023: Entry & exit messages are now printed regardless, to STDERR.
 #                   STDERR = entry & exit messages, stats, diagnostics, and severe errors.
@@ -93,7 +93,8 @@
 # Tue Mar 04, 2025: Got rid of prototypes and empty sigs. Added comments to subroutine predeclarations.
 #                   Now using "BEGIN" and "END" blocks to print entry and exit messages.
 # Sun Mar 09, 2025: Got rid of all BEGIN and END blocks, as they're too unreliable in their variable access.
-#                   The only global variables are now $cmpl_beg, $cmpl_end, and $pname.
+# Wed Mar 12, 2025: Now using BEGIN blocks the CORRECT way, to initialize global variables $pname,
+#                   $cmpl_beg, and $cmpl_end. Also renamed "$Debug" to "$Debug".
 ##############################################################################################################
 
 ##############################################################################################################
@@ -133,15 +134,14 @@ use RH::WinChomp;
 $" = ', ' ; # Quoted-array element separator = ", ".
 
 # Global Variables:
-our $pname ; # The name of this program. (Do NOT initialize here!!! That would wipe-out name set by BEGIN!!!)
-BEGIN {
-   # Set program name, so that all parts of this program know what the name of this program is:
-   $pname = substr $0, 1 + rindex $0, '/';
-}
-our $cmpl_beg; # Compilation begin. (Do NOT initialize here!!! That would wipe-out time set by BEGIN!!!)
-our $cmpl_end; # Compilation end.   (Do NOT initialize here!!! That would wipe-out time set by INIT !!!)
-BEGIN {$cmpl_beg = time}
-INIT  {$cmpl_end = time}
+# WARNING: Do NOT initialize global variables on their declaration line! That wipes-out changes made to them
+#          by BEGIN, UNITCHECK, CHECK, and INIT blocks! Instead, initialize them in those blocks.
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+our    $cmpl_beg;                              # Declare compilation begin time.
+BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
+our    $cmpl_end;                              # Declare compilation end   time.
+INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
 # NOTE: Always remember, if using BEGIN blocks, only the declaration half of any "my|our $varname = value;"
 # statement is executed before the begin blocks; the "= value;" part is executed AFTER all BEGIN blocks!!!
@@ -166,7 +166,7 @@ INIT  {$cmpl_end = time}
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
 my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
-my $Db        = 0         ; # Debug?                    bool      Don't debug.
+my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
@@ -223,11 +223,13 @@ sub help    ; # Print help and exit.
       printf(STDERR "Compilation took %.3fms\n",1000*($cmpl_end-$cmpl_beg));
    }
 
-   # Print the values of the settings variables if debugging:
-   if ( 1 == $Db ) {
+   # Print the values of all 9 settings variables if debugging:
+   if ( 1 == $Debug ) {
       say STDERR '';
-      say STDERR "Options   = (", join(', ', map {"\"$_\""} @Opts), ')';
-      say STDERR "Arguments = (", join(', ', map {"\"$_\""} @Args), ')';
+      say STDERR "Options   = (@Opts)";
+      say STDERR "Arguments = (@Args)";
+      say STDERR "Debug     = $Debug";
+      say STDERR "Help      = $Help";
       say STDERR "Verbose   = $Verbose";
       say STDERR "Recurse   = $Recurse";
       say STDERR "Target    = $Target";
@@ -277,7 +279,7 @@ sub argv {
    # Process options:
    for ( @Opts ) {
       /^-$s*h/ || /^--help$/    and $Help    =  1  ;
-      /^-$s*e/ || /^--debug$/   and $Db      =  1  ;
+      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
       /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
       /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
@@ -294,7 +296,7 @@ sub argv {
 
    # If user typed more than 2 arguments, and we're not debugging, print error and help messages and exit:
    if ( $NA > 2                  # If number of arguments > 2
-        && !$Db && !$Help ) {    # and we're not debugging and not getting help,
+        && !$Debug && !$Help ) { # and we're not debugging and not getting help,
       error($NA);                # print error message,
       help;                      # and print help message,
       exit 666;                  # and exit, returning The Number Of The Beast.
@@ -307,8 +309,7 @@ sub argv {
 
    # Second argument, if present, is a file-selection predicate:
    if ( $NA > 1 ) {              # If number of arguments >= 2,
-      $Predicate = $Args[1];     # set $Predicate to $args[1]
-      $Target = 'A';             # and set $Target to 'A' to avoid conflicts with $Predicate.
+      $Predicate = $Args[1];     # set $Predicate to $args[1].
    }
 
    # Return success code 1 to caller:
@@ -323,8 +324,8 @@ sub curdire {
    # Get current working directory:
    my $cwd = d getcwd;
 
-   # Announce current working directory if being at-least-somewhat-verbose:
-   if ( 1 == $Verbose || 2 == $Verbose) {
+   # Announce current working directory if being verbose:
+   if ( 2 == $Verbose) {
       say "\nDirectory # $direcount: $cwd\n";
    }
 
@@ -370,7 +371,7 @@ sub curfile ($file) {
    my $path = $file->{Path};
 
    # Announce path:
-   if ( 1 == $Db ) {
+   if ( 1 == $Debug ) {
       say STDOUT "Simulate: $path";
       # (Don't actually DO anything to file at $path.)
    }
@@ -423,7 +424,7 @@ sub error ($NA) {
 
    Error: you typed $NA arguments, but this program takes at most
    2 arguments (an optional file-selection regexp and an optional
-   file-selection predicate). Help follows:
+   file-selection predicate). Help follows.
    END_OF_ERROR
    return 1;
 } # end sub error
@@ -465,9 +466,10 @@ sub help {
    Multiple single-letter options may be piled-up after a single hyphen.
    For example, use -vr to verbosely and recursively process items.
 
-   If multiple conflicting separate options are given, later overrides earlier.
-   If multiple conflicting single-letter options are piled after a single hyphen,
-   the result is determined by this descending order of precedence: heabdfrlvtq.
+   If two piled-together single-letter options conflict, the option
+   appearing lowest on the options chart above will prevail.
+   If two separate (not piled-together) options conflict, the right
+   overrides the left.
 
    If you want to use an argument that looks like an option (say, you want to
    search for files which contain "--recurse" as part of their name), use a "--"
@@ -495,9 +497,7 @@ sub help {
    file-test operators. The expression must be enclosed in parentheses (else
    this program will confuse your file-test operators for options), and then
    enclosed in single quotes (else the shell won't pass your expression to this
-   program intact). If this argument is used, it overrides "--files", "--dirs",
-   or "--both", and sets target to "--all" in order to avoid conflicts with
-   the predicate. Here are some examples of valid and invalid predicate arguments:
+   program intact). Here are some examples of valid and invalid predicate arguments:
    '(-d && -l)'  # VALID:   Finds symbolic links to directories
    '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
    '(-b)'        # VALID:   Finds block special files

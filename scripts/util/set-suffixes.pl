@@ -21,38 +21,49 @@
 # Sat Aug 12, 2023: Reduced width from 120 to 110. Upgraded from "v5.32" to "v5.38". Got rid of
 #                   "common::sense" (antiquated). Got rid of all prototypes. Now using signatures.
 # Sun Aug 13, 2023: Added section headers to help. Renamed from "set-extensions.pl" to "set-suffixes.pl".
-# Sat Sep 02, 2023: Changed all $db to $Db. Got rid of all "/o" on all qr(). Entry and exit messages are now
+# Sat Sep 02, 2023: Changed all $db to $Debug. Got rid of all "/o" on all qr(). Entry and exit messages are now
 #                   always printed to STDERR regardless of $Verbose. Got rid of "--nodebug" as that's already
 #                   default. Updated argv. Updated help. Increased parallelism "(g|s)et-suffixes.pl".
 #                   Stats now always print to STDERR. Got rid of "quiet" and "verbose" options.
 #                   Instead, I'm now using STDERR for messages, stats, diagnostics, STDOUT for dirs/files.
 # Wed Jul 31, 2024: Added both :prototype() and signatures () to all subroutines.
 # Thu Aug 15, 2024: -C63; Width 120->110; erased unnecessary "use ..."; added protos & sigs to all subs.
+# Thu Mar 13, 2025: Got rid of all prototypes. Added predicate.
 ##############################################################################################################
 
 use v5.36;
 use utf8;
+
 use Cwd 'getcwd';
 use Time::HiRes 'time';
 use File::Type;
+
 use RH::Dir;
 
+# ======= VARIABLES: =========================================================================================
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
+# System Variables:
+$" = ', ' ; # Quoted-array element separator = ", ".
 
-sub argv    :prototype()  ;
-sub curdire :prototype()  ;
-sub curfile :prototype($) ;
-sub stats   :prototype()  ;
-sub error   :prototype($) ;
-sub help    :prototype()  ;
+# Global Variables:
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+our    $cmpl_beg;                              # Declare compilation begin time.
+BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
+our    $cmpl_end;                              # Declare compilation end   time.
+INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
-# ======= PAGE-GLOBAL LEXICAL VARIABLES: =====================================================================
+# Local variables:
 
-# Settings:     Defaults:   # Meaning of setting:         Range:    Meaning of default:
-my $Db        = 0         ; # Debug?                      bool      Don't debug.
-my $Recurse   = 0         ; # Recurse subdirectories?     bool      Don't recurse subdirectories.
-my $RegExp    = qr/^.+$/o ; # Process which file names?   regexp    Process files of all names.
+# Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
+my @Opts      = ()        ; # options                   array     Options.
+my @Args      = ()        ; # arguments                 array     Arguments.
+my $Debug     = 0         ; # Debug?                    bool      Don't debug.
+my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
+my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
+my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 
 # Event counters:
 my $direcount = 0; # Count of directories processed.
@@ -64,93 +75,138 @@ my $diffcount = 0; # Count of files with new name different from old.
 my $renacount = 0; # Count of files successfully renamed.
 my $failcount = 0; # Count of failed file-rename attempts.
 
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
+
+sub argv    ;
+sub curdire ;
+sub curfile ;
+sub stats   ;
+sub error   ;
+sub help    ;
+
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
+   # Start execution timer:
    my $t0 = time;
-   my $pname = get_name_from_path($0);
+
+   # Process @ARGV and set settings:
    argv;
-   say STDERR "Now entering program \"$pname\".";
-   say STDERR "\$Db      = \"$Db\".";
-   say STDERR "\$Recurse = \"$Recurse\".";
-   say STDERR "\$RegExp  = \"$RegExp\".";
 
-   $Recurse and RecurseDirs {curdire} or curdire;
+   # Print program entry message if being terse or verbose:
+   if ( 1 == $Verbose || 2 == $Verbose ) {
+      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
+      printf(STDERR "Compilation took %.3fms\n",1000*($cmpl_end-$cmpl_beg));
+   }
 
-   stats;
-   say    STDERR '';
-   say    STDERR "Now exiting program \"$pname\".";
-   printf STDERR "Execution time was %.3f seconds.", time - $t0;
+   # Print the values of all 8 settings variables if debugging:
+   if ( 1 == $Debug ) {
+      say STDERR '';
+      say STDERR "Options   = (@Opts)";
+      say STDERR "Arguments = (@Args)";
+      say STDERR "Debug     = $Debug";
+      say STDERR "Help      = $Help";
+      say STDERR "Verbose   = $Verbose";
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
+   }
+
+   # Process current directory (and all subdirectories if recursing) and print stats,
+   # unless user requested help, in which case just print help:
+   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+
+   # Stop execution timer:
+   my $t1 = time;
+
+   # Print exit message if being terse or verbose:
+   if ( 1 == $Verbose || 2 == $Verbose ) {
+      my $te = $t1 - $t0; my $ms = 1000 * $te;
+      say    STDERR '';
+      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
+      printf STDERR "Execution time was %.3fms.", $ms;
+   }
+
+   # Exit program, returning success code "0" to caller:
    exit 0;
 } # end main
 
 # ======= SUBROUTINE DEFINITIONS =============================================================================
 
 # Process @ARGV:
-sub argv :prototype() () {
+sub argv {
    # Get options and arguments:
-   my @opts = ();            # options
-   my @args = ();            # arguments
    my $end = 0;              # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
    for ( @ARGV ) {           # For each element of @ARGV,
       /^--$/                 # "--" = end-of-options marker = construe all further CL items as arguments,
       and $end = 1           # so if we see that, then set the "end-of-options" flag
+      and push @Opts, $_     # and push the "--" to @Opts
       and next;              # and skip to next element of @ARGV.
       !$end                  # If we haven't yet reached end-of-options,
       && ( /^-(?!-)$s+$/     # and if we get a valid short option
       ||  /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @opts, $_     # then push item to @opts
-      or  push @args, $_;    # else push item to @args.
+      and push @Opts, $_     # then push item to @Opts
+      or  push @Args, $_;    # else push item to @Args.
    }
 
    # Process options:
-   for ( @opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit 777 ;
-      /^-$s*e/ || /^--debug$/   and $Db      =  1     ;
-      /^-$s*l/ || /^--local$/   and $Recurse =  0     ;
-      /^-$s*r/ || /^--recurse$/ and $Recurse =  1     ;
+   for ( @Opts ) {
+      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
+      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
+      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
+      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
    }
 
-   # If debugging, print the options and arguments:
-   if ( $Db ) {
-      say STDERR '';
-      say STDERR "\$opts = (", join(', ', map {"\"$_\""} @opts), ')';
-      say STDERR "\$args = (", join(', ', map {"\"$_\""} @args), ')';
+   # Get number of arguments:
+   my $NA = scalar(@Args);
+
+   # If user typed more than 2 arguments, and we're not debugging, print error and help messages and exit:
+   if ( $NA > 2                  # If number of arguments > 2
+        && !$Debug && !$Help ) { # and we're not debugging and not getting help,
+      error($NA);                # print error message,
+      help;                      # and print help message,
+      exit 666;                  # and exit, returning The Number Of The Beast.
    }
 
-   # Process arguments:
-   my $NA = scalar(@args);      # Get number of arguments.
-                                # If number of arguments == 0, do nothing.
-   $NA >= 1                     # If number of arguments >= 1,
-   and $RegExp = qr/$args[0]/o; # set $RegExp.
-   $NA >= 2 && !$Db             # If number of arguments >= 2 and we're not debugging,
-   and error($NA)               # print error message,
-   and help                     # and print help message,
-   and exit 666;                # and exit, returning The Number Of The Beast.
+   # First argument, if present, is a file-selection regexp:
+   if ( $NA > 0 ) {              # If number of arguments > 0,
+      $RegExp = qr/$Args[0]/o;   # set $RegExp to $args[0].
+   }
+
+   # Second argument, if present, is a file-selection predicate:
+   if ( $NA > 1 ) {              # If number of arguments >= 2,
+      $Predicate = $Args[1];     # set $Predicate to $args[1].
+   }
 
    # Return success code 1 to caller:
    return 1;
 } # end sub argv
 
 # Process current directory:
-sub curdire :prototype() () {
+sub curdire {
    ++$direcount;
    my $curdir = d getcwd;
    say STDOUT '';
    say STDOUT "Directory # $direcount: $curdir";
    say STDOUT '';
    my @paths = glob_regexp_utf8($curdir, 'F', $RegExp);
-   for my $path (@paths) {
+   foreach my $path (@paths) {
       next unless is_data_file($path);
-      curfile $path;
+      local $_ = e $path;
+      if (eval($Predicate)) {
+         curfile($path);
+      }
    }
    return 1;
 } # end sub curdire
 
 # Process current file:
-sub curfile :prototype($) ($old_path) {
+sub curfile ($old_path) {
    ++$filecount;
    my $old_name  = get_name_from_path($old_path);
    my $old_dir   = get_dir_from_path ($old_path);
@@ -168,7 +224,7 @@ sub curfile :prototype($) ($old_path) {
    $new_name eq $old_name and ++$samecount or  ++$diffcount;
 
    # If debugging, print values of various variables:
-   if ($Db) {
+   if ($Debug) {
       say STDERR '';
       say STDERR "In \"set-suffixes.pl\", in curfile, after setting variables.";
       say STDERR "\$filecount = \"$filecount\".";
@@ -192,7 +248,7 @@ sub curfile :prototype($) ($old_path) {
 
    # Otherwise, announce that old name is incorrect and attempt rename:
    else {
-      print STDOUT "Incorrect: \"$old_name\" => \"$new_name\"";
+      say STDOUT "Incorrect: \"$old_name\" => \"$new_name\"";
       rename_file($old_path, $new_path)
       and ++$renacount
       and say STDOUT " (rename succeeded)"
@@ -220,7 +276,7 @@ sub curfile :prototype($) ($old_path) {
 } # end sub curfile
 
 # Print statistics:
-sub stats :prototype() () {
+sub stats {
    say STDERR '';
    say STDERR "Stats for \"set-suffixes.pl\":";
    say STDERR "Navigated $direcount directories.";
@@ -235,18 +291,18 @@ sub stats :prototype() () {
 } # end sub stats
 
 # Handle errors:
-sub error :prototype($) ($NA) {
+sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
-   Error: you typed $NA arguments, but this program takes at most
-   one argument, which, if present, must be a regular expression describing
-   which items to process. Help follows:
+   Error: you typed $NA arguments, but this program takes at most two arguments
+   which, if present, must be a regular expression describing which items to
+   process and a boolean file-type predicate. Help follows.
    END_OF_ERROR
    return 1;
 } # end sub error
 
 # Print help:
-sub help :prototype() () {
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
@@ -270,21 +326,25 @@ sub help :prototype() () {
    set-extensions.pl [options] [argument]   (to set file-name extensions)
 
    -------------------------------------------------------------------------------
-   Description of options:
+   Description of Options:
 
    Option:            Meaning:
    -h or --help       Print help and exit.
-   -e or --debug      DO    print diagnostics and exit.
-   -l or --local      DON'T recurse subdirectories.                      (DEFAULT)
+   -e or --debug      Print diagnostics.
+   -q or --quiet      Be quiet.                         (DEFAULT)
+   -t or --terse      Be terse.
+   -v or --verbose    Be verbose.
+   -l or --local      DON'T recurse subdirectories.     (DEFAULT)
    -r or --recurse    DO    recurse subdirectories.
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
    For example, use -vr to verbosely and recursively process items.
 
-   If multiple conflicting separate options are given, later overrides earlier.
-   If multiple conflicting single-letter options are piled after a single hyphen,
-   the result is determined by this descending order of precedence: herlvq.
+   If two piled-together single-letter options conflict, the option
+   appearing lowest on the options chart above will prevail.
+   If two separate (not piled-together) options conflict, the right
+   overrides the left.
 
    If you want to use an argument that looks like an option (say, you want to
    search for files which contain "--recurse" as part of their name), use a "--"
@@ -294,20 +354,47 @@ sub help :prototype() () {
    All options not listed above are ignored.
 
    -------------------------------------------------------------------------------
-   Description of arguments:
+   Description of Arguments:
 
-   In addition to options, this program can take one optional argument which, if
-   present, must be a Perl-Compliant Regular Expression specifying which items to
-   process. To specify multiple patterns, use the | alternation operator.
-   To apply pattern modifier letters, use an Extended RegExp Sequence.
-   For example, if you want to search for items with names containing "cat",
-   "dog", or "horse", title-cased or not, you could use this regexp:
+   In addition to options, this program can take 1 or 2 optional arguments.
 
-   '(?i:c)at|(?i:d)og|(?i:h)orse'
-
+   Arg1 (OPTIONAL), if present, must be a Perl-Compliant Regular Expression
+   specifying which file names to process. To specify multiple patterns, use the
+   | alternation operator. To apply pattern modifier letters, use an Extended
+   RegExp Sequence. For example, if you want to process items with names
+   containing "cat", "dog", or "horse", title-cased or not, you could use this
+   regexp: '(?i:c)at|(?i:d)og|(?i:h)orse'
    Be sure to enclose your regexp in 'single quotes', else BASH may replace it
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
+
+   Arg2 (OPTIONAL), if present, must be a boolean predicate using Perl
+   file-test operators. The expression must be enclosed in parentheses (else
+   this program will confuse your file-test operators for options), and then
+   enclosed in single quotes (else the shell won't pass your expression to this
+   program intact). If this argument is used, it overrides "--files", "--dirs",
+   or "--both", and sets target to "--all" in order to avoid conflicts with
+   the predicate. Here are some examples of valid and invalid predicate arguments:
+   '(-d && -l)'  # VALID:   Finds symbolic links to directories
+   '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
+   '(-b)'        # VALID:   Finds block special files
+   '(-c)'        # VALID:   Finds character special files
+   '(-S || -p)'  # VALID:   Finds sockets and pipes.  (S must be CAPITAL S   )
+    '-d && -l'   # INVALID: missing parentheses       (confuses program      )
+    (-d && -l)   # INVALID: missing quotes            (confuses shell        )
+     -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
+
+   (Exception: Technically, you can use an integer as a boolean, and it doesn't
+   need quotes or parentheses; but if you use an integer, any non-zero integer
+   will process all paths and 0 will process no paths, so this isn't very useful.)
+
+   Arguments and options may be freely mixed, but the arguments must appear in
+   the order Arg1, Arg2 (RegExp first, then File-Type Predicate); if you get them
+   backwards, they won't do what you want, as most predicates aren't valid regexps
+   and vice-versa.
+
+   A number of arguments greater than 2 will cause this program to print an error
+   message and abort.
 
    Happy suffix setting!
 

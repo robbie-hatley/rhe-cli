@@ -1,10 +1,10 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env -S perl -C63
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
-########################################################################################################################
+##############################################################################################################
 # reindent.pl
 # Usage: "rindent.pl p1 p2 regexp"
 # Reformats files from multiple-of-p1 indentation to multiple-of-p2 indentation.
@@ -13,28 +13,36 @@
 #
 # Edit history:
 # Mon Nov 01, 2021: Wrote it.
-# Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
+# Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
 # Mon Jun 05, 2023: Renamed from "p1-to-p2.pl" (cryptic!) to "reindent.pl".
 # Mon Mar 03, 2025: Got rid of "common::sense".
-########################################################################################################################
+# Wed Mar 12, 2025: Got rid of given/when in argv; fixed missing "use utf8;" bug; increased min ver from
+#                   "5.32" to "5.36"; got rid of all prototypes; added signatures; reduced width from 120 to
+#                   110; -C63; now using glob_regexp_utf8 instead of GetFiles; changed bracing to C-style;
+#                   and now writes re-indented versions of input files to new output files instead of
+#                   overwriting its input files as it WAS doing.
+##############################################################################################################
 
-use v5.32;
-use Time::HiRes 'time';
-use POSIX 'floor', 'ceil';
+use v5.36;
+use utf8;
+use Cwd          qw( cwd getcwd );
+use Time::HiRes  qw( time       );
+use POSIX        qw( floor ceil );
+
 use RH::Util;
 use RH::WinChomp;
 use RH::Dir;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv    ()  ; # Process @ARGV.
-sub curdire ()  ; # Process current directory.
-sub curfile ($) ; # Process current file.
-sub stats   ()  ; # Print statistics.
-sub error   ($) ; # Handle errors.
-sub help    ()  ; # Print help and exit.
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub stats   ; # Print statistics.
+sub error   ; # Handle errors.
+sub help    ; # Print help and exit.
 
-# ======= VARIABLES: ===================================================================================================
+# ======= VARIABLES: =========================================================================================
 
 # Turn on debugging?
 my $db = 0; # Set to 1 for debugging, 0 for no debugging.
@@ -52,7 +60,7 @@ my $filecount = 0; # Count of dir entries processed by curfile().
 my $succcount = 0; # Count of files successfully reformatted.
 my $failcount = 0; # Count of failed reformat attempts.
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
    say "Now entering program \"" . get_name_from_path($0) . "\".";
@@ -70,10 +78,9 @@ my $failcount = 0; # Count of failed reformat attempts.
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-sub argv ()
-{
+sub argv {
    for ( my $i = 0 ; $i < @ARGV ; ++$i )
    {
       $_ = $ARGV[$i];
@@ -94,30 +101,14 @@ sub argv ()
    }
 
    my $NA = scalar(@ARGV);
-   given ($NA)
-   {
-      when (2)
-      {
-         $p1=$ARGV[0];            # Set Period 1.
-         $p2=$ARGV[1];            # Set Period 2.
-      }
-      when (3)
-      {
-         $p1=$ARGV[0];            # Set Period 1.
-         $p2=$ARGV[1];            # Set Period 2.
-         $RegExp = qr/$ARGV[2]/o; # Set $RegExp.
-      }
-      default
-      {
-         error($NA);              # Print error and help messages and exit 666.
-      }
-   }
+   if ( $NA > 3 ) {error; help; exit(666);}   # Print error and help msgs and exit.
+   if ( $NA > 0 ) {$p1=$ARGV[0];}             # Set Period 1.
+   if ( $NA > 1 ) {$p2=$ARGV[1];}             # Set Period 2.
+   if ( $NA > 2 ) {$RegExp = qr/$ARGV[2]/o;}  # Set RegExp.
    return 1;
+} # end sub argv
 
-} # end sub argv ()
-
-sub curdire ()
-{
+sub curdire {
    # Increment directory counter:
    ++$direcount;
 
@@ -125,74 +116,62 @@ sub curdire ()
    my $cwd = cwd_utf8;
    say "\nDirectory # $direcount: $cwd\n";
 
-   # Get list of file-info packets in $cwd matching $Target and $RegExp:
-   my $curdirfiles = GetFiles($cwd, $Target, $RegExp);
+   # Get list of paths in $cwd matching $Target and $RegExp:
+   my @paths = glob_regexp_utf8($cwd, $Target, $RegExp);
 
    # Iterate through $curdirfiles and send each file to curfile():
-   foreach my $file (@{$curdirfiles})
-   {
-      curfile($file);
+   foreach my $path (@paths) {
+      curfile($path);
    }
    return 1;
-} # end sub curdire ()
+} # end sub curdire
 
-sub curfile ($)
-{
-   my $file  = shift;
-   my $path  = $file->{Path};
-   my $name  = get_name_from_path($path);
-   my $pref  = get_prefix($name);
-   my $suff  = get_suffix($name);
-   my $h     = undef;
-   my @lines = ();
-
-   # Increment global file counter:
+sub curfile ($oldpath) {
    ++$filecount;
-
-   # Get name, prefix, and suffix:
-   $name = get_name_from_path($path);
+   my $dir     = get_dir_from_path($oldpath);
+   my $oldname = get_name_from_path($oldpath);
+   my $oldpref = get_prefix($oldname);
+   my $oldsuff = get_suffix($oldname);
+   my $oldhand = undef;
+   my @lines   = ();
 
    # Grab file contents:
-   $h = undef;
-   if (not open_utf8($h, '<', $path))
-   {
-      say("Failed to open $path for reading.");
+   $oldhand = undef;
+   if (not open($oldhand, '<', e($oldpath))) {
+      say("Failed to open $oldpath for reading.");
       ++$failcount;
       return 0;
    }
-   @lines = <$h>;
-   close($h);
+   @lines = <$oldhand>;
+   close($oldhand);
 
    # Convert leading spaces from x4 to x3:
-   for (@lines)
-   {
+   for (@lines) {
       winchomp;
       s/^( +)(?=[^ ])/" " x ($p2 * ceil(length($1) \/ $p1))/e;
    }
 
    # Write $lines to a new file:
-   $h=undef;
-   if (open_utf8($h, '>', $path))
-   {
-      for (@lines)
-      {
-         say($h $_);
+   my $newname = $oldpref . "_reindented" .$oldsuff;
+   my $newpath = path($dir, $newname);
+   my $newhand = undef;
+   if (open($newhand, '>', e($newpath))) {
+      for (@lines) {
+         say($newhand $_);
       }
-      close($h);
-      say("Successfully reformatted $path");
+      close($newhand);
+      say("Successfully reformatted \"$oldname\" to \"$newname\".");
       ++$succcount;
       return 1;
    }
-   else
-   {
-      say("Failed to open $path for writing.");
+   else {
+      say("Failed to open \"$newpath\" for writing.");
       ++$failcount;
       return 0;
    }
-} # end sub curfile ($)
+} # end sub curfile
 
-sub stats ()
-{
+sub stats {
    say '';
    say 'Statistics for this directory tree:';
    say "Navigated $direcount directories.";
@@ -200,22 +179,17 @@ sub stats ()
    say "Successfully reformated $succcount files.";
    say "Failed $failcount reformat attempts.";
    return 1;
-} # end sub stats ()
+} # end sub stats
 
-sub error ($)
-{
-   my $NA = shift;
+sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+
    Error: you typed $NA arguments, but this program takes 2 or 3 arguments.
-   Help follows:
-
+   Help follows.
    END_OF_ERROR
-   help;
-   exit 666;
-} # end sub error ($)
+} # end sub error
 
-sub help ()
-{
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
    Welcome to "reindent.pl". This program converts space-based indenting of
    files (lsl scripts by default, but this can be changed with regexps)
@@ -259,4 +233,4 @@ sub help ()
    programmer.
    END_OF_HELP
    return 1;
-} # end sub help ()
+} # end sub help
