@@ -40,6 +40,10 @@ sub moonshadow {
    say "I'm being followed by a moon shadow.";
 }
 
+sub reaper {
+   say "Don't fear the reaper.";
+}
+
 sub find (@needful_things) {
    my $found = 0;
    foreach my $needful_thing (@needful_things) {
@@ -59,6 +63,7 @@ sub quest {
    run, crawl, scale $CityWalls;
    only @ToBeWithYou;
    moonshadow;
+   reaper;
    find(@WhatImLookingFor)
    or say "But I still haven't found what I'm looking for!"
 }
