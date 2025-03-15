@@ -77,7 +77,7 @@
 #                   are different, and fc($OldName) eq fc($NewName)".
 # Thu Oct 03, 2024: Dramatically-simplified RecurseDirs (got rid of unnecessary restrictions on directories
 #                   and removed personal identifying information). Got rid of Sys::Binmode.
-# Fri Mar 14, 2025: Changed settings for "e" and "e" so that they leave source intact, use substitution
+# Fri Mar 14, 2025: Changed settings for "d" and "e" so that they leave source intact, use substitution
 #                   characters, warn on error, and continue until encoding or decoding is FINISHED.
 #                   (They now don't "return on error"). Also, trimmed all dividers and lines to 110 max.
 ##############################################################################################################

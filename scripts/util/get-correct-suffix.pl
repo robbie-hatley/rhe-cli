@@ -22,14 +22,16 @@
 
 use v5.36;
 use utf8;
+
 use Time::HiRes qw( time );
 use Encode      qw( :DEFAULT encode decode :fallbacks :fallback_all );
-use File::Type;
+use File::Type  qw( :DEFAULT );
 use List::Util  qw( sum0 );
 
 my $Db = 0; # Debug?
 
-# Prepare constant "EFLAGS" which contains bitwise-OR'd flags for Encode::encode and Encode::decode :
+# Prepare constant "EFLAGS" which contains bitwise-OR'd flags for Encode::encode and Encode::decode;
+# leave source intact and warn on error, but don't return or die on error:
 use constant EFLAGS => LEAVE_SRC | WARN_ON_ERR | ;
 
 # Decode from UTF-8 to Unicode:
@@ -311,8 +313,8 @@ sub help {
    -------------------------------------------------------------------------------
    Description of options:
 
-   There are no options. Any option you attempt to use would be interpreted as a
-   file path, so don't try to use options.
+   The only options are "-h" and "--help". All other command-line arguments will
+   be interpreted as file paths. (See "Description of Arguments".)
 
    -------------------------------------------------------------------------------
    Description of arguments:
