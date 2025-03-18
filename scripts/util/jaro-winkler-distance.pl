@@ -1,5 +1,7 @@
 #!/usr/bin/env -S perl -CSDA
 
+# jaro-winkler-distance.pl
+
 =pod
 
 The Weekly Challenge 010-2, "Jaro-Winkler distance".
@@ -68,9 +70,10 @@ sub help {
    END_OF_HELP
    return 1;
 }
+
 for (@ARGV) {'-h' eq $_ || '--help' eq $_ and help and exit}
 
-# Otherwise, if we don't have 2 arguments, print error message, give help, and exit:
+# If we don't have 2 arguments, print error message, give help, and exit:
 2 != @ARGV and warn "Error: Invalid input. Help follows.\n" and help and exit;
 
 # Get strings and their lengths:

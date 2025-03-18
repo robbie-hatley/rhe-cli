@@ -3,9 +3,9 @@
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
-
+asdf
 ##############################################################################################################
-# randomize-file-names.pl
+# file-names-to-gibberish.pl
 # Renames all files in the current directory (and all subdirectories if a -r or --recurse option is used)
 # to strings of 8 random lower-case letters. All file-name information will be lost; only the file bodies
 # will remain, with gibberish names.
@@ -44,11 +44,12 @@
 #                   Now using "d getcwd" instead of "cwd_utf8". Reverted to using "-9" for "--nine".
 #                   $Db now triggers only diagostics and simulation, not entry/exit or stats.
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
+# Mon Mar 17, 2025: Renamed to "file-names-to-gibberish.pl", and archived "file-names-to-gib.pl" as being a
+#                   duplicate of this program.
 ##############################################################################################################
 
 use v5.36;
 use utf8;
-use warnings FATAL => 'utf8';
 
 use Cwd;
 use Time::HiRes 'time';
@@ -480,4 +481,3 @@ sub help {
    END_OF_HELP
    return 1;
 } # end help
-__END__

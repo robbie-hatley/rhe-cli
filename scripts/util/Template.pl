@@ -110,13 +110,13 @@ use v5.36;
 use utf8;
 
 # CPAN modules:
-use Cwd;
-use Time::HiRes 'time';
-use charnames qw( :full :short );
-use Unicode::Normalize qw( NFD NFC );
+use Cwd                qw( cwd getcwd   );
+use Time::HiRes        qw( time         );
+use charnames          qw( :full :short );
+use Unicode::Normalize qw( NFD NFC      );
 use Unicode::Collate;
 use MIME::QuotedPrint;
-use Scalar::Util qw( looks_like_number reftype );
+use Scalar::Util       qw( looks_like_number reftype );
 use List::AllUtils;
 use Hash::Util;
 use Regexp::Common;
@@ -220,12 +220,20 @@ sub help    ; # Print help and exit.
    # Print program entry message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
       say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
-      printf(STDERR "Compilation took %.3fms\n",1000*($cmpl_end-$cmpl_beg));
+      say STDERR '';
    }
 
-   # Print the values of all 9 settings variables if debugging:
-   if ( 1 == $Debug ) {
+   # Also print compilation time if being verbose:
+   if ( 2 == $Verbose ) {
+      printf(STDERR "Compilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
       say STDERR '';
+   }
+
+   # Print the values of all variables if debugging:
+   if ( 1 == $Debug ) {
+      say STDERR "pname     = $pname";
+      say STDERR "cmpl_beg  = $cmpl_beg";
+      say STDERR "cmpl_end  = $cmpl_end";
       say STDERR "Options   = (@Opts)";
       say STDERR "Arguments = (@Args)";
       say STDERR "Debug     = $Debug";
@@ -235,6 +243,7 @@ sub help    ; # Print help and exit.
       say STDERR "Target    = $Target";
       say STDERR "RegExp    = $RegExp";
       say STDERR "Predicate = $Predicate";
+      say STDERR '';
    }
 
    # Process current directory (and all subdirectories if recursing) and print stats,
@@ -304,12 +313,12 @@ sub argv {
 
    # First argument, if present, is a file-selection regexp:
    if ( $NA > 0 ) {              # If number of arguments > 0,
-      $RegExp = qr/$Args[0]/o;   # set $RegExp to $args[0].
+      $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
    }
 
    # Second argument, if present, is a file-selection predicate:
    if ( $NA > 1 ) {              # If number of arguments >= 2,
-      $Predicate = $Args[1];     # set $Predicate to $args[1].
+      $Predicate = $Args[1];     # set $Predicate to $Args[1].
    }
 
    # Return success code 1 to caller:

@@ -329,20 +329,17 @@ sub help
    file-test operators. The expression must be enclosed in parentheses (else
    this program will confuse your file-test operators for options), and then
    enclosed in single quotes (else the shell won't pass your expression to this
-   program intact). Here are some examples of valid and invalid predicate arguments:
-   '(-M >= 100)'     # VALID: Find files modified 100-or-more days ago
-   '(-s >= 5000000)' # VALID: Find files at least 5MB in size
-   '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
-   '(-b)'        # VALID:   Finds block special files
-   '(-c)'        # VALID:   Finds character special files
-   '(-S || -p)'  # VALID:   Finds sockets and pipes.  (S must be CAPITAL S   )
-    '-d && -l'   # INVALID: missing parentheses       (confuses program      )
-    (-d && -l)   # INVALID: missing quotes            (confuses shell        )
-     -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
-
+   program intact). Also, "-M" and "-s" should be in (parentheses) else your
+   predicate may be considered "ambiguous" by the Perl interpreter.
+   Here are some examples of valid and invalid predicate arguments:
+   '((-M) < 100)'     # VALID: Find files modified less-than-100 days ago
+   '((-s) < 5000000)' # VALID: Find files at least 5MB in size
+   '(-M) < 100'       # INVALID: missing outer parentheses (confuses Perl)
+   '(-M  < 100)'      # INVALID: missing inner parentheses (confuses Perl)
+   ((-M) < 100))      # INVALID: missing quotes (confuses shell)
    WARNING: If you use a predicate which excludes files which can have mime types,
    or includes files which CAN'T have mime types, this program will not perform
-   correctly. Predicates can be used, though, to specify file attributes such as
+   correctly. Predicates can be useful, though, to specify file attributes such as
    sizes or dates.
 
    Arguments and options may be freely mixed, but the arguments must appear in

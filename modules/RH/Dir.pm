@@ -2422,17 +2422,18 @@ sub is_data_file :prototype($) ($path) {
    return 1;
 } # end sub is_data_file :prototype($) ($path)
 
-# Return 1 if-and-only-if a given string is a path to a "meta" file (a data file which is hidden,
+# Return 1 if-and-only-if a given string is a path to a "meta" file (a file which is hidden,
 # desktop-settings, windows-picture-thumbnails, paint-shop-pro-browse-thumbnails, or ID-Token.
 # Keep in mind that "hidden" include ALL files with names starting with ".", which include
 # application settings, Free-File-Sync synchronization files, Dolphin ".directory" files,
-# Kate project files, etc; these are all "meta" files, not intended for direct use by humans.
+# Kate project files, hidden directories, etc; these are all "meta" files, not intended for
+# direct use by humans.
 sub is_meta_file :prototype($) ($path) {
    return 0 unless -e e $path;
    my $name = get_name_from_path($path);
    return 1 if $name =~ m/^\./;
-   return 1 if $name =~ m/^desktop.*\.ini$/i;
-   return 1 if $name =~ m/^thumbs.*\.db$/i;
+   return 1 if $name =~ m/^desktop(?:-\(\d\d\d\d\))?\.ini$/;
+   return 1 if $name =~  m/^Thumbs(?:-\(\d\d\d\d\))?\.db$/;
    return 1 if $name =~ m/^pspbrwse.*\.jbf$/i;
    return 1 if $name =~ m/id-token/i;
    return 0;

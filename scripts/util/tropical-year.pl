@@ -11,9 +11,9 @@
 # Written by Robbie Hatley.
 # Edit history:
 # Sat Jun 05, 2021: Wrote it.
+# Sat Mar 15, 2025: Changed "say" to "print" and removed "use v5.16" (can work with any Perl version).
 ##############################################################################################################
 
-use v5.16;
 use utf8;
 
 my @lines;
@@ -32,11 +32,11 @@ for my $line (@lines) {
 }
 my $accumulator = 0;
 for my $year (2011..2030) {
-   say "Length-in-days of tropical year ending March $year = $lengths{$year}";
+   print "Length-in-days of tropical year ending March $year = $lengths{$year}\n";
    $accumulator += $lengths{$year}
 }
 my $average = $accumulator/20;
-say "Average length of tropical year 2011-2030 = $average";
+print "Average length of tropical year 2011-2030         = $average\n";
 
 __DATA__
 March 2010 – March 2011	365	5	48	23

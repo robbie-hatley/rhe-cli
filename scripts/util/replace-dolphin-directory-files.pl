@@ -8,7 +8,7 @@
 # "replace-dolphin-directory-files.pl"
 # For the current directory (and all subdirectories if a -r or --recurse option is used), replace all
 # Dolphin ".directory" files with versions which are appropriate for the contents of the directory.
-# Make sure that directories which contain 1-or-more picture files (jpg, jpeg, bmp, png, apng, gif, tif,
+# Makes sure that directories which contain 1-or-more picture files (jpg, jpeg, bmp, png, apng, gif, tif,
 # tiff) have a "thumbnails" or ctrl-1 ".directory" file, and all other directories should have a "details"
 # or ctrl-3 ".directory" file.
 #
@@ -33,13 +33,16 @@
 #                   Variable "$Verbose" now means "print per-file info", and default is to NOT do that.
 #                   STDERR = "stats and serious errors". STDOUT = "files erased/copied, and dirs if verbose".
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
+# Sun Mar 16, 2025: Minor tweaks to formatting, comments, and help.
 ##############################################################################################################
 
 use v5.36;
 use utf8;
+
 use Cwd 'getcwd';
 use Time::HiRes 'time';
 use Sys::Hostname;
+
 use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
@@ -307,7 +310,7 @@ sub help
    Introduction:
 
    Welcome to "repair-dolphin-directory-files.pl". This program pastes replaces
-   all existing ".directory" files in the current directory (and all
+   all existing Dolphin ".directory" files in the current directory (and all
    subdirectories if a -r or --recurse option is used) with an appropriate
    ".directory" file depending on whether or not pictures are present.
 
@@ -316,6 +319,18 @@ sub help
 
    If    no     picture files are present, a "Ctrl-3" .directory file is copied;
    this will put Dolphin in "Details" mode for the current directory.
+
+   WARNING: To get this program to work for you, you'll have to alter its source
+   code to specify your own allowed host names (the computers you want to run this
+   on) and exemplar directories (one directory with a ".directory" file set for
+   "non-picture" contents,  and  one directory with a ".directory" file set for
+   "picture" contents). But run my program
+   "refresh-dolphin-directory-file-dates.pl" on your exemplar directories first,
+   else this program may not work, because Dolphin ignores ".directory" files that
+   haven't been updated in a long time.
+
+   WARNING: If you're not using "Dolphin" as your primary file manager, then this
+   program will be useless to you, so don't waste your time with it.
 
    -------------------------------------------------------------------------------
    Command lines:
