@@ -28,8 +28,8 @@ Output: "_e-!g_nel-la!h_c"
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-The key is to first "split" the string to an array of single chars, then determine which indices of the array
-are letters, then use "slices" to reverse the letters only, then "join" the array back to a string.
+My approach was to first "split" each string to an array of single chars, then determine which indices of the
+array are letters, then use "slices" to reverse the letters only, then "join" the array back to a string.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
