@@ -73,8 +73,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
          # If current char differs from char to left, store sig of previous cluster:
          if ( $idx == length($x) || substr($x, $idx, 1) ne substr($x, $idx-1, 1) ) {
             # Store the character at $previdx and the number of contiguous copies:
-            push @xsig, [substr($x, $previdx, 1), $idx-$previdx];
-            $previdx = $idx;
+            push @xsig, [substr($x, $prv, 1), $idx-$prv];
+            $prv = $idx;
          }
       }
       # Get list of signatures for second string:
@@ -82,8 +82,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
          # If current char differs from char to left, store sig of previous cluster:
          if ( $idx == length($y) || substr($y, $idx, 1) ne substr($y, $idx-1, 1) ) {
             # Store the character at $previdx and the number of contiguous copies:
-            push @ysig, [substr($y, $previdx, 1), $idx-$previdx];
-            $previdx = $idx;
+            push @ysig, [substr($y, $prv, 1), $idx-$prv];
+            $prv = $idx;
          }
       }
       # If the lengths don't match, $y is not broken-key version of $x:
