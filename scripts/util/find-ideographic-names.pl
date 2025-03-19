@@ -1,22 +1,21 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# find-spacey-names.pl
-# Finds directory entries with names containing spaces.
+# find-ideographic-names.pl
 #
 # Author: Robbie Hatley.
 #
 # Edit history:
-# Unknown date    : Wrote it.
-# Wed Feb 17, 2021: Refactored to use the new GetFiles(), which now requires a fully-qualified directory as
-#                   its first argument, target as second, and regexp (instead of wildcard) as third.
+# Mon Mar 15, 2021: Wrote it.
 # Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
-# Sat Nov 27, 2021: Shortened sub names. Tested: Works.
+# Sat Nov 27, 2021: Shortened sub names. Fixed regexp bug that was causing program to find no files.
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
+# Mon Oct 07, 2024: Added "use warnings FATAL => 'utf8';", as this program deals with elaborate UTF-8 names.
+#                   Also upgraded to "v5.36" with prototypes and signatures.
 # Wed Mar 19, 2025: Modernized. Now offers many more options. Can now pile-up single-letter options after a
 #                   single hyphen. Can now use both regexps and predicates to select files to process.
 #                   Shortened width from 120 to 110. Put "-C63" in shebang.
@@ -60,7 +59,7 @@ my $Predicate = 1         ; # Boolean predicate.        bool      Process all fi
 my $direcount = 0 ; # Count of directories processed by curdire().
 my $filecount = 0 ; # Count of files matching target and regexp.
 my $predcount = 0 ; # Count of files also matching predicate.
-my $spaccount = 0 ; # Count of spacey directory names found.
+my $ideocount = 0; # Count of dir entries matching regexps.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -219,33 +218,27 @@ sub curdire {
 
 # Process current file:
 sub curfile ($path) {
-   if ( get_name_from_path($path) =~ m/\s/ ) {
-      ++$spaccount;
+   if ( get_name_from_path($path) =~ m/\p{Lo}/ ) {
+      ++$ideocount;
       say $path;
    }
    return 1;
 } # end sub curfile
 
 sub stats {
-   print
-   (
-      STDERR
-      "\n"
-    . "Navigated $direcount directories.\n"
-    . "Examined $filecount directory entries.\n"
-    . "Found $spaccount spacey names.\n"
-    . "\n"
-   );
+   warn "\nStatistics for this directory tree:\n";
+   warn "Navigated $direcount directories.\n";
+   warn "Processed $filecount files.\n";
+   warn "Found $ideocount paths with names containing \"other\" letters.\n";
    return 1;
 } # end sub stats
 
 sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
-   Error: you typed $NA arguments, but \"find-spacey-names.pl\" takes
-   at most 1 argument, which, if present, must be a regular expression
-   specifying which directory entries to process. (Did you forget to put
-   your regexp in 'single quotes'?)
+   Error: you typed $NA arguments, but this program takes at most 1 argument,
+   which, if present, must be a Perl-Compliant Regular Expression specifying
+   which directory entries to process.
 
    Help follows.
    END_OF_ERROR
@@ -254,13 +247,14 @@ sub error ($NA) {
 
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   Welcome to "find-ideographic-file-names.pl". This program finds all files
+   in the current directory (and all subdirectories if a -r or --recurse
+   option is used) which have names containing ideographic characters,
+   and prints their whole paths.
 
-   Welcome to "find-spacey-names.pl". This program finds entries in the current
-   directory (and all subdirectories if a -r or --recurse option is used) which
-   have names containing white space.
-
-   Command line:
-   find-spacey-names.pl [options] [argument]
+   Command lines:
+   find-ideographic-file-names.pl -h | --help            (to print help)
+   find-ideographic-file-names.pl [options] [arguments]  (to find files)
 
    -------------------------------------------------------------------------------
    Description of Options:

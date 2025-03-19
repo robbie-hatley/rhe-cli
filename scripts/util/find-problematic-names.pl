@@ -1,22 +1,17 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
-# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
+# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# find-spacey-names.pl
-# Finds directory entries with names containing spaces.
+# "find-problematic-names.pl"
+# Finds directory entries with names containing problematic characters.
 #
-# Author: Robbie Hatley.
+# Written by Robbie Hatley on Wednesday, March 27th, 2024.
 #
 # Edit history:
-# Unknown date    : Wrote it.
-# Wed Feb 17, 2021: Refactored to use the new GetFiles(), which now requires a fully-qualified directory as
-#                   its first argument, target as second, and regexp (instead of wildcard) as third.
-# Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
-# Sat Nov 27, 2021: Shortened sub names. Tested: Works.
-# Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
+# Wed Mar 27, 2024: Wrote it.
 # Wed Mar 19, 2025: Modernized. Now offers many more options. Can now pile-up single-letter options after a
 #                   single hyphen. Can now use both regexps and predicates to select files to process.
 #                   Shortened width from 120 to 110. Put "-C63" in shebang.
@@ -60,7 +55,7 @@ my $Predicate = 1         ; # Boolean predicate.        bool      Process all fi
 my $direcount = 0 ; # Count of directories processed by curdire().
 my $filecount = 0 ; # Count of files matching target and regexp.
 my $predcount = 0 ; # Count of files also matching predicate.
-my $spaccount = 0 ; # Count of spacey directory names found.
+my $probcount = 0; # Count of problematic file names found.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -219,8 +214,8 @@ sub curdire {
 
 # Process current file:
 sub curfile ($path) {
-   if ( get_name_from_path($path) =~ m/\s/ ) {
-      ++$spaccount;
+   if ( get_name_from_path($path) =~ m/[\[\](){}<>`'"^\$!#&*:;=?^~\\|\/\pC]/ ) {
+      ++$probcount;
       say $path;
    }
    return 1;
@@ -232,8 +227,8 @@ sub stats {
       STDERR
       "\n"
     . "Navigated $direcount directories.\n"
-    . "Examined $filecount directory entries.\n"
-    . "Found $spaccount spacey names.\n"
+    . "Processed $filecount files.\n"
+    . "Found $probcount problematic file names.\n"
     . "\n"
    );
    return 1;
@@ -242,12 +237,10 @@ sub stats {
 sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
-   Error: you typed $NA arguments, but \"find-spacey-names.pl\" takes
-   at most 1 argument, which, if present, must be a regular expression
+   Error: you typed $NA arguments, but \"find-problematic-file-names.pl\"
+   takes at most 1 argument, which, if present, must be a regular expression
    specifying which directory entries to process. (Did you forget to put
    your regexp in 'single quotes'?)
-
-   Help follows.
    END_OF_ERROR
    return 1;
 } # end sub error
@@ -255,9 +248,9 @@ sub error ($NA) {
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
-   Welcome to "find-spacey-names.pl". This program finds entries in the current
-   directory (and all subdirectories if a -r or --recurse option is used) which
-   have names containing white space.
+   Welcome to "find-problematic-file-names.pl", Robbie Hatley's nifty finder of
+   files with names containing characters which are problematic in Linux and/or
+   Windows.
 
    Command line:
    find-spacey-names.pl [options] [argument]
