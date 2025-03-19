@@ -267,7 +267,7 @@ sub help    ; # Print help and exit.
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-# Process @ARGV :
+# Process @ARGV and set settings:
 sub argv {
    # Get options and arguments:
    my $end = 0;              # end-of-options flag
