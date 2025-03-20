@@ -168,9 +168,9 @@ my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $Verbose   = 1         ; # Be verbose?               0,1,2     Be somewhat verbose.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
-my $Target    = 'A'       ; # Target                    F|D|B|A   All directory entries.
+my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 
@@ -335,7 +335,7 @@ sub curdire {
 
    # Announce current working directory if being verbose:
    if ( 2 == $Verbose) {
-      say "\nDirectory # $direcount: $cwd\n";
+      say STDERR "\nDirectory # $direcount: $cwd\n";
    }
 
    # Get list of file-info packets in $cwd matching $Target and $RegExp:

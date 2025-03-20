@@ -594,22 +594,23 @@ years. I've been putting more things into repositories on Github, so many direct
 Sun Feb 09, 2025:
 
 I now have 7 "rhe-.*" directories:
-rhe-bin
-rhe-cli
-rhe-extra
-rhe-notes
-rhe-private
-rhe-qt
-rhe-shared
+rhe-bin       (executables)
+rhe-cli       (shared CLI source)
+rhe-extra     (lumber room)
+rhe-private   (private stuff)
+rhe-qt        (QT)
 
-Four of those are also Git repositories:
+Two of those are also Git repositories:
 Repo:        Privacy:   Description:
 rhe-cli      public     command-line programming
-rhe-notes    private    notes
-rhe-private  private    scripts and programs
-rhe-shared   public     notes, scripts, programs, images
+rhe-private  private    anything I don't want to share with the public
 
+--------------------------------------------------------------------------------------------------------------
+Thu Mar 20, 2025:
 
+I just finished an extensive binge of "going through my utility Perl scripts and refactoring them up-to my
+current standards", which include lots of options, multiple single-letter options piled-up after a single
+hyphen, and both regular expressions and boolean predicates as first two arguments. What next?
 
-
+I think I'll start by looking in my other script directories for inspiration.
 
