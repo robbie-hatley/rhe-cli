@@ -11,6 +11,7 @@
 # Wed Mar 05, 2025: Wrote it.
 ##############################################################################################################
 
+use utf8;
 use Scalar::Util qw( looks_like_number        );
 use Math::Trig   qw( pi great_circle_distance );
 
@@ -19,25 +20,31 @@ use Math::Trig   qw( pi great_circle_distance );
 sub argv    ; # Process @ARGV.
 sub help    ; # Print help and exit.
 
-# ======= LEXICAL VARIABLES: =================================================================================
-
-my $lat1 = 0.0 ; # Latitude  of first  location.
-my $lon1 = 0.0 ; # Longitude of first  location.
-my $lat2 = 0.0 ; # Latitude  of second location.
-my $lon2 = 0.0 ; # Longitude of second location.
-my $dist = 0.0 ; # Distance in kilometers between first and second locations.
-
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
    # Process @ARGV:
    argv;
 
-   # Print distance in km:
-   print
-   "Distance = ",
-   great_circle_distance($lon1, pi/2-$lat1, $lon2, pi/2-$lat2, 6371.0),
-   "km\n";
+   # Get latitude and longitude of the two locations in radians:
+   my $lat1 = $ARGV[0] * pi / 180.0; # Latitude  of first  location.
+   my $lon1 = $ARGV[1] * pi / 180.0; # Longitude of first  location.
+   my $lat2 = $ARGV[2] * pi / 180.0; # Latitude  of second location.
+   my $lon2 = $ARGV[3] * pi / 180.0; # Longitude of second location.
+
+   # Convert geographic coordinates (in radians) to spherical coordinates (in radians):
+   my $θ1 =        $lon1; # Angle around equator       of location 1.
+   my $ϕ1 = pi/2 - $lat1; # Angle down from north pole of location 1.
+   my $θ2 =        $lon2; # Angle around equator       of location 2.
+   my $ϕ2 = pi/2 - $lat2; # Angle down from north pole of location 2.
+   my $r  =       6371.0; # Average radius of Earth in km.
+
+   # Calculate great-circle distance in km:
+   my $gcd = great_circle_distance($θ1, $ϕ1, $θ2, $ϕ2, $r);
+   # NOTE: great_circle_distance() uses spherical coordinates (θ1, ϕ1,
+
+   # Print result:
+   print "Great Circle Distance = ${gcd}km\n";
 
    # Exit program, returning success code "0" to caller:
    exit 0;
@@ -74,10 +81,6 @@ sub argv {
    if (!looks_like_number($ARGV[3])) {
       die "Error: Argument 4 non-numeric. Use \"--help\" to get help.\n";
    }
-   $lat1 = $ARGV[0] * pi / 180.0;
-   $lon1 = $ARGV[1] * pi / 180.0;
-   $lat2 = $ARGV[2] * pi / 180.0;
-   $lon2 = $ARGV[3] * pi / 180.0;
 
    # Return success code 1 to caller:
    return 1;
