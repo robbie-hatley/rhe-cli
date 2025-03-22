@@ -49,7 +49,6 @@ sub argv {
 
    # Process options:
    foreach (@Opts) {
-      /^-\p{L}*e/ || /^--debug$/ and $Debug = 1;
       /^-\p{L}*h/ || /^--help$/  and $Help  = 1;
    }
 
@@ -94,31 +93,25 @@ sub help {
 
    Option:            Meaning:
    -h or --help       Print this help and exit.
-   -e or --debug      Print diagnostics.
-         --           End of options (all further CL items are arguments).
 
-   Multiple single-letter options may be piled-up after a single hyphen.
-   For example, use -eh to print both diagnostic info and help.
-
-   If you want to use an argument that looks like an option, use a "--" option;
-   that will force all command-line entries to its right to be considered
-   "arguments" rather than "options".
-
-   All options not listed above are ignored.
+   All other options are ignored.
 
    -------------------------------------------------------------------------------
    Description of Arguments:
 
    In addition to options, this program takes an odd number of command-line
    arguments:
-   Arg1 is input RPM.
-   Args 2 and 3 are first  gear ratio.
-   Args 4 and 5 are second gear ratio.
-   Args 6 and 7 are third  gear ratio.
+
+   gear-ratio.pl IRPM T1 T2 T3 T4 T5 T6...
+
+   IRPM is input RPM
+   T1 and T2 are first  gear ratio.
+   T3 and T4 are second gear ratio.
+   T5 and T6 are third  gear ratio.
    Etc.
 
-   Arguments and options may be freely mixed. Arguments must will be construed in
-   order IRPM, T1, T2, etc.
+   IRPM can be any real number.
+   T1, T2, etc, should be positive integers.
 
    Cheers,
    Robbie Hatley,
