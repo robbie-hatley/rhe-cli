@@ -8,12 +8,12 @@
 
 # ======= PRAGMAS AND MODULES: ===============================================================================
 
-use v5.36;
+use v5.16;
 use strict;
 use warnings;
 
 use Scalar::Util qw( looks_like_number );
-use bigrat       qw( lib GMP a 50      );
+use bignum       qw( lib GMP a 20      );
 
 # ======= VARIABLES: =========================================================================================
 
@@ -67,7 +67,21 @@ sub gear_ratio {
       $ORPM *= ($x/$y);
       ++$i;
    }
-   say "Output = ${ORPM}RPM.";
+   say "Output speed = ${ORPM}RPM.";
+   my $dur = 1/$ORPM; my $unit = 'min';          # Duration
+   if ($dur < 1) {
+      $dur *= 60; $unit = 'sec';
+   }
+   if ($dur >= 60) {
+      $dur /= 60; $unit = 'hrs';
+      if ($dur >= 24) {
+         $dur /= 24; $unit = 'days';
+         if ($dur >= 365.2425) {
+            $dur /= 365.2425; $unit = 'years';
+         }
+      }
+   }
+   say "Duration of one output revolution = $dur$unit";
    return 1;
 }
 
