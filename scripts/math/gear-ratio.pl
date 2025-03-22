@@ -59,15 +59,16 @@ sub argv {
 
 # Calculate and print output RPM:
 sub gear_ratio {
-   my $IRPM = 0;
-   if (@Args) {$IRPM = shift @Args;}
+   my $IRPM = 0; if (@Args) {$IRPM = shift @Args;}
    my $ORPM = $IRPM;
+   my $i = 0;
    while (scalar(@Args) >= 2) {
       my $x = shift @Args;
       my $y = shift @Args;
       $ORPM *= ($x/$y);
+      ++$i;
    }
-   say $ORPM;
+   say "Output = ${ORPM}RPM.";
    return 1;
 }
 
