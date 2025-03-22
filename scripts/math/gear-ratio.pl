@@ -58,17 +58,19 @@ sub argv {
 
 # Calculate and print output RPM:
 sub gear_ratio {
-   my $IRPM = 0; if (@Args) {$IRPM = shift @Args;}
+   my $IRPM = 0;
+   if (@Args) {$IRPM = shift @Args;}    # Input speed.
    my $ORPM = $IRPM;
-   my $i = 0;
+   my $GR = 1;                          # Gear ratio.
+   my $i = 0;                           # Steps.
    while (scalar(@Args) >= 2) {
       my $x = shift @Args;
       my $y = shift @Args;
-      $ORPM *= ($x/$y);
+      $GR *= ($x/$y);
       ++$i;
    }
-   say "Output speed = ${ORPM}RPM.";
-   my $dur = 1/$ORPM; my $unit = 'min';          # Duration
+   $ORPM = $IRPM * $GR;                 # Output speed.
+   my $dur = 1/$ORPM; my $unit = 'min'; # Duration
    if ($dur < 1) {
       $dur *= 60; $unit = 'sec';
    }
@@ -81,6 +83,10 @@ sub gear_ratio {
          }
       }
    }
+   say "Gear ratio = $GR";
+   say "Number of steps = $i";
+   say "Input speed = ${IRPM}RPM";
+   say "Output speed = ${ORPM}RPM";
    say "Duration of one output revolution = $dur$unit";
    return 1;
 }
@@ -94,7 +100,8 @@ sub help {
 
    Welcome to Robbie Hatley's nifty gear-ratio program. Given an "input" RPM and
    an even number of positive integers representing the gear ratios of a train of
-   gears, this program will output the corresponding "output" RPM.
+   gears, this program will output the combined gear ratio and the corresponding
+   "output" RPM.
 
    -------------------------------------------------------------------------------
    Command lines:
