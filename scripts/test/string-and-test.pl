@@ -20,8 +20,24 @@ sub str_and ($x, $y) {
 }
 
 sub bin_print ($x) {
-   for (map {ord} split //, $x) {
-      printf("%08b ", $_);
+   for my $ord (map {ord} split //, $x) {
+      # 1 byte:
+      if ($ord < 2**8) {
+         printf("%08b ", $ord);
+      }
+      # 2 bytes:
+      elsif ($ord < 2**16) {
+         printf("%016b ", $ord);
+      }
+      # 3 bytes:
+      elsif ($ord < 2**24) {
+         printf("%024b ", $ord);
+      }
+
+      # 4 bytes:
+      elsif ($ord < 2**32) {
+         printf("%032b ", $ord);
+      }
    }
    printf "\n";
 }
