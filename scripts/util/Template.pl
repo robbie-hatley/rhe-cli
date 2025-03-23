@@ -99,7 +99,7 @@
 
 ##############################################################################################################
 # myprog.pl
-# "MyProg" is a program which [insert description here].
+# Twiddles libokodes on unguish iblkuabs.
 # Written by Robbie Hatley.
 # Edit history:
 # Sat Jun 05, 2021: Wrote it.
