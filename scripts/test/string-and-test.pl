@@ -47,4 +47,4 @@ print 'x&y str print: '; str_print($z);
 say '';
 print ' x  bin print: '; bin_print($x);
 print ' y  bin print: '; bin_print($y);
-print 'x&Y bin print: '; bin_print($z);
+print 'x&y bin print: '; bin_print($z);
