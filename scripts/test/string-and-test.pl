@@ -29,12 +29,12 @@ sub bin_print ($x) {
 sub str_print ($x) {
    my @charset;
    for (0..255) {
-      $charset[$_]=chr($_);
+      $charset[$_]=$_;
    }
-   @charset[0..31] = qw( ␀ ␁ ␂ ␃ ␄ ␅ ␆ ␇ ␈ ␉ ␊ ␋ ␌ ␍ ␎ ␏ ␐ ␑ ␒ ␓ ␔ ␕ ␖ ␗ ␘ ␙ ␚ ␛ ␜ ␝ ␞ ␟ ␠);
-   $charset[127] = '␡';
-   @charset[128..159] = ('�') x 32;
-   my $string = join '', map {$charset[$_]} map {ord} split //, $x;
+   @charset[0..31] = map {ord} qw( ␀ ␁ ␂ ␃ ␄ ␅ ␆ ␇ ␈ ␉ ␊ ␋ ␌ ␍ ␎ ␏ ␐ ␑ ␒ ␓ ␔ ␕ ␖ ␗ ␘ ␙ ␚ ␛ ␜ ␝ ␞ ␟ ␠);
+   $charset[127] = ord('␡');
+   @charset[128..159] = (ord('�')) x 32;
+   my $string = join '', map {chr} map { ( $_ < 256 ) ? $charset[$_] : $_} map {ord} split //, $x;
    say $string;
 }
 
