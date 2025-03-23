@@ -7,16 +7,13 @@ use utf8;
 use List::MoreUtils qw( pairwise );
 
 sub str_and ($x, $y) {
-   my $m = length($x);
-   my $n = length($y);
-   if ($m != $n) {
+   if (length($x) != length($y)) {
       die "Error: strings are of unequal length.\n";
    }
    my @xbin = map {ord} split //, $x;
    my @ybin = map {ord} split //, $y;
    my @zbin = pairwise { $a & $b } @xbin, @ybin;
-   my $z = join '', map {chr} @zbin;
-   return $z;
+   return join '', map {chr} @zbin;
 }
 
 sub bin_print ($x) {
@@ -39,7 +36,7 @@ sub bin_print ($x) {
          printf("%032b ", $ord);
       }
    }
-   printf "\n";
+   print "\n";
 }
 
 sub str_print ($x) {

@@ -17,11 +17,11 @@ use v5.36;
 use utf8;
 
 # CPAN modules:
-use Cwd              qw( cwd getcwd                  );
-use Time::HiRes      qw( time                        );
-use Scalar::Util     qw( looks_like_number reftype   );
-use List::AllUtils;  qw( :DEFAULT                    );
-use Digest::SHA      qw( sha1_hex                    );
+use Cwd             qw( cwd getcwd                  );
+use Time::HiRes     qw( time                        );
+use Scalar::Util    qw( looks_like_number reftype   );
+use List::AllUtils  qw( :DEFAULT                    );
+use Digest::SHA     qw( sha1_hex                    );
 
 # RH modules:
 use RH::Dir;
@@ -46,7 +46,7 @@ my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-my $Verbose   = 1         ; # Be verbose?               0,1,2     Be somewhat verbose.
+my $Verbose   = 0         ; # Be verbose?               0,1,2     Be quiet.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Sha1      = ''        ; # SHA-1 hash of a file      hash      blank
 
@@ -163,7 +163,7 @@ sub argv {
 
    # First argument, if present, is SHA-1 hash to look for:
    if ( $NA >= 1 ) {             # If we have at-least-1 arguments,
-      $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
+      $Sha1 = $Args[0];          # set $Sha1 to $Args[0].
    }
 
    # Return success code 1 to caller:
@@ -203,11 +203,18 @@ sub curdire {
       next if   -t _ ; # Skip TTYs
       next if   -z _ ; # Skip empty files
       # If we get to here, we have a hashable data file, so get its hash:
-      my $hash = get_sha1($entry);
+      my $hash = sha1($entry);
+      if ($Debug) {
+         say STDERR "In \"for each entry\" loop in curdire.";
+         say STDERR "Entry name = \"$entry\".";
+         say STDERR "Entry hash = \"$hash\".";
+         say STDERR "Refer hash = \"$Sha1\".";
+      }
       next if '***ERROR***' eq $hash;
       # Skip this file if it doesn't match the hash the user is searching for:
       next if $hash ne $Sha1;
-      # If we get to here we found a match, so print path:
+      # If we get to here we found a match, so increment file counter and print path:
+      ++$filecount;
       say path($cwd, $entry);
    }
 
@@ -219,7 +226,7 @@ sub curdire {
 sub sha1 ($name) {
    my   $fh = undef;                           # File handle (initially undefined).
    local $/ = undef;                           # Set "input record separator" to EOF.
-   open($fh, '< :raw', e $path)                # Try to open the file for reading in "raw" mode.
+   open($fh, '< :raw', e $name)                # Try to open the file for reading in "raw" mode.
    or warn "Error: couldn't open \"$name\".\n" # If file-open failed, warn user
    and return '***ERROR***';                   # and return error code.
    my $data = <$fh>;                           # Slurp file into $data as one big string of unprocessed bytes.
@@ -237,8 +244,7 @@ sub stats {
       say    STDERR '';
       say    STDERR 'Statistics for this directory tree:';
       say    STDERR "Navigated $direcount directories.";
-      say    STDERR "Found $filecount files matching regexp \"$RegExp\" and target \"$Target\".";
-      say    STDERR "Found $predcount files which also match predicate \"$Predicate\".";
+      say    STDERR "Found $filecount files matching SHA-1 hash \"$Sha1\".";
    }
 
    return 1;
@@ -262,15 +268,15 @@ sub help {
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "[insert Program Name here]". This program does blah blah blah
-   to all files in the current directory (and all subdirectories if a -r or
-   --recurse option is used).
+   Welcome to "find-files-by-sha1.pl". Given a hex SHA-1 hash, this program
+   searches for files in the current directory (and all subdirectories if a -r or
+   --recurse option is used) which match the given hash.
 
    -------------------------------------------------------------------------------
    Command lines:
 
-   program-name.pl -h | --help                       (to print this help and exit)
-   program-name.pl [options] [Arg1] [Arg2] [Arg3]    (to [perform funciton] )
+   find-files-by-sha1.pl -h | --help      (to print this help and exit)
+   find-files-by-sha1.pl [options] sha1   (to find files with hash sha1)
 
    -------------------------------------------------------------------------------
    Description of Options:
@@ -283,10 +289,6 @@ sub help {
    -v or --verbose    Be verbose.
    -l or --local      DON'T recurse subdirectories.     (DEFAULT)
    -r or --recurse    DO    recurse subdirectories.
-   -f or --files      Target Files.
-   -d or --dirs       Target Directories.
-   -b or --both       Target Both.
-   -a or --all        Target All.                       (DEFAULT)
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
@@ -297,9 +299,8 @@ sub help {
    If two separate (not piled-together) options conflict, the right
    overrides the left.
 
-   If you want to use an argument that looks like an option (say, you want to
-   search for files which contain "--recurse" as part of their name), use a "--"
-   option; that will force all command-line entries to its right to be considered
+   If you want to use an argument that looks like an option, use a "--" option;
+   that will force all command-line entries to its right to be considered
    "arguments" rather than "options".
 
    All options not listed above are ignored.
@@ -307,7 +308,8 @@ sub help {
    -------------------------------------------------------------------------------
    Description of Arguments:
 
-   In addition to options, this program can take 1 or 2 optional arguments.
+   In addition to options, this program needs 1 mandatory argument, which must be
+   a hex SHA-1 hash using lower-case letters a-f. For example,
 
    Arg1 (OPTIONAL), if present, must be a Perl-Compliant Regular Expression
    specifying which file names to process. To specify multiple patterns, use the
