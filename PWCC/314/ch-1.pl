@@ -32,7 +32,15 @@ Output: 3
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+The first thing I note is that "-1" will have to be returned if-and-only-if the 3 input strings do NOT all
+start with the same first character. (The examples rule-out the idea that 3 empty strings should be considered
+"equal".) With that in-mind, I see two main ways to attack this:
+
+1. Nibble from the right, chopping-off substrings until the 3 strings are equal, and count operations.
+2. Count from the left, counting triplets of equal characters. Substract number of equal chars from total.
+
+Either will the the same answer. I'll go with option 2, because it gives an easy way to determine when -1
+should be returned: precisely when the number of equal characters (counted in triplets from the left) is 0.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
@@ -47,25 +55,41 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.38;
-use utf8;
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   use utf8;
+   use List::Util qw( min max sum0);
+
+   # How many characters need to be excised from the right
+   # ends of a triplet of strings to make them all equal?
+   sub equal_strings {
+      my ($x,$y,$z) = @_ ;
+      my ($l,$m,$n) = (length($x),length($y),length($z));
+      my $min_len =  min($l,$m,$n);
+      my $max_len =  max($l,$m,$n);
+      my $sum_len = sum0($l,$m,$n);
+      my $index = 0;
+      for ( ; $index <  $max_len ; ++$index ) {
+         last unless $index < $min_len
+            && substr($x,$index,1) eq substr($y,$index,1)
+            && substr($y,$index,1) eq substr($z,$index,1)
+            && substr($z,$index,1) eq substr($x,$index,1);
+      }
+      $index and return ($sum_len - (3 * $index)) or return -1;
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) : (["abc", "abb", "ab"], ["ayz", "cyz", "xyz"], ["yza", "yzb", "yzc"]);
+#                  Expected outputs :            2                    -1                      3
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
 for my $aref (@arrays) {
-   say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   my ($x,$y,$z) = @$aref;
+   my $ops = equal_strings($x,$y,$z);
+   print "\n";
+   print "First  string = $x\n";
+   print "Second string = $y\n";
+   print "Third  string = $z\n";
+   print "$ops operations were required to equalize strings.\n";
 }
