@@ -39,7 +39,7 @@ With that in-mind, I see two main ways to attack this:
 1. Nibble from the right, chopping-off substrings until the 3 strings are equal, and count operations.
 2. Count triplets of equal characters from the left, and subtract number of equal characters from total.
 
-Either will the the same answer. I'll go with option 2, because it gives an easy way to determine when -1
+Either will give the same answer. I'll go with option 2, because it gives an easy way to determine when -1
 should be returned: precisely when the number of equal characters (counted in triplets from the left) is 0
 (or if any of the three strings is empty). With that in-mind, I'll make these 2 subroutines:
 
