@@ -252,7 +252,9 @@ sub curdire {
    my $diprcount = 0; # Count of files also matching $Predicate,     for this directory only.
 
    # Get current working directory:
-   my $curdir = d getcwd;
+   my $curdir = d(getcwd);
+
+   if ($Debug) {say STDERR "In \"rhdir.pl\", in \"curdire()\"; \$curdir = \"$curdir\".";}
 
    # Get list of files in current directory matching $Target and $RegExp:
    my $curdirfiles = GetFiles($curdir, $Target, $RegExp);

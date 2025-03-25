@@ -269,9 +269,10 @@ sub GetFiles :prototype(;$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$'
    }
 
    if ($dir !~ m/^\//) {
-      die "Error in GetFiles: directory must start with \"/\".\n".
-          "To use \".\", use \"GetFiles cwd_utf8\".\n".
-          "To use \"..\", use \"chdir '..'; GetFiles cwd_utf8\".\n";
+      say STDERR "Error in GetFiles: Directory \"$dir\" is invalid.\n"
+                ."Directory must start with \"/\".\"\n"
+                 ."Returning reference to empty anonymous array.";
+      return [];
    }
 
    # Zero all RH::Dir counters here. You should save a copy in main:: if you want to keep this info, because
@@ -638,25 +639,11 @@ sub FilesAreIdentical :prototype($$) ($filepath1, $filepath2) {
 # Navigate a directory tree recursively, applying code at each node on the tree:
 sub RecurseDirs :prototype(&) ($f) {
 
-   # ======= ARGUMENT CHECK: =================================================================================
+   # ======= WHO'S CALLING? ==================================================================================
 
-   # Die if f is not a ref to some code (block or sub):
-   if ('CODE' ne ref $f) {
-      die '\nFatal error in RecurseDirs: This subroutine takes 1 argument which must be a\n'.
-          '{code block} or a reference to a subroutine.\n\n';
-   }
-
-   # ======= DIRECTORY CHECKS: ===============================================================================
-
-   # Get raw current directory:
-   my $curdir = d(getcwd);
-
-   # We MUST have a valid "current working directory"!!!
-   if ( ! defined e($curdir) ) {
-      die "Fatal error in RecurseDirs:\n"
-         ."We were unable to determine the current working directory!\n"
-         ."Aborting execution to prevent disaster!\n"
-         ."$!\n";
+   if ($db) {
+      my ($pac,$fil,$lin)=caller;
+      say STDERR "RecurseDirs called by package \"$pac\", file \"$fil\", line \"$lin\".";
    }
 
    # ======= RECURSION CHECKS: ===============================================================================
@@ -664,74 +651,101 @@ sub RecurseDirs :prototype(&) ($f) {
    # This is a recursive function, being used in a chaotic and unpredictable environment with an unknown file
    # system, so it is VERY possible for runaway recursion to occur. So, to keep track of recursion, we use a
    # recursion counter, "$recursion", which is initialized to zero once only, the first time this function is
-   # called during this run of this program.
-   #
-   # If RecurseDirs() is called multiple times during a program run (rare!), "$recursion" won't be initialized
-   # to 0 on the 2nd and subsequent runs, but that's fine, because when RecurseDirs() is done recursing a
-   # directory tree, "$recursion" will always be 0 immediately before the final return anyway.
-   #
-   # "$recursion" is incremented immediately before recursing and decremented immediately after recursing,
-   # and it is checked each time this subroutine is run to make sure it never exceeds 50 levels of recursion:
-   state $recursion = 0;
+   # called during this run of this program. "$recursion" is incremented immediately before recursing and
+   # decremented immediately after recursing, and it is checked each time this subroutine is run to make sure
+   # it never exceeds 100 levels of recursion:
+   state $recursion     = 0;
+   state $max_recursion = 0;
 
-   # If we are more than 50 levels deep into recursion, die:
-   if ( $recursion > 50 ) {
-      die "Fatal error in RecurseDirs:\n"
-         ."More than 50 levels of recursion!\n"
-         ."CWD = \"$curdir\"\n"
+   # If RecurseDirs() is called multiple times during a program run (rare!), "$recursion" won't be initialized
+   # to 0 on the 2nd and subsequent runs. That's normally fine, because when RecurseDirs() is done recursing a
+   # directory tree, "$recursion" will always be 0 immediately before the final return anyway. HOWEVER, if
+   # RecurseDirs() exited unexpectedly on a previous recursive run, it may be non-zero on first entry of next
+   # recursive run. So to combat that, we COULD reset it to zero if calling package is not "RH:Dir":
+
+   # if ($db) {say STDERR "(1) Recursion Level = $recursion";}
+   # if ('RH::Dir' ne (caller())[0]) {$recursion = 0;}
+   # if ($db) {say STDERR "(2) Recursion Level = $recursion";}
+
+   # NOTE RH 2025-03-23_01-06: No, let's not do that. It just wastes time, because a set of recursive calls to
+   # this subroutine will either:
+   # 1. Unwind, decrementing $recursion back to 0.
+   # 2. Crash.
+   # In neither case will an outside caller ever find $recursion anything other than 0 on first entry, even if
+   # this subroutine is called multiple times in a program run (already exceedingly rare).
+
+   # If we are more than 100 levels deep into recursion, die:
+   if ( $recursion > 100 ) {
+      die "Fatal error in RecurseDirs: More than 100 levels of recursion!\n$!\n";
+   }
+
+   # ======= ARGUMENT CHECK: =================================================================================
+
+   # Die if f is not a ref to some code (block or sub):
+   if ('CODE' ne ref $f) {
+      die "\nFatal error in RecurseDirs: This subroutine takes 1 argument which must be a\n".
+          "{code block} or a reference to a subroutine.\n\n";
+   }
+
+   # ======= CURRENT WORKING DIRECTORY CHECKS: ===============================================================
+
+   # Get current working directory:
+   my     $curdir   = d(getcwd) ;  # Current directory at beginning of THIS recursive call (may be any level).
+   state  $oridir   = $curdir   ;  # Current directory as FIRST entry (level 0 only).
+   my     $new_cwd  = undef     ;  # Keep track of ACTUAL current working directory when chdir'ing!
+
+   # We MUST have a valid "current working directory"!!!
+   if ( !defined($curdir) || '/' ne substr($curdir, 0, 1) || ! -e e($curdir) || ! -d e($curdir) ) {
+      die "Fatal error in RecurseDirs: unable to determine the current working directory!\n"
+         ."Aborting execution to prevent damage to file system!\n"
          ."$!\n";
    }
 
-   # ======= ORIGINAL (PRE-RECURSION) DIRECTORY: =============================================================
-
-   # Keep track of the ORIGINAL directory we were in when we first entered this subroutine, before recursing:
-   state $oridir;           # Original directory.
-   if ( 0 == $recursion ) { # If this is a non-recursive (first) entry,
-      $oridir = $curdir;    # set $oridir to $curdir.
-   }
-
-   # ======= PLATFORM-SPECIFIC ORIGINAL-DIRECTORY CHECKS: ====================================================
-
-   # If "original" directory is something we shouldn't recurse, print warning and return 0 (failure):
+   # If we don't have permission to read this directory, jump to bottom:
+   lstat e($curdir);
    if
    (
-         $oridir eq '/proc' # Linux: Attempting to navigate from "/proc" can cause system crashes!
-      || $oridir =~ m#/\.git$#                     && 'root' ne $ENV{USER} # All OSs: git        is root-only.
-      || $oridir =~ m#/System Volume Information$# && 'root' ne $ENV{USER} # Windows: SysVolInf  is root-only.
-      || $oridir =~ m#/lost+found$#                && 'root' ne $ENV{USER} # Linux:   Lost&Found is root-only.
-      || $oridir =~ m#/\.Recycle/$#i               && 'root' ne $ENV{USER} # Windows: trash      is root-only.
-      || $oridir =~ m#/\$Recycle\.Bin$#i           && 'root' ne $ENV{USER} # Windows: trash      is root-only.
-      || $oridir =~ m#/Recyler$#i                  && 'root' ne $ENV{USER} # Windows: trash      is root-only.
-      || $oridir =~ m#/Trash.*$#i                  && 'root' ne $ENV{USER} # Linux:   trash      is root-only.
-      || $oridir =~ m#/\.Trash.*$#i                && 'root' ne $ENV{USER} # Linux:   trash      is root-only.
+         ! -r _ # We can't read     this directory.
+      || ! -R _ # We can't read     this directory.
+      || ! -x _ # We can't navigate this directory.
+      || ! -X _ # We can't navigate this directory.
    )
    {
-      warn "Error in RecurseDirs:\n"
-          ."Can't recurse from this problematic starting directory:\n"
-          ."$oridir\n"
-          ."Aborting directory-tree walk.\n";
-      return 0;
-   }
+      warn "Error in RecurseDirs: Can't navigate directory \"$curdir\". Skipping this sub-tree.\n";
+      chdir(e($curdir));
+      $new_cwd = d(getcwd);
+      if ( !defined($new_cwd) || $new_cwd ne $curdir) {
+         die "Fatal error in RecurseDirs: Couldn't cd back to curdir \"$curdir\"!\n";
+      }
+      goto BOTTOM; # This allows directory-tree-walking to continue (or ends program if we're at level 0).
+   } # end $curdir is problematic
 
+   # ======= READ CONTENTS OF CURRENT DIRECTORY: =============================================================
    # Try to open current directory; if that fails, print warning and return 1:
    my $dh = undef;
-   opendir $dh, e $curdir
-   or warn "Error in RecurseDirs: Couldn't open this directory:\n".
-           "\"$curdir\"\n".
-           "Moving on to next directory.\n"
-   and return 1; # This allows directory-tree-walking to continue.
+   if ( ! opendir $dh, e $curdir ) {
+      warn "Error in RecurseDirs: Couldn't open directory \"$curdir\".\nMoving on to next directory.\n";
+      chdir(e($curdir));
+      $new_cwd = d(getcwd);
+      if ( !defined($new_cwd) || $new_cwd ne $curdir) {
+         die "Fatal error in RecurseDirs: Couldn't cd back to curdir \"$curdir\"!\n";
+      }
+      goto BOTTOM; # This allows directory-tree-walking to continue (or ends program if we're at level 0).
+   }
 
    # Try to read current directory; if that fails, print warning and return 1:
    my @subdirs = sort(d(readdir($dh))); # Subdirs & files. (We'll get rid of the files down below.)
    if ( scalar(@subdirs) < 2 ) {
-      warn "Error in RecurseDirs: Couldn't read this directory:\n".
-           "\"$curdir\"\n".
-           "Moving on to next directory.\n";
-      closedir $dh
-      or die "Fatal error in RecurseDirs: Couldn't close this directory:\n".
-             "\"$curdir\"\n".
-             "$!\n";
-      return 1; # This allows directory-tree-walking to continue.
+      warn "Error in RecurseDirs: Couldn't read directory \"$curdir\".\nMoving on to next directory.\n";
+      if ( ! closedir $dh ) {
+         die "Fatal error in RecurseDirs: Couldn't close directory \"$curdir\".\n$!\n";
+      }
+      chdir(e($curdir));
+      $new_cwd = d(getcwd);
+      if ( !defined($new_cwd) || $new_cwd ne $curdir) {
+         die "Fatal error in RecurseDirs: Couldn't cd back to curdir \"$curdir\"!\n";
+      }
+      goto BOTTOM; # This allows directory-tree-walking to continue (or ends program if we're at level 0).
    }
 
    # Try to close current directory; if that fails, abort program:
@@ -739,10 +753,17 @@ sub RecurseDirs :prototype(&) ($f) {
       die "Fatal error in RecurseDirs: Couldn't close directory \"$curdir\".\n$!\n";
    }
 
-   # Navigate immediate subdirs (if any) of this instance's current directory:
+   if ($db) {
+      say STDERR '';
+      say STDERR "In RecurseDirs(); list of entries in directory \"$curdir\":";
+      say STDERR for @subdirs;
+      say STDERR '';
+   }
+
+   # ======= NAVIGATE SUBDIRS (IF ANY) OF CURRENT DIRECTORY: =================================================
    SUBDIR: foreach my $subdir (@subdirs) {
 
-      # ======= SUBDIR STATS CHECKS: =========================================================================
+      # ------- SUBDIR STATS CHECKS: -------------------------------------------------------------------------
 
       # If "$subdir" doesn't exist, skip it:
       next SUBDIR if ! -e e $subdir;                # Doesn't exist.
@@ -757,60 +778,78 @@ sub RecurseDirs :prototype(&) ($f) {
       next SUBDIR if   -l _ ;                       # Symbolic link.
 
       # If "$subdir" is forbidden to us, skip it:
-      next SUBDIR if ! -r _ ;                       # We can't read file names in this subdir!
-      next SUBDIR if ! -x _ ;                       # We can't read file info  in this subdir!
+      next SUBDIR if ! -r _ ;                       # We can't read     this subdir!
+      next SUBDIR if ! -R _ ;                       # We can't read     this subdir!
+      next SUBDIR if ! -x _ ;                       # We can't navigate this subdir!
+      next SUBDIR if ! -X _ ;                       # We can't navigate this subdir!
 
-      # ======= SUBDIR NAME CHECKS: ==========================================================================
+      # ------- SUBDIR NAME CHECKS: --------------------------------------------------------------------------
 
       # Skip certain poisonous subdirectories order to avoid loops and crashes:
       next SUBDIR if $subdir eq '.';                       # Windows/Linux/Cygwin: Hard link to self.
       next SUBDIR if $subdir eq '..';                      # Windows/Linux/Cygwin: Hard link to parent.
-      next SUBDIR if $curdir eq '/' && $subdir eq 'proc';  # Linux: Navigating in here causes crashes.
 
-      # If we're not 'root' then bypass various directories that only 'root' should be messing with:
-      if ( 'root' ne $ENV{USER} ) {
-         # Avoid certain specific problematic directories:
-         next SUBDIR if $subdir eq '.git';                         # All OSs: don't mess with git.
-         next SUBDIR if $subdir eq 'System Volume Information';    # Windows: SysVolInf is off-limits.
-         next SUBDIR if $subdir =~ m/lost+found$/;                 # Linux:   Lost&Found is root-only.
+      # ------- SUBDIR PATH: ---------------------------------------------------------------------------------
 
-         # Avoid rooting in trash bins:
-         next SUBDIR if $subdir =~ m/^\.Recycle/i;                 # Windows trash bins.
-         next SUBDIR if $subdir =~ m/^\$Recycle.Bin/i;             # Windows trash bins.
-         next SUBDIR if $subdir =~ m/^Recyler/i;                   # Windows trash bins.
-         next SUBDIR if $subdir =~ m/^Trash/i;                     # Linux trash bins.
-         next SUBDIR if $subdir =~ m/^\.Trash/i;                   # Linux trash bins.
-      } # end if (we're not root)
+      # Get fully-qualified path for $subdir:
+      my $subdir_path = path($curdir, $subdir);
 
       # Try to chdir to $subdir; if that fails, try to cd back to $curdir (or die if that fails),
       # then move on to next subdirectory:
-      if ( ! chdir e $subdir ) {
-         warn "Warning from RecurseDirs: Couldn't cd to subdir \"$subdir\"!\n";
-         chdir e $curdir or die "Fatal error in RecurseDirs: Couldn't cd back to curdir \"$curdir\"!\n";
+      chdir(e($subdir_path));
+      $new_cwd = d(getcwd);
+      if ( !defined($new_cwd) || $new_cwd ne $subdir_path ) {
+         say STDERR "Warning from RecurseDirs: return value of getcwd is \"$new_cwd\","
+                   ."but that doesn't match our presumed current directory which is \"$subdir_path\".\n"
+                   ."Skipping this subdirectory and moving on to next.";
+         # Try to cd back to $curdir (and die if that fails):
+         chdir(e($curdir));
+         $new_cwd = d(getcwd);
+         if ( !defined($new_cwd) || $new_cwd ne $curdir) {
+            die "Fatal error in RecurseDirs: Couldn't cd back to curdir \"$curdir\"!\n";
+         }
          next SUBDIR;
       }
 
       # Recurse:
       ++$recursion;
+      if ( $recursion > $max_recursion ) { $max_recursion = $recursion }
+      if ($db) {say STDERR "In RecurseDirs, in \"$new_cwd\", about to recurse.";}
       RecurseDirs(\&{$f});
+      if ($db) {say STDERR "In RecurseDirs, in \"$new_cwd\", just returned from recursion.";}
       --$recursion;
 
       # Try to cd back to $curdir (and die if that fails):
-      chdir e $curdir or die "Fatal error in RecurseDirs: Couldn't cd back to previous directory!\n";
-
+      chdir(e($curdir));
+      $new_cwd = d(getcwd);
+      if ( !defined($new_cwd) || $new_cwd ne $curdir) {
+         die "Fatal error in RecurseDirs: Couldn't cd back to curdir \"$curdir\"!\n";
+      }
    } # end foreach my $subdir (@subdirs)
 
+   # ======= EXECUTE FUNCTION: ===============================================================================
    # Execute f only at the tail end of SubDirs; that way if f renames immediate subdirectories of the
    # current directory (for example, f is RenameFiles running in directories mode), that's no problem,
    # because all navigation of subdirectories of the current directory is complete before f is executed.
    # In other words, each instance of RecurseDirs is only allowed to fulfill its primary task after its
    # children have all died of old age, having fulfilled their tasks.
+
+   # But first, make sure we're back to our original current working directory!
+   chdir(e($curdir));
+   $new_cwd = d(getcwd);
+   if ( !defined($new_cwd) || $new_cwd ne $curdir ) {
+      die "Fatal error at bottom of RecurseDirs: return value of getcwd is \"$new_cwd\",\n"
+         ."but that doesn't match our presumed current directory which is \"$curdir\".\n"
+         ."Aborting program to avoid damaging file system.";
+   }
+   if ($db) {say STDERR "In RecurseDirs, in \"$new_cwd\", about to execute function.";}
    if ( ! $f->() ) {
-      warn "Warning from RecurseDirs: Couldn't apply function in directory $curdir!\n";
+      warn "Warning from RecurseDirs: Couldn't apply function in directory $new_cwd!\n";
    }
 
-   # If we get to here, we've succeeded, so return 1:
-   return 1;
+   # ======= RETURN: =========================================================================================
+   # If we get to here, we've succeeded, so return:
+   BOTTOM: return $max_recursion;
 } # end sub RecurseDirs (&)
 
 # Copy a file from a given path to a given directory.

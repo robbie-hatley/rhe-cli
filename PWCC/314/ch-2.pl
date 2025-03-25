@@ -37,13 +37,19 @@ Output: 0
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+I could cheat and just return the number of columns necessary to be deleted, but that's NOT what the problem
+description actually says; it says "make each column sorted lexicographically by DELETING any non-sorted
+columns". So I'll actually do that. I'll make these 4 subroutines:
+1. col($pref,$n)          (Return a column.)
+2. del_col($pref,$n)      (Delete a column.)
+3. is_srt(@list)          (Is a list sorted?)
+4. del_unsrt_cols($pref)  (Delete unsorted columns.)
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, apostrophes escaped as '"'"', in proper Perl syntax:
-./ch-2.pl '(["She shaved?", "She ate 7 hot dogs."],["She didn'"'"'t take baths.", "She sat."])'
+single-quoted array of arrays of equal-length double-quoted strings, in proper Perl syntax, like so:
+./ch-2.pl '(["SNMP", "HTTP", "SVGA"],["132","546","879"],["zxy","nqp","fdh"])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -52,25 +58,56 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.38;
-use utf8;
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   use v5.36;
+   use utf8;
+   use List::Util qw( min );
+
+   # Return a column from a page:
+   sub col ($pref,$n) {
+      return map {substr $_, $n, 1} @$pref;
+   }
+
+   # Delete a column from a page:
+   sub del_col ($pref,$n) {
+      map {substr $_, $n, 1, ''} @$pref;
+   }
+
+   # Is a given list already-sorted?
+   sub is_srt (@list) {
+      my @srt = sort @list;
+      map {return 0 unless $srt[$_] eq $list[$_]} (0..$#list);
+      return 1;
+   }
+
+   # Delete all unsorted columns from a page:
+   sub del_unsrt_cols ($pref) {
+      my $cols = min map {length($pref->[$_])} (0..$#$pref);
+      my $delcnt = 0;
+      for ( my $col = 0 ; $col <= $cols ; ++$col ) {
+         if ( !is_srt(col($pref, $col)) ) {
+            del_col($pref, $col);
+            ++$delcnt; # Increment deletion counter,
+            --$cols;   # because we deleted a column,
+            --$col;    # and remaining columns shifted left.
+         }
+      }
+      return $delcnt;  # Return number of columns deleted.
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @pages = @ARGV ? eval($ARGV[0]) : (["swpc","tyad","azbe"],["cba","daf","ghi"],["a", "b", "c"]);
+#                 Expected outputs :             2                    1                 0
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
-for my $aref (@arrays) {
+for my $pref (@pages) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   say 'Page of text:';
+   say for @$pref;
+   my $removed = del_unsrt_cols($pref);
+   say 'Page with unsorted columns removed:';
+   say for @$pref;
+   say "Number of unsorted columns removed = $removed";
 }

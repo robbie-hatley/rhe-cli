@@ -309,55 +309,18 @@ sub help {
    Description of Arguments:
 
    In addition to options, this program needs 1 mandatory argument, which must be
-   a hex SHA-1 hash using lower-case letters a-f. For example,
+   a hex SHA-1 hash using lower-case letters a-f. For example, say an online
+   database mentions a photo of a green island with this SHA-1 hash:
+   bc70c7af332e7ecc952810eac7394cfeed0d03e7
+   Then you could see if it's somewhere in your home directory like this:
 
-   Arg1 (OPTIONAL), if present, must be a Perl-Compliant Regular Expression
-   specifying which file names to process. To specify multiple patterns, use the
-   | alternation operator. To apply pattern modifier letters, use an Extended
-   RegExp Sequence. For example, if you want to process items with names
-   containing "cat", "dog", or "horse", title-cased or not, you could use this
-   regexp: '(?i:c)at|(?i:d)og|(?i:h)orse'
-   Be sure to enclose your regexp in 'single quotes', else BASH may replace it
-   with matching names of entities in the current directory and send THOSE to
-   this program, whereas this program needs the raw regexp instead.
+      cd ~
+      find-files-by-sha1.pl -r 'bc70c7af332e7ecc952810eac7394cfeed0d03e7'
 
-   Arg2 (OPTIONAL), if present, must be a boolean predicate using Perl
-   file-test operators. The expression must be enclosed in parentheses (else
-   this program will confuse your file-test operators for options), and then
-   enclosed in single quotes (else the shell won't pass your expression to this
-   program intact). Here are some examples of valid and invalid predicate arguments:
-   '(-d && -l)'  # VALID:   Finds symbolic links to directories
-   '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
-   '(-b)'        # VALID:   Finds block special files
-   '(-c)'        # VALID:   Finds character special files
-   '(-S || -p)'  # VALID:   Finds sockets and pipes.  (S must be CAPITAL S   )
-    '-d && -l'   # INVALID: missing parentheses       (confuses program      )
-    (-d && -l)   # INVALID: missing quotes            (confuses shell        )
-     -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
-
-   (Exception: Technically, you can use an integer as a boolean, and it doesn't
-   need quotes or parentheses; but if you use an integer, any non-zero integer
-   will process all paths and 0 will process no paths, so this isn't very useful.)
-
-   Arguments and options may be freely mixed, but the arguments must appear in
-   the order Arg1, Arg2 (RegExp first, then File-Type Predicate); if you get them
-   backwards, they won't do what you want, as most predicates aren't valid regexps
-   and vice-versa.
-
-   A number of arguments greater than 2 will cause this program to print an error
-   message and abort.
-
-   A number of arguments less than 0 will likely rupture our spacetime manifold
-   and destroy everything. But if you DO somehow manage to use a negative number
-   of arguments without destroying the universe, please send me an email at
-   "Hatley.Software@gmail.com", because I'd like to know how you did that!
-
-   But if you somehow manage to use a number of arguments which is an irrational
-   or complex number, please keep THAT to yourself. Some things would be better
-   for my sanity for me not to know. I don't want to find myself enthralled to
-   Cthulhu.
-
-   Happy item processing!
+   That goes to your home directory, then searches all of its subdirectories,
+   unlimited levels deep, for a file with that SHA-1 hash; if such a file
+   exists, this program will print its path, such as, perhaps:
+   /home/patrick/scenic-pics/unknown-photo-of-green-island.jpg
 
    Cheers,
    Robbie Hatley,
