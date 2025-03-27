@@ -48,7 +48,7 @@ my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               0,1,2     Be quiet.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
-my $Sha1      = ''        ; # SHA-1 hash of a file      hash      blank
+my @Sha1      = ()        ; # SHA-1 hashes.             hashes    (empty)
 my $Cwd       = ''        ; # Share cwd between subs.   cwd       blank
 
 # Counts of events in this program:
@@ -153,22 +153,8 @@ sub argv {
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
    }
 
-   # Get number of arguments:
-   my $NA = scalar(@Args);
-
-   # If user typed other-than-1 arguments, and we're not debugging or getting help,
-   # print error and help messages and exit:
-   if ( 1 != $NA                 # If number of arguments is other-than-1,
-        && !$Debug && !$Help ) { # and we're not debugging and not getting help,
-      error($NA);                # print error message,
-      help;                      # and print help message,
-      exit 666;                  # and exit, returning The Number Of The Beast.
-   }
-
-   # First argument, if present, is SHA-1 hash to look for:
-   if ( $NA >= 1 ) {             # If we have at-least-1 arguments,
-      $Sha1 = $Args[0];          # set $Sha1 to $Args[0].
-   }
+   # Interpret the elements of @Args as being SHA-1 hashes:
+   @Sha1 = @Args;
 
    # Return success code 1 to caller:
    return 1;
@@ -271,14 +257,16 @@ sub curdire {
       and return 0;
    }
 
-   # ======= SEARCH FOR FILE MATCHING GIVEN SHA1: ============================================================
+   # ======= SEARCH FOR FILE MATCHING GIVEN SHA1 HASHES: =====================================================
 
-   # Iterate through the key/value pairs of %ht, looking for our desired SHA-1; if the SHA-1 for a key matches
-   # the SHA-1 we're looking for, increment find counter and print path:
-   foreach my $key (keys %ht) {
-      if ( $ht{$key}->[2] eq $Sha1 ) {
-         ++$filecount;
-         say STDOUT path($Cwd, $key);
+   # For each hash in @Sha1 iterate through the key/value pairs of %ht, looking for our desired SHA-1;
+   # if the SHA-1 for a key matches the SHA-1 we're looking for, increment find counter and print path:
+   foreach my $sha1 (@Sha1) {
+      foreach my $key (keys %ht) {
+         if ( $ht{$key}->[2] eq $Sha1 ) {
+            ++$filecount;
+            say STDOUT path($Cwd, $key);
+         }
       }
    }
 
@@ -379,10 +367,12 @@ sub help {
    -------------------------------------------------------------------------------
    Description of Arguments:
 
-   In addition to options, this program needs 1 mandatory argument, which must be
-   a hex SHA-1 hash using lower-case letters a-f. For example, say an online
-   database mentions a photo of a green island with this SHA-1 hash:
-   bc70c7af332e7ecc952810eac7394cfeed0d03e7
+   All non-option arguments will be interpreted as SHA-1 hashes to look for.
+   For example, say an online database mentions a photo of a green island with
+   this SHA-1 hash:
+
+      bc70c7af332e7ecc952810eac7394cfeed0d03e7
+
    Then you could see if it's somewhere in your home directory like this:
 
       cd ~
