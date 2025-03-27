@@ -249,8 +249,8 @@ sub curdire {
       open($sha1fh, '>', e '.sha1')
       or say STDERR "Error: Couldn't open file \".sha1\" for writing in directory \"$Cwd\"."
       and return 0;
-      foreach my $entry (keys %ht) {
-         say $sha1fh join('/', $entry, $ht{$entry}->[0], $ht{$entry}->[1], $ht{$entry}->[2]);
+      foreach my $key (sort keys %ht) {
+         say $sha1fh join('/', $key, $ht{$key}->[0], $ht{$key}->[1], $ht{$key}->[2]);
       }
       close($sha1fh)
       or say STDERR "Error: Couldn't close file \".sha1\" in directory \"$Cwd\"."
