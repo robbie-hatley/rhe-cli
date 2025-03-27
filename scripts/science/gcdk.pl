@@ -37,17 +37,63 @@ my $Lon2      = 0         ; # Longitude of location 2   num       0N0E
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv    ; # Process @ARGV.
-sub help    ; # Print help and exit.
+sub argv           ; # Process @ARGV.
+sub check_args_deg ; # Check arguments if in decimal-degrees mode.
+sub check_args_dms ; # Check arguments if in degrees-minutes-seconds mode.
+sub help           ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   # Process @ARGV:
+   # Process @ARGV, get options and arguments, and set settings:
    argv;
-   # NOTE: argv calls either "deg" or "dms" depending on whether user specified degrees-minutes-seconds mode
-   # (by using a "-d" or "--dms" flag) or not. By the time we get here, $Lat1, $Lon1, $Lat2, $Lon2 are set
-   # to the correct values in radians for the user's inputs.
+
+   # If debugging, print all settings:
+   if ($Debug) {
+      say STDERR "At top of main body of program. Settings:";
+      say STDERR "\@Opts  = (@Opts)" ; # options
+      say STDERR "\@Args  = (@Args)" ; # arguments
+      say STDERR "\$Debug = $Debug " ; # Debug?
+      say STDERR "\$Help  = $Help  " ; # Just print help and exit?
+      say STDERR "\$Dms   = $Dms   " ; # Enter deg-min-sec mode?
+      say STDEFF '';
+   }
+
+   # Check @Args for validity:
+   $Dms and check_args_dms or check_args_deg;
+
+   # Set Lat1, Lon1, Lat2, Lon2 to geographic coordinates in radians:
+
+   # If we're in degrees-minutes-seconds mode:
+   if ($Dms) {
+      # Convert latitude and longitude of the two locations from dms(dir) to radians:
+      $Lat1 = ($Args[ 0]+$Args[ 1]/60+$Args[ 2]/3600) * pi / 180.0; # Latitude  of first location.
+      $Lon1 = ($Args[ 4]+$Args[ 5]/60+$Args[ 6]/3600) * pi / 180.0; # Longitude of first  location.
+      $Lat2 = ($Args[ 8]+$Args[ 9]/60+$Args[10]/3600) * pi / 180.0; # Latitude  of second location.
+      $Lon2 = ($Args[12]+$Args[13]/60+$Args[14]/3600) * pi / 180.0; # Longitude of second location.
+      if ($Args[ 3] =~ m/s/i) {$Lat1 *= (-1)}                       # If south, make it negative.
+      if ($Args[ 7] =~ m/w/i) {$Lon1 *= (-1)}                       # If west,  make it negative.
+      if ($Args[11] =~ m/s/i) {$Lat2 *= (-1)}                       # If south, make it negative.
+      if ($Args[15] =~ m/w/i) {$Lon2 *= (-1)}                       # If west,  make it negative.
+   }
+
+   # Else we're in decimal-degrees mode:
+   else {
+      # Convert latitude and longitude of the two locations from degrees to radians:
+      $Lat1 = $Args[0] * pi / 180.0; # Latitude  of first  location.
+      $Lon1 = $Args[1] * pi / 180.0; # Longitude of first  location.
+      $Lat2 = $Args[2] * pi / 180.0; # Latitude  of second location.
+      $Lon2 = $Args[3] * pi / 180.0; # Longitude of second location.
+   }
+
+   # If debugging, print geographical coordinates (in radians) for our two locations:
+   if ($Debug) {
+      say STDERR "\$Lat1  = $Lat1  " ; # Latitude  of location 1
+      say STDERR "\$Lon1  = $Lon1  " ; # Longitude of location 1
+      say STDERR "\$Lat2  = $Lat2  " ; # Latitude  of location 2
+      say STDERR "\$Lon2  = $Lon2  " ; # Longitude of location 2
+      say STDERR "\$Dms   = $Dms   " ; # Are we in DMS mode?
+   }
 
    # Convert geographic coordinates (in radians) to spherical coordinates (in radians):
    my $θ1 =        $Lon1; # Angle around equator       of location 1.
@@ -94,76 +140,37 @@ sub argv {
       /^-$s*d/ || /^--dms$/     and $Dms     =  1  ;
    }
 
-   if ($Debug) {print "\$Dms = $Dms\n";}
-
-   # If we're in degrees-minutes-seconds mode, launch dms():
-   if ($Dms) {dms();}
-
-   # Otherwise we're in decimal-degrees mode so launch deg() instead:
-   else {deg();}
-
    # Return success code 1 to caller:
    return 1;
 } # end sub argv
 
-# decimal-degrees mode:
-sub deg {
-   if ($Debug) {print "Just entered subroutine \"deg()\".\n";}
-
-   # Get number of arguments:
-   my $NA = scalar(@Args);
-
+# Check arguments if in decimal-degrees mode:
+sub check_args_deg {
    # Die if number of arguments is not 4, or if arguments aren't numbers:
-   if ( 4 != $NA || !looks_like_number($Args[0]) || !looks_like_number($Args[1])
-                 || !looks_like_number($Args[2]) || !looks_like_number($Args[3]) ) {
+   if (     4 != scalar(@Args)
+         || !looks_like_number($Args[0]) || !looks_like_number($Args[1])
+         || !looks_like_number($Args[2]) || !looks_like_number($Args[3]) ) {
       die "Error: Must have 4 numeric arguments: Lat1, Long1, Lat2, Long2.\n"
         . "Each argument should be in degrees, from -180 to +180.\n"
         . "Use negative numbers for W/S, positive numbers for E/N.\n"
         . "Use \"-h\" or \"--help\" for more help.\n";
    }
 
-   # Convert latitude and longitude of the two locations from degrees to radians:
-   $Lat1 = $Args[0] * pi / 180.0; # Latitude  of first  location.
-   $Lon1 = $Args[1] * pi / 180.0; # Longitude of first  location.
-   $Lat2 = $Args[2] * pi / 180.0; # Latitude  of second location.
-   $Lon2 = $Args[3] * pi / 180.0; # Longitude of second location.
-
-   if ($Debug) {
-      print "At bottom of subroutine \"deg()\".\n";
-      print "Lat1 = $Lat1\n";
-      print "Lon1 = $Lon1\n";
-      print "Lat2 = $Lat2\n";
-      print "Lon2 = $Lon2\n";
-   }
-
-   # We succeeded, so return success code 1 to caller:
+   # If we didn't die, return success code 1 to caller:
    return 1;
 }
 
-# degress-minutes-seconds mode:
-sub dms {
-   if ($Debug) {print "Just entered subroutine \"dms()\".\n";}
-
-   # Get number of arguments:
-   my $NA = scalar(@Args);
-
+# Check arguments if in degress-minutes-seconds mode:
+sub check_args_dms {
    # Die if number of arguments is not 16, or if arguments are wrong types:
-   if (     16 != $NA
-         || !looks_like_number($Args[ 0])
-         || !looks_like_number($Args[ 1])
-         || !looks_like_number($Args[ 2])
+   if (     16 != scalar(@Args)
+         || !looks_like_number($Args[ 0]) || !looks_like_number($Args[ 1]) || !looks_like_number($Args[ 2])
+         || !looks_like_number($Args[ 4]) || !looks_like_number($Args[ 5]) || !looks_like_number($Args[ 6])
+         || !looks_like_number($Args[ 8]) || !looks_like_number($Args[ 9]) || !looks_like_number($Args[10])
+         || !looks_like_number($Args[12]) || !looks_like_number($Args[13]) || !looks_like_number($Args[14])
          || $Args[ 3] !~ m/^[ns]$/i
-         || !looks_like_number($Args[ 4])
-         || !looks_like_number($Args[ 5])
-         || !looks_like_number($Args[ 6])
          || $Args[ 7] !~ m/^[ew]$/i
-         || !looks_like_number($Args[ 8])
-         || !looks_like_number($Args[ 9])
-         || !looks_like_number($Args[10])
          || $Args[11] !~ m/^[ns]$/i
-         || !looks_like_number($Args[12])
-         || !looks_like_number($Args[13])
-         || !looks_like_number($Args[14])
          || $Args[15] !~ m/^[ew]$/i       ) {
       die "Error: Must have 16 arguments:\n"
         . "Lat1deg, Lat1min, Lat1sec, S or N,\n"
@@ -176,25 +183,7 @@ sub dms {
         . "Use \"-h\" or \"--help\" for more help.\n";
    }
 
-   # Convert latitude and longitude of the two locations from dms(dir) to radians:
-   $Lat1 = ($Args[ 0]+$Args[ 1]/60+$Args[ 2]/3600) * pi / 180.0; # Latitude of first location.
-   if ($Args[ 3] =~ m/s/i) {$Lat1 *= (-1)}                       # If south, make it negative.
-   $Lon1 = ($Args[ 4]+$Args[ 5]/60+$Args[ 6]/3600) * pi / 180.0; # Longitude of first  location.
-   if ($Args[ 7] =~ m/w/i) {$Lon1 *= (-1)}                       # If west, make it negative.
-   $Lat2 = ($Args[ 8]+$Args[ 9]/60+$Args[10]/3600) * pi / 180.0; # Latitude  of second location.
-   if ($Args[11] =~ m/s/i) {$Lat2 *= (-1)}                       # If south, make it negative.
-   $Lon2 = ($Args[12]+$Args[13]/60+$Args[14]/3600) * pi / 180.0; # Longitude of second location.
-   if ($Args[15] =~ m/w/i) {$Lon2 *= (-1)}                       # If west, make it negative.
-
-   if ($Debug) {
-      print "At bottom of subroutine \"dms()\".\n";
-      print "Lat1 = $Lat1\n";
-      print "Lon1 = $Lon1\n";
-      print "Lat2 = $Lat2\n";
-      print "Lon2 = $Lon2\n";
-   }
-
-   # We succeeded, so return success code 1 to caller:
+   # If we get to here, return success code 1 to caller:
    return 1;
 }
 
@@ -232,10 +221,10 @@ sub help {
    In the default "decimal degrees mode", this program takes exactly 4
    command-line arguments:
 
-   lat1 = latitude  of first  location in degrees
-   lon1 = longitude of first  location in degrees
-   lat2 = latitude  of second location in degrees
-   lon2 = longitude of second location in degrees
+   lat1 = latitude  of first  location in degrees (-180 to +180)
+   lon1 = longitude of first  location in degrees (-180 to +180)
+   lat2 = latitude  of second location in degrees (-180 to +180)
+   lon2 = longitude of second location in degrees (-180 to +180)
 
    Each argument should be in the range -180 to +180.
    Use negative numbers for West longitude or South latitude.

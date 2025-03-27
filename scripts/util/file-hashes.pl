@@ -102,7 +102,7 @@ my $skipcount = 0; # Count of files skipped.
    say    STDERR "Printed hashes for $hashcount files.";
    say    STDERR "Tried-but-failed to hash $errocount files.";
    say    STDERR "Now exiting program \"$pname\".";
-   printf STDERR "Execution time was %.3f seconds.", time - $t0;
+   printf STDERR "Execution time was %.3fms.", 1000*(time - $t0);
 
    # We're finished, so exit program:
    exit 0;

@@ -687,12 +687,38 @@ sub RecurseDirs :prototype(&) ($f) {
           "{code block} or a reference to a subroutine.\n\n";
    }
 
-   # ======= CURRENT WORKING DIRECTORY CHECKS: ===============================================================
+   # ======= CREATE VARIABLES TO HOLD CURRENT, ORIGINAL, AND NEW DIRECTORIES: ================================
 
-   # Get current working directory:
    my     $curdir   = d(getcwd) ;  # Current directory at beginning of THIS recursive call (may be any level).
    state  $oridir   = $curdir   ;  # Current directory as FIRST entry (level 0 only).
    my     $new_cwd  = undef     ;  # Keep track of ACTUAL current working directory when chdir'ing!
+
+   # ======= ORIGINAL-DIRECTORY CHECKS: ======================================================================
+
+   # If we're at the 0th recursive level (just entered, first time in):
+   if (0 == $recursion) {
+      # If "original" directory is something we shouldn't meddle with, then die:
+      if
+      (
+            $oridir eq '/proc'                        # Attempting to navigate from "/proc" can crash system!
+         || $oridir =~ m#/\.git$#                     # All OSs: github files
+         || $oridir =~ m#/System Volume Information$# # Windows: system volume information
+         || $oridir =~ m#/lost+found$#                # Linux:   Lost&Found
+         || $oridir =~ m#/\.Recycle/$#i               # Windows: trash
+         || $oridir =~ m#/\$Recycle\.Bin$#i           # Windows: trash
+         || $oridir =~ m#/Recyler$#i                  # Windows: trash
+         || $oridir =~ m#/Trash.*$#i                  # Linux:   trash
+         || $oridir =~ m#/\.Trash.*$#i                # Linux:   trash
+      )
+      {
+         die "Fatal Error in RecurseDirs:\n"
+             ."Can't recurse from this problematic starting directory:\n"
+             ."$oridir\n"
+             ."Aborting program to prevent damage to file system.\n";
+      } # end if (original directory is problematic)
+   } # end if (0th recursive level)
+
+   # ======= CURRENT WORKING DIRECTORY CHECKS: ===============================================================
 
    # We MUST have a valid "current working directory"!!!
    if ( !defined($curdir) || '/' ne substr($curdir, 0, 1) || ! -e e($curdir) || ! -d e($curdir) ) {
@@ -786,8 +812,21 @@ sub RecurseDirs :prototype(&) ($f) {
       # ------- SUBDIR NAME CHECKS: --------------------------------------------------------------------------
 
       # Skip certain poisonous subdirectories order to avoid loops and crashes:
-      next SUBDIR if $subdir eq '.';                       # Windows/Linux/Cygwin: Hard link to self.
-      next SUBDIR if $subdir eq '..';                      # Windows/Linux/Cygwin: Hard link to parent.
+      next SUBDIR if $subdir eq '.';                         # Windows/Linux/Cygwin: Hard link to self.
+      next SUBDIR if $subdir eq '..';                        # Windows/Linux/Cygwin: Hard link to parent.
+      next SUBDIR if $curdir eq '/' && $subdir eq 'proc';    # Linux: Navigating in here causes crashes.
+
+      # Avoid certain specific problematic directories:
+      next SUBDIR if $subdir eq '.git';                      # All OSs: don't mess with git.
+      next SUBDIR if $subdir eq 'System Volume Information'; # Windows: SysVolInf is off-limits.
+      next SUBDIR if $subdir =~ m/lost+found$/;              # Linux:   Lost&Found is root-only.
+
+      # Avoid rooting in trash bins:
+      next SUBDIR if $subdir =~ m/^\.Recycle/i;              # Windows trash bins.
+      next SUBDIR if $subdir =~ m/^\$Recycle.Bin/i;          # Windows trash bins.
+      next SUBDIR if $subdir =~ m/^Recyler/i;                # Windows trash bins.
+      next SUBDIR if $subdir =~ m/^Trash/i;                  # Linux trash bins.
+      next SUBDIR if $subdir =~ m/^\.Trash/i;                # Linux trash bins.
 
       # ------- SUBDIR PATH: ---------------------------------------------------------------------------------
 
@@ -2446,33 +2485,31 @@ sub shorten_sl_names :prototype($$$$) ($src_dir, $src_fil, $dst_dir, $dst_fil) {
    return ($src_dir, $src_fil, $dst_dir, $dst_fil);
 } # end sub shorten_sl_names ($$$$)
 
-# Return 1 if-and-only-if a path points to a data file (an existing, non-link, non-dir, regular file):
+# Return 1 if-and-only-if a path points to a data file (an existing, non-dir, non-link, non-empty plain file).
+# (Note: All "meta" files are "data" files, but most "data" files are not "meta" files; see next subroutine.)
 sub is_data_file :prototype($) ($path) {
-   return 0 if ! -e e $path;
-   lstat e $path;
-   return 0 if ! -f _ ;
-   return 0 if   -b _ ;
-   return 0 if   -c _ ;
-   return 0 if   -d _ ;
-   return 0 if   -l _ ;
-   return 0 if   -p _ ;
-   return 0 if   -S _ ;
-   return 0 if   -t _ ;
+   my @stats = lstat e $path;
+   return 0 if 13 != scalar @stats; # Nonexistent files contain no data.
+   return 0 if   -d _ ;             # Directories contain no data.
+   return 0 if   -l _ ;             # Links contain no data.
+   return 0 if ! -f _ ;             # Special files contain no data that we should be messing with.
+   return 0 if   -z _ ;             # Empty files contain no data.
    return 1;
 } # end sub is_data_file :prototype($) ($path)
 
-# Return 1 if-and-only-if a given string is a path to a "meta" file (a file which is hidden,
-# desktop-settings, windows-picture-thumbnails, paint-shop-pro-browse-thumbnails, or ID-Token.
-# Keep in mind that "hidden" include ALL files with names starting with ".", which include
-# application settings, Free-File-Sync synchronization files, Dolphin ".directory" files,
-# Kate project files, hidden directories, etc; these are all "meta" files, not intended for
-# direct use by humans.
+# Return 1 if-and-only-if a given string is a path to a "meta" file (a file which is hidden, desktop-settings,
+# windows-picture-thumbnails, paint-shop-pro-browse-thumbnails, or ID-Token). Keep in mind that "hidden"
+# includes ALL files with names starting with ".", which include application settings, Free-File-Sync
+# synchronization files, Dolphin ".directory" files, Kate project files, hidden directories, etc; these are
+# all "meta" files, not intended for direct use by humans. Also note that this subroutine examines only the
+# NAME of a file, and does not test if it exists, or what kind of file it is; this is by design; my intention
+# is that you should test a file first with "is_data_file" to make sure it's an existing, non-empty plain file
+# before using THIS subroutine to see if it's "meta".
 sub is_meta_file :prototype($) ($path) {
-   return 0 unless -e e $path;
    my $name = get_name_from_path($path);
    return 1 if $name =~ m/^\./;
-   return 1 if $name =~ m/^desktop(?:-\(\d\d\d\d\))?\.ini$/;
-   return 1 if $name =~  m/^Thumbs(?:-\(\d\d\d\d\))?\.db$/;
+   return 1 if $name =~ m/^desktop.*\.ini$/i;
+   return 1 if $name =~ m/^thumbs.*\.db$/i;
    return 1 if $name =~ m/^pspbrwse.*\.jbf$/i;
    return 1 if $name =~ m/id-token/i;
    return 0;

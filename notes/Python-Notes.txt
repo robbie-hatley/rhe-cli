@@ -1,0 +1,87 @@
+Python Notes
+Robbie Hatley's adventures in learning Python, primarily from
+the O'Reilly book "Learning Python", 4th ed, Mark Lutz, 2009.
+
+General structure of Python programs (p75):
+1. Programs are composed of modules.
+2. Modules contain statements.
+3. Statements contain expressions.
+4. Expressions create and process objects.
+
+Table 4-1: Python's core data types (p77):
+Object type:            Example literals/creation:
+-------------------------------------------------------------------------------
+Numbers                 1234, 3.1415, 3+4j, Decimal, Fraction
+Strings                 'spam', "guido's", b'a\x01c'            NOTE: Immutable
+Lists                   [1, [2, 'three'], 4]                    NOTE: Mutable
+Dictionaries            {'food': 'spam', 'taste': 'yum'}        NOTE: Mutable
+Tuples                  (1, 'spam', 4, 'U')                     NOTE: Immutable
+Files                   myfile = open('eggs', 'r')
+Sets                    set('abc'), {'a', 'b', 'c'}
+Other core types        Booleans, types, None
+Program unit types      Functions, modules, classes (Part IV, Part V, Part VI)
+Implementation-related  Compiled code, stack tracebacks (Part IV, Part VII)
+
+“As we’ll see in later parts of the book, program units such as functions, modules, and
+classes are objects in Python too—they are created with statements and expressions
+such as def, class, import, and lambda and may be passed around scripts freely, stored
+within other objects, and so on.”
+
+“Even though, as we’ll see, there are no type declarations in
+Python, the syntax of the expressions you run determines the types of objects you create
+and use. In fact, object-generation expressions like those in Table 4-1 are generally
+where types originate in the Python language.”
+
+Operator precedence chart on p109 is upside-down. Actual precedence is:
+{}                 Dictionaries, sets, and comprehensions
+[]                 Lists and comprehensions
+()                 Tuples and expressions
+x.attr             Attribute reference
+x()                Function calls
+x[i:j:k]           Slicing
+x[i]               Indexing
+x**y               Exponents
+~x                 Bitwise NOT
+-x  +x             negation, identity
+x*y x/y x//y x%y   multiplication, division, floor division, modulo
+x+y x-y            addition, string concatenation, subtraction, set difference
+x << y, x >> y     bit shifting
+x & y              bitwise AND
+x ^ y              bitwise XOR
+x | y              bitwise OR
+< <= > >= == !=    comparisons
+is, is not         identity
+in, not in         membership
+not                logical NOT
+and                logical AND                            (short-circuit)
+or                 logical OR                             (short-circuit)
+x if y else z      ternary selection (same as y?x:z in C) (short-circuit)
+lambda             anonymous functions
+yield              “generator function send protocol” (???)
+
+"+" is used for string concatenation:
+>>> "co"+"ri"+"ander"
+'coriander'
+
+There seems to be no Python equivalent to Perl's "slice", which is a shame.
+(No, Python's "slice" doesn't do the same thing and is much-more-literally a pair of cuts.)
+
+lambda Basics (p474):
+“The lambda’s general form is the keyword lambda, followed by one or more arguments
+(exactly like the arguments list you enclose in parentheses in a def header), followed
+by an expression after a colon:”
+
+   lambda argument1, argument2,... argumentN : expression using arguments
+
+%python
+Python 3.13.2 (main, Feb  5 2025, 08:05:21) [GCC 14.2.1 20250128] on linux
+>>> f=lambda x,y,z:x+y+z
+>>> f(1,3,5)
+9
+>>> key = 'pear'
+>>> bob = {'apple':(lambda a,b: a+b), 'orange':(lambda a,b:a*b), 'pear':(lambda a,b:a**b)}
+>>> bob[key](3,4)
+81
+
+
+

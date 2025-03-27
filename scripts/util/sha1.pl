@@ -5,16 +5,20 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# find-files-by-sha1.pl
-# Files data files matching a given SHA1 hash.
+# sha1.pl
+# Creates or updates database ".sha1" of SHA1 hashes of files in current directory (and all subdirectories if
+# a "-r" or "--recurse" option is used).
 # Written by Robbie Hatley.
 # Edit history:
-# Sat Mar 22, 2025: Wrote it.
+# Wed Mar 26, 2025: Wrote it.
 ##############################################################################################################
 
 # Pragmas:
 use v5.36;
 use utf8;
+use strict;
+use warnings;
+use warnings FATAL => 'utf8';
 
 # CPAN modules:
 use Cwd             qw( cwd getcwd                  );
@@ -48,15 +52,12 @@ my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               0,1,2     Be quiet.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
-my $Sha1      = ''        ; # SHA-1 hash of a file      hash      blank
-my $Cwd       = ''        ; # Share cwd between subs.   cwd       blank
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
-my $filecount = 0 ; # Count of non-meta data files encountered.
-my $newfcount = 0 ; # Count of new ".sha1" files created.
-my $updfcount = 0 ; # Count of old ".sha1" files updated.
-my $findcount = 0 ; # Count of files found matching our desired SHA-1.
+my $filecount = 0 ; # Count of data files processed.
+my $newfcount = 0 ; # Count of new ".sha1" file-hash-database files created.
+my $updfcount = 0 ; # Count of old ".sha1" file-hash-database files updated.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -64,7 +65,6 @@ sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
 sub sha1    ; # SHA-1 hash of a file.
 sub stats   ; # Print statistics.
-sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
@@ -99,7 +99,6 @@ sub help    ; # Print help and exit.
       say STDERR "Help      = $Help";
       say STDERR "Verbose   = $Verbose";
       say STDERR "Recurse   = $Recurse";
-      say STDERR "Sha1      = $Sha1";
       say STDERR '';
    }
 
@@ -153,22 +152,7 @@ sub argv {
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
    }
 
-   # Get number of arguments:
-   my $NA = scalar(@Args);
-
-   # If user typed other-than-1 arguments, and we're not debugging or getting help,
-   # print error and help messages and exit:
-   if ( 1 != $NA                 # If number of arguments is other-than-1,
-        && !$Debug && !$Help ) { # and we're not debugging and not getting help,
-      error($NA);                # print error message,
-      help;                      # and print help message,
-      exit 666;                  # and exit, returning The Number Of The Beast.
-   }
-
-   # First argument, if present, is SHA-1 hash to look for:
-   if ( $NA >= 1 ) {             # If we have at-least-1 arguments,
-      $Sha1 = $Args[0];          # set $Sha1 to $Args[0].
-   }
+   # (This program cheerfully ignores all arguments.)
 
    # Return success code 1 to caller:
    return 1;
@@ -180,14 +164,12 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   $Cwd = d getcwd;
+   my $cwd = d getcwd;
 
    # Announce current working directory if being verbose:
    if ( 2 == $Verbose) {
-      say STDERR "\nDirectory # $direcount: $Cwd\n";
+      say STDERR "\nDirectory # $direcount: $cwd\n";
    }
-
-   # ======= MAKE SURE THAT THIS DIRECTORY'S ".sha1" FILE IS UP-TO-DATE: =====================================
 
    # Make a hash table to hold SHA-1 file hashes of all non-meta data files in this directory:
    my %ht;
@@ -200,7 +182,7 @@ sub curdire {
    if (!$new_flag) {
       my $sha1fh = undef;
       open($sha1fh, '<', e '.sha1')
-      or say STDERR "Error: Couldn't open file \".sha1\" in directory \"$Cwd\"."
+      or say STDERR "Error: Couldn't open file \".sha1\" in directory \"$cwd\"."
       and return 0;
       while (<$sha1fh>) {
          chomp;
@@ -208,14 +190,14 @@ sub curdire {
          $ht{$name} = [$size, $mod, $sha1];
       }
       close($sha1fh)
-      or say STDERR "Error: Couldn't close file \".sha1\" in directory \"$Cwd\"."
+      or say STDERR "Error: Couldn't close file \".sha1\" in directory \"$cwd\"."
       and return 0;
    }
 
    # Get a list of all entries in current directory:
    my @entries;
    my $dh = undef;
-   opendir($dh, e $Cwd)          or say STDERR "Error: Couldn't open  directory \"$Cwd\"." and return 0;
+   opendir($dh, e $cwd)          or say STDERR "Error: Couldn't open  directory \"$cwd\"." and return 0;
    while (readdir($dh)) {
       chomp;
       my $entry = d $_ ;
@@ -224,7 +206,7 @@ sub curdire {
       push @entries, $entry;
       ++$filecount;
    }
-   closedir $dh                  or say STDERR "Error: Couldn't close directory \"$Cwd\"." and return 0;
+   closedir $dh                  or say STDERR "Error: Couldn't close directory \"$cwd\"." and return 0;
 
    # Have we updated the hash table?
    my $update_flag = 0;
@@ -261,25 +243,25 @@ sub curdire {
    if ($new_flag || $update_flag) {
       my $sha1fh = undef;
       open($sha1fh, '>', e '.sha1')
-      or say STDERR "Error: Couldn't open file \".sha1\" for writing in directory \"$Cwd\"."
+      or say STDERR "Error: Couldn't open file \".sha1\" for writing in directory \"$cwd\"."
       and return 0;
       foreach my $entry (keys %ht) {
          say $sha1fh join('/', $entry, $ht{$entry}->[0], $ht{$entry}->[1], $ht{$entry}->[2]);
       }
       close($sha1fh)
-      or say STDERR "Error: Couldn't close file \".sha1\" in directory \"$Cwd\"."
+      or say STDERR "Error: Couldn't close file \".sha1\" in directory \"$cwd\"."
       and return 0;
+      # Always say path, to STDOUT:
+      say STDOUT 'wrote ', path($cwd, '.sha1');
    }
 
-   # ======= SEARCH FOR FILE MATCHING GIVEN SHA1: ============================================================
-
-   # Iterate through the key/value pairs of %ht, looking for our desired SHA-1; if the SHA-1 for a key matches
-   # the SHA-1 we're looking for, increment find counter and print path:
-   foreach my $key (keys %ht) {
-      if ( $ht{$key}->[2] eq $Sha1 ) {
-         ++$filecount;
-         say STDOUT path($Cwd, $key);
-      }
+   # If debugging, now read-back the whole ".sha1" file:
+   if ($Debug) {
+      say STDERR 'Readback of entire ".sha1" file:';
+      my $sha1fh = undef;
+      open($sha1fh, '<', e '.sha1');
+      while (<$sha1fh>){chomp;say;}
+      close($sha1fh);
    }
 
    # Return success code 1 to caller:
@@ -305,28 +287,16 @@ sub sha1 ($name) {
 sub stats {
    # If being terse or verbose, print basic stats to STDERR:
    if ( 1 == $Verbose || 2 == $Verbose ) {
-      say    STDERR '';
-      say    STDERR 'Statistics for this directory tree:';
-      say    STDERR "Navigated $direcount directories.";
-      say    STDERR "Processed $filecount files.";
-      say    STDERR "Created $newfcount new \".sha1\" files.";
-      say    STDERR "Updated $updfcount old \".sha1\" files.";
-      say    STDERR "Found $findcount files matching SHA-1 hash \"$Sha1\".";
+      say STDERR '';
+      say STDERR 'Statistics for this directory tree:';
+      say STDERR "Navigated $direcount directories.";
+      say STDERR "Found $filecount non-empty non-meta data files.";
+      say STDERR "Created $newfcount new SHA-1 file-hash database files.";
+      say STDERR "Updated $updfcount old SHA-1 file-hash database files.";
    }
 
    return 1;
 } # end sub stats
-
-# Handle errors:
-sub error ($NA) {
-   print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
-
-   Error: you typed $NA arguments, but this program takes at most one
-   argument which, if present, should be a hex SHA-1 hash to search for.
-   Help follows.
-   END_OF_ERROR
-   return 1;
-} # end sub error
 
 # Print help:
 sub help {
@@ -335,19 +305,15 @@ sub help {
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "find-files-by-sha1.pl". Given a hex SHA-1 hash, this program
-   searches for files in the current directory (and all subdirectories if a -r or
-   --recurse option is used) which match the given hash. In the process, this
-   program will create or update a file of SHA-1 hashes called ".sha" in every
-   directory it processes, and it will use the information in that file to search
-   for files in that directory for every subsequent search. (See also my program
-   "sha1.pl" which updates ".sha1" files, locally or recursively.)
+   Welcome to "sha1.pl". This program creates or updates a database ".sha1" of
+   SHA1 hashes of all non-meta data files in current directory (and all of its
+   subdirectories if a "-r" or "--recurse" option is used).
 
    -------------------------------------------------------------------------------
    Command lines:
 
-   find-files-by-sha1.pl -h | --help      (to print this help and exit)
-   find-files-by-sha1.pl [options] sha1   (to find files with hash sha1)
+   sha1.pl -h | --help   (to print this help and exit)
+   sha1.pl [options]     (to maintain ".sha1" databases)
 
    -------------------------------------------------------------------------------
    Description of Options:
@@ -363,7 +329,7 @@ sub help {
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
-   For example, use -vr to verbosely and recursively process items.
+   For example, use -vr to verbosely and recursively update SHA-1 databases.
 
    If two piled-together single-letter options conflict, the option
    appearing lowest on the options chart above will prevail.
@@ -379,20 +345,10 @@ sub help {
    -------------------------------------------------------------------------------
    Description of Arguments:
 
-   In addition to options, this program needs 1 mandatory argument, which must be
-   a hex SHA-1 hash using lower-case letters a-f. For example, say an online
-   database mentions a photo of a green island with this SHA-1 hash:
-   bc70c7af332e7ecc952810eac7394cfeed0d03e7
-   Then you could see if it's somewhere in your home directory like this:
+   This program cheerfully ignores all non-option arguments.
 
-      cd ~
-      find-files-by-sha1.pl -r 'bc70c7af332e7ecc952810eac7394cfeed0d03e7'
 
-   That goes to your home directory, then searches all of its subdirectories,
-   unlimited levels deep, for a file with that SHA-1 hash; if such a file
-   exists, this program will print its path, such as, perhaps:
-   /home/patrick/scenic-pics/unknown-photo-of-green-island.jpg
-
+   Happy file hashing!
    Cheers,
    Robbie Hatley,
    programmer.
