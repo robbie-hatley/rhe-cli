@@ -264,7 +264,7 @@ sub curdire {
    foreach my $sha1 (@Sha1) {
       foreach my $key (keys %ht) {
          if ( $ht{$key}->[2] eq $sha1 ) {
-            ++$filecount;
+            ++$findcount;
             say STDOUT path($Cwd, $key);
          }
       }
