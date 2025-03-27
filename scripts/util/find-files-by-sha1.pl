@@ -99,7 +99,7 @@ sub help    ; # Print help and exit.
       say STDERR "Help      = $Help";
       say STDERR "Verbose   = $Verbose";
       say STDERR "Recurse   = $Recurse";
-      say STDERR "Sha1      = $Sha1";
+      say STDERR "Sha1      = (@Sha1)";
       say STDERR '';
    }
 
@@ -263,7 +263,7 @@ sub curdire {
    # if the SHA-1 for a key matches the SHA-1 we're looking for, increment find counter and print path:
    foreach my $sha1 (@Sha1) {
       foreach my $key (keys %ht) {
-         if ( $ht{$key}->[2] eq $Sha1 ) {
+         if ( $ht{$key}->[2] eq $sha1 ) {
             ++$filecount;
             say STDOUT path($Cwd, $key);
          }
@@ -299,7 +299,7 @@ sub stats {
       say    STDERR "Processed $filecount files.";
       say    STDERR "Created $newfcount new \".sha1\" files.";
       say    STDERR "Updated $updfcount old \".sha1\" files.";
-      say    STDERR "Found $findcount files matching SHA-1 hash \"$Sha1\".";
+      say    STDERR "Found $findcount files matching SHA-1 hashes (@Sha1).";
    }
 
    return 1;
