@@ -1,44 +1,28 @@
 #!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
-# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
+# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# list-paths.pl
-# Recursively lists all paths to all objects in and under current dir node.
-#
+# exif.pl
+# Prints EXIF information from image files.
+# Written by Robbie Hatley.
 # Edit history:
-# Sun Apr 05, 2020: Wrote it.
-# Fri Feb 12, 2021: Widened to 120. Got rid of "Settings" hash. No strict. Accumulators are now in main::.
-# Wed Feb 17, 2021: Refactored to use the new GetFiles(), which now requires a fully-qualified directory as
-#                   its first argument, target as second, and regexp (instead of wildcard) as third.
-# Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and
-#                   "Sys::Binmode".
-# Sat Nov 27, 2021: Fixed a wide character (missing e) bug and shortened sub names. Tested: Works.
-# Thu Sep 07, 2023: Reduced width from 120 to 110. Upgraded from "v5.32" to "v5.36". Got rid of CPAN module
-#                   "common::sense" (antiquated). Added "use strict", "use warnings", "use utf8",
-#                   "warning FATAL => 'utf8'", "use Cwd", and "use Time::HiRes 'time'". Changed "cwd_utf8" to
-#                   "d getcwd". Changed "$db" to "$Debug". Got rid of all prototypes. Now using signatures.
-#                   Changed all "$Regexp" to "RegExp". Updated argv to my latest @ARGV-handling technology.
-#                   Updated help to my latest formatting standard.
-#                   Changed @LiveFiles to @PathsOfTheLiving. Changed @DeadFiles to @PathsOfTheDead.
-# Thu Mar 27, 2025: Moved subroutine predeclarations to just-above main. Nixed GetFiles; now using
-#                   glob_regexp_utf8 instead. Nixed extended stats (we already have "rhdir.pl" for that).
-#                   Brought formatting of dividers, etc up to my current standards. Put "-C63" in shebang.
-#                   Added system variables, global variables, BEGIN, INIT, and compilation timing.
-#                   Fixed "count all files twice" bug. Changed default verbosity from "terse" to "quiet".
+# Thu Mar 27, 2025: Wrote it.
 ##############################################################################################################
 
+# Pragmas:
 use v5.36;
-use strict;
-use warnings;
 use utf8;
-use warnings FATAL => 'utf8';
 
+# CPAN modules:
 use Cwd;
-use Time::HiRes 'time';
+use Time::HiRes   qw( time );
+use Image::EXIF;
+use Data::Dumper;
 
+# RH modules:
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================
@@ -46,7 +30,6 @@ use RH::Dir;
 # ------- System Variables: ----------------------------------------------------------------------------------
 
 $" = ', ' ; # Quoted-array element separator = ", ".
-
 
 # ------- Global Variables: ----------------------------------------------------------------------------------
 
@@ -59,27 +42,22 @@ INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
 # ------- Local variables: -----------------------------------------------------------------------------------
 
-# Setting:      Default:      Meaning of setting:       Range:    Meaning of default:
+# Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
 my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
-my $Debug     = 0         ; # Pring diagnostics?        bool      Don't print diagnostics.
+my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-my $Verbose   = 0         ; # Quiet, Terse, or Verbose? 0|1|2     Shhh! Be quiet!
-my $Recurse   = 0         ; # Recurse subdirectories?   bool      Recurse.
-my $Target    = 'A'       ; # Target                    F|D|B|A   List paths of files of all types.
-my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    List paths of files of all names.
-my $Predicate = 1         ; # Boolean predicate.        bool      List paths of all combos of types.
+my $Verbose   = 0         ; # Be verbose?               0,1,2     Shhh! Be quiet!
+my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
+my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all image names.
+my $Predicate = 1         ; # Boolean predicate.        bool      Process all image types.
 my $OriDir    = d getcwd  ; # Original directory.       cwd       Directory on program entry.
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
-my $filecount = 0 ; # Count of files matching target.
+my $filecount = 0 ; # Count of files matching $ExifPat.
 my $regxcount = 0 ; # Count of files also matching regexp.
 my $predcount = 0 ; # Count of files also matching predicate.
-
-# Lists of paths which do and do-not exist:
-my @PathsOfTheLiving; # List of paths to files which exist.
-my @PathsOfTheDead;   # List of paths to files which unexist. (Always empty, unless something evil happened.)
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -89,6 +67,10 @@ sub curfile ; # Process current file.
 sub stats   ; # Print statistics.
 sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
+
+# ======= QUENCH STDERR: =====================================================================================
+close STDERR;
+open STDERR, '>', '/dev/null';
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
@@ -101,31 +83,30 @@ sub help    ; # Print help and exit.
 
    # Print program entry message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
-      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
-      say STDERR '';
+      say STDOUT "\nNow entering program \"$pname\" at timestamp $t0.";
+      say STDOUT '';
    }
 
    # Also print compilation time if being verbose:
    if ( 2 == $Verbose ) {
-      printf(STDERR "Compilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
-      say STDERR '';
+      printf(STDOUT "Compilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
+      say STDOUT '';
    }
 
    # Print the values of all variables if debugging or being verbose:
    if ( 1 == $Debug || 2 == $Verbose ) {
-      say STDERR "pname     = $pname";
-      say STDERR "cmpl_beg  = $cmpl_beg";
-      say STDERR "cmpl_end  = $cmpl_end";
-      say STDERR "Options   = (@Opts)";
-      say STDERR "Arguments = (@Args)";
-      say STDERR "Debug     = $Debug";
-      say STDERR "Help      = $Help";
-      say STDERR "Verbose   = $Verbose";
-      say STDERR "Recurse   = $Recurse";
-      say STDERR "Target    = $Target";
-      say STDERR "RegExp    = $RegExp";
-      say STDERR "Predicate = $Predicate";
-      say STDERR '';
+      say STDOUT "pname     = $pname";
+      say STDOUT "cmpl_beg  = $cmpl_beg";
+      say STDOUT "cmpl_end  = $cmpl_end";
+      say STDOUT "Options   = (@Opts)";
+      say STDOUT "Arguments = (@Args)";
+      say STDOUT "Debug     = $Debug";
+      say STDOUT "Help      = $Help";
+      say STDOUT "Verbose   = $Verbose";
+      say STDOUT "Recurse   = $Recurse";
+      say STDOUT "RegExp    = $RegExp";
+      say STDOUT "Predicate = $Predicate";
+      say STDOUT '';
    }
 
    # Process current directory (and all subdirectories if recursing) and print stats,
@@ -138,17 +119,16 @@ sub help    ; # Print help and exit.
    # Print exit message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
-      say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
-      printf STDERR "Execution time was %.3fms.", $ms;
+      say    STDOUT '';
+      say    STDOUT "Now exiting program \"$pname\" at timestamp $t1.";
+      printf STDOUT "Execution time was %.3fms.", $ms;
    }
 
    # Exit program, returning success code "0" to caller:
    exit 0;
 } # end main
 
-# ============================================================================================================
-# SUBROUTINE DEFINITIONS:
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
 # Process @ARGV and set settings:
 sub argv {
@@ -177,10 +157,6 @@ sub argv {
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
-      /^-$s*f/ || /^--files$/   and $Target  = 'F' ;
-      /^-$s*d/ || /^--dirs$/    and $Target  = 'D' ;
-      /^-$s*b/ || /^--both$/    and $Target  = 'B' ;
-      /^-$s*a/ || /^--all$/     and $Target  = 'A' ; # Default.
    }
 
    # Get number of arguments:
@@ -217,31 +193,23 @@ sub curdire {
    # Get current working directory:
    my $cwd = d getcwd;
 
-   # Get list of paths in $cwd matching $Target:
-   my @paths = glob_regexp_utf8($cwd, $Target);
-   my $np = scalar(@paths);
-
-   # If being verbose, announce current working directory and number of paths found here:
+   # Announce current working directory if being verbose:
    if ( 2 == $Verbose) {
-      say STDERR '';
-      say STDERR "Directory # $direcount: $cwd";
-      say STDERR "Found $np paths here.";
+      say STDOUT "\nDirectory # $direcount: $cwd\n";
    }
 
-   # Increment $filecount by scalar(@paths), thus counting all files in $cwd which match $Target and $Regexp:
-   $filecount += $np;
+   # Get list of paths to plain files in $cwd matching $ExifPat:
+   my @paths = glob_regexp_utf8($cwd, 'F', qr/\.(?i:jpe?g)$/o);
 
-   # Iterate through @paths. For any that match $RegExp, increment $regxcount. For any that also match
-   # $Predicate, increment $predcount. Send all paths that match both $RegExp and $Predicate to curfile():
+   # Increment $filecount by scalar(@paths), thus counting all plain files in $cwd which match $ExifPat:
+   $filecount += scalar(@paths);
+
+   # Iterate through @paths; for any that match $RegExp, increment $regxcount and send path to curfile():
    foreach my $path (sort @paths) {
       my $name = $path =~ s#^.*/##r;
       if ($name =~ m/$RegExp/) {
          ++$regxcount;
-         local $_ = e $path;
-         if (eval($Predicate)) {
-            ++$predcount;
-            curfile($path);
-         }
+         curfile($path);
       }
    }
 
@@ -251,53 +219,42 @@ sub curdire {
 
 # Process current file:
 sub curfile ($path) {
-   # If current file exists, record it in @PathsOfTheLiving:
-   if ( -e e $path ) {
-      push @PathsOfTheLiving, $path;
-   }
-
-   # If current file does NOT exist, record its hash in @PathsOfTheDead:
-   else
-   {
-      push @PathsOfTheDead, $path;
+   my $name = $path =~ s#^.*/##r;
+   my $exif = Image::EXIF->new($path); # hash reference
+   if (defined $exif) {
+      my $info = $exif->get_all_info(); # hash reference
+      if (defined $info) {
+         if (eval($Predicate)) {
+            ++$predcount;
+            say STDOUT "EXIF data for file \"$path\":";
+            print Dumper($info);
+         }
+      }
    }
    return 1;
 } # end sub curfile
 
 # Print statistics for this program run:
 sub stats {
-   # If any paths are living, list The Paths Of The Living:
-   if ( @PathsOfTheLiving ) {
-      say STDOUT '';
-      say STDOUT 'Paths Of The Living:';
-      say STDOUT for @PathsOfTheLiving;
-   }
-
-   # If any paths are dead, list The Paths Of The Dead:
-   if ( @PathsOfTheDead ) {
-      say STDOUT '';
-      say STDOUT 'Paths Of The Dead:';
-      say STDOUT for @PathsOfTheDead;
-   }
-
-   # If being terse or verbose, also print basic stats:
-   if ( $Verbose >= 1 ) {
-      say STDERR '';
-      say STDERR "Stats for running \"$pname\" on \"$OriDir\" dir tree:";
-      say STDERR "Traversed $direcount directories.";
-      say STDERR "Encountered $filecount files matching target \"$Target\".";
-      say STDERR "Found $regxcount files also matching regexp \"$RegExp\".";
-      say STDERR "Found $predcount files also matching predicate \"$Predicate\".";
+   # If being terse or verbose, print basic stats to STDOUT:
+   if ( 1 == $Verbose || 2 == $Verbose ) {
+      say    STDOUT '';
+      say    STDOUT "Stats for running \"$pname\" on \"$OriDir\" dir tree:";
+      say    STDOUT "Navigated $direcount directories.";
+      say    STDOUT "Found $filecount jpeg files.";
+      say    STDOUT "Found $regxcount files which also match RegExp \"$RegExp\".";
+      say    STDOUT "Found $predcount files which also match EXIF predicate \"$Predicate\".";
    }
 
    return 1;
-} # sub stats
-
+} # end sub stats
 # Handle errors:
 sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
-   Error: you typed $NA arguments, but this program takes 0, 1, or 2 arguments.
-   Help follows:
+
+   Error: you typed $NA arguments, but this program takes at most
+   2 arguments (an optional file-selection regexp and an optional
+   file-selection predicate). Help follows.
    END_OF_ERROR
    return 1;
 } # end sub error
@@ -309,40 +266,40 @@ sub help {
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "list-paths.pl". This program lists all paths it finds in the
-   current directory (and all subdirectories if a -r or --recurse option is used).
-   Paths verified to   exist   are listed as "Paths Of The Living".
-   Paths verified to NOT exist are listed as "Paths Of The Dead".
+   Welcome to "[insert Program Name here]". This program does blah blah blah
+   to all files in the current directory (and all subdirectories if a -r or
+   --recurse option is used).
 
    -------------------------------------------------------------------------------
    Command lines:
 
-   list-paths.pl [-h|--help]              (to print this help and exit)
-   list-paths.pl [options] [arguments]    (to list paths)
+   program-name.pl -h | --help                       (to print this help and exit)
+   program-name.pl [options] [Arg1] [Arg2] [Arg3]    (to [perform funciton] )
 
    -------------------------------------------------------------------------------
-   Description of options:
+   Description of Options:
 
    Option:            Meaning:
    -h or --help       Print help and exit.
    -e or --debug      Print diagnostics.
-   -q or --quiet      Be quiet. (Default.)
+   -q or --quiet      Be quiet.                         (DEFAULT)
    -t or --terse      Be terse.
    -v or --verbose    Be verbose.
-   -l or --local      DON'T recurse subdirectories. (Default.)
+   -l or --local      DON'T recurse subdirectories.     (DEFAULT)
    -r or --recurse    DO    recurse subdirectories.
    -f or --files      Target Files.
    -d or --dirs       Target Directories.
    -b or --both       Target Both.
-   -a or --all        Target All. (Default.)
+   -a or --all        Target All.                       (DEFAULT)
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
    For example, use -vr to verbosely and recursively process items.
 
-   If multiple conflicting separate options are given, later overrides earlier.
-   If multiple conflicting single-letter options are piled after a single hyphen,
-   the result is determined by this descending order of precedence: heabdfrlvtq.
+   If two piled-together single-letter options conflict, the option
+   appearing lowest on the options chart above will prevail.
+   If two separate (not piled-together) options conflict, the right
+   overrides the left.
 
    If you want to use an argument that looks like an option (say, you want to
    search for files which contain "--recurse" as part of their name), use a "--"
@@ -352,7 +309,7 @@ sub help {
    All options not listed above are ignored.
 
    -------------------------------------------------------------------------------
-   Description of arguments:
+   Description of Arguments:
 
    In addition to options, this program can take 1 or 2 optional arguments.
 
@@ -366,32 +323,26 @@ sub help {
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
 
-   Arg2 (OPTIONAL), if present, must be a boolean predicate using Perl
-   file-test operators. The expression must be enclosed in parentheses (else
-   this program will confuse your file-test operators for options), and then
-   enclosed in single quotes (else the shell won't pass your expression to this
-   program intact). If this argument is used, it overrides "--files", "--dirs",
-   or "--both", and sets target to "--all" in order to avoid conflicts with
-   the predicate. Here are some examples of valid and invalid predicate arguments:
-   '(-d && -l)'  # VALID:   Finds symbolic links to directories
-   '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
-   '(-b)'        # VALID:   Finds block special files
-   '(-c)'        # VALID:   Finds character special files
-   '(-S || -p)'  # VALID:   Finds sockets and pipes.  (S must be CAPITAL S   )
-    '-d && -l'   # INVALID: missing parentheses       (confuses program      )
-    (-d && -l)   # INVALID: missing quotes            (confuses shell        )
-     -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
+   Arg2 (OPTIONAL), if present, must be a boolean predicate using "$info" to
+   refer to a hash ref to EXIF information for a file. For example, if one
+   wants to look for images created on Mar 5, 2004, one could use this:
+
+      exif.pl -vr '.+' '$info->{"image"}->{"Image Created"} =~ m/^2004:03:03/'
+
+   NOTE: You can't omit Arg1 and skip straight to Arg2 because the arguments
+   in this program are "positional", so your intended Arg2 will be construed as
+   Arg1. However, Arg1 can be "bypassed" by using '.+' meaning "any file names".
 
    Arguments and options may be freely mixed, but the arguments must appear in
-   the order Arg1, Arg2 (RegExp first, then File-Type Predicate); if you get them
-   backwards, they won't do what you want, as most predicates aren't valid regexps
-   and vice-versa.
+   the order Arg1, Arg2 (RegExp first, then EXIF predicate); if you get them
+   backwards, they won't do what you want, as most EXIF predicates aren't valid
+   regexps and vice-versa.
 
    A number of arguments greater than 2 will cause this program to print an error
-   message and this help message and exit.
+   message and abort.
 
 
-   Happy path listing!
+   Happy file-finding and EXIF-information-printing!
    Cheers,
    Robbie Hatley,
    programmer.

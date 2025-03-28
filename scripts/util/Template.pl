@@ -130,10 +130,13 @@ use RH::WinChomp;
 
 # ======= VARIABLES: =========================================================================================
 
-# System Variables:
+# ------- System Variables: ----------------------------------------------------------------------------------
+
 $" = ', ' ; # Quoted-array element separator = ", ".
 
-# Global Variables:
+
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
 # WARNING: Do NOT initialize global variables on their declaration line! That wipes-out changes made to them
 #          by BEGIN, UNITCHECK, CHECK, and INIT blocks! Instead, initialize them in those blocks.
 our    $pname;                                 # Declare program name.
@@ -161,40 +164,25 @@ INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 #    My dog's name is Spot.
 #    Spot is a nice dog.
 
-# Local variables:
+# ------- Local variables: -----------------------------------------------------------------------------------
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
 my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-my $Verbose   = 1         ; # Be verbose?               0,1,2     Be somewhat verbose.
+my $Verbose   = 0         ; # Be verbose?               0,1,2     Shhh! Be quiet!
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
+my $OriDir    = d getcwd  ; # Original directory.       cwd       Directory on program entry.
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
-my $filecount = 0 ; # Count of files matching target and regexp.
+my $filecount = 0 ; # Count of files matching target.
+my $regxcount = 0 ; # Count of files also matching regexp.
 my $predcount = 0 ; # Count of files also matching predicate.
-
-# Accumulations of counters from RH::Dir::GetFiles():
-my $totfcount = 0 ; # Count of all directory entries encountered.
-my $noexcount = 0 ; # Count of all nonexistent files encountered.
-my $ottycount = 0 ; # Count of all tty files.
-my $cspccount = 0 ; # Count of all character special files.
-my $bspccount = 0 ; # Count of all block special files.
-my $sockcount = 0 ; # Count of all sockets.
-my $pipecount = 0 ; # Count of all pipes.
-my $brkncount = 0 ; # Count of all symbolic links to nowhere
-my $slkdcount = 0 ; # Count of all symbolic links to directories.
-my $linkcount = 0 ; # Count of all symbolic links to regular files.
-my $weircount = 0 ; # Count of all symbolic links to weirdness (things other than files or dirs).
-my $sdircount = 0 ; # Count of all directories.
-my $hlnkcount = 0 ; # Count of all regular files with multiple hard links.
-my $regfcount = 0 ; # Count of all regular files.
-my $unkncount = 0 ; # Count of all unknown files.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -229,8 +217,8 @@ sub help    ; # Print help and exit.
       say STDERR '';
    }
 
-   # Print the values of all variables if debugging:
-   if ( 1 == $Debug ) {
+   # Print the values of all variables if debugging or being verbose:
+   if ( 1 == $Debug || 2 == $Verbose ) {
       say STDERR "pname     = $pname";
       say STDERR "cmpl_beg  = $cmpl_beg";
       say STDERR "cmpl_end  = $cmpl_end";
@@ -303,7 +291,8 @@ sub argv {
    # Get number of arguments:
    my $NA = scalar(@Args);
 
-   # If user typed more than 2 arguments, and we're not debugging, print error and help messages and exit:
+   # If user typed more than 2 arguments, and we're not debugging or getting help,
+   # then print error and help messages and exit:
    if ( $NA > 2                  # If number of arguments > 2
         && !$Debug && !$Help ) { # and we're not debugging and not getting help,
       error($NA);                # print error message,
@@ -338,35 +327,23 @@ sub curdire {
       say STDERR "\nDirectory # $direcount: $cwd\n";
    }
 
-   # Get list of file-info packets in $cwd matching $Target and $RegExp:
-   my $curdirfiles = GetFiles($cwd, $Target, $RegExp);
+   # Get list of paths in $cwd matching $Target:
+   my @paths = glob_regexp_utf8($cwd, $Target);
 
-   # If being very-verbose, also accumulate all counters from RH::Dir:: to main:
-   if ( $Verbose >= 2 ) {
-      $totfcount += $RH::Dir::totfcount; # all directory entries found
-      $noexcount += $RH::Dir::noexcount; # nonexistent files
-      $ottycount += $RH::Dir::ottycount; # tty files
-      $cspccount += $RH::Dir::cspccount; # character special files
-      $bspccount += $RH::Dir::bspccount; # block special files
-      $sockcount += $RH::Dir::sockcount; # sockets
-      $pipecount += $RH::Dir::pipecount; # pipes
-      $brkncount += $RH::Dir::slkdcount; # symbolic links to nowhere
-      $slkdcount += $RH::Dir::slkdcount; # symbolic links to directories
-      $linkcount += $RH::Dir::linkcount; # symbolic links to regular files
-      $weircount += $RH::Dir::weircount; # symbolic links to weirdness
-      $sdircount += $RH::Dir::sdircount; # directories
-      $hlnkcount += $RH::Dir::hlnkcount; # regular files with multiple hard links
-      $regfcount += $RH::Dir::regfcount; # regular files
-      $unkncount += $RH::Dir::unkncount; # unknown files
-   }
+   # Increment $filecount by scalar(@paths), thus counting all files in $cwd which match $Target and $Regexp:
+   $filecount += scalar(@paths);
 
-   # Process each path that matches $RegExp, $Target, and $Predicate:
-   foreach my $file (sort {$a->{Name} cmp $b->{Name}} @$curdirfiles) {
-      ++$filecount;
-      local $_ = e $file->{Path};
-      if (eval($Predicate)) {
-         ++$predcount;
-         curfile($file);
+   # Iterate through @paths. For any that match $RegExp, increment $regxcount. For any that also match
+   # $Predicate, increment $predcount. Send all paths that match both $RegExp and $Predicate to curfile():
+   foreach my $path (sort @paths) {
+      my $name = $path =~ s#^.*/##r;
+      if ($name =~ m/$RegExp/) {
+         ++$regxcount;
+         local $_ = e $path;
+         if (eval($Predicate)) {
+            ++$predcount;
+            curfile($path);
+         }
       }
    }
 
@@ -375,10 +352,7 @@ sub curdire {
 } # end sub curdire
 
 # Process current file:
-sub curfile ($file) {
-   # Get path:
-   my $path = $file->{Path};
-
+sub curfile ($path) {
    # Announce path:
    if ( 1 == $Debug ) {
       say STDOUT "Simulate: $path";
@@ -398,32 +372,13 @@ sub stats {
    # If being terse or verbose, print basic stats to STDERR:
    if ( 1 == $Verbose || 2 == $Verbose ) {
       say    STDERR '';
-      say    STDERR 'Statistics for this directory tree:';
+      say    STDERR "Stats for running \"$pname\" on \"$OriDir\" dir tree:";
       say    STDERR "Navigated $direcount directories.";
-      say    STDERR "Found $filecount files matching regexp \"$RegExp\" and target \"$Target\".";
+      say    STDERR "Found $filecount files matching target \"$Target\".";
+      say    STDERR "Found $regxcount files which also match RegExp \"$RegExp\".";
       say    STDERR "Found $predcount files which also match predicate \"$Predicate\".";
    }
 
-   # If being verbose, also print extended stats to STDERR:
-   if ( 2 == $Verbose ) {
-      say    STDERR '';
-      say    STDERR 'Directory entries encountered in this tree included:';
-      printf STDERR "%7u total files\n",                            $totfcount;
-      printf STDERR "%7u nonexistent files\n",                      $noexcount;
-      printf STDERR "%7u tty files\n",                              $ottycount;
-      printf STDERR "%7u character special files\n",                $cspccount;
-      printf STDERR "%7u block special files\n",                    $bspccount;
-      printf STDERR "%7u sockets\n",                                $sockcount;
-      printf STDERR "%7u pipes\n",                                  $pipecount;
-      printf STDERR "%7u symbolic links to nowhere\n",              $brkncount;
-      printf STDERR "%7u symbolic links to directories\n",          $slkdcount;
-      printf STDERR "%7u symbolic links to non-directories\n",      $linkcount;
-      printf STDERR "%7u symbolic links to weirdness\n",            $weircount;
-      printf STDERR "%7u directories\n",                            $sdircount;
-      printf STDERR "%7u regular files with multiple hard links\n", $hlnkcount;
-      printf STDERR "%7u regular files\n",                          $regfcount;
-      printf STDERR "%7u files of unknown type\n",                  $unkncount;
-   }
    return 1;
 } # end sub stats
 
@@ -461,15 +416,15 @@ sub help {
    Option:            Meaning:
    -h or --help       Print help and exit.
    -e or --debug      Print diagnostics.
-   -q or --quiet      Be quiet.                         (DEFAULT)
+   -q or --quiet      Be quiet. (Default.)
    -t or --terse      Be terse.
    -v or --verbose    Be verbose.
-   -l or --local      DON'T recurse subdirectories.     (DEFAULT)
+   -l or --local      DON'T recurse subdirectories. (Default.)
    -r or --recurse    DO    recurse subdirectories.
    -f or --files      Target Files.
    -d or --dirs       Target Directories.
    -b or --both       Target Both.
-   -a or --all        Target All.                       (DEFAULT)
+   -a or --all        Target All. (Default.)
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
