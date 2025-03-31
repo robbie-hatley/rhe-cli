@@ -326,7 +326,7 @@ sub help {
    Welcome to "find-files-by-sha1.pl". Given a hex SHA-1 hash, this program
    searches for files in the current directory (and all subdirectories if a -r or
    --recurse option is used) which match the given hash. In the process, this
-   program will create or update a file of SHA-1 hashes called ".sha" in every
+   program will create or update a database of SHA-1 hashes called ".sha" in every
    directory it processes, and it will use the information in that file to search
    for files in that directory for every subsequent search. (See also my program
    "sha1.pl" which updates ".sha1" files, locally or recursively.)

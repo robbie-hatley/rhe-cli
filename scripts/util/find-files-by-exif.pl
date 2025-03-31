@@ -5,8 +5,8 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# exif.pl
-# Prints EXIF information from image files.
+# find-files-by-exif.pl
+# Prints paths of files matching a given EXIF predicate.
 # Written by Robbie Hatley.
 # Edit history:
 # Thu Mar 27, 2025: Wrote it.
@@ -15,12 +15,13 @@
 # Pragmas:
 use v5.36;
 use utf8;
+no warnings 'uninitialized';
 
 # CPAN modules:
 use Cwd;
-use Time::HiRes   qw( time );
-use Image::EXIF;
-use Data::Dumper;
+use Time::HiRes     qw( time     );
+use Image::ExifTool qw( :Public  );
+use Data::Dumper    qw( :DEFAULT );
 
 # RH modules:
 use RH::Dir;
@@ -68,10 +69,6 @@ sub stats   ; # Print statistics.
 sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
 
-# ======= QUENCH STDERR: =====================================================================================
-close STDERR;
-open STDERR, '>', '/dev/null';
-
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
@@ -83,30 +80,30 @@ open STDERR, '>', '/dev/null';
 
    # Print program entry message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
-      say STDOUT "\nNow entering program \"$pname\" at timestamp $t0.";
-      say STDOUT '';
+      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
+      say STDERR '';
    }
 
    # Also print compilation time if being verbose:
    if ( 2 == $Verbose ) {
-      printf(STDOUT "Compilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
-      say STDOUT '';
+      printf(STDERR "Compilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
+      say STDERR '';
    }
 
    # Print the values of all variables if debugging or being verbose:
    if ( 1 == $Debug || 2 == $Verbose ) {
-      say STDOUT "pname     = $pname";
-      say STDOUT "cmpl_beg  = $cmpl_beg";
-      say STDOUT "cmpl_end  = $cmpl_end";
-      say STDOUT "Options   = (@Opts)";
-      say STDOUT "Arguments = (@Args)";
-      say STDOUT "Debug     = $Debug";
-      say STDOUT "Help      = $Help";
-      say STDOUT "Verbose   = $Verbose";
-      say STDOUT "Recurse   = $Recurse";
-      say STDOUT "RegExp    = $RegExp";
-      say STDOUT "Predicate = $Predicate";
-      say STDOUT '';
+      say STDERR "pname     = $pname";
+      say STDERR "cmpl_beg  = $cmpl_beg";
+      say STDERR "cmpl_end  = $cmpl_end";
+      say STDERR "Options   = (@Opts)";
+      say STDERR "Arguments = (@Args)";
+      say STDERR "Debug     = $Debug";
+      say STDERR "Help      = $Help";
+      say STDERR "Verbose   = $Verbose";
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
+      say STDERR '';
    }
 
    # Process current directory (and all subdirectories if recursing) and print stats,
@@ -119,9 +116,9 @@ open STDERR, '>', '/dev/null';
    # Print exit message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
-      say    STDOUT '';
-      say    STDOUT "Now exiting program \"$pname\" at timestamp $t1.";
-      printf STDOUT "Execution time was %.3fms.", $ms;
+      say    STDERR '';
+      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
+      printf STDERR "Execution time was %.3fms.", $ms;
    }
 
    # Exit program, returning success code "0" to caller:
@@ -195,7 +192,7 @@ sub curdire {
 
    # Announce current working directory if being verbose:
    if ( 2 == $Verbose) {
-      say STDOUT "\nDirectory # $direcount: $cwd\n";
+      say STDERR "\nDirectory # $direcount: $cwd\n";
    }
 
    # Get list of paths to plain files in $cwd matching $ExifPat:
@@ -219,16 +216,11 @@ sub curdire {
 
 # Process current file:
 sub curfile ($path) {
-   my $name = $path =~ s#^.*/##r;
-   my $exif = Image::EXIF->new($path); # hash reference
-   if (defined $exif) {
-      my $info = $exif->get_all_info(); # hash reference
-      if (defined $info) {
-         if (eval($Predicate)) {
-            ++$predcount;
-            say STDOUT "EXIF data for file \"$path\":";
-            print Dumper($info);
-         }
+   my $info = ImageInfo($path);
+   if (defined $info) {
+      if (eval($Predicate)) {
+         ++$predcount;
+         say STDOUT $path;
       }
    }
    return 1;
@@ -342,7 +334,7 @@ sub help {
    message and abort.
 
 
-   Happy file-finding and EXIF-information-printing!
+   Happy EXIF-based file-finding!
    Cheers,
    Robbie Hatley,
    programmer.
