@@ -46,7 +46,7 @@ Deep in moonshine”
 ~~Jonathan Hodge
 
 Since this problem involves finding indexes matching a criteria, I'll use the "indexes" function from CPAN
-module "List::MoreUtils" to apply regular-expression "m/$char/" to all words.
+module "List::MoreUtils" to apply regular-expression "m/$char/" to all words in @list.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
@@ -62,12 +62,12 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-   use v5.38;
+   use v5.36;
    use utf8;
    use List::MoreUtils qw( indexes );
 
    # Which words in a list contain a given character?
-   sub find_words :prototype(\@$) ($lref, $char) {
+   sub find_words ($lref, $char) {
       indexes {$_ =~ m/$char/} @$lref
    }
 
@@ -103,9 +103,7 @@ my @arrays = @ARGV ? eval($ARGV[0]) :
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my @list = @{$aref->[0]};
-   my $char = $aref->[1];
-   my @indexes = find_words(@list, $char);
-   say "Words = (@list)";
-   say "Indexes of words containing \"$char\" = (@indexes)";
+   my @indexes = find_words(@$aref);
+   say "Words = (@{$aref->[0]})";
+   say "Indexes of words containing \"$aref->[1]\" = (@indexes)";
 }

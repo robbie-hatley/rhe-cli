@@ -41,16 +41,15 @@ Output:
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-I find the phrase "in sequence to" in the problem description to be vague. However, the examples make it clear
-that this is intended to mean "all words which follow after a first and second word in sequence". I'll take
-the approach of greping the indices after 0 and 1 for indices such that $w[$_-2] is "first" word and $w[$_-1]
-is "second word".
+Since this task is all about "finding words which follow after a first and second word in-sequence", I'll take
+the approach of first spliting $sentence into an array @w of words, then greping the indices after 0 and 1 for
+indices such that $w[$_-2] is "first" word and $w[$_-1] is "second word".
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings in proper Perl syntax. Each inner array must be a
-sentence followed by two individual words. For example:
+single-quoted array of arrays in proper Perl syntax. Each inner array must consist of a double-quoted sentence
+followed by two double-quoted words. For example:
 ./ch-2.pl '(["She ate seven hot dogs.", "She", "ate"],["mom dad son mom dad daughter", "mom", "dad"])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
@@ -60,7 +59,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-   use v5.38;
+   use v5.36;
    use utf8;
 
    # Find all words in a sentence which follow after a first and second word:
