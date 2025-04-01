@@ -115,6 +115,7 @@ use Image::Size;
 use List::Util    qw( sum0 );
 use Time::HiRes   qw( time sleep );
 use Filesys::Type qw( fstype );
+use Switch;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -151,7 +152,8 @@ sub readlink_utf8          :prototype($)    ; # utf8 version of "unlink".
 sub rmdir_utf8             :prototype($)    ; # utf8 version of "rmdir".
 sub symlink_utf8           :prototype($$)   ; # utf8 version of "unlink".
 sub unlink_utf8            :prototype(@)    ; # utf8 version of "unlink".
-sub glob_regexp_utf8       :prototype(;$$$) ; # Regexp file globber using readdir_utf8.
+sub glob_regexp_utf8       :prototype(;$$$) ; # Regexp file globber using opendir/readdir/closedir.
+sub readdir_regexp_utf8    :prototype(;$$$$); # Regexp dir  reader  using opendir/readdir/closedir.
 
 # Section 4, Minor Subroutines (code is (relatively) short and simple):
 sub rename_file            :prototype($$)   ; # Rename a file, taking precautions.
@@ -194,6 +196,7 @@ our @EXPORT =
       mkdir_utf8
       readdir_utf8            readlink_utf8           rmdir_utf8
       symlink_utf8            unlink_utf8             glob_regexp_utf8
+      readdir_regexp_utf8
 
       rename_file             time_from_mtime         date_from_mtime
       get_prefix              get_suffix              get_dir_from_path
@@ -215,7 +218,7 @@ our @EXPORT_OK =
    );
 
 # Turn on debugging?
-my $db = 0; # Set to 1 for debugging, 0 for no debugging.
+my $db = 1; # Set to 1 for debugging, 0 for no debugging.
 
 # Formatting for quoted arrays:
 $"=', ';
@@ -1847,6 +1850,58 @@ sub glob_regexp_utf8 :prototype(;$$$) ($dir = d(getcwd), $target = 'A', $regexp 
    }
    return @paths;
 } # end sub glob_regexp_utf8 (;$$$)
+
+# Return the contents of a directory, filtered by target, regexp, and predicate:
+sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate=1) {
+   if ($db) {
+      say "Directory = $dir";
+      say "Target    = $target";
+      say "Regexp    = $regexp";
+      say "Predicate = $predicate";
+   }
+   # Try to open, read, and close $dir; if any of those operations fail, die:
+   my $dh = undef;
+   opendir $dh, e $dir
+   or die "Fatal error in readdir_regexp_utf8(): Couldn't open  directory \"$dir\".\n$!\n";
+
+   my @raw = sort {$a cmp $b} d(readdir($dh));
+   scalar(@raw) >= 2 # $dir should contain at least '.' and '..'!
+   or die "Fatal error in readdir_regexp_utf8(): Couldn't read  directory \"$dir\".\n$!\n";
+
+   closedir $dh
+   or die "Fatal error in readdir_regexp_utf8(): Couldn't close directory \"$dir\".\n$!\n";
+
+   # Iterate through @names, rejecting '.', '..',  and everything that doesn't match $target, $regexp, and
+   # $predicate, and restoring remainder in an array called @names:
+   my @names = ();
+   NAME: foreach my $name (@raw) {
+      next if '.'  eq $name;
+      next if '..' eq $name;
+      next if ! -e e $name;
+      my @stats = lstat e $name;
+      if ( scalar(@stats) < 13 ) {
+         warn "Warning in readdir_regexp_utf8(): Can't lstat \"$name\" in \"$dir\".\n";
+         next;
+      }
+      # Skip $name if it doesn't match $target:
+      switch($target) {
+         case 'F' { next NAME if !     -f _                 }
+         case 'D' { next NAME if !                 -d _     }
+         case 'B' { next NAME if ! ( ( -f _ ) || ( -d _ ) ) }
+         case 'A' {                     ;                   } # Do nothing.
+         else     {                     ;                   } # Do nothing.
+      }
+      # Skip $name if it doesn't match $regexp:
+      next if $name !~ m/$regexp/;
+      # Skip $name if it doesn't match $predicate:
+      local $_ = $name;
+      next if !eval($predicate);
+      # If we get to here, push name to @names:
+      push @names, $name;
+   }
+   # Return results:
+   return @names;
+} # end sub readdir_regexp_utf8
 
 # ======= SECTION 4, MINOR SUBROUTINES: ======================================================================
 
