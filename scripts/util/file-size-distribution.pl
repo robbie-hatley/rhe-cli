@@ -114,7 +114,7 @@ sub argv {
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
    for ( @ARGV ) {
-      /^--$/                 # "--" = end-of-options marker = construe all further CL items as arguments,
+      /^--$/ && !$end        # "--" = end-of-options marker = construe all further CL items as arguments,
       and $end = 1           # so if we see that, then set the "end-of-options" flag
       and next;              # and skip to next element of @ARGV.
       !$end                  # If we haven't yet reached end-of-options,

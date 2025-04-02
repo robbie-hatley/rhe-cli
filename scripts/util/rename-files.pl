@@ -48,7 +48,7 @@
 #                   Got rid of "/...|.../" in favor of "/.../ || /.../" (speeds-up program).
 #                   Simplified way in which options and arguments are printed if debugging.
 #                   Removed "$" = ', '" and "$, = ', '". Got rid of "/o" from all instances of qr().
-#                   Changed all "$db" to $Db". Debugging now simulates renames instead of exiting in main.
+#                   Changed all "$db" to $Debug". Debugging now simulates renames instead of exiting in main.
 #                   Removed "no debug" option as that's already default in all of my programs.
 #                   "$Verbose" now means "print directories"; all other info is now printed regardless.
 #                   STDERR = "stats and serious errors". STDOUT = "files renamed, and dirs if being verbose".
@@ -58,6 +58,8 @@
 # Sat Apr 27, 2024: Set default target to "both" and improved comments and help.
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
 # Mon Oct 07, 2024: Added "use warnings FATAL => 'utf8';". Removed "_END_".
+# Wed Apr 02, 2025: Fixed bug which was making it impossible to use "--" as a regexp to search for.
+#                   (Trick is to first use "--" as an option, then use "--" again as an argument.)
 ##############################################################################################################
 
 use v5.36;
@@ -68,27 +70,38 @@ use Time::HiRes 'time';
 use RH::Util;
 use RH::Dir;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
-
-sub argv    ;
-sub curdire ;
-sub curfile ;
-sub stats   ;
-sub error   ;
-sub help    ;
-
 # ======= VARIABLES: =========================================================================================
 
-# Settings:   Default Value:   Meaning of Setting:                Range:         Meaning of default:
-my $Db        = 0          ; # Debug?                             bool           Don't debug.
-my $Verbose   = 0          ; # Print directories?                 bool           Don't print dirs.
-my $Recurse   = 0          ; # Recurse subdirectories?            bool           Be local.
-my $Target    = 'B'        ; # Files, directories, both, or All?  F|D|B|A        Both files & dirs.
-my $Mode      = 'P'        ; # Prompt mode                        P|S|Y          Prompt user.
-my $RegExp    = qr/^(.+)$/ ; # RegExp.                            RegExp         Match all file names.
-my $Replace   = '$1'       ; # Replacement string.                string         Replacement is same as match.
-my $Flags     = ''         ; # Flags for s/// operator.           imsxopdualgre  No flags.
-my $Predicate = 1          ; # Boolean file-test predicate.       bool           All file-type combos.
+# ------- System Variables: ----------------------------------------------------------------------------------
+
+$" = ', ' ; # Quoted-array element separator = ", ".
+
+
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+our    $cmpl_beg;                              # Declare compilation begin time.
+BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
+our    $cmpl_end;                              # Declare compilation end   time.
+INIT  {$cmpl_end = time}                       # Set     compilation end   time.
+
+# ------- Local variables: -----------------------------------------------------------------------------------
+
+# Settings:     Default:   Meaning of Setting:                Range:         Meaning of default:
+my @Opts      = ()        ; # options                   array     Options.
+my @Args      = ()        ; # arguments                 array     Arguments.
+my $Debug     = 0         ; # Debug?                             bool           Don't debug.
+my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
+my $Verbose   = 0         ; # Print directories?                 bool           Don't print dirs.
+my $Recurse   = 0         ; # Recurse subdirectories?            bool           Be local.
+my $Target    = 'F'       ; # Files, directories, both, or All?  F|D|B|A        Files.
+my $RegExp    = qr/^.+$/o ; # RegExp.                            RegExp         Match all file names.
+my $Predicate = 1         ; # Boolean file-test predicate.       bool           All file-type combos.
+my $OriDir    = d getcwd  ; # Original directory.       cwd       Directory on program entry.
+my $Mode      = 'P'       ; # Prompt mode                        P|S|Y          Prompt user.
+my $Replace   = '$1'      ; # Replacement string.                string         Replacement is same as match.
+my $Flags     = ''        ; # Flags for s/// operator.           imsxopdualgre  No flags.
 
 # Counters:
 my $dircount  = 0; # Count of directories processed.
@@ -112,29 +125,73 @@ $Targets{D} = 'Directories Only';
 $Targets{B} = 'Both Files And Directories';
 $Targets{A} = 'All Directory Entries';
 
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
+
+sub argv    ;
+sub curdire ;
+sub curfile ;
+sub stats   ;
+sub error   ;
+sub help    ;
+
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
+   # Start execution timer:
    my $t0 = time;
+   my @s0 = localtime($t0);
+
+   # Process @ARGV and set settings:
    argv;
-   my $pname = get_name_from_path($0);
-   say    STDERR '';
-   say    STDERR "Now entering program \"$pname\".";
-   say    STDERR 'Verbosity is ' . ($Verbose ? 'on' : 'off') . '.';
-   say    STDERR 'Recursion is ' . ($Recurse ? 'on' : 'off') . '.';
-   say    STDERR 'Target    is ' . $Targets{$Target}         . '.';
-   say    STDERR 'Mode      is ' . $Modes{$Mode}             . '.';
-   say    STDERR "Regular Expression = $RegExp";
-   say    STDERR "Replacement String = $Replace";
-   say    STDERR "Modifier Flags     = $Flags";
-   say    STDERR "Predicate          = $Predicate";
 
-   $Recurse and RecurseDirs {curdire} or curdire;
+   # Print program entry message if being terse or verbose:
+   if ( 1 == $Verbose || 2 == $Verbose ) {
+      say    STDERR "\nNow entering program \"$pname\" in directory \"$OriDir\"";
+      printf STDERR "at %02d:%02d:%02d on %d/%d/%d.\n", $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
+      say    STDERR '';
+   }
 
-   stats;
-   say    STDERR '';
-   say    STDERR "Now exiting program \"$pname\".";
-   printf STDERR "Execution time was %.3f seconds.\n", time - $t0;
+   # Also print compilation time if being verbose:
+   if ( 2 == $Verbose ) {
+      printf(STDERR "Compilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
+      say STDERR '';
+   }
+
+   # Print the values of all variables if debugging or being verbose:
+   if ( 1 == $Debug || 2 == $Verbose ) {
+      say STDERR "pname     = $pname";
+      say STDERR "cmpl_beg  = $cmpl_beg";
+      say STDERR "cmpl_end  = $cmpl_end";
+      say STDERR "Options   = (@Opts)";
+      say STDERR "Arguments = (@Args)";
+      say STDERR "Debug     = $Debug";
+      say STDERR "Help      = $Help";
+      say STDERR "Verbose   = $Verbose";
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "Target    = $Target";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
+      say STDERR '';
+   }
+
+   # Process current directory (and all subdirectories if recursing) and print stats,
+   # unless user requested help, in which case just print help:
+   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+
+   # Stop execution timer:
+   my $t1 = time;
+   my @s1 = localtime($t1);
+
+   # Print exit message if being terse or verbose:
+   if ( 1 == $Verbose || 2 == $Verbose ) {
+      my $te = $t1 - $t0; my $ms = 1000 * $te;
+      say    STDERR '';
+      say    STDERR "\nNow exiting program \"$pname\" in directory \"$OriDir\"";
+      printf STDERR "at %02d:%02d:%02d on %d/%d/%d. ", $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
+      printf STDERR "Execution time was %.3fms.", $ms;
+   }
+
+   # Exit program, returning success code "0" to caller:
    exit 0;
 } # end main
 
@@ -142,26 +199,24 @@ $Targets{A} = 'All Directory Entries';
 
 sub argv {
    # Get options and arguments:
-   my @opts = ();             # options
-   my @args = ();             # arguments
-   my $end = 0;               # end-of-options flag
-   my $s = '[a-zA-Z0-9]';     # single-hyphen allowable chars (English letters, numbers)
-   my $d = '[a-zA-Z0-9=.-]';  # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
+   my $end = 0;              # end-of-options flag
+   my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
+   my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
    for ( @ARGV ) {
-      /^--$/                  # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1            # so if we see that, then set the "end-of-options" flag
-      and next;               # and skip to next element of @ARGV.
-      !$end                   # If we haven't yet reached end-of-options,
-      && ( /^-(?!-)$s+$/      # and if we get a valid short option
-      ||   /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @opts, $_      # then push item to @opts
-      or  push @args, $_;     # else push item to @args.
+      /^--$/ && !$end        # "--" = end-of-options marker = construe all further CL items as arguments,
+      and $end = 1           # so if we see that, then set the "end-of-options" flag
+      and next;              # and skip to next element of @ARGV.
+      !$end                  # If we haven't yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we get a valid short option
+      ||   /^--(?!-)$d+$/ )  # or a valid long option,
+      and push @Opts, $_     # then push item to @Opts
+      or  push @Args, $_;    # else push item to @Args.
    }
 
    # Process options:
-   for ( @opts ) {
+   for ( @Opts ) {
       /^-$s*h/ || /^--help$/     and help and exit 777 ;
-      /^-$s*e/ || /^--debug$/    and $Db      =  1     ;
+      /^-$s*e/ || /^--debug$/    and $Debug   =  1     ;
       /^-$s*q/ || /^--quiet$/    and $Verbose =  0     ; # DEFAULT
       /^-$s*v/ || /^--verbose$/  and $Verbose =  1     ;
       /^-$s*l/ || /^--local$/    and $Recurse =  0     ; # DEFAULT
@@ -174,31 +229,31 @@ sub argv {
       /^-$s*s/ || /^--simulate$/ and $Mode    = 'S'    ;
       /^-$s*y/ || /^--noprompt$/ and $Mode    = 'Y'    ;
    }
-   if ( $Db ) {
+   if ( $Debug ) {
       say STDERR '';
-      say STDERR "\$opts = (", join(', ', map {"\"$_\""} @opts), ')';
-      say STDERR "\$args = (", join(', ', map {"\"$_\""} @args), ')';
+      say STDERR "\$Opts = (", join(', ', map {"\"$_\""} @Opts), ')';
+      say STDERR "\$Args = (", join(', ', map {"\"$_\""} @Args), ')';
    }
 
    # Process arguments:
-   my $NA = scalar @args;      # Get number of arguments.
+   my $NA = scalar @Args;      # Get number of arguments.
    if ( ($NA < 2 || $NA > 4)   # If number of arguments < 2 or > 4
-      && !$Db ) {              # and we're not debugging,
+      && !$Debug ) {              # and we're not debugging,
       error($NA);              # print error message,
       help;                    # and print help message,
       exit 666;                # and exit, returning The Number Of The Beast.
    }
    if ( $NA >= 1 ) {           # If number of arguments >= 1,
-      $RegExp = qr/$args[0]/;  # set $RegExp to $args[0].
+      $RegExp = qr/$Args[0]/;  # set $RegExp to $Args[0].
    }
    if ( $NA >= 2 ) {           # If number of arguments >= 2,
-      $Replace   = $args[1];   # set $Replace to $args[1].
+      $Replace   = $Args[1];   # set $Replace to $Args[1].
    }
    if ( $NA >= 3 ) {           # If number of arguments >= 3,
-      $Flags     = $args[2];   # set $Flags to $args[2].
+      $Flags     = $Args[2];   # set $Flags to $Args[2].
    }
    if ( $NA >= 4 ) {           # If number of arguments >= 4,
-      $Predicate = $args[3];   # set $Predicate to $args[3]
+      $Predicate = $Args[3];   # set $Predicate to $Args[3]
       $Target = 'A';           # and set $Target to 'A' to avoid conflicts with $Predicate.
    }
 
@@ -221,7 +276,7 @@ sub curdire {
    # Process each path that matches $RegExp, $Target, and $Predicate:
    foreach my $file (sort {$a->{Name} cmp $b->{Name}} @$curdirfiles) {
       ++$filecount;
-      say STDERR "Debug msg in rnf, in curdire, in foreach: filename = $file->{Name}" if $Db;
+      say STDERR "Debug msg in rnf, in curdire, in foreach: filename = $file->{Name}" if $Debug;
       local $_ = e $file->{Path};
       if (eval($Predicate)) {
          ++$predcount;
@@ -314,7 +369,7 @@ sub curfile ($file) {
    } # end if (current mode is 'Y')
 
    # Simulation Mode or Debugging:
-   elsif ( 'S' eq $Mode || $Db ) {
+   elsif ( 'S' eq $Mode || $Debug ) {
       ++$simucount;
       say STDOUT "Simulation: Would have renamed file from old name to new name.";
    }

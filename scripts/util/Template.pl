@@ -201,14 +201,16 @@ sub help    ; # Print help and exit.
 { # begin main
    # Start execution timer:
    my $t0 = time;
+   my @s0 = localtime($t0);
 
    # Process @ARGV and set settings:
    argv;
 
    # Print program entry message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
-      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
-      say STDERR '';
+      say    STDERR "\nNow entering program \"$pname\" in directory \"$OriDir\"";
+      printf STDERR "at %02d:%02d:%02d on %d/%d/%d.\n", $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
+      say    STDERR '';
    }
 
    # Also print compilation time if being verbose:
@@ -240,12 +242,14 @@ sub help    ; # Print help and exit.
 
    # Stop execution timer:
    my $t1 = time;
+   my @s1 = localtime($t1);
 
    # Print exit message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
       say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
+      say    STDERR "\nNow exiting program \"$pname\" in directory \"$OriDir\"";
+      printf STDERR "at %02d:%02d:%02d on %d/%d/%d. ", $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
       printf STDERR "Execution time was %.3fms.", $ms;
    }
 
@@ -262,7 +266,7 @@ sub argv {
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
    for ( @ARGV ) {           # For each element of @ARGV,
-      /^--$/                 # "--" = end-of-options marker = construe all further CL items as arguments,
+      /^--$/ && !$end        # "--" = end-of-options marker = construe all further CL items as arguments,
       and $end = 1           # so if we see that, then set the "end-of-options" flag
       and push @Opts, $_     # and push the "--" to @Opts
       and next;              # and skip to next element of @ARGV.
@@ -384,7 +388,7 @@ sub stats {
 
 # Handle errors:
 sub error ($NA) {
-   print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+   print STDERR ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
    Error: you typed $NA arguments, but this program takes at most
    2 arguments (an optional file-selection regexp and an optional
@@ -395,7 +399,7 @@ sub error ($NA) {
 
 # Print help:
 sub help {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print STDERR ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Introduction:

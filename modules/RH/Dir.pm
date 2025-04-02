@@ -218,7 +218,7 @@ our @EXPORT_OK =
    );
 
 # Turn on debugging?
-my $db = 1; # Set to 1 for debugging, 0 for no debugging.
+my $db = 0; # Set to 1 for debugging, 0 for no debugging.
 
 # Formatting for quoted arrays:
 $"=', ';

@@ -5,7 +5,7 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# print-urls.pl
+# print-url-lines.pl
 # Prints those lines of a file which contain "http:".
 #
 # Written by Robbie Hatley on Saturday January 10, 2015.
@@ -19,12 +19,12 @@
 # Wed Dec 08, 2021: Reformatted titlecard.
 # Sun Aug 04, 2024: Reduced width from 120 to 110. Upgraded from "v5.32" to "v5.36".
 #                   Got rid of "use common::sense". Got rid of "use Sys::Binmode". Added "use utf8".
+# Tue Apr 01, 2025: Reduced min ver "5.36" -> "5.00". Renamed from "print-urls.pl" to "print-url-lines.pl".
 ##############################################################################################################
 
-use v5.36;
+use v5.00;
 use utf8;
 
-while (<>)
-{
+while (<>) {
    print if /https?:/;
 }
