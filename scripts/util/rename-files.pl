@@ -253,8 +253,7 @@ sub argv {
       $Flags     = $Args[2];   # set $Flags to $Args[2].
    }
    if ( $NA >= 4 ) {           # If number of arguments >= 4,
-      $Predicate = $Args[3];   # set $Predicate to $Args[3]
-      $Target = 'A';           # and set $Target to 'A' to avoid conflicts with $Predicate.
+      $Predicate = $Args[3];   # set $Predicate to $Args[3].
    }
 
    # Return success code 1 to caller:
@@ -457,16 +456,13 @@ sub help {
    then the order of precedence from highest to lowest will be heyspabdfrlvq.
 
    If you want to use an argument that looks like an option (say, you want to
-   search for files which contain "--recurse" as part of their name), use a "--"
-   option; that will force all command-line entries to its right to be considered
-   "arguments" rather than "options".
+   change "--" to "-" in file names), use a "--" option; that will force all
+   command-line entries to its right to be considered "arguments" rather than
+   "options". For example, to change "--" to "-" in file names, you might use:
+   rename-files.pl -fql -- '--' '-'
+   The first -- is an end-of-options marker; the second -- is an argument.
 
    All options not listed above are ignored.
-
-   WARNING: If the 4th argument ("Predicate"; see below) is used, any target-
-   selection options (-f, --files, -d, --directories, -b, --both, -a, --all)
-   will be ignored and the target will be set to "all". This is to avoid
-   conflict with predicates which may specify a boolean combination of targets.
 
    -------------------------------------------------------------------------------
    Description of arguments:
