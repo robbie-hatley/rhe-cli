@@ -95,6 +95,7 @@
 # Sun Mar 09, 2025: Got rid of all BEGIN and END blocks, as they're too unreliable in their variable access.
 # Wed Mar 12, 2025: Now using BEGIN blocks the CORRECT way, to initialize global variables $pname,
 #                   $cmpl_beg, and $cmpl_end. Also renamed "$Debug" to "$Debug".
+# Fri Apr 04, 2025: Now using "utf8::all" and "Cwd::utf8". Nixed "*_utf8", "d", "e".
 ##############################################################################################################
 
 ##############################################################################################################
@@ -102,31 +103,19 @@
 # Twiddles libokodes on unguish iblkuabs.
 # Written by Robbie Hatley.
 # Edit history:
-# Sat Jun 05, 2021: Wrote it.
+# Tue Jul 01, 2025: Wrote it.
 ##############################################################################################################
 
-# Pragmas:
 use v5.36;
+use strict;
+use warnings;
+use warnings FATAL => 'utf8';
 use utf8;
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes 'time';
 
-# CPAN modules:
-use Cwd                qw( cwd getcwd   );
-use Time::HiRes        qw( time         );
-use charnames          qw( :full :short );
-use Unicode::Normalize qw( NFD NFC      );
-use Unicode::Collate;
-use MIME::QuotedPrint;
-use Scalar::Util       qw( looks_like_number reftype );
-use List::AllUtils;
-use Hash::Util;
-use Regexp::Common;
-
-# RH modules:
 use RH::Dir;
-use RH::Math;
-use RH::RegTest;
-use RH::Util;
-use RH::WinChomp;
 
 # ======= VARIABLES: =========================================================================================
 
@@ -176,7 +165,7 @@ my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
-my $OriDir    = d getcwd  ; # Original directory.       cwd       Directory on program entry.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
@@ -208,32 +197,30 @@ sub help    ; # Print help and exit.
 
    # Print program entry message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
-      say    STDERR "\nNow entering program \"$pname\" in directory \"$OriDir\"";
-      printf STDERR "at %02d:%02d:%02d on %d/%d/%d.\n", $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
-      say    STDERR '';
+      printf STDERR "Now entering program \"%s\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $pname, $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
    }
 
    # Also print compilation time if being verbose:
    if ( 2 == $Verbose ) {
-      printf(STDERR "Compilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
-      say STDERR '';
+      printf STDERR "Compilation time was %.3fms\n\n",
+                    1000 * ($cmpl_end - $cmpl_beg);
    }
 
    # Print the values of all variables if debugging or being verbose:
    if ( 1 == $Debug || 2 == $Verbose ) {
-      say STDERR "pname     = $pname";
-      say STDERR "cmpl_beg  = $cmpl_beg";
-      say STDERR "cmpl_end  = $cmpl_end";
-      say STDERR "Options   = (@Opts)";
-      say STDERR "Arguments = (@Args)";
-      say STDERR "Debug     = $Debug";
-      say STDERR "Help      = $Help";
-      say STDERR "Verbose   = $Verbose";
-      say STDERR "Recurse   = $Recurse";
-      say STDERR "Target    = $Target";
-      say STDERR "RegExp    = $RegExp";
-      say STDERR "Predicate = $Predicate";
-      say STDERR '';
+      print STDERR "pname     = $pname\n",
+                   "cmpl_beg  = $cmpl_beg\n",
+                   "cmpl_end  = $cmpl_end\n",
+                   "Options   = (@Opts)\n",
+                   "Arguments = (@Args)\n",
+                   "Debug     = $Debug\n",
+                   "Help      = $Help\n",
+                   "Verbose   = $Verbose\n",
+                   "Recurse   = $Recurse\n",
+                   "Target    = $Target\n",
+                   "RegExp    = $RegExp\n",
+                   "Predicate = $Predicate\n\n";
    }
 
    # Process current directory (and all subdirectories if recursing) and print stats,
@@ -247,7 +234,6 @@ sub help    ; # Print help and exit.
    # Print exit message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
-      say    STDERR '';
       say    STDERR "\nNow exiting program \"$pname\" in directory \"$OriDir\"";
       printf STDERR "at %02d:%02d:%02d on %d/%d/%d. ", $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
       printf STDERR "Execution time was %.3fms.", $ms;
@@ -272,11 +258,11 @@ sub argv {
             push @Opts, $_;            # and push the "--" to @Opts
             next;                      # and move on to next item.
          }
-         if ( /^-(?!-)$s+$/ ) {     # If we see a valid short option,
+         elsif ( /^-(?!-)$s+$/  ) { # Else if we see a valid short option,
             push @Opts, $_;            # then push item to @Opts
             next;                      # and move on to next item.
          }
-         if ( /^--(?!-)$d+$/ ) {    # If we see a valid long option,
+         elsif ( /^--(?!-)$d+$/ ) { # Else if we see a valid long option,
             push @Opts, $_;            # then push item to @Opts
             next;                      # and move on to next item.
          }
@@ -332,7 +318,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
+   my $cwd = cwd;
 
    # Announce current working directory if being verbose:
    if ( 2 == $Verbose) {
@@ -351,7 +337,7 @@ sub curdire {
       my $name = $path =~ s#^.*/##r;
       if ($name =~ m/$RegExp/) {
          ++$regxcount;
-         local $_ = e $path;
+         local $_ = $path;
          if (eval($Predicate)) {
             ++$predcount;
             curfile($path);
@@ -384,7 +370,7 @@ sub stats {
    # If being terse or verbose, print basic stats to STDERR:
    if ( 1 == $Verbose || 2 == $Verbose ) {
       say    STDERR '';
-      say    STDERR "Stats for running \"$pname\" on \"$OriDir\" dir tree:";
+      say    STDERR "Stats for running \"$pname\" on directory tree \"$OriDir\":";
       say    STDERR "Navigated $direcount directories.";
       say    STDERR "Found $filecount files matching target \"$Target\".";
       say    STDERR "Found $regxcount files which also match RegExp \"$RegExp\".";
