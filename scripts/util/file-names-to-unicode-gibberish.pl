@@ -9,8 +9,7 @@
 # Renames ALL regular files in the current directory (and all subdirectories if -r or --recurse is used)
 # to strings of 8 random Unicode characters characters. No regular files are spared. All file-name information
 # will be lost; only the file bodies will remain, with gibberish names. This is very useful for testing the
-# ability of OTHER scripts to rename files from pathological names to more-sensical names, hence I'm putting
-# this script in my "Perl Internals" directory.
+# ability of OTHER scripts to rename files from pathological names to more-sensical names.
 # Written by Robbie Hatley.
 # Edit history:
 # Thu Apr 03, 2025: Wrote it.
