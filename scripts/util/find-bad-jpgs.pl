@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -27,23 +27,23 @@
 # Mon Mar 10, 2025: Got rid of given/when.
 # Thu Mar 13, 2025: -C63. Reduced width from 120 to 110. Got rid of prototypes. Changed bracing to C-style.
 #                   Increased min ver from "5.32" to "5.36". Added signatures.
+# Fri Apr 04, 2025: Shebang->"#!/usr/bin/env perl". Now using "utf8::all" and "Cwd::utf8". Nixed "cwd_utf8".
 ##############################################################################################################
 
+# Pragmas:
 use v5.36;
+use strict;
+use warnings;
+use warnings FATAL => "utf8";
 use utf8;
+use utf8::all;
 
+# CPAN Modules:
+use Cwd::utf8;
 use Time::HiRes qw( time );
 
+# RH Modules:
 use RH::Dir;
-
-# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
-
-sub argv    ; # Process @ARGV.
-sub curdire ; # Process current directory.
-sub curfile ; # Process current file.
-sub stats   ; # Print statistics.
-sub error   ; # Handle errors.
-sub help    ; # Print help and exit.
 
 # ======= VARIABLES: =========================================================================================
 
@@ -77,6 +77,15 @@ my $direcount = 0; # Count of directories processed by curdire().
 my $filecount = 0; # Count of directory entries matching targe 'F' and $RegExp
 my $predcount = 0; # Count of files also matching $Predicate.
 my $badjcount = 0; # Count of bad jpeg files found.
+
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
+
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub stats   ; # Print statistics.
+sub error   ; # Handle errors.
+sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
@@ -115,7 +124,7 @@ my $badjcount = 0; # Count of bad jpeg files found.
 
    # Print exit message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
-      my $te = $t1 - $t0; my $ms = 1000 * $te;
+      my $ms = 1000 * ($t1 - $t0);
       say    STDERR '';
       say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
       printf STDERR "Execution time was %.3fms.", $ms;
@@ -188,7 +197,7 @@ sub curdire {
    ++$direcount;
 
    # Де ми в світі???
-   my $curdir = cwd_utf8;
+   my $curdir = cwd;
 
    # Den aktuellen Standort nur dann bekannt geben,
    # wenn man sehr langatmig ist:
@@ -218,7 +227,7 @@ sub curfile ($indlela) {
    my $первые_три_байта; # First 3 bytes.
 
    # Open file in raw mode:
-   open($文件句柄, "< :raw", e $indlela)
+   open($文件句柄, "< :raw", $indlela)
       or warn "Couldn't open file \"$indlela\".\n$!\n"
       and return 0;
 
