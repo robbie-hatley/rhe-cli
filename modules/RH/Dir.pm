@@ -36,7 +36,7 @@
 # Mon Jan 11, 2021: Added sub "sha1".
 # Sat Feb 13, 2021: Fixed some bugs in "glob_regexp_utf8": removed globbing and decoding of directory, which
 #                   were causing trouble; this function now requires that the directory input already be
-#                   decoded from (whatever) to raw Unicode. This shouldn't be a problem if cwd_utf8 is used;
+#                   decoded from (whatever) to raw Unicode. This shouldn't be a problem if d(getcwd)) is used;
 #                   however, using glob() or <* .*> as source for directory will cause trouble.
 # Tue Feb 16, 2021: Completely re-wrote GetFiles() to use glob_regexp_utf8. Refactored both subs to require
 #                   a fully-qualified directory (starting with '/') as their first argument.
@@ -139,8 +139,6 @@ sub eight_rand_lc_letters  :prototype()     ; # Get a random string of 8 lower-c
 # Section 3, UTF-8-related subroutines:
 sub d                                       ; # utf8-decode.
 sub e                                       ; # utf8-encode.
-sub chdir_utf8             :prototype($)    ; # utf8 version of "chdir".
-sub cwd_utf8               :prototype()     ; # utf8 version of "get curr dir".
 sub glob_utf8              :prototype($)    ; # utf8 version of "glob".
 sub link_utf8              :prototype($$)   ; # utf8 version of "unlink".
 sub mkdir_utf8             :prototype($;$)  ; # utf8 version of "mkdir".
@@ -191,8 +189,8 @@ our @EXPORT =
       RecurseDirs             copy_file               move_file
       copy_files              move_files
 
-      d                       e                       chdir_utf8
-      cwd_utf8                glob_utf8               link_utf8
+      d                       e
+      glob_utf8               link_utf8
       mkdir_utf8
       readdir_utf8            readlink_utf8           rmdir_utf8
       symlink_utf8            unlink_utf8             glob_regexp_utf8
@@ -244,7 +242,305 @@ our $hlnkcount = 0; # Count of all regular files with multiple hard links.
 our $regfcount = 0; # Count of all regular files.
 our $unkncount = 0; # Count of all unknown files.
 
-# ======= SECTION 1, MAJOR SUBROUTINES: ======================================================================
+# ======= SECTION 1, PRIVATE SUBROUTINES: ====================================================================
+
+# Is a line of text encoded in ASCII?
+sub is_ascii :prototype($) ($text) {
+   my ($cpac, $cfil) = caller;
+   die "Fatal error: function \"is_ascii\" in module \"RH::Dir\" is private.\n"
+   unless $cpac eq __PACKAGE__ && $cfil eq __FILE__;
+   my $is_ascii = 1;
+   foreach my $ord (map {ord} split //, $text) {
+      if ($db) {say STDERR "In is_ascii(), at top of foreach. \$ord = $ord"}
+      next if (  9 == $ord ); # HT
+      next if ( 10 == $ord ); # LF
+      next if ( 11 == $ord ); # VT
+      next if ( 13 == $ord ); # CR
+      next if ( 32 == $ord ); # SP
+      next if ( $ord >=  33
+             && $ord <= 126); # ASCII glyph
+      # If we get to here, all of the above tests failed, which means that our current character
+      # is neither commonly-used ASCII whitespace nor an ASCII glyphical character,
+      # so set $is_ascii to 0 and break from loop:
+      $is_ascii = 0;
+      last;
+   }
+   if ($db) {say STDERR "In is_ascii(), about to return. \$is_ascii = $is_ascii"}
+   return $is_ascii;
+} # end sub is_ascii :prototype($) ($text)
+
+# Is a line of text encoded in iso-8859-1?
+sub is_iso_8859_1 :prototype($) ($text) {
+   my ($cpac, $cfil) = caller;
+   die "Fatal error: function \"is_iso_8859_1\" in module \"RH::Dir\" is private.\n"
+   unless $cpac eq __PACKAGE__ && $cfil eq __FILE__;
+   my $is_iso = 1;
+   foreach my $ord (map {ord} split //, $text) {
+      if ($db) {say STDERR "In is_iso_8859_1(), at top of foreach. \$ord = $ord"}
+      next if (  9 == $ord ); # HT
+      next if ( 10 == $ord ); # LF
+      next if ( 11 == $ord ); # VT
+      next if ( 13 == $ord ); # CR
+      next if ( 32 == $ord ); # SP
+      next if ( $ord >=  33
+             && $ord <= 126); # ASCII glyph
+      next if ( $ord >= 160
+             && $ord <= 255); # iso-8859-1 character
+      # If we get to here, all of the above tests failed, which means that our current character
+      # is neither commonly-used iso-8859-1 whitespace nor an iso-8859-1 glyphical character,
+      # so set $is_iso to 0 and break from loop:
+      $is_iso = 0;
+      last;
+   }
+   if ($db) {say STDERR "In is_iso_8859_1(), about to return. \$is_iso = $is_iso"}
+   return $is_iso;
+} # end sub is_iso_8859_1 :prototype($) ($text)
+
+# Is a line of text encoded in Unicode then transformed to UTF-8?
+sub is_utf8 :prototype($) ($text) {
+   my ($cpac, $cfil) = caller;
+   die "Fatal error: function \"is_utf8\" in module \"RH::Dir\" is private.\n"
+   unless $cpac eq __PACKAGE__ && $cfil eq __FILE__;
+   my $is_utf8;
+   if ( eval {decode('UTF-8', $text, DIE_ON_ERR|LEAVE_SRC)} ) {
+      $is_utf8 = 1;
+   }
+   else {
+      $is_utf8 = 0;
+   }
+   if ($db) {say STDERR "In is_utf8(), about to return. \$is_utf8 = $is_utf8"}
+   return $is_utf8;
+}
+
+# Return a random integer in the range [m,n] inclusive:
+sub rand_int :prototype($$) ($min, $max) {
+   my ($cpac, $cfil) = caller;
+   die "Fatal error: function \"rand_int\" in module \"RH::Dir\" is private.\n"
+   unless $cpac eq __PACKAGE__ && $cfil eq __FILE__;
+   return floor($min+rand($max-$min+1));
+} # end sub rand_int
+
+# Return a string of 8 random lower-case English letters:
+sub eight_rand_lc_letters :prototype() {
+   my ($cpac, $cfil) = caller;
+   die "Fatal error: function \"eight_rand_lc_letters\" in module \"RH::Dir\" is private.\n"
+   unless $cpac eq __PACKAGE__ && $cfil eq __FILE__;
+   return join '', map {chr(rand_int(97, 122))} (1..8);
+}
+
+# ======= SECTION 2, UTF-8 SUBROUTINES: ======================================================================
+
+# Prepare constant "EFLAGS" which contains bitwise-OR'd flags for Encode::encode and Encode::decode :
+
+# Should we warn and return? No, let's NOT do that, because it will cause loss of remaining data:
+# use constant EFLAGS => LEAVE_SRC | WARN_ON_ERR | RETURN_ON_ERR;
+# That would be useful for use with buffers, but we're usually not doing that in my programs. So for my
+# "d" and "e" subroutines, let's leave the source intact, use substitute characters, warn user on errors,
+# and continue (don't return until encoding or decoding is complete):
+use constant EFLAGS => LEAVE_SRC | WARN_ON_ERR;
+
+# Decode from UTF-8 to Unicode:
+sub d :prototype(@) (@args) {
+      if (0 == scalar @args) {return Encode::decode('UTF-8', $_,       EFLAGS);}
+   elsif (1 == scalar @args) {return Encode::decode('UTF-8', $args[0], EFLAGS);}
+   else                 {return map {Encode::decode('UTF-8', $_,       EFLAGS)} @args };
+} # end sub d
+
+# Encode from Unicode to UTF-8:
+sub e :prototype(@) (@args) {
+      if (0 == scalar @args) {return Encode::encode('UTF-8', $_,       EFLAGS);}
+   elsif (1 == scalar @args) {return Encode::encode('UTF-8', $args[0], EFLAGS);}
+   else                 {return map {Encode::encode('UTF-8', $_,       EFLAGS)} @args };
+} # end sub e
+
+# file glob, but using UTF-8:
+sub glob_utf8 :prototype($) ($wildcard) {
+   if (wantarray) {return map {d($_)} glob(e($wildcard)) ;}
+   else           {return      d     (glob(e($wildcard)));}
+}
+
+# UTF-8 version of link:
+sub link_utf8 :prototype($$) ($target, $linkname) {
+   return link(e($target), e($linkname));
+}
+
+# mkdir, but using UTF-8:
+sub mkdir_utf8 :prototype($;$) ($dirname, $mask = 0777) {
+   return mkdir(e($dirname),$mask);
+}
+
+# readdir, but using UTF-8:
+sub readdir_utf8 :prototype($) ($dh) {
+   if (wantarray) {return map {d($_)} readdir($dh);}
+   else           {return d(readdir($dh));         }
+}
+
+# UTF-8 version of readlink:
+sub readlink_utf8 :prototype($) ($link) {
+   return d(readlink(e($link)));
+}
+
+# rmdir, but using UTF-8:
+sub rmdir_utf8 :prototype($) ($dir) {
+   return rmdir(e($dir));
+}
+
+# UTF-8 version of symlink:
+sub symlink_utf8 :prototype($$) ($target, $linkname) {
+   return symlink(e($target), e($linkname));
+}
+
+# UTF-8 version of unlink:
+sub unlink_utf8 :prototype(@) (@args) {
+   return unlink(e(@args));
+}
+
+sub glob_regexp_utf8 :prototype(;$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$') {
+   # This sub is like glob(), but using UTF-8, a given directory, a target type, and a regular expression
+   # instead of a csh-style wildcard as input, and returning matching fully-qualified paths as output, with
+   # '.' and '..' stripped-out.
+
+   # VITALLY IMPORTANT: THE "DIRECTORY" ARGUMENT MUST ALREADY BE DECODED FROM UTF-8 INTO RAW UNICODE,
+   # OTHERWISE THIS FUNCTION WILL GENERATE "WIDE CHARACTER" ERRORS AND CRASH THE CALLING PROGRAM.
+   # THIS SHOULD AUTOMATICALLY BE DONE FOR YOU IF YOU USE "d(getcwd)" TO PROVIDE THE DIRECTORY.
+   # USING RAW "glob()" OR "<* .*>" OR "readdir", HOWEVER, WILL CAUSE MANY ERRORS ON EITHER LINUX OR CYGWIN
+   # IF THE CALLING PROGRAM ATTEMPTS TO PROCESS FILE NAMES IN ANY LANGUAGE OTHER THAN ENGLISH.
+   # (NAMES SUCH AS "Говорю Русский", "ॐ नमो भगवते वासुदेवाय", "看的星星，知道你是爱。" WOULD CRASH HORRIBLY.)
+
+   # If debugging, announce inputs:
+   if ($db) {
+      say STDERR "                                       ";
+      say STDERR "In sub \"glob_regexp_utf8\", near top. ";
+      say STDERR "\$dir    = $dir                        ";
+      say STDERR "\$target = $target                     ";
+      say STDERR "\$regex  = $regexp                     ";
+      say STDERR "                                       ";
+   }
+
+   # But do those inputs even make any sense?? Let's check now!
+   if ( !-e(e($dir)) || !-d(e($dir)) ) {
+      die "Fatal error in glob_regexp_utf8: Invalid directory \'$dir\'.\n$!\n";
+   }
+   if ( $target !~ m/^[FDBA]$/ ) {
+      die "Fatal error in glob_regexp_utf8: Invalid target \'$target\'.\n$!\n";
+   }
+   my $re;
+   if ( !eval {$re = qr/$regexp/} ) {
+      die "Fatal error in glob_regexp_utf8: Invalid regular expression \'$regexp\'.\n$!\n";
+   }
+
+   # Try to open, read, and close $dir; if any of those operations fail, die:
+   my $dh = undef;
+   opendir $dh, e $dir
+   or die "Fatal error in glob_regexp_utf8: Couldn't open  directory \"$dir\".\n$!\n";
+
+   my @names = sort {$a cmp $b} d(readdir($dh));
+   scalar(@names) < 2 # $dir should contain at least '.' and '..'!
+   and die "Fatal error in glob_regexp_utf8: Couldn't read  directory \"$dir\".\n$!\n";
+
+   closedir $dh
+   or die "Fatal Error in glob_regexp_utf8: Couldn't close directory \"$dir\".\n$!\n";
+
+   # Riffle through @names. Skip '.', '..', and names not matching $regex, construct paths from names,
+   # skip paths that don't exist if target is F or D or B, skip paths to objects of types not matching target,
+   # and push remaining paths onto @paths:
+   my $path;
+   my @paths;
+   foreach my $name (@names) {
+      say "IN glob_regexp_utf8. NAME FROM readdir_utf8: $name" if $db;
+      next if $name eq '.';
+      next if $name eq '..';
+      next if $name !~ m/$re/;
+
+      # Construct fully-qualified path from $dir and $name:
+      if ($dir eq '/')  {$path = "/$name";}
+      else              {$path = "$dir/$name";}
+      say "IN glob_regexp_utf8. CONSTRUCTED PATH: $path" if $db;
+
+      # Don't test for existence or type here unless target is 'F', 'D', or 'B'. For target 'A', we want
+      # GetFiles (or other caller) to be able to note any non-existent directory entries and flag them "noex":
+      if ($target eq 'A') {
+         ; # Do nothing.
+      }
+      else {
+         next if ! -e e $path;
+         lstat e $path;
+         # NOTE: DON'T test for -b -c -p -S -t here; wastes too much time; use "is_data_file" for that:
+         if    ($target eq 'F') {next if  -l _ || !-f _ ||  -d _ }
+         elsif ($target eq 'D') {next if  -l _ ||  -f _ || !-d _ }
+         elsif ($target eq 'B') {next if  -l _ || !-f _ && !-d _ }
+         else {die "Fatal error in glob_regexp_utf8: Invalid target \"$target\".\n$!\n";}
+      }
+      push @paths, $path;
+   }
+
+   # If debugging, print diagnostics:
+   if ($db) {
+      say STDERR "                            ";
+      say STDERR "IN glob_regexp_utf8 AT END. ";
+      say STDERR "\@paths:                    ";
+      say STDERR for @paths;
+      say STDERR "                            ";
+   }
+   return @paths;
+} # end sub glob_regexp_utf8 (;$$$)
+
+# Return the contents of a directory, filtered by target, regexp, and predicate:
+sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate=1) {
+   if ($db) {
+      say "Directory = $dir";
+      say "Target    = $target";
+      say "Regexp    = $regexp";
+      say "Predicate = $predicate";
+   }
+   # Try to open, read, and close $dir; if any of those operations fail, die:
+   my $dh = undef;
+   opendir($dh, e($dir))
+   or die "Fatal error in readdir_regexp_utf8(): Couldn't open  directory \"$dir\".\n$!\n";
+
+   my @raw = sort {$a cmp $b} map {d($_)} readdir($dh);
+   scalar(@raw) >= 2 # $dir should contain at least '.' and '..'!
+   or die "Fatal error in readdir_regexp_utf8(): Couldn't read  directory \"$dir\".\n$!\n";
+
+   closedir $dh
+   or die "Fatal error in readdir_regexp_utf8(): Couldn't close directory \"$dir\".\n$!\n";
+
+   # Iterate through @names, rejecting '.', '..',  and everything that doesn't match $target, $regexp, and
+   # $predicate, and restoring remainder in an array called @names:
+   my @names = ();
+   NAME: foreach my $name (@raw) {
+      next if '.'  eq $name;
+      next if '..' eq $name;
+      if ( ! -e e($name) ) {
+         warn "Warning in readdir_regexp_utf8(): File \"$name\" in \"$dir\" does not exist.\n";
+         next;
+      }
+      my @stats = lstat e $name;
+      if ( scalar(@stats) < 13 ) {
+         warn "Warning in readdir_regexp_utf8(): Can't lstat \"$name\" in \"$dir\".\n";
+         next;
+      }
+      # Skip $name if it doesn't match $target:
+      switch($target) {
+         case 'F' { next NAME if !     -f _                 }
+         case 'D' { next NAME if !                 -d _     }
+         case 'B' { next NAME if ! ( ( -f _ ) || ( -d _ ) ) }
+         case 'A' {                     ;                   } # Do nothing.
+         else     {                     ;                   } # Do nothing.
+      }
+      # Skip $name if it doesn't match $regexp:
+      next if $name !~ m/$regexp/;
+      # Skip $name if it doesn't match $predicate:
+      local $_ = $name;
+      next if !eval($predicate);
+      # If we get to here, push name to @names:
+      push @names, $name;
+   }
+   # Return results:
+   return @names;
+} # end sub readdir_regexp_utf8
+
+# ======= SECTION 3, MAJOR SUBROUTINES: ======================================================================
 
 # GetFiles returns a reference to an array of filerecords for all files in a user-specified directory.
 # Optionally, user can also specify a regular expression to match names against and a single-letter "target"
@@ -434,7 +730,7 @@ sub GetFiles :prototype(;$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$'
 # files records in same-file-size arrays and does not collect any stats other than $totfcount and $regfcount
 # (which will be equal).
 sub GetRegularFilesBySize :prototype(;$) ($regexp = '^.+$') {
-   my $cwd    = cwd_utf8                                   ; # Current Working Directory.
+   my $cwd    = d(getcwd)                                  ; # Current Working Directory.
    my $target = 'F'                                        ; # Target is "regular files only".
    my $path   = ''                                         ; # Path for a file.
    my $name   = ''                                         ; # Name for a file.
@@ -642,14 +938,14 @@ sub FilesAreIdentical :prototype($$) ($filepath1, $filepath2) {
 # Navigate a directory tree recursively, applying code at each node on the tree:
 sub RecurseDirs :prototype(&) ($f) {
 
-   # ======= WHO'S CALLING? ==================================================================================
+   # ------- WHO'S CALLING? ----------------------------------------------------------------------------------
 
    if ($db) {
       my ($pac,$fil,$lin)=caller;
       say STDERR "RecurseDirs called by package \"$pac\", file \"$fil\", line \"$lin\".";
    }
 
-   # ======= RECURSION CHECKS: ===============================================================================
+   # ------- RECURSION CHECKS: -------------------------------------------------------------------------------
 
    # This is a recursive function, being used in a chaotic and unpredictable environment with an unknown file
    # system, so it is VERY possible for runaway recursion to occur. So, to keep track of recursion, we use a
@@ -682,7 +978,7 @@ sub RecurseDirs :prototype(&) ($f) {
       die "Fatal error in RecurseDirs: More than 100 levels of recursion!\n$!\n";
    }
 
-   # ======= ARGUMENT CHECK: =================================================================================
+   # ------- ARGUMENT CHECK: ---------------------------------------------------------------------------------
 
    # Die if f is not a ref to some code (block or sub):
    if ('CODE' ne ref $f) {
@@ -690,13 +986,13 @@ sub RecurseDirs :prototype(&) ($f) {
           "{code block} or a reference to a subroutine.\n\n";
    }
 
-   # ======= CREATE VARIABLES TO HOLD CURRENT, ORIGINAL, AND NEW DIRECTORIES: ================================
+   # ------- CREATE VARIABLES TO HOLD CURRENT, ORIGINAL, AND NEW DIRECTORIES: --------------------------------
 
    my     $curdir   = d(getcwd) ;  # Current directory at beginning of THIS recursive call (may be any level).
    state  $oridir   = $curdir   ;  # Current directory as FIRST entry (level 0 only).
    my     $new_cwd  = undef     ;  # Keep track of ACTUAL current working directory when chdir'ing!
 
-   # ======= ORIGINAL-DIRECTORY CHECKS: ======================================================================
+   # ------- ORIGINAL-DIRECTORY CHECKS: ----------------------------------------------------------------------
 
    # If we're at the 0th recursive level (just entered, first time in):
    if (0 == $recursion) {
@@ -721,7 +1017,7 @@ sub RecurseDirs :prototype(&) ($f) {
       } # end if (original directory is problematic)
    } # end if (0th recursive level)
 
-   # ======= CURRENT WORKING DIRECTORY CHECKS: ===============================================================
+   # ------- CURRENT WORKING DIRECTORY CHECKS: ---------------------------------------------------------------
 
    # We MUST have a valid "current working directory"!!!
    if ( !defined($curdir) || '/' ne substr($curdir, 0, 1) || ! -e e($curdir) || ! -d e($curdir) ) {
@@ -749,7 +1045,7 @@ sub RecurseDirs :prototype(&) ($f) {
       goto BOTTOM; # This allows directory-tree-walking to continue (or ends program if we're at level 0).
    } # end $curdir is problematic
 
-   # ======= READ CONTENTS OF CURRENT DIRECTORY: =============================================================
+   # ------- READ CONTENTS OF CURRENT DIRECTORY: -------------------------------------------------------------
    # Try to open current directory; if that fails, print warning and return 1:
    my $dh = undef;
    if ( ! opendir $dh, e $curdir ) {
@@ -789,7 +1085,7 @@ sub RecurseDirs :prototype(&) ($f) {
       say STDERR '';
    }
 
-   # ======= NAVIGATE SUBDIRS (IF ANY) OF CURRENT DIRECTORY: =================================================
+   # ------- NAVIGATE SUBDIRS (IF ANY) OF CURRENT DIRECTORY: -------------------------------------------------
    SUBDIR: foreach my $subdir (@subdirs) {
 
       # ------- SUBDIR STATS CHECKS: -------------------------------------------------------------------------
@@ -869,7 +1165,7 @@ sub RecurseDirs :prototype(&) ($f) {
       }
    } # end foreach my $subdir (@subdirs)
 
-   # ======= EXECUTE FUNCTION: ===============================================================================
+   # ------- EXECUTE FUNCTION: -------------------------------------------------------------------------------
    # Execute f only at the tail end of SubDirs; that way if f renames immediate subdirectories of the
    # current directory (for example, f is RenameFiles running in directories mode), that's no problem,
    # because all navigation of subdirectories of the current directory is complete before f is executed.
@@ -889,7 +1185,7 @@ sub RecurseDirs :prototype(&) ($f) {
       warn "Warning from RecurseDirs: Couldn't apply function in directory $new_cwd!\n";
    }
 
-   # ======= RETURN: =========================================================================================
+   # ------- RETURN: -----------------------------------------------------------------------------------------
    # If we get to here, we've succeeded, so return:
    BOTTOM: return $max_recursion;
 } # end sub RecurseDirs (&)
@@ -1321,23 +1617,23 @@ sub copy_files :prototype($$;@)
       say "\nJust entered \"if (\$unique)\"; about to get src & dst file hashes." if $db;
 
       # Note starting directory:
-      my $startdir = cwd_utf8;
+      my $startdir = d(getcwd);
 
       # cd to source directory and get hash-by-size of files there:
-      chdir_utf8($src) or die "Couldn't cd to \"$src\".\n";
-      $src = cwd_utf8;
+      chdir(e($src)) or die "Couldn't cd to \"$src\".\n";
+      $src = d(getcwd);
       my $ssizes = GetRegularFilesBySize($regexp);
 
       # cd back to starting directory:
-      chdir_utf8($startdir) or die "Couldn't cd to \"$startdir\".\n";
+      chdir(e($startdir)) or die "Couldn't cd to \"$startdir\".\n";
 
       # cd to destination directory and get hash-by-size of files there:
-      chdir_utf8($dst) or die "Couldn't cd to \"$dst\".\n";
-      $dst = cwd_utf8;
+      chdir(e($dst)) or die "Couldn't cd to \"$dst\".\n";
+      $dst = d(getcwd);
       my $dsizes = GetRegularFilesBySize($regexp);
 
       # cd back to starting directory:
-      chdir_utf8($startdir) or die "Couldn't cd to \"$startdir\".\n";
+      chdir(e($startdir)) or die "Couldn't cd to \"$startdir\".\n";
 
       # For each size of source file, copy each file of that size to destination if-and-only-if no identical
       # file exists in destination:
@@ -1505,23 +1801,23 @@ sub move_files :prototype($$;@)
       say "\nJust entered \"if (\$unique)\"; about to get src & dst file hashes." if $db;
 
       # Note starting directory:
-      my $startdir = cwd_utf8;
+      my $startdir = d(getcwd);
 
       # cd to source directory and get hash-by-size of files there:
-      chdir_utf8($src) or die "Couldn't cd to \"$src\".\n";
-      $src = cwd_utf8;
+      chdir(e($src)) or die "Couldn't cd to \"$src\".\n";
+      $src = d(getcwd);
       my $ssizes = GetRegularFilesBySize($regexp);
 
       # cd back to starting directory:
-      chdir_utf8($startdir) or die "Couldn't cd to \"$startdir\".\n";
+      chdir(e($startdir)) or die "Couldn't cd to \"$startdir\".\n";
 
       # cd to destination directory and get hash-by-size of files there:
-      chdir_utf8($dst) or die "Couldn't cd to \"$dst\".\n";
-      $dst = cwd_utf8;
+      chdir(e($dst)) or die "Couldn't cd to \"$dst\".\n";
+      $dst = d(getcwd);
       my $dsizes = GetRegularFilesBySize($regexp);
 
       # cd back to starting directory:
-      chdir_utf8($startdir) or die "Couldn't cd to \"$startdir\".\n";
+      chdir(e($startdir)) or die "Couldn't cd to \"$startdir\".\n";
 
       # For each size of source file, copy each file of that size to destination if-and-only-if no identical
       # file exists in destination:
@@ -1597,311 +1893,6 @@ sub move_files :prototype($$;@)
    say "Suffered $err_cnt errors.";
    return 1;
 } # end sub move_files
-
-# ======= SECTION 2, PRIVATE SUBROUTINES: ====================================================================
-
-# Is a line of text encoded in ASCII?
-sub is_ascii :prototype($) ($text) {
-   my $is_ascii = 1;
-   foreach my $ord (map {ord} split //, $text) {
-      if ($db) {say STDERR "In is_ascii(), at top of foreach. \$ord = $ord"}
-      next if (  9 == $ord ); # HT
-      next if ( 10 == $ord ); # LF
-      next if ( 11 == $ord ); # VT
-      next if ( 13 == $ord ); # CR
-      next if ( 32 == $ord ); # SP
-      next if ( $ord >=  33
-             && $ord <= 126); # ASCII glyph
-      # If we get to here, all of the above tests failed, which means that our current character
-      # is neither commonly-used ASCII whitespace nor an ASCII glyphical character,
-      # so set $is_ascii to 0 and break from loop:
-      $is_ascii = 0;
-      last;
-   }
-   if ($db) {say STDERR "In is_ascii(), about to return. \$is_ascii = $is_ascii"}
-   return $is_ascii;
-} # end sub is_ascii :prototype($) ($text)
-
-# Is a line of text encoded in iso-8859-1?
-sub is_iso_8859_1 :prototype($) ($text) {
-   my $is_iso = 1;
-   foreach my $ord (map {ord} split //, $text) {
-      if ($db) {say STDERR "In is_iso_8859_1(), at top of foreach. \$ord = $ord"}
-      next if (  9 == $ord ); # HT
-      next if ( 10 == $ord ); # LF
-      next if ( 11 == $ord ); # VT
-      next if ( 13 == $ord ); # CR
-      next if ( 32 == $ord ); # SP
-      next if ( $ord >=  33
-             && $ord <= 126); # ASCII glyph
-      next if ( $ord >= 160
-             && $ord <= 255); # iso-8859-1 character
-      # If we get to here, all of the above tests failed, which means that our current character
-      # is neither commonly-used iso-8859-1 whitespace nor an iso-8859-1 glyphical character,
-      # so set $is_iso to 0 and break from loop:
-      $is_iso = 0;
-      last;
-   }
-   if ($db) {say STDERR "In is_iso_8859_1(), about to return. \$is_iso = $is_iso"}
-   return $is_iso;
-} # end sub is_iso_8859_1 :prototype($) ($text)
-
-# Is a line of text encoded in Unicode then transformed to UTF-8?
-sub is_utf8 :prototype($) ($text) {
-   my $is_utf8;
-   if ( eval {decode('UTF-8', $text, DIE_ON_ERR|LEAVE_SRC)} ) {
-      $is_utf8 = 1;
-   }
-   else {
-      $is_utf8 = 0;
-   }
-   if ($db) {say STDERR "In is_utf8(), about to return. \$is_utf8 = $is_utf8"}
-   return $is_utf8;
-}
-
-# Return a random integer in the range [m,n] inclusive:
-sub rand_int :prototype($$) ($min, $max) {
-   return floor($min+rand($max-$min+1));
-} # end sub rand_int
-
-# Return a string of 8 random lower-case English letters:
-sub eight_rand_lc_letters :prototype() {
-   return join '', map {chr(rand_int(97, 122))} (1..8);
-}
-
-# ======= SECTION 3, UTF-8 SUBROUTINES: ======================================================================
-
-# Prepare constant "EFLAGS" which contains bitwise-OR'd flags for Encode::encode and Encode::decode :
-
-# Should we warn and return? No, let's NOT do that, because it will cause loss of remaining data:
-# use constant EFLAGS => LEAVE_SRC | WARN_ON_ERR | RETURN_ON_ERR;
-# That would be useful for use with buffers, but we're usually not doing that in my programs. So for my
-# "d" and "e" subroutines, let's leave the source intact, use substitute characters, warn user on errors,
-# and continue (don't return until encoding or decoding is complete):
-use constant EFLAGS => LEAVE_SRC | WARN_ON_ERR;
-
-# Decode from UTF-8 to Unicode:
-sub d :prototype(@) (@args) {
-      if (0 == scalar @args) {return Encode::decode('UTF-8', $_,       EFLAGS);}
-   elsif (1 == scalar @args) {return Encode::decode('UTF-8', $args[0], EFLAGS);}
-   else                 {return map {Encode::decode('UTF-8', $_,       EFLAGS)} @args };
-} # end sub d
-
-# Encode from Unicode to UTF-8:
-sub e :prototype(@) (@args) {
-      if (0 == scalar @args) {return Encode::encode('UTF-8', $_,       EFLAGS);}
-   elsif (1 == scalar @args) {return Encode::encode('UTF-8', $args[0], EFLAGS);}
-   else                 {return map {Encode::encode('UTF-8', $_,       EFLAGS)} @args };
-} # end sub e
-
-# chdir, but using UTF-8:
-sub chdir_utf8 :prototype($) ($dir) {return chdir(e($dir))}
-
-# cwd, but using UTF-8:
-sub cwd_utf8 :prototype() {return d(getcwd)}
-
-# file glob, but using UTF-8:
-sub glob_utf8 :prototype($) ($wildcard) {
-   if (wantarray) {return map {d($_)} glob(e($wildcard)) ;}
-   else           {return      d     (glob(e($wildcard)));}
-}
-
-# UTF-8 version of link:
-sub link_utf8 :prototype($$) ($target, $linkname) {
-   return link(e($target), e($linkname));
-}
-
-# mkdir, but using UTF-8:
-sub mkdir_utf8 :prototype($;$) ($dirname, $mask = 0777) {
-   return mkdir(e($dirname),$mask);
-}
-
-# utf8 version of open:
-# WOMBAT : Doesn't work with bareword handles;
-# for those, use this instead: open(HND, '<', e $filepath);
-# WOMBAT : Only works with the "FileHandle, Mode, FilePath" version of open.
-# ECHIDNA RH 2024-02-06: This sub doesn't work with modern Perl,
-# so I'm commenting it out:
-# sub open_utf8 :prototype($$$) ($fh, $mode, $path) {
-#    return open($fh, $mode, e($path));
-# }
-
-# opendir, but using UTF-8:
-# WOMBAT : won't work with bareword handles;
-# for those, use this instead: opendir(HND, e $dirpath);
-# ECHIDNA RH 2024-02-06: This sub doesn't work with modern Perl,
-# so I'm commenting it out:
-# sub opendir_utf8 :prototype($$) ($dh, $path) {
-#    return opendir($dh, e($path));
-# }
-
-# readdir, but using UTF-8:
-sub readdir_utf8 :prototype($) ($dh) {
-   if (wantarray) {return map {d($_)} readdir($dh);}
-   else           {return d(readdir($dh));         }
-}
-
-# UTF-8 version of readlink:
-sub readlink_utf8 :prototype($) ($link) {
-   return d(readlink(e($link)));
-}
-
-# rmdir, but using UTF-8:
-sub rmdir_utf8 :prototype($) ($dir) {
-   return rmdir(e($dir));
-}
-
-# UTF-8 version of symlink:
-sub symlink_utf8 :prototype($$) ($target, $linkname) {
-   return symlink(e($target), e($linkname));
-}
-
-# UTF-8 version of unlink:
-sub unlink_utf8 :prototype(@) (@args) {
-   return unlink(e(@args));
-}
-
-sub glob_regexp_utf8 :prototype(;$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$') {
-   # This sub is like glob(), but using UTF-8, a given directory, a target type, and a regular expression
-   # instead of a csh-style wildcard as input, and returning matching fully-qualified paths as output, with
-   # '.' and '..' stripped-out.
-
-   # VITALLY IMPORTANT: THE "DIRECTORY" ARGUMENT MUST ALREADY BE DECODED FROM UTF-8 INTO RAW UNICODE,
-   # OTHERWISE THIS FUNCTION WILL GENERATE "WIDE CHARACTER" ERRORS AND CRASH THE CALLING PROGRAM.
-   # THIS SHOULD AUTOMATICALLY BE DONE FOR YOU IF YOU USE MY "cwd_utf8" FUNCTION TO PROVIDE THE DIRECTORY.
-   # USING RAW "glob()" OR "<* .*>" OR "readdir", HOWEVER, WILL CAUSE MANY ERRORS ON WINDOWS+NTFS+CYGWIN
-   # IF THE CALLING PROGRAM ATTEMPTS TO PROCESS FILE NAMES IN ANY LANGUAGE OTHER THAN ENGLISH.
-   # (NAMES SUCH AS "Говорю Русский", "ॐ नमो भगवते वासुदेवाय", "看的星星，知道你是爱。" WOULD CRASH HORRIBLY.)
-
-   # If debugging, announce inputs:
-   if ($db) {
-      say STDERR "                                       ";
-      say STDERR "In sub \"glob_regexp_utf8\", near top. ";
-      say STDERR "\$dir    = $dir                        ";
-      say STDERR "\$target = $target                     ";
-      say STDERR "\$regex  = $regexp                     ";
-      say STDERR "                                       ";
-   }
-
-   # But do those inputs even make any sense?? Let's check now!
-   if ( !-e(e($dir)) || !-d(e($dir)) ) {
-      die "Fatal error in glob_regexp_utf8: Invalid directory \'$dir\'.\n$!\n";
-   }
-   if ( $target !~ m/^[FDBA]$/ ) {
-      die "Fatal error in glob_regexp_utf8: Invalid target \'$target\'.\n$!\n";
-   }
-   my $re;
-   if ( !eval {$re = qr/$regexp/} ) {
-      die "Fatal error in glob_regexp_utf8: Invalid regular expression \'$regexp\'.\n$!\n";
-   }
-
-   # Try to open, read, and close $dir; if any of those operations fail, die:
-   my $dh = undef;
-   opendir $dh, e $dir
-   or die "Fatal error in glob_regexp_utf8: Couldn't open  directory \"$dir\".\n$!\n";
-
-   my @names = sort {$a cmp $b} d(readdir($dh));
-   scalar(@names) < 2 # $dir should contain at least '.' and '..'!
-   and die "Fatal error in glob_regexp_utf8: Couldn't read  directory \"$dir\".\n$!\n";
-
-   closedir $dh
-   or die "Fatal Error in glob_regexp_utf8: Couldn't close directory \"$dir\".\n$!\n";
-
-   # Riffle through @names. Skip '.', '..', and names not matching $regex, construct paths from names,
-   # skip paths that don't exist if target is F or D or B, skip paths to objects of types not matching target,
-   # and push remaining paths onto @paths:
-   my $path;
-   my @paths;
-   foreach my $name (@names) {
-      say "IN glob_regexp_utf8. NAME FROM readdir_utf8: $name" if $db;
-      next if $name eq '.';
-      next if $name eq '..';
-      next if $name !~ m/$re/;
-
-      # Construct fully-qualified path from $dir and $name:
-      if ($dir eq '/')  {$path = "/$name";}
-      else              {$path = "$dir/$name";}
-      say "IN glob_regexp_utf8. CONSTRUCTED PATH: $path" if $db;
-
-      # Don't test for existence or type here unless target is 'F', 'D', or 'B'. For target 'A', we want
-      # GetFiles (or other caller) to be able to note any non-existent directory entries and flag them "noex":
-      if ($target eq 'A') {
-         ; # Do nothing.
-      }
-      else {
-         next if ! -e e $path;
-         lstat e $path;
-         # NOTE: DON'T test for -b -c -p -S -t here; wastes too much time; use "is_data_file" for that:
-         if    ($target eq 'F') {next if  -l _ || !-f _ ||  -d _ }
-         elsif ($target eq 'D') {next if  -l _ ||  -f _ || !-d _ }
-         elsif ($target eq 'B') {next if  -l _ || !-f _ && !-d _ }
-         else {die "Fatal error in glob_regexp_utf8: Invalid target \"$target\".\n$!\n";}
-      }
-      push @paths, $path;
-   }
-
-   # If debugging, print diagnostics:
-   if ($db) {
-      say STDERR "                            ";
-      say STDERR "IN glob_regexp_utf8 AT END. ";
-      say STDERR "\@paths:                    ";
-      say STDERR for @paths;
-      say STDERR "                            ";
-   }
-   return @paths;
-} # end sub glob_regexp_utf8 (;$$$)
-
-# Return the contents of a directory, filtered by target, regexp, and predicate:
-sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate=1) {
-   if ($db) {
-      say "Directory = $dir";
-      say "Target    = $target";
-      say "Regexp    = $regexp";
-      say "Predicate = $predicate";
-   }
-   # Try to open, read, and close $dir; if any of those operations fail, die:
-   my $dh = undef;
-   opendir $dh, e $dir
-   or die "Fatal error in readdir_regexp_utf8(): Couldn't open  directory \"$dir\".\n$!\n";
-
-   my @raw = sort {$a cmp $b} d(readdir($dh));
-   scalar(@raw) >= 2 # $dir should contain at least '.' and '..'!
-   or die "Fatal error in readdir_regexp_utf8(): Couldn't read  directory \"$dir\".\n$!\n";
-
-   closedir $dh
-   or die "Fatal error in readdir_regexp_utf8(): Couldn't close directory \"$dir\".\n$!\n";
-
-   # Iterate through @names, rejecting '.', '..',  and everything that doesn't match $target, $regexp, and
-   # $predicate, and restoring remainder in an array called @names:
-   my @names = ();
-   NAME: foreach my $name (@raw) {
-      next if '.'  eq $name;
-      next if '..' eq $name;
-      next if ! -e e $name;
-      my @stats = lstat e $name;
-      if ( scalar(@stats) < 13 ) {
-         warn "Warning in readdir_regexp_utf8(): Can't lstat \"$name\" in \"$dir\".\n";
-         next;
-      }
-      # Skip $name if it doesn't match $target:
-      switch($target) {
-         case 'F' { next NAME if !     -f _                 }
-         case 'D' { next NAME if !                 -d _     }
-         case 'B' { next NAME if ! ( ( -f _ ) || ( -d _ ) ) }
-         case 'A' {                     ;                   } # Do nothing.
-         else     {                     ;                   } # Do nothing.
-      }
-      # Skip $name if it doesn't match $regexp:
-      next if $name !~ m/$regexp/;
-      # Skip $name if it doesn't match $predicate:
-      local $_ = $name;
-      next if !eval($predicate);
-      # If we get to here, push name to @names:
-      push @names, $name;
-   }
-   # Return results:
-   return @names;
-} # end sub readdir_regexp_utf8
 
 # ======= SECTION 4, MINOR SUBROUTINES: ======================================================================
 

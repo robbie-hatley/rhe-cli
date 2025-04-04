@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -18,14 +18,17 @@
 #                   Changed shebang to "-C63". Changed counters to match my other programs. Still renames
 #                   only non-meta regular files, but now uses both regexp and predicate. Increased min ver
 #                   from "v5.32" to "v5.36". Got rid of all prototypes. Added signatures.
+# Thu Apr 03, 2025: Now using "utf8::all" and "Cwd::utf8". Got rid of "cwd_utf8", "d", "e".
 ##############################################################################################################
 
 use v5.36;
+use strict;
+use warnings;
+use warnings FATAL => "utf8";
 use utf8;
-
-use Cwd          qw( cwd getcwd );
-use Time::HiRes  qw( time       );
-use List::Util   qw( all        );
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes qw( time );
 
 use RH::Dir;
 use RH::Util;
@@ -113,7 +116,7 @@ sub help    ; # Print help.
    }
 
    # If user wants help, just print help and exit:
-   $Help and help exit;
+   $Help and help and exit;
 
    warn
    "WARNING!!! THIS PROGRAM CONVERTS THE NAMES OF (NEARLY) ALL FILES IN THE\n".
@@ -173,10 +176,6 @@ sub argv {
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
-
-
-
-
    }
 
    # Get number of arguments:
@@ -210,7 +209,7 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $curdir = cwd_utf8;
+   my $curdir = cwd;
    say "\nDir # $direcount: $curdir\n";
 
    # Get a list of all paths in current directory matching target "F" and $RegExp:
@@ -218,8 +217,6 @@ sub curdire {
 
    # Send each matching path to curfile:
    foreach my $path (@paths) {
-
-
       # Bypass all non-data files (dirs, links, pipes, sockets, etc):
       next if !is_data_file($path);
       # Bypass all meta files (hidden, settings, metadata, etc):
@@ -227,7 +224,7 @@ sub curdire {
       # Count all non-meta data files matching regexp "$RegExp":
       ++$filecount;
       # Skip all paths not matching $Predicate:
-      local $_ = e $path;
+      local $_ = $path;
       next if !eval($Predicate);
       # If we get to here, increment $predcount and send path to curfile:
       ++$predcount;

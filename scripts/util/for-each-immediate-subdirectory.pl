@@ -1,10 +1,10 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env -S perl -C63
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
-########################################################################################################################
+##############################################################################################################
 # for-each-immediate-subdirectory.pl
 # Executes a given command once for each immediate subdirectory of the current directory (but not for the
 # current directory or any lower-level subdirectories). NOTE: this is very different from for-each-dir.pl,
@@ -14,58 +14,61 @@
 # Mon Apr 08, 2019: Wrote it.
 # Fri Jul 19, 2019: Simplified it.
 # Sat Jan 16, 2021: Refactored. Now using indented here documents.
-# Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
-# Thu Nov 25, 2021: Renamed to "for-each-immediate-subdirectory.pl" to avoid confusion. Shortened subroutine names.
-#                   Now using GetFiles instead of glob_utf8, so as to more-easily get fully-qualified directory names.
-#                   Also added time-stamping.
+# Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
+# Thu Nov 25, 2021: Renamed to "for-each-immediate-subdirectory.pl" to avoid confusion. Shortened subroutine
+#                   names. Now using GetFiles instead of glob, so as to more-easily get fully-qualified
+#                   directory names. Added time-stamping.
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
 # Mon Mar 10, 2025: Got rid of given/when.
-########################################################################################################################
+# Thu Apr 03, 2025: Reduced width from 120 to 110. Got rid of "cwd_utf8". Got rid of prototypes. Increased
+#                   min ver from "5.32" to "5.36". Changed shebang from "-CSDA" to "-C63". Bracing->C.
+##############################################################################################################
 
-use v5.32;
+use v5.36;
 use utf8;
 
-use Time::HiRes 'time';
+use Cwd          qw( cwd getcwd );
+use Time::HiRes  qw( time       );
 
 use RH::Dir;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv    ();
-sub curdire ($);
-sub stats   ();
-sub error   ($);
-sub help    ();
+sub argv    ;
+sub curdire ;
+sub stats   ;
+sub error   ;
+sub help    ;
 
-# ======= VARIABLES: ===================================================================================================
+# ======= VARIABLES: =========================================================================================
 
-my $db         = 0;   # Set to 1 to debug, 0 to non debug.
-my $StartDir   = '';  # Starting directory.
-my $Command    = '';  # Command to be executed (string).
-my $direcount  = 0;   # Count of directories processed by process_current_directory().
+my $db         = 0  ; # Set to 1 to debug, 0 to non debug.
+my $StartDir   = '' ; # Starting directory.
+my $Command    = '' ; # Command to be executed (string).
+my $direcount  = 0  ; # Count of directories processed by process_current_directory().
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   say "\nNow entering program \"" . get_name_from_path($0) . "\".";
+   my $pname = $0 =~ s#^.+/##r;
+   say "\nNow entering program \"$pname\".";
    my $t0 = time;
    argv();
-   $StartDir = cwd_utf8;
+   $StartDir = d(getcwd);
    my $SubDirs = GetFiles($StartDir, 'D');
    foreach my $SubDir (@{$SubDirs})
    {
       curdire($SubDir->{Path});
    }
    stats();
-   my $t1 = time; my $te = $t1 - $t0;
-   say "\nNow exiting program \"" . get_name_from_path($0) . "\". Execution time was $te seconds.";
+   my $t1 = time; my $ms = 1000*($t1 - $t0);
+   printf STDERR "\nNow exiting program \"%s\". Execution time was %.3fms.\n", $pname, $ms;
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-sub argv ()
-{
+sub argv {
    for ( my $i = 0 ; $i < @ARGV ; ++$i )
    {
       $_ = $ARGV[$i];
@@ -80,14 +83,11 @@ sub argv ()
    if ( 1 != $NA ) {error($NA); help; exit(666);}
    $Command = $ARGV[0];
    return 1;
-} # end sub argv ()
+} # end sub argv
 
-sub curdire ($)
-{
+sub curdire ($SubDir) {
    # Increment directory counter:
    ++$direcount;
-
-   my $SubDir = shift;
 
    # cd to subdirectory:
    chdir e $SubDir;
@@ -102,27 +102,23 @@ sub curdire ($)
    # cd back to starting directory and return:
    chdir e $StartDir;
    return 1;
-} # end sub curdire ($)
+} # end sub curdire
 
-sub stats ()
-{
+sub stats {
    say "\nApplied command \"$Command\" to $direcount immediate subdirectories";
    say "of starting directory \"$StartDir\".";
    return 1;
 } # end sub stats ()
 
-sub error ($)
-{
-   my $NA = shift;
-
+sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+
    Error: You typed $NA arguments, but this program requires exactly 1 argument.
    Help follows:
    END_OF_ERROR
-} # end sub error ($)
+} # end sub error
 
-sub help ()
-{
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    Welcome to "for-each-subdir.pl", Robbie Hatley's nifty program for

@@ -20,11 +20,13 @@
 # Wed Sep 06, 2023: Predicate now overrides target and forces it to 'A' to avoid conflicts with predicate.
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
 # Tue Mar 04, 2025: Got rid of all prototypes and empty sigs.
+# Thu Apr 03, 2025: Now using "utf8::all" and "Cwd::utf8". Got rid of "d", "e", and "cwd_utf8".
 ##############################################################################################################
 
 use v5.36;
 use utf8;
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -147,7 +149,7 @@ sub argv {
    # Process arguments:
    my $NA = scalar(@args);     # Get number of arguments.
    if ( $NA >= 1 ) {           # If number of arguments >= 1,
-      $RegExp = qr/$args[0]/;  # set $RegExp to $args[0].
+      $RegExp = qr/$args[0]/o; # set $RegExp to $args[0].
    }
    if ( $NA >= 2 ) {           # If number of arguments >= 2,
       $Predicate = $args[1];   # set $Predicate to $args[1]
@@ -169,7 +171,7 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $curdir = cwd_utf8;
+   my $curdir = cwd;
    say '';
    say "Directory #$direcount: $curdir";
 
@@ -186,10 +188,10 @@ sub curdire {
    # verified to exist. For files verifed to NOT exist, increment $deadcount and push to @deadpaths:
    foreach my $file ( @{$curdirfiles} ) {
       ++$filecount;
-      local $_ = e $file->{Path};
+      local $_ = $file->{Path};
       if (eval($Predicate)) {
          ++$predcount;
-         if ( -e e $file->{Path} ) {
+         if ( -e $file->{Path} ) {
             ++$livecount;
          }
          else {
@@ -326,7 +328,7 @@ sub help {
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
-   For example, use -vr to verbosely and recursively print directory statistics.
+   For example, use -rf to recursively print stats for regular files only.
 
    If multiple conflicting separate options are given, later overrides earlier.
    If multiple conflicting single-letter options are piled after a single hyphen,

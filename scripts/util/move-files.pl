@@ -26,6 +26,7 @@
 ########################################################################################################################
 
 use v5.32;
+use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -69,14 +70,14 @@ my @MoveArgs  = (); # Arguments for move_files().
    $cur = cwd_utf8;
 
    # CD to src, grab full path, then CD back to cur:
-   chdir_utf8 $src;
-   $src = cwd_utf8;
-   chdir_utf8 $cur;
+   chdir(e($src));
+   $src = d(getcwd);
+   chdir(e($cur));
 
    # CD to dst, grab full path, then CD back to cur:
-   chdir_utf8 $dst;
-   $dst = cwd_utf8;
-   chdir_utf8 $cur;
+   chdir(e($dst));
+   $dst = d(getcwd);
+   chdir(e($cur));
 
    # Move files:
    move_files($src, $dst, @MoveArgs);

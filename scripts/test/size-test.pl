@@ -1,35 +1,31 @@
 #!/usr/bin/perl
-
 ##################################################################
 # size-test.pl
 # Tests for differences (if any) between -s size and stat size.
 ##################################################################
+use v5.16;
+use strict;
+use warnings;
+use warnings FATAL => "utf8";
+use utf8;
+use utf8::all;
+use Cwd::utf8;
 
-use v5.32;
-
-use Cwd;
-
-use RH::Dir;
-
-my $CurDir;
-my %CurDirFiles;
-
-$CurDir = cwd_utf8;
-print "CWD = ", $CurDir, "\n";
+my $curdir = cwd;
+say "CWD = \"$curdir\".";
 
 my $dh = undef;
-opendir($dh, e $CurDir) or die "Can\'t open directory \"$CurDir\".\n$!\n";
-my @files = map {d($_)} readdir($dh);
-closedir($dh);
+opendir $dh, $curdir                      or die "Can't open  directory \"$curdir\".\n";
+my @files = sort {$a cmp $b} readdir $dh  or die "Can't read  directory \"$curdir\".\n";
+closedir $dh                              or die "Can't close directory \"$curdir\".\n";
 
-foreach my $file_name (@files)
-{
-   next if not -e e $file_name;
-   my @stats = lstat e $file_name;
+foreach my $name (@files) {
+   next if not -e $name;
+   my @stats = lstat $name;
    next if not -f _ ;
    my $dash_size = -s _ ;
    my $stat_size = $stats[7];
-   printf("%-60s%12s%12s\n", $file_name, $dash_size, $stat_size);
+   printf("%-60s  d-size = %10d  s-size = %10d\n", $name, $dash_size, $stat_size);
 
 };
 # Note, 2014-12-05: On running this script on several directories,

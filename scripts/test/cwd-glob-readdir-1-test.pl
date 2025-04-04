@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -17,22 +17,23 @@
 ##############################################################################################################
 
 use v5.16;
+use utf8;
 use Cwd;
 use Encode;
 
 say '';
 say 'cwd test:';
-chdir encode_utf8('/d/test-range/unicode-test/茶');
-say decode_utf8(cwd);
+chdir(encode_utf8('/d/test-range/unicode-test/煎茶')) or die "Couldn't change directory!\n";
+my $curdir = decode_utf8(getcwd);
+say "Current directory = \"$curdir\"";
 
 say '';
 say 'glob test:';
-say for map {decode_utf8($_)} glob('* .*');
+say for sort {$a cmp $b} map {decode_utf8($_)} glob(encode_utf8('* .*'));
 
 say '';
 say 'readdir test:';
 my $dh;
-opendir($dh, '.') || die "serious dainbramage: $!";
-my @allfiles = map {decode_utf8($_)} readdir($dh);
+opendir($dh, encode_utf8('.')) || die "Error: Couldn't open directory \"$curdir\"\n";
+say for sort {$a cmp $b} map {decode_utf8($_)} readdir($dh);
 closedir $dh;
-say for @allfiles;

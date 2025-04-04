@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -20,11 +20,18 @@
 # Thu Sep 07, 2023: Reduced width from 120 to 110. Upgraded from "v5.32" to "v5.36". Got rid of CPAN module
 #                   "common::sense" (antiquated). Can now run RecurseDirs once for each argument.
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
-# Thu Mar 13, 2024: Reduced min ver from "5.36" to (tacit) "5.00".
+# Thu Mar 13, 2025: Reduced min ver from "5.36" to (tacit) "5.00".
+# Thu Apr 03, 2025: Increased min ver from "5.00" to "5.16" to get "say". Now using CPAN modules "utf8::all"
+#                   and "Cwd::utf8". Got rid of "d" and "e". Shebang = "#!/usr/bin/env perl".
 ##############################################################################################################
 
+use v5.16;
+use strict;
+use warnings;
+use warnings FATAL => "utf8";
 use utf8;
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use RH::Dir;
 
 for ( @ARGV ) {
@@ -36,13 +43,18 @@ for ( @ARGV ) {
 }
 
 if ( @ARGV ) {
-   my $starting_directory = d(getcwd);
+   my $starting_directory = cwd;
    for ( @ARGV ) {
-      chdir(e($_)) or die "Couldn't chdir to directory \"$_\".\n$!\n";
-      RecurseDirs {say(d(getcwd))};
-      chdir(e($starting_directory)) or die "Couldn't chdir to directory \"$starting_directory\".\n$!\n";
+      chdir $_
+      or warn "Couldn't chdir to directory \"$_\".\n"
+      and (chdir $starting_directory
+      or warn "Couldn't chdir to directory \"$starting_directory\".\n")
+      and next;
+      RecurseDirs {say cwd};
+      chdir $starting_directory
+      or die "Couldn't chdir to directory \"$starting_directory\".\n";
    }
 }
 else {
-   RecurseDirs {say(d(getcwd))};
+   RecurseDirs {say cwd};
 }

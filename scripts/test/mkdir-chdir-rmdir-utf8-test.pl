@@ -10,12 +10,12 @@ use Encode;
 
 use RH::Dir;
 
-chdir_utf8 '/D/test-range/unicode-test'    or die "Couldn't cd to test range.             \n$!\n";
-mkdir_utf8 '蜰粨мéЦPJÊ'                     or die "Couldn't  make test directory.         \n$!\n";
-chdir_utf8 '蜰粨мéЦPJÊ'                     or die "Couldn't cd to test directory.         \n$!\n";
-say 'New current directory is ', cwd_utf8  or die "Couldn't determine new cwd.            \n$!\n";
+chdir(e('/D/test-range/unicode-test'))     or die "Couldn't cd to test range.             \n$!\n";
+mkdir(e('蜰粨мéЦPJÊ'))                       or die "Couldn't  make test directory.         \n$!\n";
+chdir(e('蜰粨мéЦPJÊ'))                       or die "Couldn't cd to test directory.         \n$!\n";
+say 'New current directory is ', d(getcwd) or die "Couldn't determine new cwd.            \n$!\n";
 say 'Returning to unicode-test...';
-chdir_utf8 '..'                            or die "Couldn't return to previous directory. \n$!\n";
+chdir(e('..'))                             or die "Couldn't return to previous directory. \n$!\n";
 say 'Erasing 蜰粨мéЦPJÊ...';
-rmdir_utf8 '蜰粨мéЦPJÊ'                     or die "Couldn't remove test directory.        \n$!\n";
+rmdir(e('蜰粨мéЦPJÊ'))                       or die "Couldn't remove test directory.        \n$!\n";
 say 'Test successful.';

@@ -49,19 +49,12 @@
 #                   from 120 to 110; and added prototypes and signatures to all subroutines.
 # Wed Feb 26, 2025: Got rid of "use Encode;". Fixed "missing sub 'help'" bug. Got rid of all prototypes and
 #                   empty signatures. Trimmed over-length horizontal dividers.
+# Thu Apr 03, 2025: Moved subroutine pre-declarations to just above main.
 ##############################################################################################################
 
 use v5.36;
+use Cwd;
 use RH::Dir;
-use RH::Util;
-
-# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
-
-sub argv  ; # Process @ARGV
-sub merge ; # Merge directories.
-sub stats ; # Print stats.
-sub error ; # Process errors.
-sub help  ; # Print help.
 
 # ======= PAGE-GLOBAL LEXICAL VARIABLES: =====================================================================
 
@@ -72,6 +65,14 @@ my $Db = 0; # Use debugging? (Ie, print diagnostics?)
 my $delecount = 0; # Count of all files deleted from Dir1
 my $mergcount = 0; # Count of all files successfully merged.
 my $failcount = 0; # Count of all files which couldn't be merged.
+
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
+
+sub argv  ; # Process @ARGV
+sub merge ; # Merge directories.
+sub stats ; # Print stats.
+sub error ; # Process errors.
+sub help  ; # Print help.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
@@ -115,7 +116,7 @@ sub argv {
 } # end sub argv
 
 sub merge ($dir1, $dir2) {
-   my @spaths = glob_utf8("${dir1}/* ${dir1}/.*");
+   my @spaths = map {d($_)} glob(e("${dir1}/* ${dir1}/.*"));
    if ($Db) {
       say $dir1;
       say $dir2;
@@ -135,7 +136,7 @@ sub merge ($dir1, $dir2) {
    }
 
    # What contents (if any) is still in dir1?
-   @spaths = glob_utf8("${dir1}/* ${dir1}/.*");
+   @spaths = map {d($_)} glob(e("${dir1}/* ${dir1}/.*"));
    my $remainder = scalar @spaths;
    if ($Db) {
       say for @spaths;
@@ -147,11 +148,11 @@ sub merge ($dir1, $dir2) {
       # Because we're about to attempt to delete directory $dir1, we first need to get it's absolute address,
       # then chdir to root, so that we will never be attempting to delete a directory at or above our current
       # location on the directory tree, which never works:
-      chdir_utf8 $dir1;
-      $dir1 = cwd_utf8;
-      chdir_utf8 '/';
+      chdir(e($dir1));
+      $dir1 = d(getcwd);
+      chdir(e('/'));
       say "\nRemoving directory \"${dir1}\"...";
-      rmdir_utf8($dir1)
+      rmdir(e($dir1))
       and say "Directory \"${dir1}\" has been removed."
       or say "Failed to remove directory \"${dir1}\".";
    }

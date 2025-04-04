@@ -5,24 +5,24 @@
 # Test of file- and directory- related Perl techniques.
 ##########################################################
 
-use v5.32;
-
+use v5.16;
+use utf8;
 use Cwd;
-
-use RH::Util;
 use RH::Dir;
-
 
 # Main body of program:
 { # begin main
-   # Get and open current working directory:
-   my $CurDir = cwd_utf8;
-   say ("Current directory is ", $CurDir);
+   say '';
+   say 'cwd test:';
+   chdir(e('/d/test-range/unicode-test/煎茶')) or die "Couldn't change directory!\n";
+   my $curdir = d(getcwd);
+   say "Current directory = \"$curdir\"";
 
    my @CurDirFiles;
    my $fh = undef;
-   opendir($fh, e $CurDir) or die "Can\'t open directory \"$CurDir\"!\n$!\n";
-   my @names = map {d($_)} readdir $fh;
+   opendir($fh, e($curdir)) or die "Can\'t open directory \"$curdir\"!\n$!\n";
+   my @names = sort {$a cmp $b} map {d($_)} readdir $fh;
+   closedir($fh);
 
    GETINFO: foreach my $name (@names)
    {
@@ -30,10 +30,10 @@ use RH::Dir;
       next if ($name eq '.' || $name eq '..');
 
       # Skip items which do not exist:
-      next if ! -e e $name;
+      next if ! -e e($name);
 
       # Is current file a "regular" file?
-      my $regular = (-f e $name) ? 1 : 0 ;
+      my $regular = (-f e($name)) ? 1 : 0 ;
 
       # Get info:
       my ($inode, $mode, $nlinks, $size, $mtime) = (lstat(e($name)))[1,2,3,7,9];
@@ -51,7 +51,7 @@ use RH::Dir;
          };
 
    };
-   closedir($fh);
+
 
    my $count= scalar @CurDirFiles;
    say "There are $count files in this directory:";

@@ -19,6 +19,7 @@ use experimental 'switch';
 use strict;
 use warnings;
 use warnings FATAL => "utf8";
+use Cwd;
 
 my @colors;
 my $r; my $g; my $b;
@@ -58,11 +59,11 @@ for ( my $i = 0 ; $i < 256 ; ++$i )
    push @colors, [$r,$g,$b];
 }
 
-chdir_utf8 '/rhe/bin64/fractals'
+chdir(e('/d/rhe-bin/bin_lin/fractals'))
 or die "Couldn't cd to fractals folder.\n$!\n";
 
 my $fh;
-open_utf8($fh, '>', 'mandelbrot.ini') or die "Can't open mandelbrot.ini for writing.\n$!\n";
+open($fh, '>', e('mandelbrot.ini')) or die "Can't open mandelbrot.ini for writing.\n$!\n";
 for (reverse @colors) {printf($fh "%02X %02X %02X\n", @{$_});}
 close $fh;
 exit 0;

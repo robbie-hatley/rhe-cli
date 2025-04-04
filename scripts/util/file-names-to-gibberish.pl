@@ -1,9 +1,9 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
-asdf
+
 ##############################################################################################################
 # file-names-to-gibberish.pl
 # Renames all files in the current directory (and all subdirectories if a -r or --recurse option is used)
@@ -46,27 +46,35 @@ asdf
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
 # Mon Mar 17, 2025: Renamed to "file-names-to-gibberish.pl", and archived "file-names-to-gib.pl" as being a
 #                   duplicate of this program.
+# Thu Apr 03, 2025: Now using "utf8::all" and "Cwd::utf8". Got rid of "cwd_utf8", "d", "e".
 ##############################################################################################################
 
 use v5.36;
+use strict;
+use warnings;
+use warnings FATAL => "utf8";
 use utf8;
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes qw( time );
 
-use Cwd;
-use Time::HiRes 'time';
-
-use RH::Util;
 use RH::Dir;
+use RH::Util;
 
-# ======= SUBROUTINE PRE-DECLARATIONS ========================================================================
+# ======= VARIABLES: =========================================================================================
 
-sub argv    ; # Process @ARGV.
-sub curdire ; # Process current directory.
-sub curfile ; # Process current file.
-sub stats   ; # Print statistics.
-sub error   ; # Handle errors.
-sub help    ; # Print help and exit.
+# System Variables:
+$" = ', ' ; # Quoted-array element separator = ", ".
 
-# ======= GLOBAL VARIABLES ===================================================================================
+# Global Variables:
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+our    $cmpl_beg;                              # Declare compilation begin time.
+BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
+our    $cmpl_end;                              # Declare compilation end   time.
+INIT  {$cmpl_end = time}                       # Set     compilation end   time.
+
+# Local variables:
 
 # Setting:      Default Value:   Meaning of setting:           Range:    Meaning of default:
 my $Db        = 0            ; # Debug?                        bool      Don't debug.
@@ -97,6 +105,15 @@ my $nonacount = 0; # Count of candidates for which no suitable name could be fou
 my $simucount = 0; # Count of file renames simulated.
 my $renacount = 0; # Count of files renamed.
 my $failcount = 0; # Count of failed attempts to rename files.
+
+# ======= SUBROUTINE PRE-DECLARATIONS ========================================================================
+
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub stats   ; # Print statistics.
+sub error   ; # Handle errors.
+sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM ===============================================================================
 
@@ -196,7 +213,7 @@ sub argv {
    # Process arguments:
    my $NA = scalar(@args);     # Get number of arguments.
    if ( $NA >= 1 ) {           # If number of arguments >= 1,
-      $RegExp = qr/$args[0]/;  # set $RegExp to $args[0].
+      $RegExp = qr/$args[0]/o; # set $RegExp to $args[0].
    }
    if ( $NA >= 2 ) {           # If number of arguments >= 2,
       $Predicate = $args[1];   # set $Predicate to $args[1]
@@ -215,12 +232,12 @@ sub argv {
 # Process current directory:
 sub curdire {
    ++$direcount;
-   my $cwd = d getcwd;
+   my $cwd = cwd;
    say STDOUT "\nDir # $direcount: $cwd\n";
    my $curdirfiles = GetFiles($cwd, $Target, $RegExp);
    foreach my $file (@$curdirfiles) {
       ++$filecount;
-      local $_ = e $file->{Path};
+      local $_ = $file->{Path};
       if (eval($Predicate)) {
          ++$findcount;
          curfile($file);

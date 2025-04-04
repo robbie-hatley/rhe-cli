@@ -262,19 +262,27 @@ sub help    ; # Print help and exit.
 # Process @ARGV and set settings:
 sub argv {
    # Get options and arguments:
-   my $end = 0;              # end-of-options flag
-   my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
-   my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {           # For each element of @ARGV,
-      /^--$/ && !$end        # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1           # so if we see that, then set the "end-of-options" flag
-      and push @Opts, $_     # and push the "--" to @Opts
-      and next;              # and skip to next element of @ARGV.
-      !$end                  # If we haven't yet reached end-of-options,
-      && ( /^-(?!-)$s+$/     # and if we get a valid short option
-      ||  /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @Opts, $_     # then push item to @Opts
-      or  push @Args, $_;    # else push item to @Args.
+   my $end = 0;               # end-of-options flag
+   my $s = '[a-zA-Z0-9]';     # single-hyphen allowable chars (English letters, numbers)
+   my $d = '[a-zA-Z0-9=.-]';  # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
+   for ( @ARGV ) {            # For each element of @ARGV:
+      if ( !$end ) {             # If we're not at end-of-options:
+         if ( /^--$/ ) {            # If we see "--",
+            $end = 1;                  # then set the "end-of-options" flag
+            push @Opts, $_;            # and push the "--" to @Opts
+            next;                      # and move on to next item.
+         }
+         if ( /^-(?!-)$s+$/ ) {     # If we see a valid short option,
+            push @Opts, $_;            # then push item to @Opts
+            next;                      # and move on to next item.
+         }
+         if ( /^--(?!-)$d+$/ ) {    # If we see a valid long option,
+            push @Opts, $_;            # then push item to @Opts
+            next;                      # and move on to next item.
+         }
+      }
+      push @Args, $_; # If we get to here, then the current command-line item must be construed as an
+      next;           # "argument" rather than as an option, so push it it @Args and move on to next item.
    }
 
    # Process options:
