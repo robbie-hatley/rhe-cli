@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -95,7 +95,8 @@
 # Sun Mar 09, 2025: Got rid of all BEGIN and END blocks, as they're too unreliable in their variable access.
 # Wed Mar 12, 2025: Now using BEGIN blocks the CORRECT way, to initialize global variables $pname,
 #                   $cmpl_beg, and $cmpl_end. Also renamed "$Debug" to "$Debug".
-# Fri Apr 04, 2025: Now using "utf8::all" and "Cwd::utf8". Nixed "*_utf8", "d", "e".
+# Fri Apr 04, 2025: Now using "utf8::all" and "Cwd::utf8". Nixed "*_utf8", "d", "e". Simplified shebang to
+#                   "#!/usr/bin/env perl".
 ##############################################################################################################
 
 ##############################################################################################################
@@ -114,7 +115,6 @@ use utf8;
 use utf8::all;
 use Cwd::utf8;
 use Time::HiRes 'time';
-
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================
@@ -122,7 +122,6 @@ use RH::Dir;
 # ------- System Variables: ----------------------------------------------------------------------------------
 
 $" = ', ' ; # Quoted-array element separator = ", ".
-
 
 # ------- Global Variables: ----------------------------------------------------------------------------------
 
@@ -170,8 +169,6 @@ my $OriDir    = cwd       ; # Original directory.       cwd       Directory on p
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
 my $filecount = 0 ; # Count of files matching target.
-my $regxcount = 0 ; # Count of files also matching regexp.
-my $predcount = 0 ; # Count of files also matching predicate.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -248,27 +245,21 @@ sub help    ; # Print help and exit.
 # Process @ARGV and set settings:
 sub argv {
    # Get options and arguments:
-   my $end = 0;               # end-of-options flag
-   my $s = '[a-zA-Z0-9]';     # single-hyphen allowable chars (English letters, numbers)
-   my $d = '[a-zA-Z0-9=.-]';  # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {            # For each element of @ARGV:
-      if ( !$end ) {             # If we're not at end-of-options:
-         if ( /^--$/ ) {            # If we see "--",
-            $end = 1;                  # then set the "end-of-options" flag
-            push @Opts, $_;            # and push the "--" to @Opts
-            next;                      # and move on to next item.
-         }
-         elsif ( /^-(?!-)$s+$/  ) { # Else if we see a valid short option,
-            push @Opts, $_;            # then push item to @Opts
-            next;                      # and move on to next item.
-         }
-         elsif ( /^--(?!-)$d+$/ ) { # Else if we see a valid long option,
-            push @Opts, $_;            # then push item to @Opts
-            next;                      # and move on to next item.
-         }
-      }
-      push @Args, $_; # If we get to here, then the current command-line item must be construed as an
-      next;           # "argument" rather than as an option, so push it it @Args and move on to next item.
+   my $end = 0;              # end-of-options flag
+   my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
+   my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
+   for ( @ARGV ) {           # For each element of @ARGV:
+      !$end                  # If we haven't yet reached end-of-options,
+      && /^--$/              # and we see an "--" option,
+      and $end = 1           # set the "end-of-options" flag
+      and push @Opts, '--'   # and push "--" to @Opts
+      and next;              # and skip to next element of @ARGV.
+      !$end                  # If we haven't yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we get a valid short option
+      ||  /^--(?!-)$d+$/ )   # or a valid long option,
+      and push @Opts, $_     # then push item to @Opts
+      and next;              # and skip to next element of @ARGV.
+      push @Args, $_;        # Otherwise, push item to @Args.
    }
 
    # Process options:
@@ -325,25 +316,11 @@ sub curdire {
       say STDERR "\nDirectory # $direcount: $cwd\n";
    }
 
-   # Get list of paths in $cwd matching $Target:
-   my @paths = glob_regexp_utf8($cwd, $Target);
+   # Get sorted list of paths in $cwd matching $Target, $RegExp, and $Predicate:
+   my @paths = sort {$a cmp $b} glob_regexp_utf8($cwd, $Target, $RegExp, $Predicate);
 
-   # Increment $filecount by scalar(@paths), thus counting all files in $cwd which match $Target and $Regexp:
-   $filecount += scalar(@paths);
-
-   # Iterate through @paths. For any that match $RegExp, increment $regxcount. For any that also match
-   # $Predicate, increment $predcount. Send all paths that match both $RegExp and $Predicate to curfile():
-   foreach my $path (sort @paths) {
-      my $name = $path =~ s#^.*/##r;
-      if ($name =~ m/$RegExp/) {
-         ++$regxcount;
-         local $_ = $path;
-         if (eval($Predicate)) {
-            ++$predcount;
-            curfile($path);
-         }
-      }
-   }
+   # Send each path to curfile():
+   foreach my $path (@paths) {curfile($path)}
 
    # Return success code 1 to caller:
    return 1;
@@ -351,6 +328,9 @@ sub curdire {
 
 # Process current file:
 sub curfile ($path) {
+   # Increment file counter:
+   ++$filecount;
+
    # Announce path:
    if ( 1 == $Debug ) {
       say STDOUT "Simulate: $path";
@@ -369,14 +349,12 @@ sub curfile ($path) {
 sub stats {
    # If being terse or verbose, print basic stats to STDERR:
    if ( 1 == $Verbose || 2 == $Verbose ) {
-      say    STDERR '';
-      say    STDERR "Stats for running \"$pname\" on directory tree \"$OriDir\":";
-      say    STDERR "Navigated $direcount directories.";
-      say    STDERR "Found $filecount files matching target \"$Target\".";
-      say    STDERR "Found $regxcount files which also match RegExp \"$RegExp\".";
-      say    STDERR "Found $predcount files which also match predicate \"$Predicate\".";
+      say STDERR '';
+      say STDERR "Stats for running program \"$pname\" on directory tree \"$OriDir\"";
+      say STDERR "with target \"$Target\", regexp \"$RegExp\", and predicate \"$Predicate\":";
+      say STDERR "Navigated $direcount directories.";
+      say STDERR "Processed $filecount files matching given target, regexp, and predicate.";
    }
-
    return 1;
 } # end sub stats
 
@@ -469,27 +447,18 @@ sub help {
     (-d && -l)   # INVALID: missing quotes            (confuses shell        )
      -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
 
-   (Exception: Technically, you can use an integer as a boolean, and it doesn't
-   need quotes or parentheses; but if you use an integer, any non-zero integer
-   will process all paths and 0 will process no paths, so this isn't very useful.)
-
    Arguments and options may be freely mixed, but the arguments must appear in
    the order Arg1, Arg2 (RegExp first, then File-Type Predicate); if you get them
    backwards, they won't do what you want, as most predicates aren't valid regexps
    and vice-versa.
 
+   NOTE: You can't "skip" Arg1 and go straight to Arg2 because your intended Arg2
+   would be construed as Arg1! But you can "bypass" Arg1 by using '.+' meaning
+   "some characters" which will match every file name.
+
    A number of arguments greater than 2 will cause this program to print an error
    message and abort.
 
-   A number of arguments less than 0 will likely rupture our spacetime manifold
-   and destroy everything. But if you DO somehow manage to use a negative number
-   of arguments without destroying the universe, please send me an email at
-   "Hatley.Software@gmail.com", because I'd like to know how you did that!
-
-   But if you somehow manage to use a number of arguments which is an irrational
-   or complex number, please keep THAT to yourself. Some things would be better
-   for my sanity for me not to know. I don't want to find myself enthralled to
-   Cthulhu.
 
    Happy item processing!
 

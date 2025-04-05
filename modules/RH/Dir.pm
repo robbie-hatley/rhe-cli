@@ -120,7 +120,7 @@ use Switch;
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
 # Section 1, Major Subroutines (code is long and complex):
-sub GetFiles               :prototype(;$$$) ; # Get array of filerecords.
+sub GetFiles               :prototype(;$$$$); # Get array of filerecords.
 sub GetRegularFilesBySize  :prototype(;$)   ; # Get hash of arrays of same-size filerecords.
 sub FilesAreIdentical      :prototype($$)   ; # Are two files identical?
 sub RecurseDirs            :prototype(&)    ; # Recursively walk directory tree.
@@ -150,7 +150,7 @@ sub readlink_utf8          :prototype($)    ; # utf8 version of "unlink".
 sub rmdir_utf8             :prototype($)    ; # utf8 version of "rmdir".
 sub symlink_utf8           :prototype($$)   ; # utf8 version of "unlink".
 sub unlink_utf8            :prototype(@)    ; # utf8 version of "unlink".
-sub glob_regexp_utf8       :prototype(;$$$) ; # Regexp file globber using opendir/readdir/closedir.
+sub glob_regexp_utf8       :prototype(;$$$$); # Regexp file globber using opendir/readdir/closedir.
 sub readdir_regexp_utf8    :prototype(;$$$$); # Regexp dir  reader  using opendir/readdir/closedir.
 
 # Section 4, Minor Subroutines (code is (relatively) short and simple):
@@ -395,12 +395,12 @@ sub unlink_utf8 :prototype(@) (@args) {
    return unlink(e(@args));
 }
 
-sub glob_regexp_utf8 :prototype(;$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$') {
-   # This sub is like glob(), but using UTF-8, a given directory, a target type, and a regular expression
-   # instead of a csh-style wildcard as input, and returning matching fully-qualified paths as output, with
-   # '.' and '..' stripped-out.
+sub glob_regexp_utf8 :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$', $predicate = '1') {
+   # This sub is like glob(), but using UTF-8, a given directory, a target type, a regular expression
+   # (instead of a csh-style wildcard), and a boolean file-type predicate as inputs, and returning matching
+   # fully-qualified paths as output, with '.' and '..' stripped-out.
 
-   # VITALLY IMPORTANT: THE "DIRECTORY" ARGUMENT MUST ALREADY BE DECODED FROM UTF-8 INTO RAW UNICODE,
+   # VITALLY IMPORTANT: THE "DIRECTORY" ARGUMENT MUST ALREADY BE DECODED FROM UTF-8 TO RAW UNICODE,
    # OTHERWISE THIS FUNCTION WILL GENERATE "WIDE CHARACTER" ERRORS AND CRASH THE CALLING PROGRAM.
    # THIS SHOULD AUTOMATICALLY BE DONE FOR YOU IF YOU USE "d(getcwd)" TO PROVIDE THE DIRECTORY.
    # USING RAW "glob()" OR "<* .*>" OR "readdir", HOWEVER, WILL CAUSE MANY ERRORS ON EITHER LINUX OR CYGWIN
@@ -471,6 +471,14 @@ sub glob_regexp_utf8 :prototype(;$$$) ($dir = d(getcwd), $target = 'A', $regexp 
          elsif ($target eq 'B') {next if  -l _ || !-f _ && !-d _ }
          else {die "Fatal error in glob_regexp_utf8: Invalid target \"$target\".\n$!\n";}
       }
+
+      # Discard files which don't match our predicate:
+      if ( '1' ne "$predicate" ) {
+         local $_ = $name;
+         next if ! eval $predicate;
+      }
+
+      # If we get to here, the current file has passed all our tests, so push its path to "@paths":
       push @paths, $path;
    }
 
@@ -555,7 +563,7 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
 # D = Directories only (but not SYMLINKDs).
 # B = Both regular files and directories (but not SYMLINKDs).
 # A = All files (regular, directories, links, SYMLINKDs, pipes, etc, etc, etc)
-sub GetFiles :prototype(;$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$') {
+sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$', $predicate = '1') {
    # "$dir"     =  What directory does user want a list of file-info packets for?
    # "$target"  =  'F' = 'Files'; 'D' = 'Directories'; 'B' = 'Both'; 'A' = 'All'.
    # "$regexp"  =  What regular expression should we use for selecting files?
@@ -594,8 +602,8 @@ sub GetFiles :prototype(;$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$'
    $unkncount = 0; # Count of all unknown files.
 
    # Get fully-qualified paths of all entries (except for '.' and '..') in directory "$dir" which match
-   # regular expression $regexp and target $target:
-   my @paths = glob_regexp_utf8($dir, $target, $regexp);
+   #  target $target, regular expression $regexp, and predicate $predicate:
+   my @paths = glob_regexp_utf8($dir, $target, $regexp, $predicate);
 
    # If debugging, print diagnostics:
    if ($db) {

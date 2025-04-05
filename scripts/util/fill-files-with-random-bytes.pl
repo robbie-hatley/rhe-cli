@@ -5,28 +5,14 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# find-corrupt-files.pl
-# Finds all files in the current directory (and subdirectories if using "-r" or "--recurse")
-# which have the following as their first 16 bytes:
-# BB 1A E3 1E 3C 26 C2 62 57 E2 63 F3 27 4F 7C A3
-# Such files have been corrupted by particularly nasty virus and need to be quarantined.
-#
-# Author: Robbie Hatley
-#
+# fill-files-with-random-bytes.pl
+# Fills all (or targeted) regular files in the current working directory (and all of its subdirectories if a
+# "-r" or "--recurse" option is used) with 100,000-to-999,999 bytes of random bytes (0 to 255).
+# WARNING: THIS PROGRAM WILL DESTROY THE CONTENTS OF ALL OF YOUR FILES!!!
+# ARE YOU SURE THAT THAT IS WHAT YOU REALLY WANT TO DO???
+# Written by Robbie Hatley.
 # Edit history:
-# Fri Jun 12, 2015: Wrote it.
-# Fri Jul 17, 2015: Upgraded for utf8.
-# Sat Apr 16, 2016: Now using -CSDA.
-# Mon Feb 24, 2020: Widened to 110 and added entry, exit, and stat announcements.
-# Wed Feb 17, 2021: Refactored to use the new GetFiles(), which now requires a fully-qualified directory as
-#                   its first argument, target as second, and regexp (instead of wildcard) as third.
-# Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
-# Sat Nov 27, 2021: Shortened sub names. Tested: Works.
-# Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
-# Mon Mar 10, 2025: Got rid of given/when.
-# Fri Apr 04, 2025: Reduced width from 120 to 110; increased min ver "5.32"->"5.36"; nixed prototypes; added
-#                   signatures; changed bracing to C-style; now using "utf8::all" and "Cwd::utf8"; simplified
-#                   shebang to "#!/usr/bin/env perl"; change "cwd_utf8" to "cwd; nixed "d" and "e".
+# Fri Apr 04, 2025: Wrote it.
 ##############################################################################################################
 
 use v5.36;
@@ -38,6 +24,7 @@ use utf8::all;
 use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
+use RH::Util;
 
 # ======= VARIABLES: =========================================================================================
 
@@ -68,17 +55,10 @@ my $Predicate = 1         ; # Boolean predicate.        bool      Process all fi
 my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
 # Counts of events in this program:
-my $Direcount = 0 ; # Count of directories processed by curdire().
-my $Filecount = 0 ; # Count of files matching target.
-my $Corrcount = 0 ; # Count of corrupt files found.
-
-=pod
-Corruption signature:
-BB 1A E3 1E 3C 26 C2 62 57 E2 63 F3 27 4F 7C A3
-=cut
-
-# Corruption regexp:
-my $Corruption = qr/^\xBB\x1A\xE3\x1E\x3C\x26\xC2\x62\x57\xE2\x63\xF3\x27\x4F\x7C\xA3/o;
+my $direcount = 0 ; # Count of directories processed by curdire().
+my $filecount = 0 ; # Count of files processed by curfile().
+my $bytecount = 0 ; # Count of files intentionally and irrevocably corrupted by this program.
+my $simucount = 0 ; # Count of files we only PRETENDED to corrupt.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -126,9 +106,21 @@ sub help    ; # Print help and exit.
                    "Predicate = $Predicate\n\n";
    }
 
-   # Process current directory (and all subdirectories if recursing) and print stats,
-   # unless user requested help, in which case just print help:
-   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+   # If user wants help, just print help:
+   if ($Help) {help}
+
+   # Otherwise, make sure user understands how dangerous this program is, and if they still want to proceed,
+   # then process current directory (and all subdirectories if recursing) and print stats:
+   else {
+      say 'WARNING: THIS PROGRAM WILL DESTROY THE CONTENTS OF ALL OF YOUR FILES!!!';
+      say 'ARE YOU SURE THAT THAT IS WHAT YOU REALLY WANT TO DO???';
+      say 'PRESS ^ (SHIFT-6) TO CONTINUE OR ANY OTHER KEY TO ABORT.';
+      my $character = get_character();
+      if ( '^' eq $character ) {
+         $Recurse and RecurseDirs {curdire} or curdire;
+         stats;
+      }
+   }
 
    # Stop execution timer:
    my $t1 = time;
@@ -148,6 +140,7 @@ sub help    ; # Print help and exit.
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
+# Process @ARGV and set settings:
 sub argv {
    # Get options and arguments:
    my $end = 0;              # end-of-options flag
@@ -204,94 +197,114 @@ sub argv {
    return 1;
 } # end sub argv
 
+# Process current directory:
 sub curdire {
    # Increment directory counter:
-   ++$Direcount;
+   ++$direcount;
 
    # Get current working directory:
    my $cwd = cwd;
 
    # Announce current working directory if being verbose:
    if ( 2 == $Verbose) {
-      say STDERR "\nDirectory # $Direcount: $cwd\n";
+      say STDERR "\nDirectory # $direcount: $cwd\n";
    }
 
-   # Get a sorted-by-name list of records of all files in $cwd matching $Target, $RegExp, and $Predicate:
-   my @files = sort {$a->{Name} cmp $b->{Name}} @{GetFiles($cwd, 'F', $RegExp, $Predicate)};
+   # Get sorted list of paths in $cwd matching $Target, $RegExp, and $Predicate:
+   my @paths = sort {$a cmp $b} glob_regexp_utf8($cwd, 'F', $RegExp, $Predicate);
 
-   # Send each file record to curfile():
-   foreach my $file ( @files ) { curfile($file) }
+   # Send each path to curfile():
+   foreach my $path ( @paths ) { curfile($path) }
 
    # Return success code 1 to caller:
    return 1;
 } # end sub curdire
 
-sub curfile ($file) {
+# Process current file:
+sub curfile ($path) {
    # Increment file counter:
-   ++$Filecount;
+   ++$filecount;
 
-   # Try to read the first 16 bytes of the file into a buffer; if anything goes wrong, just silently return 1,
-   # as a tiny, empty, or unreadable file in not "corrupt" in the way we mean here:
-   my $fh     = undef ;
-   my $buffer = ''    ;
-   open($fh, '< :raw', $file->{Path}) or return 1;
-   read($fh, $buffer, 16, 0)          or return 1;
-   close($fh)                         or return 1;
-   16 == length($buffer)              or return 1;
-
-   # Alert user if this file is corrupt:
-   if ($buffer =~ m/$Corruption/) {
-      ++$Corrcount;
-      say "CORRUPT: $file->{Path}";
+   # Announce path:
+   if ( 1 == $Debug ) {
+      # We're in simulation mode, so just PRETEND to destroy file contents:
+      say STDOUT "simulating corruption of file \"$path\"";
+      ++$simucount;
    }
+   else {
+      # We're in activation mode, so intentionally destroy the contents of the current file with great malice
+      # by filling it with 100_000 to 999_999 random bytes:
+      my $size = 100_000 + int rand 900_000;
+      my $garbage = '';
+      for (1..$size) {
+         $garbage .= chr(int rand 255);
+      }
+      my $fh = undef;
+      open  $fh, '>:raw', $path or warn "Couldn't open  \"$path\".\n" and return 0;
+      print $fh $garbage        or warn "Couldn't write \"$path\".\n" and return 0;
+      close $fh                 or warn "Couldn't close \"$path\".\n" and return 0;
+      say STDOUT "corrupted file \"$path\"";
+      ++$bytecount;
+   }
+
+   # Return success code 1 to caller:
    return 1;
 } # end sub curfile
 
+# Print statistics for this program run:
 sub stats {
    # If being terse or verbose, print basic stats to STDERR:
    if ( 1 == $Verbose || 2 == $Verbose ) {
       say STDERR '';
       say STDERR "Stats for running program \"$pname\" on directory tree \"$OriDir\"";
       say STDERR "with regexp \"$RegExp\" and predicate \"$Predicate\":";
-      say STDERR "Navigated $Direcount directories.";
-      say STDERR "Processed $Filecount files matching given regexp and predicate.";
-      say STDERR "Found     $Corrcount corrupt files.";
+      say STDERR "Navigated $direcount directories.";
+      say STDERR "Processed $filecount files matching given regexp and predicate.";
+      say STDERR "Intentionally filled $bytecount files with random bytes.";
+      say STDERR "Simulated the corruption of $simucount files.";
    }
+
    return 1;
 } # end sub stats
 
+# Handle errors:
 sub error ($NA) {
-   print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+   print STDERR ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
    Error: you typed $NA arguments, but this program takes at most
    2 arguments (an optional file-selection regexp and an optional
    file-selection predicate). Help follows.
    END_OF_ERROR
+   return 1;
 } # end sub error
 
+# Print help:
 sub help {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print STDERR ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "find-corrupt-files.pl". This program searches for any regular files
-   which contain the following as their first 16 bytes:
-   BB 1A E3 1E 3C 26 C2 62 57 E2 63 F3 27 4F 7C A3
-   This program will print the paths of all such files found.
+   Welcome to "fill-files-with-random-bytes.pl". This program fills all (or
+   targeted) regular files in the current working directory (and all of its
+   subdirectories if a "-r" or "--recurse" option is used) with
+   100,000-to-999,999 random bytes (0 to 255).
+
+   WARNING: THIS PROGRAM WILL DESTROY THE CONTENTS OF ALL OF YOUR FILES!!!
+   ARE YOU SURE THAT THAT IS WHAT YOU REALLY WANT TO DO???
 
    -------------------------------------------------------------------------------
    Command lines:
 
-   find-corrupt-files.pl -h | --help     (to print this help and exit)
-   find-corrupt-files.pl [opts] [args]   (to find corrupt files)
+   fill-files-with-random-bytes.pl -h | --help     (to print this help and exit)
+   fill-files-with-random-bytes.pl [opts] [args]   (to trash contents of files)
 
    -------------------------------------------------------------------------------
    Description of Options:
 
    Option:            Meaning:
    -h or --help       Print help and exit.
-   -e or --debug      Print diagnostics.
+   -e or --debug      Print diagnostics and emulate (don't alter files).
    -q or --quiet      Be quiet. (Default.)
    -t or --terse      Be terse.
    -v or --verbose    Be verbose.
@@ -300,7 +313,7 @@ sub help {
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
-   For example, use -vr to verbosely and recursively process items.
+   For example, use -vr to verbosely and recursively randomize files.
 
    If two piled-together single-letter options conflict, the option
    appearing lowest on the options chart above will prevail.
@@ -308,7 +321,7 @@ sub help {
    overrides the left.
 
    If you want to use an argument that looks like an option (say, you want to
-   search for files which contain "--recurse" as part of their name), use a "--"
+   randomize files which contain "--recurse" as part of their name), use a "--"
    option; that will force all command-line entries to its right to be considered
    "arguments" rather than "options".
 
@@ -351,7 +364,7 @@ sub help {
    A number of arguments greater than 2 will cause this program to print an error
    message and abort.
 
-   Happy corrupt-file finding!
+   Happy file destruction!
 
    Cheers,
    Robbie Hatley,

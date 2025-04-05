@@ -5,9 +5,9 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# find-corrupt-files.pl
-# Finds all files in the current directory (and subdirectories if using "-r" or "--recurse")
-# which have the following as their first 16 bytes:
+# find-corrupt-files-2014-10.pl
+# Finds all files in the current directory (and subdirectories if using "-r" or "--recurse") which were
+# last modified in October 2014 and have the following as their first 16 bytes:
 # BB 1A E3 1E 3C 26 C2 62 57 E2 63 F3 27 4F 7C A3
 # Such files have been corrupted by particularly nasty virus and need to be quarantined.
 #
@@ -230,6 +230,9 @@ sub curfile ($file) {
    # Increment file counter:
    ++$Filecount;
 
+   # Reject all files not modified in October 2014:
+   if ( $file->{Date} !~ m/^2014-10-/ ) {return 1}
+
    # Try to read the first 16 bytes of the file into a buffer; if anything goes wrong, just silently return 1,
    # as a tiny, empty, or unreadable file in not "corrupt" in the way we mean here:
    my $fh     = undef ;
@@ -275,16 +278,17 @@ sub help {
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "find-corrupt-files.pl". This program searches for any regular files
-   which contain the following as their first 16 bytes:
+   Welcome to "find-corrupt-files-2014-10.pl". This program searches for any
+   regular files modified in October 2014 which contain the following as their
+   first 16 bytes:
    BB 1A E3 1E 3C 26 C2 62 57 E2 63 F3 27 4F 7C A3
    This program will print the paths of all such files found.
 
    -------------------------------------------------------------------------------
    Command lines:
 
-   find-corrupt-files.pl -h | --help     (to print this help and exit)
-   find-corrupt-files.pl [opts] [args]   (to find corrupt files)
+   find-corrupt-files-2014-10.pl -h | --help     (to print this help and exit)
+   find-corrupt-files-2014-10.pl [opts] [args]   (to find corrupt files)
 
    -------------------------------------------------------------------------------
    Description of Options:

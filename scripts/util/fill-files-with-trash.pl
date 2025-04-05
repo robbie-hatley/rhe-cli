@@ -1,32 +1,26 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -CSDA
 
-# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
-# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file.
+# ¡Hablo Español!  Говорю Русский.  Björt skjöldur.  麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# find-corrupt-files.pl
-# Finds all files in the current directory (and subdirectories if using "-r" or "--recurse")
-# which have the following as their first 16 bytes:
-# BB 1A E3 1E 3C 26 C2 62 57 E2 63 F3 27 4F 7C A3
-# Such files have been corrupted by particularly nasty virus and need to be quarantined.
-#
-# Author: Robbie Hatley
-#
+# /rhe/scripts/util/fill-files-with-trash.pl
+# "Fill Files With Trash". Destroys all files in current directory matching a given regular expression
+# by filling them with 25-250 rows of 35-70 columns of random characters of various different kinds.
+# WARNING: THIS PROGRAM WILL DESTROY THE CONTENTS OF ALL YOUR FILES!!!
+# ARE YOU SURE THAT THAT IS WHAT YOU REALLY WANT TO DO???
 # Edit history:
-# Fri Jun 12, 2015: Wrote it.
+# Sun Jul 12, 2015: Wrote it.
 # Fri Jul 17, 2015: Upgraded for utf8.
 # Sat Apr 16, 2016: Now using -CSDA.
-# Mon Feb 24, 2020: Widened to 110 and added entry, exit, and stat announcements.
+# Wed Dec 20, 2017: Cleaned up formatting, improved comments.
 # Wed Feb 17, 2021: Refactored to use the new GetFiles(), which now requires a fully-qualified directory as
 #                   its first argument, target as second, and regexp (instead of wildcard) as third.
-# Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
-# Sat Nov 27, 2021: Shortened sub names. Tested: Works.
-# Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
-# Mon Mar 10, 2025: Got rid of given/when.
-# Fri Apr 04, 2025: Reduced width from 120 to 110; increased min ver "5.32"->"5.36"; nixed prototypes; added
-#                   signatures; changed bracing to C-style; now using "utf8::all" and "Cwd::utf8"; simplified
-#                   shebang to "#!/usr/bin/env perl"; change "cwd_utf8" to "cwd; nixed "d" and "e".
+# Thu Apr 03, 2025: Reduced width from 120 to 110. Increased min ver from "5.32" to "5.36". Shortened sub
+#                   names. Got rid of prototypes. Now using signature. All subs now return 1 on success.
+#                   Now using "utf8::all" and "Cwd::utf8". Got rid of "d", "e", and "cwd_utf8".
+# Sat Apr 05, 2025: Modernized, absorbing most of the content from "Template.pl".
 ##############################################################################################################
 
 use v5.36;
@@ -38,6 +32,7 @@ use utf8::all;
 use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
+use RH::Util;
 
 # ======= VARIABLES: =========================================================================================
 
@@ -68,17 +63,9 @@ my $Predicate = 1         ; # Boolean predicate.        bool      Process all fi
 my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
 # Counts of events in this program:
-my $Direcount = 0 ; # Count of directories processed by curdire().
-my $Filecount = 0 ; # Count of files matching target.
-my $Corrcount = 0 ; # Count of corrupt files found.
-
-=pod
-Corruption signature:
-BB 1A E3 1E 3C 26 C2 62 57 E2 63 F3 27 4F 7C A3
-=cut
-
-# Corruption regexp:
-my $Corruption = qr/^\xBB\x1A\xE3\x1E\x3C\x26\xC2\x62\x57\xE2\x63\xF3\x27\x4F\x7C\xA3/o;
+my $direcount = 0 ; # Count of directories processed by curdire().
+my $filecount = 0 ; # Count of files matching target.
+my $garbcount = 0 ; # Count of files we gleefully vandalized by filling them with trash.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -128,7 +115,23 @@ sub help    ; # Print help and exit.
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+
+   # If user wants help, just print help:
+   if ($Help) {help}
+
+   # Otherwise, warn user that this program will destroy his/her files. If user wants to do that, proceed:
+   else {
+      # Give final warning:
+      say 'WARNING: THIS PROGRAM WILL DESTROY THE CONTENTS OF ALL YOUR FILES!!!';
+      say 'ARE YOU SURE THAT THAT IS WHAT YOU REALLY WANT TO DO???';
+      say 'PRESS $ (SHIFT-4) TO CONTINUE OR ANY OTHER KEY TO ABORT.';
+      my $character = get_character();
+      if ( '$' eq $character ) {
+         # Destroy files and maybe print stats summarizing the destruction:
+         $Recurse and RecurseDirs {curdire} or curdire;
+         stats;
+      }
+   }
 
    # Stop execution timer:
    my $t1 = time;
@@ -144,10 +147,11 @@ sub help    ; # Print help and exit.
 
    # Exit program, returning success code "0" to caller:
    exit 0;
-} # end main
+}#end main
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
+# Process @ARGV and set settings:
 sub argv {
    # Get options and arguments:
    my $end = 0;              # end-of-options flag
@@ -204,87 +208,111 @@ sub argv {
    return 1;
 } # end sub argv
 
+# Process current directory:
 sub curdire {
    # Increment directory counter:
-   ++$Direcount;
+   ++$direcount;
 
    # Get current working directory:
    my $cwd = cwd;
 
    # Announce current working directory if being verbose:
    if ( 2 == $Verbose) {
-      say STDERR "\nDirectory # $Direcount: $cwd\n";
+      say STDERR "\nDirectory # $direcount: $cwd\n";
    }
 
-   # Get a sorted-by-name list of records of all files in $cwd matching $Target, $RegExp, and $Predicate:
-   my @files = sort {$a->{Name} cmp $b->{Name}} @{GetFiles($cwd, 'F', $RegExp, $Predicate)};
+   # Get sorted list of paths in $cwd matching $Target, $RegExp, and $Predicate:
+   my @paths = sort {$a cmp $b} glob_regexp_utf8($cwd, 'F', $RegExp, $Predicate);
 
-   # Send each file record to curfile():
-   foreach my $file ( @files ) { curfile($file) }
+   # Send each path to curfile():
+   foreach my $path (@paths) {curfile($path)}
 
    # Return success code 1 to caller:
    return 1;
 } # end sub curdire
 
-sub curfile ($file) {
+# Process current file:
+sub curfile ($path) {
    # Increment file counter:
-   ++$Filecount;
+   ++$filecount;
 
-   # Try to read the first 16 bytes of the file into a buffer; if anything goes wrong, just silently return 1,
-   # as a tiny, empty, or unreadable file in not "corrupt" in the way we mean here:
-   my $fh     = undef ;
-   my $buffer = ''    ;
-   open($fh, '< :raw', $file->{Path}) or return 1;
-   read($fh, $buffer, 16, 0)          or return 1;
-   close($fh)                         or return 1;
-   16 == length($buffer)              or return 1;
-
-   # Alert user if this file is corrupt:
-   if ($buffer =~ m/$Corruption/) {
-      ++$Corrcount;
-      say "CORRUPT: $file->{Path}";
+   # Fill a buffer with garbage:
+   my $fh;
+   my $nextchar;
+   my $chars =
+   'ABCDEFGHIJKLMNOPQRSTUVWXYZ'              .
+   'abcdefghijklmnopqrstuvwxyz'         x  2 .
+   'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞ'          .
+   'ßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ'   x  2 .
+   'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'       .
+   'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'  x  2 .
+   ' '                                  x 80 .
+   '麦藁雪富士川町山梨県茶京愛永看的星道你是。、'           .
+   '☺♪♫♭♮♯'                                   .
+   '☿♀♁♂♃♄♅♆♇'                                ;
+   my $buffer = '';
+   my $rows      = rand_int(25, 250);
+   my $cols_base = rand_int(35,  70);
+   for (1..$rows) {
+      my $cols = $cols_base + rand_int(-8,+8);
+      for (1..$cols) {
+         $nextchar = substr $chars, int rand length $chars, 1;
+         $buffer .= "$nextchar";
+      }
+      $buffer .= "\n";
    }
+
+   # Write garbage from buffer to file:
+   open  $fh, '>', $path or warn "Error: couldn't open  \"$path\".\n" and return 0;
+   print $fh $buffer     or warn "Error: couldn't write \"$path\".\n" and return 0;
+   close $fh             or warn "Error: couldn't close \"$path\".\n" and return 0;
+   say "Filled file \"$path\" with trash.";
+   ++$garbcount;
    return 1;
 } # end sub curfile
 
+# Print statistics for this program run:
 sub stats {
    # If being terse or verbose, print basic stats to STDERR:
    if ( 1 == $Verbose || 2 == $Verbose ) {
       say STDERR '';
       say STDERR "Stats for running program \"$pname\" on directory tree \"$OriDir\"";
       say STDERR "with regexp \"$RegExp\" and predicate \"$Predicate\":";
-      say STDERR "Navigated $Direcount directories.";
-      say STDERR "Processed $Filecount files matching given regexp and predicate.";
-      say STDERR "Found     $Corrcount corrupt files.";
+      say STDERR "Navigated $direcount directories.";
+      say STDERR "Processed $filecount files matching given regexp and predicate.";
+      say STDERR "Filled $garbcount files with trash.";
    }
    return 1;
 } # end sub stats
 
+# Handle errors:
 sub error ($NA) {
-   print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+   print STDERR ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
    Error: you typed $NA arguments, but this program takes at most
    2 arguments (an optional file-selection regexp and an optional
    file-selection predicate). Help follows.
    END_OF_ERROR
+   return 1;
 } # end sub error
 
+# Print help:
 sub help {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print STDERR ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "find-corrupt-files.pl". This program searches for any regular files
-   which contain the following as their first 16 bytes:
-   BB 1A E3 1E 3C 26 C2 62 57 E2 63 F3 27 4F 7C A3
-   This program will print the paths of all such files found.
+   Welcome to "Fill Files With Trash", Robbie Hatley's file trashing Utility.
+   This program fills all regular files in current directory matching a given
+   regular expression with 25-250 rows of 35-70 columns of random characters.
+   (It also trashes all subdirectories if "-r" or "--recurse" is used.)
 
    -------------------------------------------------------------------------------
    Command lines:
 
-   find-corrupt-files.pl -h | --help     (to print this help and exit)
-   find-corrupt-files.pl [opts] [args]   (to find corrupt files)
+   fill-files-with-trash.pl [-h|--help]     (to print this help and exit)
+   fill-files-with-trash.pl [opts] [args]   (to fill files with trash)
 
    -------------------------------------------------------------------------------
    Description of Options:
@@ -300,7 +328,7 @@ sub help {
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
-   For example, use -vr to verbosely and recursively process items.
+   For example, use -vr to verbosely and recursively trash files.
 
    If two piled-together single-letter options conflict, the option
    appearing lowest on the options chart above will prevail.
@@ -308,7 +336,7 @@ sub help {
    overrides the left.
 
    If you want to use an argument that looks like an option (say, you want to
-   search for files which contain "--recurse" as part of their name), use a "--"
+   trash files which contain "--recurse" as part of their name), use a "--"
    option; that will force all command-line entries to its right to be considered
    "arguments" rather than "options".
 
@@ -320,11 +348,11 @@ sub help {
    In addition to options, this program can take 1 or 2 optional arguments.
 
    Arg1 (OPTIONAL), if present, must be a Perl-Compliant Regular Expression
-   specifying which file names to process. To specify multiple patterns, use the
-   | alternation operator. To apply pattern modifier letters, use an Extended
-   RegExp Sequence. For example, if you want to process items with names
-   containing "cat", "dog", or "horse", title-cased or not, you could use this
-   regexp: '(?i:c)at|(?i:d)og|(?i:h)orse'
+   specifying which files to trash. To specify multiple patterns, use the "|"
+   alternation operator. To apply pattern modifier letters, use an Extended
+   RegExp Sequence. For example, if you want to trash files with names
+   containing "cat", "dog", or "horse", title-cased or not, you could use this:
+   fill-files-with-trash.pl '(?i:c)at|(?i:d)og|(?i:h)orse'
    Be sure to enclose your regexp in 'single quotes', else BASH may replace it
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
@@ -348,14 +376,19 @@ sub help {
    backwards, they won't do what you want, as most predicates aren't valid regexps
    and vice-versa.
 
+   NOTE: You can't "skip" Arg1 and go straight to Arg2 because your intended Arg2
+   would be construed as Arg1! But you can "bypass" Arg1 by using '.+' meaning
+   "some characters" which will match every file name.
+
    A number of arguments greater than 2 will cause this program to print an error
    message and abort.
 
-   Happy corrupt-file finding!
+
+   Happy file trashing!
 
    Cheers,
    Robbie Hatley,
    programmer.
    END_OF_HELP
    return 1;
-} # end sub help
+}
