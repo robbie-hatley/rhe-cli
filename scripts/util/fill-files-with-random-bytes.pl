@@ -57,7 +57,7 @@ my $OriDir    = cwd       ; # Original directory.       cwd       Directory on p
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
 my $filecount = 0 ; # Count of files processed by curfile().
-my $bytecount = 0 ; # Count of files intentionally and irrevocably corrupted by this program.
+my $garbcount = 0 ; # Count of files intentionally and irrevocably corrupted by this program.
 my $simucount = 0 ; # Count of files we only PRETENDED to corrupt.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
@@ -214,7 +214,7 @@ sub curdire {
    my @paths = sort {$a cmp $b} glob_regexp_utf8($cwd, 'F', $RegExp, $Predicate);
 
    # Send each path to curfile():
-   foreach my $path ( @paths ) { curfile($path) }
+   foreach my $path (@paths) {curfile($path)}
 
    # Return success code 1 to caller:
    return 1;
@@ -225,28 +225,29 @@ sub curfile ($path) {
    # Increment file counter:
    ++$filecount;
 
-   # Announce path:
+   # If debugging, just simulate file destruction:
    if ( 1 == $Debug ) {
       # We're in simulation mode, so just PRETEND to destroy file contents:
       say STDOUT "simulating corruption of file \"$path\"";
       ++$simucount;
    }
-   else {
-      # We're in activation mode, so intentionally destroy the contents of the current file with great malice
-      # by filling it with 100_000 to 999_999 random bytes:
-      my $size = 100_000 + int rand 900_000;
-      my $garbage = '';
-      for (1..$size) {
-         $garbage .= chr(int rand 255);
-      }
-      my $fh = undef;
-      open  $fh, '>:raw', $path or warn "Couldn't open  \"$path\".\n" and return 0;
-      print $fh $garbage        or warn "Couldn't write \"$path\".\n" and return 0;
-      close $fh                 or warn "Couldn't close \"$path\".\n" and return 0;
-      say STDOUT "corrupted file \"$path\"";
-      ++$bytecount;
-   }
 
+   # Otherwise, fill current file with garbage:
+   else {
+      # Fill a buffer with 100_000 to 999_999 random bytes:
+      my $size   = 100_000 + int rand 900_000;
+      my $buffer = '';
+      for (1..$size) {
+         $buffer .= chr(int rand 255);
+      }
+      # Write garbage from buffer to file:
+      my $fh = undef;
+      open  $fh, '>:raw',  $path or warn "Error: couldn't open  \"$path\".\n" and return 0;
+      print $fh $buffer          or warn "Error: couldn't write \"$path\".\n" and return 0;
+      close $fh                  or warn "Error: couldn't close \"$path\".\n" and return 0;
+      say "Filled file \"$path\" with trash.";
+      ++$garbcount;
+   }
    # Return success code 1 to caller:
    return 1;
 } # end sub curfile
@@ -260,10 +261,9 @@ sub stats {
       say STDERR "with regexp \"$RegExp\" and predicate \"$Predicate\":";
       say STDERR "Navigated $direcount directories.";
       say STDERR "Processed $filecount files matching given regexp and predicate.";
-      say STDERR "Intentionally filled $bytecount files with random bytes.";
+      say STDERR "Intentionally filled $garbcount files with random bytes.";
       say STDERR "Simulated the corruption of $simucount files.";
    }
-
    return 1;
 } # end sub stats
 
@@ -287,8 +287,12 @@ sub help {
 
    Welcome to "fill-files-with-random-bytes.pl". This program fills all (or
    targeted) regular files in the current working directory (and all of its
-   subdirectories if a "-r" or "--recurse" option is used) with
-   100,000-to-999,999 random bytes (0 to 255).
+   subdirectories if a "-r" or "--recurse" option is used) with 100,000-to-999,999
+   random bytes (0 to 255).
+
+   The primary purpose of this program is to provide files with random sizes and
+   contents in order to test various file-hashing programs. However, it can also
+   be used in any other situation where you need files with random contents.
 
    WARNING: THIS PROGRAM WILL DESTROY THE CONTENTS OF ALL OF YOUR FILES!!!
    ARE YOU SURE THAT THAT IS WHAT YOU REALLY WANT TO DO???
@@ -296,8 +300,8 @@ sub help {
    -------------------------------------------------------------------------------
    Command lines:
 
-   fill-files-with-random-bytes.pl -h | --help     (to print this help and exit)
-   fill-files-with-random-bytes.pl [opts] [args]   (to trash contents of files)
+   fill-files-with-random-bytes.pl -h | --help     (to print this help)
+   fill-files-with-random-bytes.pl [opts] [args]   (to fill files with trash)
 
    -------------------------------------------------------------------------------
    Description of Options:

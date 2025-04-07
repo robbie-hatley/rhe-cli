@@ -1,13 +1,13 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file.
 # ¡Hablo Español!  Говорю Русский.  Björt skjöldur.  麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# /rhe/scripts/util/fill-files-with-trash.pl
-# "Fill Files With Trash". Destroys all files in current directory matching a given regular expression
-# by filling them with 25-250 rows of 35-70 columns of random characters of various different kinds.
+# fill-files-with-random-characters.pl
+# Fills all (or targeted) regular files in the current working directory (and all of its subdirectories if a
+# "-r" or "--recurse" option is used) with 25-250 rows of 35-70 columns of random characters.
 # WARNING: THIS PROGRAM WILL DESTROY THE CONTENTS OF ALL YOUR FILES!!!
 # ARE YOU SURE THAT THAT IS WHAT YOU REALLY WANT TO DO???
 # Edit history:
@@ -64,8 +64,9 @@ my $OriDir    = cwd       ; # Original directory.       cwd       Directory on p
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
-my $filecount = 0 ; # Count of files matching target.
-my $garbcount = 0 ; # Count of files we gleefully vandalized by filling them with trash.
+my $filecount = 0 ; # Count of files processed by curfile().
+my $garbcount = 0 ; # Count of files intentionally and irrevocably corrupted by this program.
+my $simucount = 0 ; # Count of files we only PRETENDED to corrupt.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -236,38 +237,50 @@ sub curfile ($path) {
    # Increment file counter:
    ++$filecount;
 
-   # Fill a buffer with garbage:
-   my $fh;
-   my $nextchar;
-   my $chars =
-   'ABCDEFGHIJKLMNOPQRSTUVWXYZ'              .
-   'abcdefghijklmnopqrstuvwxyz'         x  2 .
-   'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞ'          .
-   'ßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ'   x  2 .
-   'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'       .
-   'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'  x  2 .
-   ' '                                  x 80 .
-   '麦藁雪富士川町山梨県茶京愛永看的星道你是。、'           .
-   '☺♪♫♭♮♯'                                   .
-   '☿♀♁♂♃♄♅♆♇'                                ;
-   my $buffer = '';
-   my $rows      = rand_int(25, 250);
-   my $cols_base = rand_int(35,  70);
-   for (1..$rows) {
-      my $cols = $cols_base + rand_int(-8,+8);
-      for (1..$cols) {
-         $nextchar = substr $chars, int rand length $chars, 1;
-         $buffer .= "$nextchar";
-      }
-      $buffer .= "\n";
+   # If debugging, just simulate file destruction:
+   if ( 1 == $Debug ) {
+      # We're in simulation mode, so just PRETEND to destroy file contents:
+      say STDOUT "simulating corruption of file \"$path\"";
+      ++$simucount;
    }
 
-   # Write garbage from buffer to file:
-   open  $fh, '>', $path or warn "Error: couldn't open  \"$path\".\n" and return 0;
-   print $fh $buffer     or warn "Error: couldn't write \"$path\".\n" and return 0;
-   close $fh             or warn "Error: couldn't close \"$path\".\n" and return 0;
-   say "Filled file \"$path\" with trash.";
-   ++$garbcount;
+   # Otherwise, fill current file with garbage:
+   else {
+      # Make a character set containing a bunch of English, European, Mexican, and Chinese characters (and a
+      # few random symbols):
+      my $nextchar;
+      my $chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZ'              .
+      'abcdefghijklmnopqrstuvwxyz'         x  2 .
+      'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞ'          .
+      'ßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ'   x  2 .
+      'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'       .
+      'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'  x  2 .
+      ' '                                  x 80 .
+      '麦藁雪富士川町山梨県茶京愛永看的星道你是。、'           .
+      '☺♪♫♭♮♯'                                   .
+      '☿♀♁♂♃♄♅♆♇'                                ;
+      # Fill a buffer with 25-to-250 variable-length lines of random characters from our character set:
+      my $buffer    = '';
+      my $rows      = rand_int(25, 250);
+      my $cols_base = rand_int(35,  70);
+      for (1..$rows) {
+          my $cols = $cols_base + rand_int(-8,+8);
+          for (1..$cols) {
+            $nextchar = substr $chars, int rand length $chars, 1;
+            $buffer .= "$nextchar";
+          }
+          $buffer .= "\n";
+      }
+      # Write garbage from buffer to file:
+      my $fh = undef;
+      open  $fh, '>',      $path or warn "Error: couldn't open  \"$path\".\n" and return 0;
+      print $fh $buffer          or warn "Error: couldn't write \"$path\".\n" and return 0;
+      close $fh                  or warn "Error: couldn't close \"$path\".\n" and return 0;
+      say "Filled file \"$path\" with trash.";
+      ++$garbcount;
+   }
+   # Return success code 1 to caller:
    return 1;
 } # end sub curfile
 
@@ -280,7 +293,8 @@ sub stats {
       say STDERR "with regexp \"$RegExp\" and predicate \"$Predicate\":";
       say STDERR "Navigated $direcount directories.";
       say STDERR "Processed $filecount files matching given regexp and predicate.";
-      say STDERR "Filled $garbcount files with trash.";
+      say STDERR "Intentionally filled $garbcount files with random characters.";
+      say STDERR "Simulated the corruption of $simucount files.";
    }
    return 1;
 } # end sub stats
@@ -303,23 +317,30 @@ sub help {
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "Fill Files With Trash", Robbie Hatley's file trashing Utility.
-   This program fills all regular files in current directory matching a given
-   regular expression with 25-250 rows of 35-70 columns of random characters.
-   (It also trashes all subdirectories if "-r" or "--recurse" is used.)
+   Welcome to "fill-files-with-random-characters.pl". This program fills all (or
+   targeted) regular files in the current working directory (and all of its
+   subdirectories if a "-r" or "--recurse" option is used) with 25-250 rows of
+   35-70 columns of random Unicode UTF-8 characters.
+
+   The primary purpose of this program is to provide files with random sizes and
+   contents in order to test various file-hashing programs. However, it can also
+   be used in any other situation where you need files with random contents.
+
+   WARNING: THIS PROGRAM WILL DESTROY THE CONTENTS OF ALL OF YOUR FILES!!!
+   ARE YOU SURE THAT THAT IS WHAT YOU REALLY WANT TO DO???
 
    -------------------------------------------------------------------------------
    Command lines:
 
-   fill-files-with-trash.pl [-h|--help]     (to print this help and exit)
-   fill-files-with-trash.pl [opts] [args]   (to fill files with trash)
+   fill-files-with-random-characters.pl -h | --help     (to print this help)
+   fill-files-with-random-characters.pl [opts] [args]   (to fill files with trash)
 
    -------------------------------------------------------------------------------
    Description of Options:
 
    Option:            Meaning:
    -h or --help       Print help and exit.
-   -e or --debug      Print diagnostics.
+   -e or --debug      Print diagnostics and emulate (don't alter files).
    -q or --quiet      Be quiet. (Default.)
    -t or --terse      Be terse.
    -v or --verbose    Be verbose.
