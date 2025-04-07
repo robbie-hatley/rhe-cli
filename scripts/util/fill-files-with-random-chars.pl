@@ -5,7 +5,7 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# fill-files-with-random-characters.pl
+# fill-files-with-random-chars.pl
 # Fills all (or targeted) regular files in the current working directory (and all of its subdirectories if a
 # "-r" or "--recurse" option is used) with 25-250 rows of 35-70 columns of random characters.
 # WARNING: THIS PROGRAM WILL DESTROY THE CONTENTS OF ALL YOUR FILES!!!
@@ -317,7 +317,7 @@ sub help {
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "fill-files-with-random-characters.pl". This program fills all (or
+   Welcome to "fill-files-with-random-chars.pl". This program fills all (or
    targeted) regular files in the current working directory (and all of its
    subdirectories if a "-r" or "--recurse" option is used) with 25-250 rows of
    35-70 columns of random Unicode UTF-8 characters.
@@ -332,8 +332,8 @@ sub help {
    -------------------------------------------------------------------------------
    Command lines:
 
-   fill-files-with-random-characters.pl -h | --help     (to print this help)
-   fill-files-with-random-characters.pl [opts] [args]   (to fill files with trash)
+   fill-files-with-random-chars.pl -h | --help     (to print this help)
+   fill-files-with-random-chars.pl [opts] [args]   (to fill files with trash)
 
    -------------------------------------------------------------------------------
    Description of Options:
@@ -349,7 +349,7 @@ sub help {
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
-   For example, use -vr to verbosely and recursively trash files.
+   For example, use -vr to verbosely and recursively randomize files.
 
    If two piled-together single-letter options conflict, the option
    appearing lowest on the options chart above will prevail.
@@ -357,7 +357,7 @@ sub help {
    overrides the left.
 
    If you want to use an argument that looks like an option (say, you want to
-   trash files which contain "--recurse" as part of their name), use a "--"
+   randomize files which contain "--recurse" as part of their name), use a "--"
    option; that will force all command-line entries to its right to be considered
    "arguments" rather than "options".
 
@@ -369,11 +369,11 @@ sub help {
    In addition to options, this program can take 1 or 2 optional arguments.
 
    Arg1 (OPTIONAL), if present, must be a Perl-Compliant Regular Expression
-   specifying which files to trash. To specify multiple patterns, use the "|"
+   specifying which files to randomize. To specify multiple patterns, use the "|"
    alternation operator. To apply pattern modifier letters, use an Extended
-   RegExp Sequence. For example, if you want to trash files with names
+   RegExp Sequence. For example, if you want to randomize files with names
    containing "cat", "dog", or "horse", title-cased or not, you could use this:
-   fill-files-with-trash.pl '(?i:c)at|(?i:d)og|(?i:h)orse'
+   fill-files-with-random-chars.pl '(?i:c)at|(?i:d)og|(?i:h)orse'
    Be sure to enclose your regexp in 'single quotes', else BASH may replace it
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
@@ -405,11 +405,11 @@ sub help {
    message and abort.
 
 
-   Happy file trashing!
+   Happy file randomizing!
 
    Cheers,
    Robbie Hatley,
    programmer.
    END_OF_HELP
    return 1;
-}
+} # end sub help

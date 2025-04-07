@@ -337,11 +337,11 @@ sub help {
    In addition to options, this program can take 1 or 2 optional arguments.
 
    Arg1 (OPTIONAL), if present, must be a Perl-Compliant Regular Expression
-   specifying which file names to process. To specify multiple patterns, use the
-   | alternation operator. To apply pattern modifier letters, use an Extended
-   RegExp Sequence. For example, if you want to process items with names
-   containing "cat", "dog", or "horse", title-cased or not, you could use this
-   regexp: '(?i:c)at|(?i:d)og|(?i:h)orse'
+   specifying which files to randomize. To specify multiple patterns, use the "|"
+   alternation operator. To apply pattern modifier letters, use an Extended
+   RegExp Sequence. For example, if you want to randomize files with names
+   containing "cat", "dog", or "horse", title-cased or not, you could use this:
+   fill-files-with-random-bytes.pl '(?i:c)at|(?i:d)og|(?i:h)orse'
    Be sure to enclose your regexp in 'single quotes', else BASH may replace it
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
@@ -365,10 +365,15 @@ sub help {
    backwards, they won't do what you want, as most predicates aren't valid regexps
    and vice-versa.
 
+   NOTE: You can't "skip" Arg1 and go straight to Arg2 because your intended Arg2
+   would be construed as Arg1! But you can "bypass" Arg1 by using '.+' meaning
+   "some characters" which will match every file name.
+
    A number of arguments greater than 2 will cause this program to print an error
    message and abort.
 
-   Happy file destruction!
+
+   Happy file randomizing!
 
    Cheers,
    Robbie Hatley,
