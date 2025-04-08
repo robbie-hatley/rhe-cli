@@ -16,10 +16,13 @@
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
 # Tue Nov 30, 2021: Fixed list-context bug in FILE loop (added "scalar" to force scalar context).
 # Mon Mar 03, 2025: Got rid of "common::sense" and "Sys::Binmode".
+# Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
 ########################################################################################################################
 
 use v5.32;
+use Cwd::utf8;
 use MIME::QuotedPrint;
+
 use RH::WinChomp;
 use RH::Dir;
 
@@ -31,7 +34,7 @@ my $section   = 'head' ; # section indicator ('head' or 'body')
 my $blflag    = 0      ; # previous-line-was-blank  flag
 my $dh        = undef  ; # directory handle
 
-$dirname = cwd_utf8;
+$dirname = cwd;
 
 opendir($dh, e $dirname) or die "Can\'t open directory \"$dirname\". $!.";
 
@@ -96,13 +99,13 @@ EMAIL: foreach my $emlname (@filenames)
       {
          # If this line starts with 'Content-Type: text/plain',
          # next line is beginning of body section:
-         if (m<Content-Type: text/plain>)
+         if (m#Content-Type: text/plain#)
          {
             $section = 'body';
          }
 
          # Skip unnecessary headers:
-         next LINE if not m/^(?:Date:|Subject:|To:|From:)/i;
+         next LINE if not m#^(?:Date:|Subject:|To:|From:)#i;
       }
 
       # Body section:

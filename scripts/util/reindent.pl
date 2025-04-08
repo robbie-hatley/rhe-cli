@@ -21,11 +21,12 @@
 #                   110; -C63; now using glob_regexp_utf8 instead of GetFiles; changed bracing to C-style;
 #                   and now writes re-indented versions of input files to new output files instead of
 #                   overwriting its input files as it WAS doing.
+# Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
 ##############################################################################################################
 
 use v5.36;
 use utf8;
-use Cwd          qw( cwd getcwd );
+use Cwd::utf8;
 use Time::HiRes  qw( time       );
 use POSIX        qw( floor ceil );
 
@@ -113,7 +114,7 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $cwd = cwd_utf8;
+   my $cwd = cwd;
    say "\nDirectory # $direcount: $cwd\n";
 
    # Get list of paths in $cwd matching $Target and $RegExp:

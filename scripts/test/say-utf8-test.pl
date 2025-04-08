@@ -1,39 +1,33 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 # say-utf8-test.pl
-use v5.32;
+use v5.00;
 use strict;
 use warnings;
-use utf8;
 use warnings FATAL => "utf8";
+use utf8;
+use utf8::all;
 
-use Cwd;
-use Encode;
+print "Unicode text to STDIO: ÂZ譄ьÕT鯼Dв♄俛♀粨蚍þqù刌Щъ\n";
 
-use RH::Dir;
-
-say('Unicode text to STDIO: ÂZ譄ьÕT鯼Dв♄俛♀粨蚍þqù刌Щъ')
-   or warn "Couldn't print line to STDOUT.\n$!\n";
-
-chdir(e('/D/test-range/unicode-test'))
-   or die "Couldn't cd to test range.\n$!\n";
+chdir '/d/test-range/unicode-test';
 
 my $fh;
-open_utf8($fh, '>', 'Ёщтu♂.txt')
-   or die "Couldn't open file 'Ёщтu♂.txt' for writing.\n$!\n";
-say($fh 'Unicode text to/from file: WУ堑骐♮гчkн欛☺♃g卤♆Otm慻é')
-   or warn "Couldn't print line to file 'Ёщтu♂.txt'.\n$!\n";
+open $fh, '>', 'Ёщтu♂.txt'
+   or warn "Couldn't open file 'Ёщтu♂.txt' for writing.\n$!\n";
+print $fh 'WУ堑骐♮гчkн欛☺♃g卤♆Otm慻é'
+   or warn "Couldn't print text to file 'Ёщтu♂.txt'.\n$!\n";
 close $fh;
+print "Text printed to file = \"WУ堑骐♮гчkн欛☺♃g卤♆Otm慻é\"\n";
 
 $fh = undef;
-open_utf8 $fh, '<', 'Ёщтu♂.txt'
-   or die "Couldn't open file 'Ёщтu♂.txt' for reading.\n$!\n";
+open $fh, '<', 'Ёщтu♂.txt'
+   or warn "Couldn't open file 'Ёщтu♂.txt' for reading.\n$!\n";
 defined(my $line = <$fh>)
-   or warn "Couldn't read line from file 'Ёщтu♂.txt'.\n$!\n";
-print $line
+   or warn "Couldn't read text from file 'Ёщтu♂.txt'.\n$!\n";
+print "Text read  from file = \"$line\".\n"
    or warn "Couldn't print line.\n$!\n";
-say $line =~ m/欛/ ? "Matches 欛." : "Doesn't match 欛.";
-say $line =~ m/譄/ ? "Matches 譄." : "Doesn't match 譄.";
+print(($line =~ m/WУ堑骐♮гчkн欛☺♃g卤♆Otm慻é/) ? "Matches.\n" : "Doesn't match.\n");
 close $fh;
-unlink_utf8 'Ёщтu♂.txt'
+unlink 'Ёщтu♂.txt'
    or warn "Couldn't unlink file 'Ёщтu♂.txt'.\n$!\n";
-say("Wow, we actually succeeded!");
+print "Wow, we actually succeeded!\n";

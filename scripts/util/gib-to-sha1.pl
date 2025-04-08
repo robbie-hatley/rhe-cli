@@ -20,14 +20,14 @@
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
 # Mon Mar 17, 2025: Shebang to "-C63". Reduced width from 120 to 110. Increased min ver from "5.32" to "5.36".
 #                   Shortened sub names. Got rid of prototypes. Added signature to curfile().
+# Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
 ##############################################################################################################
 
 use v5.36;
 use utf8;
-
-use Cwd          qw( cwd getcwd );
-use Time::HiRes  qw( time       );
-use List::Util   qw( all        );
+use Cwd::utf8;
+use Time::HiRes 'time';
+use List::Util 'all';
 
 use RH::Dir;
 use RH::Util;
@@ -199,7 +199,7 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $curdir = cwd_utf8;
+   my $curdir = cwd;
    say "\nDir # $direcount: $curdir\n";
 
    # Get a list of all paths in current directory matching target "F", regexp $Gib, and regexp $RegExp:

@@ -23,11 +23,13 @@
 #                   the script "move-large-images.pl".
 # Tue Nov 23, 2021: Fixed "won't handle relative directories" bug by using the chdir & cwd trick.
 # Mon Mar 03, 2025: Got rid of "common::sense".
+# Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
 ########################################################################################################################
 
 use v5.32;
-use Cwd;
+use Cwd::utf8;
 use Time::HiRes 'time';
+
 use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
@@ -67,16 +69,16 @@ my @MoveArgs  = (); # Arguments for move_files().
    # Get FULLY-QUALIFIED versions of current, source, and destination directories:
 
    # Get current working directory:
-   $cur = cwd_utf8;
+   $cur = cwd;
 
    # CD to src, grab full path, then CD back to cur:
    chdir(e($src));
-   $src = d(getcwd);
+   $src = cwd;
    chdir(e($cur));
 
    # CD to dst, grab full path, then CD back to cur:
    chdir(e($dst));
-   $dst = d(getcwd);
+   $dst = cwd;
    chdir(e($cur));
 
    # Move files:

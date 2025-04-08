@@ -17,9 +17,12 @@
 #                   its first argument, target as second, and regexp (instead of wildcard) as third.
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
 # Mon Mar 03, 2025: Got rid of "common::sense" and "Sys::Binmode".
+# Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
 ########################################################################################################################
 
 use v5.32;
+use Cwd::utf8;
+
 use RH::Util;
 use RH::Dir;
 
@@ -109,7 +112,7 @@ sub process_options_and_arguments
 sub find_missing_files
 {
    # Get current directory:
-   my $curdir = cwd_utf8;
+   my $curdir = cwd;
 
    # Get list of all regular files in current directory:
    my $curdirfiles = GetFiles($curdir, 'F');

@@ -20,10 +20,11 @@
 # Sat Jul 31, 2021: Now 120 characters wide.
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
 # Mon Mar 03, 2025: Got rid of "common::sense".
+# Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
 ########################################################################################################################
 
 use v5.32;
-
+use Cwd::utf8;
 use RH::Dir;
 
 if (@ARGV && ($ARGV[0] eq '-h' || $ARGV[1] eq '--help'))
@@ -34,7 +35,7 @@ if (@ARGV && ($ARGV[0] eq '-h' || $ARGV[1] eq '--help'))
    say 'All other command-line arguments will be ignored.';
 }
 
-my $cwd   = cwd_utf8;
+my $cwd   = cwd;
 my $files = GetFiles($cwd, 'A', '^.+$');
 
 foreach my $file (@$files)

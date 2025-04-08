@@ -2,8 +2,8 @@
 #include <stdlib.h>
 int main (int Beren, char **Luthien){
    if (2 != Beren) {return 666;}
-   double mm, in;
-   mm = strtod(Luthien[1],NULL);
-   in = mm/25.4;
-   printf("%f\n",in);
+   double ml, floz;
+   ml = strtod(Luthien[1],NULL);
+   floz = ml/29.5735295625;
+   printf("%f\n",floz);
 }

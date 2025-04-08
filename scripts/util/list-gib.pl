@@ -13,9 +13,11 @@
 # Fri Feb 26, 2021: Heavily refactored. Now fully functional.
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
 # Mon Mar 03, 2025: Got rid of "common::sense" and "Sys::Binmode".
+# Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
 ########################################################################################################################
 
 use v5.32;
+use Cwd::utf8;
 
 use RH::Util;
 use RH::Dir;
@@ -77,7 +79,7 @@ sub process_current_directory ()
    ++$direcount;
 
    # Get and announce current working directory:
-   my $cwd = cwd_utf8;
+   my $cwd = cwd;
    say "\nDir # $direcount: $cwd\n";
 
    # Get list of paths of gib files in this dir:

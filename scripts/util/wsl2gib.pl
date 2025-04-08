@@ -20,13 +20,15 @@
 #                   "Sys::Binmode".
 # Tue Aug 08, 2023: Upgraded from "v5.32" to "v5.36". Renamed from "wsl-to-gib.pl" to "wsl2gib.pl".
 #                   Reduced width from 120 to 110.
+# Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
 ##############################################################################################################
 
 use v5.36;
 use strict;
 use warnings;
-use utf8;
 use warnings FATAL => "utf8";
+use utf8;
+use Cwd::utf8;
 use Time::HiRes 'time';
 
 use RH::Util;
@@ -80,7 +82,7 @@ sub argv {
 
 sub curdire {
    ++$direcount;
-   my $curdir = cwd_utf8;
+   my $curdir = cwd;
    say "\nDir # $direcount: \"$curdir\"\n";
    for my $path ( glob_regexp_utf8($curdir, 'F', $wsl) ) {
       curfile($path);

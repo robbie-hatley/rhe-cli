@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 =pod
 
@@ -29,13 +29,17 @@ Output: true
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+I find the title puzzling, because examples 1 and 3 give output as being "true" even though they're not
+circular (the last letter of "scala" is not the first letter of "perl", and the last letter fo "node.js" is
+not the first letter of "java"). I think a better name for the targeted attribute would be "linked". Checking
+for this is just a matter of using substrings in a foreach loop.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, apostrophes escaped as '"'"', in proper Perl syntax:
-./ch-1.pl '(["She shaved?", "She ate 7 hot dogs."],["She didn'"'"'t take baths.", "She sat."])'
+single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+
+./ch-1.pl '(["zebra", "lion", "cheetah"],["ant", "tango", "ostentatious"])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -44,25 +48,32 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.38;
-use utf8;
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   use v5.38;
+   use utf8;
+   # Is a list of strings "linked" (adjacent characters equal)?
+   sub linked ($aref) {
+      foreach my $i (0..$#$aref-2) {
+         return 0 unless substr($aref->[$i+0], -1, 1)
+                      eq substr($aref->[$i+1], -0, 1);
+      }
+      return 1;
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) :
+# Example inputs:
+(
+   ["perl", "loves", "scala"],           # Expected output: true
+   ["love", "the", "programming"],       # Expected output: false
+   ["java", "awk", "kotlin", "node.js"], # Expected output: true
+);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   say "Word list: (@$aref)";
+   say "Linked? ", (linked($aref)?"True.":"False.");
 }

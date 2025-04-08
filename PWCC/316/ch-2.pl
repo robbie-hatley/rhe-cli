@@ -31,19 +31,18 @@ Output: true
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-Clearly, a string S1 can't be a subsequence of a string S2 if S1 is longer than S2. So I'll start by comparing
-lengths. There will be 3 possibilities:
-switch (length($S1) <=> length($S2)) {
-   case -1 {see if $S1 can be made from $S2 by character deletion}
-   case  0 {if strings are identical, they're both subsequences; else, neither is.}
-   case  1 {see if $S2 can be made from $S1 by character deletion}
-}
+Clearly, a string S1 can't be a subsequence of a string S2 if S1 is longer than S2. So I'll start by sorting
+the two input strings by length and putting the shorter in "$shrt" and the longer in "$long. Then starting
+from the left, for each character of $long that's not equal to the character at the same index in $shrt, I'll
+delete that character from long. When finished doing that, if $long is now equal to $shrt, then $shrt was a
+subsequence of $long; otherwise, it wasn't.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, apostrophes escaped as '"'"', in proper Perl syntax:
-./ch-2.pl '(["She shaved?", "She ate 7 hot dogs."],["She didn'"'"'t take baths.", "She sat."])'
+single-quoted array of arrays of two double-quoted strings, in proper Perl syntax, like so:
+
+./ch-2.pl '(["rat", "horse"], ["catastrophic", "cast"], ["dog", "dog"])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -58,9 +57,17 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    # Is one of two strings a subsequence of the other?
    sub subsequence ($S1, $S2) {
-      # Put the two strings in the order shorter, longer:
-      my ($shrt, $long) = sort {length($a) <=> length($b)} ($S1, $S2);
-
+      my ($Shrt, $Long) = sort {length($a) <=> length($b)} ($S1, $S2);
+      my ($shrt, $long) = ($Shrt, $Long);
+      for ( my $i = 0 ; $i < length($long) ; ++$i ) {
+         if ( substr($long, $i, 1) ne substr($shrt, $i, 1) ) {
+            substr($long, $i, 1, '');
+            --$i;
+         }
+      }
+      if    ( $Shrt eq $Long ) {say "Both \"$Shrt\" and \"$Long\" are subsequences of each other."}
+      elsif ( $shrt eq $long ) {say "\"$Shrt\" is a subsequence of \"$Long\"."}
+      else                     {say "Neither \"$Shrt\" nor \"$Long\" are subsequences of each other."}
    }
 
 # ------------------------------------------------------------------------------------------------------------
@@ -87,5 +94,7 @@ for my $aref (@arrays) {
    say '';
    my $S1 = $aref->[0];
    my $S2 = $aref->[1];
-   say(subsequence($S1,$S2));
+   say "String1 = $S1";
+   say "String2 = $S2";
+   subsequence($S1,$S2);
 }

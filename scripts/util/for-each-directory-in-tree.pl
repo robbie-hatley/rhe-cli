@@ -19,11 +19,12 @@
 #                   names. Added time stamping.
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
 # Wed Mar 12, 2025: Changed double-quotes to single in help().
+# Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
 ########################################################################################################################
 
 use v5.32;
 use utf8;
-
+use Cwd::utf8;
 use Time::HiRes qw( time );
 
 use RH::Dir;
@@ -49,7 +50,7 @@ my $direcount  = 0;   # Count of directories processed by curdire().
    say "\nNow entering program \"" . get_name_from_path($0) . "\".";
    my $t0 = time;
    argv;
-   $StartDir = cwd_utf8();
+   $StartDir = cwd;
    RecurseDirs {curdire};
    stats;
    my $t1 = time; my $te = $t1 - $t0;
@@ -83,7 +84,7 @@ sub curdire ()
    ++$direcount;
 
    # Get and state current working directory:
-   my $curdir = cwd_utf8;
+   my $curdir = cwd;
    say "\nDirectory # $direcount: \"$curdir\"\n";
 
    # Execute Command:

@@ -195,7 +195,7 @@ sub curfile ($file) {
       return 1;
    }
 
-   # Attempt to unlink_utf8 $name:
+   # Attempt to unlink $name:
    ++$attecount;
    unlink(e($name))
    and ++$delecount

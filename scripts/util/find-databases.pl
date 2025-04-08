@@ -18,10 +18,12 @@
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
 # Sun Mar 17, 2025: Reduced width from 120 to 110. Increased min ver from "5.32" to "5.36". Got rid of all
 #                   prototypes.
+# Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
 ##############################################################################################################
 
 use v5.36;
 use utf8;
+use Cwd::utf8;
 
 use RH::Dir;
 use RH::Util;
@@ -66,7 +68,7 @@ sub argv {
 
 sub curdire {
    ++$direcount;
-   my $curdir = cwd_utf8;
+   my $curdir = cwd;
    my @paths = glob_regexp_utf8($curdir, 'F', '\.db$');
    foreach my $path (@paths)
    {

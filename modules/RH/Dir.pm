@@ -119,7 +119,20 @@ use Switch;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-# Section 1, Major Subroutines (code is long and complex):
+# Section 1, Private subroutines (NOT exported):
+sub rand_int               :prototype($$)   ; # Get a random integer in closed interval [arg1, arg2].
+sub is_ascii               :prototype($)    ; # Is a given text string encoded in ASCII?
+sub is_iso_8859_1          :prototype($)    ; # Is a given text string encoded in ASCII?
+sub is_utf8                :prototype($)    ; # Is a given text string encoded in ASCII?
+sub eight_rand_lc_letters  :prototype()     ; # Get a random string of 8 lower-case English letters.
+
+# Section 2, UTF-8-related subroutines:
+sub d                                       ; # utf8-decode.
+sub e                                       ; # utf8-encode.
+sub glob_regexp_utf8       :prototype(;$$$$); # Regexp file globber using opendir/readdir/closedir.
+sub readdir_regexp_utf8    :prototype(;$$$$); # Regexp dir  reader  using opendir/readdir/closedir.
+
+# Section 3, Major Subroutines (code is long and complex):
 sub GetFiles               :prototype(;$$$$); # Get array of filerecords.
 sub GetRegularFilesBySize  :prototype(;$)   ; # Get hash of arrays of same-size filerecords.
 sub FilesAreIdentical      :prototype($$)   ; # Are two files identical?
@@ -128,30 +141,6 @@ sub copy_file              :prototype($$;@) ; # Copy a file from source path to 
 sub move_file              :prototype($$;@) ; # Move a file from source path to destination directory.
 sub copy_files             :prototype($$;@) ; # Copy files  from source directory to destination directory.
 sub move_files             :prototype($$;@) ; # Move files  from source directory to destination directory.
-
-# Section 2, Private subroutines (NOT exported):
-sub rand_int               :prototype($$)   ; # Get a random integer in closed interval [arg1, arg2].
-sub is_ascii               :prototype($)    ; # Is a given text string encoded in ASCII?
-sub is_iso_8859_1          :prototype($)    ; # Is a given text string encoded in ASCII?
-sub is_utf8                :prototype($)    ; # Is a given text string encoded in ASCII?
-sub eight_rand_lc_letters  :prototype()     ; # Get a random string of 8 lower-case English letters.
-
-# Section 3, UTF-8-related subroutines:
-sub d                                       ; # utf8-decode.
-sub e                                       ; # utf8-encode.
-sub glob_utf8              :prototype($)    ; # utf8 version of "glob".
-sub link_utf8              :prototype($$)   ; # utf8 version of "unlink".
-sub mkdir_utf8             :prototype($;$)  ; # utf8 version of "mkdir".
-# ECHIDNA RH 2024-02-06: the following two items don't work with modern Perl:
-# sub open_utf8              :prototype($$$)  ; # utf8 version of "open".
-# sub opendir_utf8           :prototype($$)   ; # utf8 version of "opendir".
-sub readdir_utf8           :prototype($)    ; # utf8 version of "readdir".
-sub readlink_utf8          :prototype($)    ; # utf8 version of "unlink".
-sub rmdir_utf8             :prototype($)    ; # utf8 version of "rmdir".
-sub symlink_utf8           :prototype($$)   ; # utf8 version of "unlink".
-sub unlink_utf8            :prototype(@)    ; # utf8 version of "unlink".
-sub glob_regexp_utf8       :prototype(;$$$$); # Regexp file globber using opendir/readdir/closedir.
-sub readdir_regexp_utf8    :prototype(;$$$$); # Regexp dir  reader  using opendir/readdir/closedir.
 
 # Section 4, Minor Subroutines (code is (relatively) short and simple):
 sub rename_file            :prototype($$)   ; # Rename a file, taking precautions.
@@ -180,8 +169,6 @@ sub is_valid_qual_dir      :prototype($)    ; # Is a given string a fully-qualif
 # ======= VARIABLES: =========================================================================================
 
 # Symbols exported by default:
-# ECHIDNA RH 2024-02-06: open_utf8 and opendir_utf8 doen't work with modern Perl,
-# so I've removed them from this list (they were right after mkdir_utf8).
 our @EXPORT =
    qw
    (
@@ -189,11 +176,7 @@ our @EXPORT =
       RecurseDirs             copy_file               move_file
       copy_files              move_files
 
-      d                       e
-      glob_utf8               link_utf8
-      mkdir_utf8
-      readdir_utf8            readlink_utf8           rmdir_utf8
-      symlink_utf8            unlink_utf8             glob_regexp_utf8
+      d                       e                       glob_regexp_utf8
       readdir_regexp_utf8
 
       rename_file             time_from_mtime         date_from_mtime
@@ -353,48 +336,6 @@ sub e :prototype(@) (@args) {
    else                 {return map {Encode::encode('UTF-8', $_,       EFLAGS)} @args };
 } # end sub e
 
-# file glob, but using UTF-8:
-sub glob_utf8 :prototype($) ($wildcard) {
-   if (wantarray) {return map {d($_)} glob(e($wildcard)) ;}
-   else           {return      d     (glob(e($wildcard)));}
-}
-
-# UTF-8 version of link:
-sub link_utf8 :prototype($$) ($target, $linkname) {
-   return link(e($target), e($linkname));
-}
-
-# mkdir, but using UTF-8:
-sub mkdir_utf8 :prototype($;$) ($dirname, $mask = 0777) {
-   return mkdir(e($dirname),$mask);
-}
-
-# readdir, but using UTF-8:
-sub readdir_utf8 :prototype($) ($dh) {
-   if (wantarray) {return map {d($_)} readdir($dh);}
-   else           {return d(readdir($dh));         }
-}
-
-# UTF-8 version of readlink:
-sub readlink_utf8 :prototype($) ($link) {
-   return d(readlink(e($link)));
-}
-
-# rmdir, but using UTF-8:
-sub rmdir_utf8 :prototype($) ($dir) {
-   return rmdir(e($dir));
-}
-
-# UTF-8 version of symlink:
-sub symlink_utf8 :prototype($$) ($target, $linkname) {
-   return symlink(e($target), e($linkname));
-}
-
-# UTF-8 version of unlink:
-sub unlink_utf8 :prototype(@) (@args) {
-   return unlink(e(@args));
-}
-
 sub glob_regexp_utf8 :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$', $predicate = '1') {
    # This sub is like glob(), but using UTF-8, a given directory, a target type, a regular expression
    # (instead of a csh-style wildcard), and a boolean file-type predicate as inputs, and returning matching
@@ -447,7 +388,7 @@ sub glob_regexp_utf8 :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp
    my $path;
    my @paths;
    foreach my $name (@names) {
-      say "IN glob_regexp_utf8. NAME FROM readdir_utf8: $name" if $db;
+      say "IN glob_regexp_utf8. NAME FROM readdir: $name" if $db;
       next if $name eq '.';
       next if $name eq '..';
       next if $name !~ m/$re/;
