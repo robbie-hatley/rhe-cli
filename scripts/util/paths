@@ -1,0 +1,3 @@
+#!/usr/bin/env perl
+use utf8::all;
+print $ENV{PATH} =~ s/:/\n/gr;
