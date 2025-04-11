@@ -2354,7 +2354,7 @@ sub get_correct_suffix :prototype($) ($path) {
          substr($buffer, 0, 75) =~ m%^#!.*perl%i           and return '.pl'   ; # Perl
          substr($buffer, 0, 75) =~ m%^#!.*python%i         and return '.py'   ; # Python
          substr($buffer, 0, 75) =~ m%^#!.*raku%i           and return '.raku' ; # Raku
-         substr($buffer, 0, 75) =~ m%^#!.*sed%i            and return '.js'   ; # Sed
+         substr($buffer, 0, 75) =~ m%^#!.*sed%i            and return '.sed'  ; # Sed
       }
 
       # Next, see if this file is any of various non-text non-executable types:
