@@ -1,0 +1,7 @@
+#!/usr/bin/python
+# fahrcels
+import sys
+if 2 != len(sys.argv) : sys.exit()
+fahr = float(sys.argv[1])
+cels = (fahr - 32.0) / 1.8
+print(cels)

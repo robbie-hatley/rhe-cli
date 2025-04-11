@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -10,28 +10,33 @@
 # Written by Robbie Hatley.
 # Edit history:
 # Sat Mar 22, 2025: Wrote it.
+# Thu Apr 10, 2025: Now using "utf8::all" and "Cwd::utf8". Simplifed shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e". Now using "cwd" instead of "d getcwd".
 ##############################################################################################################
 
 # Pragmas:
 use v5.36;
-use utf8;
+use strict;
+use warnings;
 
 # CPAN modules:
-use Cwd             qw( cwd getcwd                  );
-use Time::HiRes     qw( time                        );
-use Scalar::Util    qw( looks_like_number reftype   );
-use List::Util      qw( any                         );
-use Digest::SHA     qw( sha1_hex                    );
+use utf8::all   qw( :DEFAULT );
+use Cwd::utf8   qw( :DEFAULT );
+use Time::HiRes qw( time     );
+use List::Util  qw( any      );
+use Digest::SHA qw( sha1_hex );
 
 # RH modules:
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================
 
-# System Variables:
+# ------- System Variables: ----------------------------------------------------------------------------------
+
 $" = ', ' ; # Quoted-array element separator = ", ".
 
-# Global Variables:
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
 our    $pname;                                 # Declare program name.
 BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
 our    $cmpl_beg;                              # Declare compilation begin time.
@@ -39,7 +44,7 @@ BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
 our    $cmpl_end;                              # Declare compilation end   time.
 INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
-# Local variables:
+# ------- Local variables: -----------------------------------------------------------------------------------
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
 my @Opts      = ()        ; # options                   array     Options.
@@ -47,22 +52,21 @@ my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               0,1,2     Be quiet.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my @Sha1      = ()        ; # SHA-1 hashes.             hashes    (empty)
-my $Cwd       = ''        ; # Share cwd between subs.   cwd       blank
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
-my $filecount = 0 ; # Count of non-meta data files encountered.
+my $filecount = 0 ; # Count of non-empty, non-meta data files encountered.
 my $newfcount = 0 ; # Count of new ".sha1" files created.
 my $updfcount = 0 ; # Count of old ".sha1" files updated.
-my $findcount = 0 ; # Count of files found matching our desired SHA-1.
+my $findcount = 0 ; # Count of files found matching our desired SHA-1 hash(es).
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
 sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
-sub sha1    ; # SHA-1 hash of a file.
 sub stats   ; # Print statistics.
 sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
@@ -72,24 +76,33 @@ sub help    ; # Print help and exit.
 { # begin main
    # Start execution timer:
    my $t0 = time;
+   my @s0 = localtime($t0);
 
    # Process @ARGV and set settings:
    argv;
 
    # Print program entry message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
-      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
+   if ( $Verbose >= 1 ) {
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
+   }
+
+   # Print compilation time if being verbose:
+   if ( $Verbose >= 2 ) {
+      printf STDERR "Compilation time was %.3fms\n\n",
+                    1000 * ($cmpl_end - $cmpl_beg);
+   }
+
+   # Print basic settings if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      say STDERR "OriDir    = $OriDir";
+      say STDERR "Recurse   = $Recurse";
       say STDERR '';
    }
 
-   # Also print compilation time if being verbose:
-   if ( 2 == $Verbose ) {
-      printf(STDERR "Compilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
-      say STDERR '';
-   }
-
-   # Print the values of all variables if debugging:
-   if ( 1 == $Debug ) {
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   if ( $Debug >= 1 ) {
+      say STDERR 'Debug: Values of variables after processing @ARGV:';
       say STDERR "pname     = $pname";
       say STDERR "cmpl_beg  = $cmpl_beg";
       say STDERR "cmpl_end  = $cmpl_end";
@@ -98,6 +111,7 @@ sub help    ; # Print help and exit.
       say STDERR "Debug     = $Debug";
       say STDERR "Help      = $Help";
       say STDERR "Verbose   = $Verbose";
+      say STDERR "OriDir    = $OriDir";
       say STDERR "Recurse   = $Recurse";
       say STDERR "Sha1      = (@Sha1)";
       say STDERR '';
@@ -105,16 +119,23 @@ sub help    ; # Print help and exit.
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+   if ($Help) {
+      help;
+   }
+   else {
+      $Recurse and RecurseDirs {curdire} or curdire;
+      stats;
+   }
 
    # Stop execution timer:
    my $t1 = time;
+   my @s1 = localtime($t1);
 
    # Print exit message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
+   if ( $Verbose >= 1 ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
-      say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
+      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                    $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
       printf STDERR "Execution time was %.3fms.", $ms;
    }
 
@@ -130,16 +151,18 @@ sub argv {
    my $end = 0;              # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {           # For each element of @ARGV,
-      /^--$/ && !$end        # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1           # so if we see that, then set the "end-of-options" flag
-      and push @Opts, $_     # and push the "--" to @Opts
+   for ( @ARGV ) {           # For each element of @ARGV:
+      !$end                  # If we have not yet reached end-of-options,
+      && /^--$/              # and we see an "--" option,
+      and $end = 1           # set the "end-of-options" flag
+      and push @Opts, '--'   # and push "--" to @Opts
       and next;              # and skip to next element of @ARGV.
-      !$end                  # If we haven't yet reached end-of-options,
-      && ( /^-(?!-)$s+$/     # and if we get a valid short option
+      !$end                  # If we have not yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we see a valid short option
       ||  /^--(?!-)$d+$/ )   # or a valid long option,
       and push @Opts, $_     # then push item to @Opts
-      or  push @Args, $_;    # else push item to @Args.
+      and next;              # and skip to next element of @ARGV.
+      push @Args, $_;        # Otherwise, push item to @Args.
    }
 
    # Process options:
@@ -153,7 +176,7 @@ sub argv {
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
    }
 
-   # Interpret the elements of @Args as being SHA-1 hashes:
+   # Interpret the elements of @Args as being SHA-1 hashes to search for:
    @Sha1 = @Args;
 
    # Return success code 1 to caller:
@@ -166,106 +189,36 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   $Cwd = d getcwd;
+   my $cwd = cwd;
 
    # Announce current working directory if being verbose:
-   if ( 2 == $Verbose) {
-      say STDERR "\nDirectory # $direcount: $Cwd\n";
+   if ( $Verbose >= 2 ) {
+      say STDERR "\nDirectory # $direcount: $cwd\n";
    }
 
-   # ======= MAKE SURE THAT THIS DIRECTORY'S ".sha1" FILE IS UP-TO-DATE: =====================================
+   # Update this directory's ".sha1" file if necessary and get a hash table all non-meta data files in this
+   # directory, along with number of files hashed, "made new .sha1" flag, and "updated old .sha1" flag:
+   my ($htref, $nf, $new_flag, $upd_flag) = update_sha1($cwd);
 
-   # Make a hash table to hold SHA-1 file hashes of all non-meta data files in this directory:
-   my %ht;
+   # Add number of files hashed to file counter:
+   $filecount += $nf;
 
-   # Does ".sha1" not exist in this directory?
-   my $new_flag = !(-e e ".sha1");
-   $new_flag and ++$newfcount;
+   # If ".sha1" didn't exist and we had to make a new one, increment "made new .sha1" counter:
+   if ($new_flag) {++$newfcount}
 
-   # If ".sha1" exists, read its contents into our hash table:
-   if (!$new_flag) {
-      my $sha1fh = undef;
-      open($sha1fh, '<', e '.sha1')
-      or say STDERR "Error: Couldn't open file \".sha1\" in directory \"$Cwd\"."
-      and return 0;
-      while (<$sha1fh>) {
-         chomp;
-         my ($name, $size, $mod, $sha1) = split '/', $_ ;
-         $ht{$name} = [$size, $mod, $sha1];
-      }
-      close($sha1fh)
-      or say STDERR "Error: Couldn't close file \".sha1\" in directory \"$Cwd\"."
-      and return 0;
-   }
-
-   # Get a list of all entries in current directory:
-   my @entries;
-   my $dh = undef;
-   opendir($dh, e $Cwd)          or say STDERR "Error: Couldn't open  directory \"$Cwd\"." and return 0;
-   while (readdir($dh)) {
-      chomp;
-      my $entry = d $_ ;
-      next if !is_data_file($entry);
-      next if  is_meta_file($entry);
-      push @entries, $entry;
-      ++$filecount;
-   }
-   closedir $dh                  or say STDERR "Error: Couldn't close directory \"$Cwd\"." and return 0;
-
-   # Have we updated the hash table?
-   my $update_flag = 0;
-
-   # Make sure every directory entry exists in hash table:
-   foreach my $entry (@entries) {
-      my @stats = lstat e $entry;
-      my $size  = $stats[7];
-      my $mod   = $stats[9];
-      if ( ! defined $ht{$entry} || $size != $ht{$entry}->[0] || $mod != $ht{$entry}->[1] ) {
-         if ($Debug) {say STDERR "directory entry \"$entry\" is not in hash table";}
-         my $hash = sha1($entry);
-         $ht{$entry} = [$size, $mod, $hash];
-         $update_flag = 1;
-      }
-   }
-
-   # Delete hash-table entries which don't exist in directory:
-   foreach my $key (keys %ht) {
-      if ( ! any { $_ eq $key } @entries ) {
-         if ($Debug) {say STDERR "hash-table key \"$key\" is not in directory";}
-         delete $ht{$key};
-         $update_flag = 1;
-      }
-   }
-
-   # If ".sha1" exists and we altered the hash table, increment update counter:
-   !$new_flag && $update_flag and ++$updfcount;
-
-   # If ".sha1" exists and needs to be overwritten, unlike it first:
-   if ( !$new_flag && $update_flag ) {unlink e '.sha1';}
-
-   # If we need to update file hashes, write hash table to ".sha1":
-   if ($new_flag || $update_flag) {
-      my $sha1fh = undef;
-      open($sha1fh, '>', e '.sha1')
-      or say STDERR "Error: Couldn't open file \".sha1\" for writing in directory \"$Cwd\"."
-      and return 0;
-      foreach my $key (sort keys %ht) {
-         say $sha1fh join('/', $key, $ht{$key}->[0], $ht{$key}->[1], $ht{$key}->[2]);
-      }
-      close($sha1fh)
-      or say STDERR "Error: Couldn't close file \".sha1\" in directory \"$Cwd\"."
-      and return 0;
-   }
-
-   # ======= SEARCH FOR FILE MATCHING GIVEN SHA1 HASHES: =====================================================
+   # If ".sha1" did exist and we updated it, increment "updated .sha1" counter:
+   if ($upd_flag) {++$updfcount}
 
    # For each hash in @Sha1 iterate through the key/value pairs of %ht, looking for our desired SHA-1;
    # if the SHA-1 for a key matches the SHA-1 we're looking for, increment find counter and print path:
-   foreach my $sha1 (@Sha1) {
-      foreach my $key (keys %ht) {
-         if ( $ht{$key}->[2] eq $sha1 ) {
+   foreach my $search (@Sha1) {
+      foreach my $name (sort {$a cmp $b} keys %$htref) {
+         my $size = $htref->{$name}->{Size};
+         my $modt = $htref->{$name}->{Modt};
+         my $sha1 = $htref->{$name}->{Sha1};
+         if ( $sha1 eq $search ) {
             ++$findcount;
-            say STDOUT path($Cwd, $key);
+            say STDOUT path($cwd, $name);
          }
       }
    }
@@ -274,20 +227,7 @@ sub curdire {
    return 1;
 } # end sub curdire
 
-# Return the SHA-1 hash of a named file in current directory:
-sub sha1 ($name) {
-   my   $fh = undef;                           # File handle (initially undefined).
-   local $/ = undef;                           # Set "input record separator" to EOF.
-   open($fh, '< :raw', e $name)                # Try to open the file for reading in "raw" mode.
-   or warn "Error: couldn't open \"$name\".\n" # If file-open failed, warn user
-   and return '***ERROR***';                   # and return error code.
-   my $data = <$fh>;                           # Slurp file into $data as one big string of unprocessed bytes.
-   defined $data                               # Test if $data is defined.
-   or warn "Error: couldn't read \"$name\".\n" # If file-read failed, warn user
-   and return '***ERROR***';                   # and return error code.
-   close($fh);                                 # Close file.
-   return sha1_hex($data);                     # Return SHA-1 hash of file.
-} # end sub sha1
+# Update
 
 # Print statistics for this program run:
 sub stats {

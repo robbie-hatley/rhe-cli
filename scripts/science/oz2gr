@@ -1,0 +1,7 @@
+#!/usr/bin/python
+# oz2gr
+import sys
+if 2 != len(sys.argv) : sys.exit()
+oz = float(sys.argv[1])
+gr = oz * 28.3495
+print(gr)

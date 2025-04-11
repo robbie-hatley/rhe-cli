@@ -2,7 +2,8 @@
 # all-vowels.py
 import sys
 import re
-if len(sys.argv) != 2: sys.exit()
+if len(sys.argv) != 2:
+   sys.exit()
 word=sys.argv[1]
 if (     re.search(r'a', word)
      and re.search(r'e', word)

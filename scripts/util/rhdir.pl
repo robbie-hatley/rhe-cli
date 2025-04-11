@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -46,14 +46,18 @@
 # Wed Mar 19, 2025: Changed shebang to "-C63". Cleaned-up quoting of CPAN module functions. Typing more than 2
 #                   arguments now just triggers a warning, rather than aborting the program. Help, recurse,
 #                   and stats are now all on one line, controlled by "and" and "or" for coordination.
+# Thu Apr 10, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
+use strict;
+use warnings;
 
-use Cwd           qw( cwd getcwd   );
-use Time::HiRes   qw( time         );
-use Data::Dumper  qw( :DEFAULT     );
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes qw( time );
+use Data::Dumper;
 
 use RH::Dir;
 
@@ -79,17 +83,17 @@ my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-my $Verbose   = 1         ; # Be verbose?               0,1,2     Be somewhat-verbose.
+my $Verbose   = 0         ; # Be verbose?               0,1,2     Be quiet.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    List files of all names.
-my $Predicate = 1         ; # Boolean predicate.        bool      List files of all types.
+my $Predicate = '1'       ; # Boolean predicate.        eval      List files of all types.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Inodes    = 0         ; # Print inodes?             bool      Don't print inodes.
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed.
-my $filecount = 0 ; # Count of files matching $Target and $RegExp.
-my $predcount = 0 ; # Count of files also matching $Predicate.
+my $filecount = 0 ; # Count of files matching given target, regexp, and predicate.
 
 # Accumulations of counters from RH::Dir :
 my $totfcount = 0 ; # Count of all files.
@@ -128,24 +132,35 @@ sub help       ; # Print help.
 { # begin main
    # Start execution timer:
    my $t0 = time;
+   my @s0 = localtime($t0);
 
    # Process @ARGV and set settings:
    argv;
 
    # Print program entry message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
-      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
+   if ( $Verbose >= 1 ) {
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
+   }
+
+   # Print compilation time if being verbose:
+   if ( $Verbose >= 2 ) {
+      printf STDERR "Compilation time was %.3fms\n\n",
+                    1000 * ($cmpl_end - $cmpl_beg);
+   }
+
+   # Print basic settings if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "Target    = $Target";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
       say STDERR '';
    }
 
-   # Also print compilation time if being verbose:
-   if ( 2 == $Verbose ) {
-      printf(STDERR "Compilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
-      say STDERR '';
-   }
-
-   # Print the values of all variables if debugging or being verbose:
-   if ( $Debug >= 1 || $Verbose >= 2 ) {
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   if ( $Debug >= 1 ) {
+      say STDERR 'Debug: Values of variables after processing @ARGV:';
       say STDERR "pname     = $pname";
       say STDERR "cmpl_beg  = $cmpl_beg";
       say STDERR "cmpl_end  = $cmpl_end";
@@ -158,26 +173,30 @@ sub help       ; # Print help.
       say STDERR "Target    = $Target";
       say STDERR "RegExp    = $RegExp";
       say STDERR "Predicate = $Predicate";
+      say STDERR "OriDir    = $OriDir";
       say STDERR "Inodes    = $Inodes";
       say STDERR '';
    }
 
-   # What starting directory are we in?
-   my $startdir = d getcwd;
-
-   # If use wants
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and tree_stats($startdir);
+   if ($Help) {
+      help;
+   }
+   else {
+      $Recurse and RecurseDirs {curdire} or curdire;
+      tree_stats;
+   }
 
    # Stop execution timer:
    my $t1 = time;
+   my @s1 = localtime($t1);
 
    # Print exit message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
+   if ( $Verbose >= 1 ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
-      say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
+      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                    $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
       printf STDERR "Execution time was %.3fms.", $ms;
    }
 
@@ -210,8 +229,8 @@ sub argv {
    for ( @Opts ) {
       /^-$s*h/ || /^--help$/    and $Help    =  1  ;
       /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default is "be terse".
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default is "be quiet".
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default is "don't recurse".
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
@@ -249,17 +268,19 @@ sub argv {
 
 # Process current directory:
 sub curdire {
+   # Increment directory counter:
    ++$direcount;
-   my $dificount = 0; # Count of files matching $Target and $RegExp, for this directory only.
-   my $diprcount = 0; # Count of files also matching $Predicate,     for this directory only.
 
    # Get current working directory:
-   my $curdir = d(getcwd);
+   my $curdir = cwd;
 
    if ($Debug) {say STDERR "In \"rhdir.pl\", in \"curdire()\"; \$curdir = \"$curdir\".";}
 
-   # Get list of files in current directory matching $Target and $RegExp:
-   my $curdirfiles = GetFiles($curdir, $Target, $RegExp);
+   # Get list of files in current directory matching target, regexp, and predicate:
+   my $curdirfiles = GetFiles($curdir, $Target, $RegExp, $Predicate);
+
+   # Record number of files obtained:
+   my $nf = scalar(@{$curdirfiles});
 
    # If being "very verbose", append all 15 RH::Dir file-type counters to this program's accumulators:
    if ( $Verbose >= 2 ) {
@@ -283,28 +304,21 @@ sub curdire {
    # Make a hash of refs to lists of refs to file-record hashes, keyed by type:
    my %TypeLists;
 
-   # Autovivify create type arrays in %TypeLists, and to push refs to file-record hashes into those arrays,
-   # but only for files matching $Predicate:
-   foreach my $file ( @{$curdirfiles} ) {
-      ++$dificount; # Increment local "matches target & regexp" counter.
-      local $_ = e $file->{Path};
-      if ( eval($Predicate) ) {
-         ++$diprcount; # Increment local "also matches predicate" counter.
-         push @{$TypeLists{$file->{Type}}}, $file;
-      }
+   # Autovivify type arrays in %TypeLists, and push refs to file-record hashes into those arrays:
+   foreach my $file (@{$curdirfiles}) {
+      push @{$TypeLists{$file->{Type}}}, $file;
    }
 
-   # Append local "target & regexp" and "predicate" counters to global counters:
-   $filecount += $dificount;
-   $predcount += $diprcount;
+   # Append local files counter to global files counter:
+   $filecount += $nf;
 
    # Announce current working drectory (because file listings don't mention directory):
-   say STDERR "\nDirectory # $direcount: $curdir\n";
+   say "\nDirectory # $direcount (with $nf files): $curdir\n";
 
-   # If $diprcount is 0, announced that the directory is empty then return 1, because %TypeLists is empty,
+   # If $nf is 0, announced that the directory is empty then return 1, because %TypeLists is empty,
    # so we have no files to print and don't water to clutter the screen with bizarre floating headers:
-   if ( 0 == $diprcount ) {
-      say STDERR "[DIRECTORY IS EMPTY]";
+   if ( 0 == $nf ) {
+      say "[DIRECTORY IS EMPTY]";
       return 1;
    }
 
@@ -317,15 +331,15 @@ sub curdire {
    # Directory Listing (if in inodes mode):
    if ($Inodes)
    {
-      say STDOUT 'T: Date:       Time:        Size:     Inode:      L:   Bsize:   Blocks:  Name:';
+      say 'T: Date:       Time:        Size:      Inode:      L:   Bsize:  Blocks:  Name:';
       foreach my $type (@Types)
       {
          foreach my $file (sort {fc($a->{Name}) cmp fc($b->{Name})} @{$TypeLists{$type}})
          {
-            printf STDOUT "%-1s  %-10s  %-11s  %-8.2E  %10d  %3u  %7u  %7u  %-s\n",
-                          $file->{Type},  $file->{Date},   $file->{Time},
-                          $file->{Size},  $file->{Inode},  $file->{Nlink},
-                          $file->{Bsize}, $file->{Blocks}, $file->{Name};
+            printf "%-1s  %-10s  %-11s  %-8.2E  %10d  %3u  %7u  %7u  %-s\n",
+                   $file->{Type},  $file->{Date},   $file->{Time},
+                   $file->{Size},  $file->{Inode},  $file->{Nlink},
+                   $file->{Bsize}, $file->{Blocks}, $file->{Name};
          }
       }
    }
@@ -338,25 +352,24 @@ sub curdire {
       {
          foreach my $file (sort {fc($a->{Name}) cmp fc($b->{Name})} @{$TypeLists{$type}})
          {
-            printf STDOUT "%-1s  %-10s  %-11s  %-8.2E  %3u  %-s\n",
-                          $file->{Type}, $file->{Date},  $file->{Time},
-                          $file->{Size}, $file->{Nlink}, $file->{Name};
+            printf "%-1s  %-10s  %-11s  %-8.2E  %3u  %-s\n",
+                   $file->{Type}, $file->{Date},  $file->{Time},
+                   $file->{Size}, $file->{Nlink}, $file->{Name};
          }
       }
    }
 
    # Print stats for this directory:
-   dir_stats($curdir, $dificount, $diprcount);
+   dir_stats($curdir, $nf);
 
    # Return success code 1 to caller:
    return 1;
 } # end sub curdire
 
-sub dir_stats ($curdir, $dificount, $diprcount) {
+sub dir_stats ($curdir, $nf) {
    if ( $Verbose >= 1 ) {
       say STDERR "\nStatistics for directory \"$curdir\":";
-      say STDERR "Found $dificount files in this directory matching given target and regexp.";
-      say STDERR "Found $diprcount files in this directory also matching given predicate.";
+      say STDERR "Found $nf files in this directory matching given target, regexp, and predicate.";
    }
    if ( $Verbose >= 2 ) {
       say    STDERR "\nDirectory entries encountered in this directory included:";
@@ -379,13 +392,11 @@ sub dir_stats ($curdir, $dificount, $diprcount) {
    return 1;
 } # end sub dir_stats ($curdir)
 
-sub tree_stats ($startdir) {
+sub tree_stats {
    if ( $Verbose >= 1 ) {
-      say STDERR "\nStatistics for tree descending from \"$startdir\":";
+      say STDERR "\nStatistics for running \"$pname\" on tree descending from \"$OriDir\":";
       say STDERR "Navigated $direcount directories.";
-      say STDERR "Found $filecount files matching given target and regexp.";
-      say STDERR "Found $predcount files also matching given predicate.";
-
+      say STDERR "Found $filecount files matching given target, regexp, and predicate.";
    }
    if ( $Verbose >= 2 ) {
       say    STDERR "\nDirectory entries encountered in this tree included:";
@@ -456,14 +467,14 @@ sub help
    -------------------------------------------------------------------------------
    Verbosity levels:
 
-   Unusually for my programs, this program has 3 verbosity levels:
-   Level 0 - "Quiet"
-   Level 1 - "Terse" (DEFAULT)
+   This program has 3 verbosity levels:
+   Level 0 - "Quiet" (DEFAULT)
+   Level 1 - "Terse"
    Level 2 - "Verbose"
 
    At verbosity Level 0, this program will print matching file paths only.
    At verbosity Level 1, basic statistics will also be printed.
-   At verbosity Level 2, counts of all file types encounters are also printed.
+   At verbosity Level 2, counts of all file types encountered are also printed.
 
    -------------------------------------------------------------------------------
    Command lines:
@@ -477,8 +488,8 @@ sub help
    Option:             Meaning:
    -h or --help        Print help and exit.
    -e or --debug       Print diagnostics using Data::Dumper.
-   -q or --quiet       Be  non-verbose (list   no     stats).
-   -t or --terse       Be semi-verbose (list limited  stats).            (DEFAULT)
+   -q or --quiet       Be  non-verbose (list   no     stats).            (DEFAULT)
+   -t or --terse       Be semi-verbose (list limited  stats).
    -v or --verbose     Be VERY-verbose (list   all    stats).
    -l or --local       Don't recurse subdirectories.                     (DEFAULT)
    -r or --recurse     Do    recurse subdirectories.

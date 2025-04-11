@@ -1,0 +1,7 @@
+#!/usr/bin/python
+# fo2ml
+import sys
+if 2 != len(sys.argv) : sys.exit()
+fo = float(sys.argv[1])
+ml = fo * 29.5735295625
+print(ml)

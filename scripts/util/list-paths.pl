@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -28,16 +28,17 @@
 #                   Brought formatting of dividers, etc up to my current standards. Put "-C63" in shebang.
 #                   Added system variables, global variables, BEGIN, INIT, and compilation timing.
 #                   Fixed "count all files twice" bug. Changed default verbosity from "terse" to "quiet".
+# Thu Apr 10, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
 ##############################################################################################################
 
 use v5.36;
 use strict;
 use warnings;
-use utf8;
-use warnings FATAL => 'utf8';
 
-use Cwd;
-use Time::HiRes 'time';
+use utf8::all   qw( :DEFAULT );
+use Cwd::utf8   qw( :DEFAULT );
+use Time::HiRes qw( time     );
 
 use RH::Dir;
 
@@ -69,23 +70,19 @@ my $Recurse   = 0         ; # Recurse subdirectories?   bool      Recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   List paths of files of all types.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    List paths of files of all names.
 my $Predicate = 1         ; # Boolean predicate.        bool      List paths of all combos of types.
-my $OriDir    = d getcwd  ; # Original directory.       cwd       Directory on program entry.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
 my $filecount = 0 ; # Count of files matching target.
-my $regxcount = 0 ; # Count of files also matching regexp.
-my $predcount = 0 ; # Count of files also matching predicate.
 
-# Lists of paths which do and do-not exist:
-my @PathsOfTheLiving; # List of paths to files which exist.
-my @PathsOfTheDead;   # List of paths to files which unexist. (Always empty, unless something evil happened.)
+# Lists of paths to files matching given directory, recursion, target, regexp, and predicate:
+my @Paths;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
 sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
-sub curfile ; # Process current file.
 sub stats   ; # Print statistics.
 sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
@@ -95,24 +92,35 @@ sub help    ; # Print help and exit.
 { # begin main
    # Start execution timer:
    my $t0 = time;
+   my @s0 = localtime($t0);
 
    # Process @ARGV and set settings:
    argv;
 
    # Print program entry message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
-      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
+   if ( $Verbose >= 1 ) {
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
+   }
+
+   # Print compilation time if being verbose:
+   if ( $Verbose >= 2 ) {
+      printf STDERR "Compilation time was %.3fms\n\n",
+                    1000 * ($cmpl_end - $cmpl_beg);
+   }
+
+   # Print basic settings if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "Target    = $Target";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
       say STDERR '';
    }
 
-   # Also print compilation time if being verbose:
-   if ( 2 == $Verbose ) {
-      printf(STDERR "Compilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
-      say STDERR '';
-   }
-
-   # Print the values of all variables if debugging or being verbose:
-   if ( 1 == $Debug || 2 == $Verbose ) {
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   if ( $Debug >= 1 ) {
+      say STDERR 'Debug: Values of variables after processing @ARGV:';
       say STDERR "pname     = $pname";
       say STDERR "cmpl_beg  = $cmpl_beg";
       say STDERR "cmpl_end  = $cmpl_end";
@@ -125,21 +133,30 @@ sub help    ; # Print help and exit.
       say STDERR "Target    = $Target";
       say STDERR "RegExp    = $RegExp";
       say STDERR "Predicate = $Predicate";
+      say STDERR "OriDir    = $OriDir";
       say STDERR '';
    }
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+   if ($Help) {
+      help;
+   }
+   else {
+      $Recurse and RecurseDirs {curdire} or curdire;
+      say for @Paths;
+      stats;
+   }
 
    # Stop execution timer:
    my $t1 = time;
+   my @s1 = localtime($t1);
 
    # Print exit message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
+   if ( $Verbose >= 1 ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
-      say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
+      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                    $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
       printf STDERR "Execution time was %.3fms.", $ms;
    }
 
@@ -156,16 +173,18 @@ sub argv {
    my $end = 0;              # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {           # For each element of @ARGV,
-      /^--$/ && !$end        # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1           # so if we see that, then set the "end-of-options" flag
-      and push @Opts, $_     # and push the "--" to @Opts
+   for ( @ARGV ) {           # For each element of @ARGV:
+      !$end                  # If we have not yet reached end-of-options,
+      && /^--$/              # and we see an "--" option,
+      and $end = 1           # set the "end-of-options" flag
+      and push @Opts, '--'   # and push "--" to @Opts
       and next;              # and skip to next element of @ARGV.
-      !$end                  # If we haven't yet reached end-of-options,
-      && ( /^-(?!-)$s+$/     # and if we get a valid short option
+      !$end                  # If we have not yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we see a valid short option
       ||  /^--(?!-)$d+$/ )   # or a valid long option,
       and push @Opts, $_     # then push item to @Opts
-      or  push @Args, $_;    # else push item to @Args.
+      and next;              # and skip to next element of @ARGV.
+      push @Args, $_;        # Otherwise, push item to @Args.
    }
 
    # Process options:
@@ -188,7 +207,7 @@ sub argv {
 
    # If user typed more than 2 arguments, and we're not debugging or getting help,
    # then print error and help messages and exit:
-   if ( $NA > 2                  # If number of arguments > 2
+   if ( $NA >= 3                 # If number of arguments >= 3
         && !$Debug && !$Help ) { # and we're not debugging and not getting help,
       error($NA);                # print error message,
       help;                      # and print help message,
@@ -196,12 +215,12 @@ sub argv {
    }
 
    # First argument, if present, is a file-selection regexp:
-   if ( $NA > 0 ) {              # If number of arguments > 0,
+   if ( $NA >= 1 ) {             # If number of arguments >= 1,
       $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
    }
 
    # Second argument, if present, is a file-selection predicate:
-   if ( $NA > 1 ) {              # If number of arguments >= 2,
+   if ( $NA >= 2 ) {             # If number of arguments >= 2,
       $Predicate = $Args[1];     # set $Predicate to $Args[1].
    }
 
@@ -215,81 +234,40 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
+   my $cwd = cwd;
 
-   # Get list of paths in $cwd matching $Target:
-   my @paths = glob_regexp_utf8($cwd, $Target);
+   # Get list of paths in $cwd matching target, regexp, and predicate:
+   my @paths = sort {$a cmp $b} glob_regexp_utf8($cwd, $Target, $RegExp, $Predicate);
+
+   # Count number of paths we just found:
    my $np = scalar(@paths);
 
    # If being verbose, announce current working directory and number of paths found here:
    if ( 2 == $Verbose) {
-      say STDERR '';
       say STDERR "Directory # $direcount: $cwd";
       say STDERR "Found $np paths here.";
+      say STDERR '';
    }
 
-   # Increment $filecount by scalar(@paths), thus counting all files in $cwd which match $Target and $Regexp:
+   # Push this directory's paths to list of "paths found in all directories":
+   push @Paths, @paths;
+
+   # Increment file counter:
    $filecount += $np;
-
-   # Iterate through @paths. For any that match $RegExp, increment $regxcount. For any that also match
-   # $Predicate, increment $predcount. Send all paths that match both $RegExp and $Predicate to curfile():
-   foreach my $path (sort @paths) {
-      my $name = $path =~ s#^.*/##r;
-      if ($name =~ m/$RegExp/) {
-         ++$regxcount;
-         local $_ = e $path;
-         if (eval($Predicate)) {
-            ++$predcount;
-            curfile($path);
-         }
-      }
-   }
 
    # Return success code 1 to caller:
    return 1;
 } # end sub curdire
 
-# Process current file:
-sub curfile ($path) {
-   # If current file exists, record it in @PathsOfTheLiving:
-   if ( -e e $path ) {
-      push @PathsOfTheLiving, $path;
-   }
-
-   # If current file does NOT exist, record its hash in @PathsOfTheDead:
-   else
-   {
-      push @PathsOfTheDead, $path;
-   }
-   return 1;
-} # end sub curfile
-
 # Print statistics for this program run:
 sub stats {
-   # If any paths are living, list The Paths Of The Living:
-   if ( @PathsOfTheLiving ) {
-      say STDOUT '';
-      say STDOUT 'Paths Of The Living:';
-      say STDOUT for @PathsOfTheLiving;
-   }
-
-   # If any paths are dead, list The Paths Of The Dead:
-   if ( @PathsOfTheDead ) {
-      say STDOUT '';
-      say STDOUT 'Paths Of The Dead:';
-      say STDOUT for @PathsOfTheDead;
-   }
-
-   # If being terse or verbose, also print basic stats:
+   # If being terse or verbose, print stats:
    if ( $Verbose >= 1 ) {
       say STDERR '';
       say STDERR "Stats for running \"$pname\" on \"$OriDir\" dir tree:";
       say STDERR "Traversed $direcount directories.";
-      say STDERR "Encountered $filecount files matching target \"$Target\".";
-      say STDERR "Found $regxcount files also matching regexp \"$RegExp\".";
-      say STDERR "Found $predcount files also matching predicate \"$Predicate\".";
+      say STDERR "Found $filecount files matching given target, regexp, and predicate.";
    }
-
    return 1;
 } # sub stats
 

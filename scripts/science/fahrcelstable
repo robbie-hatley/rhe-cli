@@ -1,0 +1,58 @@
+#!/usr/bin/python
+
+# This is a 110-character-wide ASCII python-script text file.
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+
+##############################################################################################################
+# Program name:  FahrCelsTable
+# Description:   Fahrenheit-to-Celsius Table Generator
+# File name:     fahrcelstable
+# Language:      Python
+# Author:        Robbie Hatley
+# Date written:  Tue Apr 08, 2025
+# Inputs:        Three CLI args: begin, end, increment.
+# Outputs:       Sends chart to cout.  Can be redir'ed to a file.
+# Edit history:
+#   Tue Apr 08, 2025: Wrote it.
+##############################################################################################################
+
+import sys
+
+def Help ():
+   print("FahrCelsTable must have 3 arguments:\n"
+       + "  Fahrenheit Min\n"
+       + "  Fahrenheit Max\n"
+       + "  Fahrenheit Increment\n"
+       + "Max must be at least 0.001 greater than Min,\n"
+       + "and Increment must be at least 0.001\n"
+       + "FahrCelsTable will then print a table of Fahrenheit-to-Celsius conversions\n"
+       + "for the range and increment you specified.")
+
+if ('-h' == sys.argv[1] or '--help' == sys.argv[1]):
+   Help()
+   sys.exit()
+
+if 4 != len(sys.argv) :
+   print("Error: you typed ", len(sys.argv)-1, " arguments,\n",
+         "but this program requires 3 arguments. Help follows.")
+   Help()
+   sys.exit()
+
+FahrMin = float(sys.argv[1])
+FahrMax = float(sys.argv[2])
+FahrInc = float(sys.argv[3])
+
+if (FahrMin > FahrMax - 0.001):
+   print("Error: maximum must be at least 0.001 greater than minimum.")
+   sys.exit()
+
+if (FahrInc < 0.001):
+   print("Error: increment must be at least 0.001")
+   sys.exit()
+
+print("    Fahr         Cels   ")
+Fahr = FahrMin
+while ( Fahr <= FahrMax + 0.0001):
+   Cels = (Fahr - 32) / 1.8
+   print('{:10.3f}   {:10.3f}'.format(Fahr, Cels))
+   Fahr += FahrInc

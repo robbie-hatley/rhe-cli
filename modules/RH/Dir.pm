@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # This is a 110-character-wide UTF-8 Unicode Perl source-code text file with hard Unix line breaks ("\x{0A}").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
@@ -82,6 +80,23 @@
 #                   (They now don't "return on error"). Also, trimmed all dividers and lines to 110 max.
 ##############################################################################################################
 
+# ======= POD: ===============================================================================================
+
+=encoding utf8
+
+=head1 NAME
+
+RH::Dir - Robbie Hatley's Directory Utilities Module
+
+=head1 DESCRIPTION
+
+A collection of subroutines for managing file systems (especially EXT4 file systems on Linux, but most
+of these subroutines are also usable on Microsoft Windows and the NTFS file system if Cygwin is used).
+
+=head1 SUBROUTINES:
+
+=cut
+
 # ======= PACKAGE: ===========================================================================================
 
 package RH::Dir;
@@ -102,7 +117,8 @@ use open         IN  => ':encoding(UTF-8)';
 use open         OUT => ':encoding(UTF-8)';
 # NOTE: these may be over-ridden later. Eg, "open($fh, '< :raw', e $path)".
 
-# CPAN modules:
+# ======= MODULES: ===========================================================================================
+
 use parent 'Exporter';
 use POSIX 'floor', 'ceil', 'strftime';
 use Cwd;
@@ -112,10 +128,43 @@ use Encode        qw( :DEFAULT encode decode :fallbacks :fallback_all );
 use File::Type;
 use File::Copy;
 use Image::Size;
-use List::Util    qw( sum0 );
+use List::Util    qw( sum0 none );
 use Time::HiRes   qw( time sleep );
 use Filesys::Type qw( fstype );
 use Switch;
+
+# ======= VARIABLES: =========================================================================================
+
+# ------- System Variables: ----------------------------------------------------------------------------------
+
+$" = ', ' ; # Quoted-array element separator = ", ".
+
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
+# Global counters in namespace "RH", used by subs GetFiles and
+# GetRegularFilesBySize. NOTE: These are all reset to 0 EVERY time one of those
+# two subs runs, so if you want to accumulate counts of events over multiple
+# entries to those subs, you need to store those accumulations in separate
+# variables.
+our $totfcount = 0; # Count of all directory entities seen, of all types.
+our $noexcount = 0; # Count of all errors encountered.
+our $ottycount = 0; # Count of all tty files.
+our $cspccount = 0; # Count of all character special files.
+our $bspccount = 0; # Count of all block special files.
+our $sockcount = 0; # Count of all sockets.
+our $pipecount = 0; # Count of all pipes.
+our $brkncount = 0; # Count of all symbolic links to nowhere.
+our $slkdcount = 0; # Count of all symbolic links to directories.
+our $linkcount = 0; # Count of all symbolic links to non-directories.
+our $weircount = 0; # Count of all symbolic links to weirdness.
+our $sdircount = 0; # Count of all directories.
+our $hlnkcount = 0; # Count of all regular files with multiple hard links.
+our $regfcount = 0; # Count of all regular files.
+our $unkncount = 0; # Count of all unknown files.
+
+# ------- Local variables: -----------------------------------------------------------------------------------
+
+my $db = 0; # Set to 1 for debugging, 0 for no debugging.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -165,19 +214,21 @@ sub shorten_sl_names       :prototype($$$$) ; # Shorten directory and file names
 sub is_data_file           :prototype($)    ; # Return 1 if a given string is a path to a -f !-l !-d file.
 sub is_meta_file           :prototype($)    ; # Return 1 if a given string is a path to a meta-data file.
 sub is_valid_qual_dir      :prototype($)    ; # Is a given string a fully-qualified path to an existing dir?
+sub update_sha1            :prototype(;$)   ; # Create/update ".sha1" file in directory & return table & flags
+sub sha1                   :prototype($)    ; # Return hex SHA-1 hash of a data file.
 
-# ======= VARIABLES: =========================================================================================
+# ======= EXPORT LISTS: ======================================================================================
 
 # Symbols exported by default:
 our @EXPORT =
    qw
    (
+      d                       e                       glob_regexp_utf8
+      readdir_regexp_utf8
+
       GetFiles                GetRegularFilesBySize   FilesAreIdentical
       RecurseDirs             copy_file               move_file
       copy_files              move_files
-
-      d                       e                       glob_regexp_utf8
-      readdir_regexp_utf8
 
       rename_file             time_from_mtime         date_from_mtime
       get_prefix              get_suffix              get_dir_from_path
@@ -186,7 +237,8 @@ our @EXPORT =
       find_avail_enum_name    find_avail_rand_name    is_large_image
       get_correct_suffix      cyg2win                 win2cyg
       hash                    shorten_sl_names        is_data_file
-      is_meta_file            is_valid_qual_dir
+      is_meta_file            is_valid_qual_dir       update_sha1
+      sha1
    );
 
 # Symbols which it is OK to export by request:
@@ -197,33 +249,6 @@ our @EXPORT_OK =
       $sockcount $pipecount $brkncount $slkdcount $linkcount
       $weircount $sdircount $hlnkcount $regfcount $unkncount
    );
-
-# Turn on debugging?
-my $db = 0; # Set to 1 for debugging, 0 for no debugging.
-
-# Formatting for quoted arrays:
-$"=', ';
-
-# Global counters in namespace "RH", used by subs GetFiles and
-# GetRegularFilesBySize. NOTE: These are all reset to 0 EVERY time one of those
-# two subs runs, so if you want to accumulate counts of events over multiple
-# entries to those subs, you need to store those accumulations in separate
-# variables.
-our $totfcount = 0; # Count of all directory entities seen, of all types.
-our $noexcount = 0; # Count of all errors encountered.
-our $ottycount = 0; # Count of all tty files.
-our $cspccount = 0; # Count of all character special files.
-our $bspccount = 0; # Count of all block special files.
-our $sockcount = 0; # Count of all sockets.
-our $pipecount = 0; # Count of all pipes.
-our $brkncount = 0; # Count of all symbolic links to nowhere.
-our $slkdcount = 0; # Count of all symbolic links to directories.
-our $linkcount = 0; # Count of all symbolic links to non-directories.
-our $weircount = 0; # Count of all symbolic links to weirdness.
-our $sdircount = 0; # Count of all directories.
-our $hlnkcount = 0; # Count of all regular files with multiple hard links.
-our $regfcount = 0; # Count of all regular files.
-our $unkncount = 0; # Count of all unknown files.
 
 # ======= SECTION 1, PRIVATE SUBROUTINES: ====================================================================
 
@@ -322,126 +347,112 @@ sub eight_rand_lc_letters :prototype() {
 # and continue (don't return until encoding or decoding is complete):
 use constant EFLAGS => LEAVE_SRC | WARN_ON_ERR;
 
-# Decode from UTF-8 to Unicode:
+=head2 d
+
+Decodes items from UTF-8 to raw Unicode codepoints:
+sub d(@args)
+=cut
 sub d :prototype(@) (@args) {
       if (0 == scalar @args) {return Encode::decode('UTF-8', $_,       EFLAGS);}
    elsif (1 == scalar @args) {return Encode::decode('UTF-8', $args[0], EFLAGS);}
    else                 {return map {Encode::decode('UTF-8', $_,       EFLAGS)} @args };
 } # end sub d
 
-# Encode from Unicode to UTF-8:
+=head2 e
+
+Encodes items from raw Unicode codepoints to UTF-8:
+sub e(@args)
+=cut
 sub e :prototype(@) (@args) {
       if (0 == scalar @args) {return Encode::encode('UTF-8', $_,       EFLAGS);}
    elsif (1 == scalar @args) {return Encode::encode('UTF-8', $args[0], EFLAGS);}
    else                 {return map {Encode::encode('UTF-8', $_,       EFLAGS)} @args };
 } # end sub e
 
-sub glob_regexp_utf8 :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$', $predicate = '1') {
-   # This sub is like glob(), but using UTF-8, a given directory, a target type, a regular expression
-   # (instead of a csh-style wildcard), and a boolean file-type predicate as inputs, and returning matching
-   # fully-qualified paths as output, with '.' and '..' stripped-out.
+=head2 glob_regexp_utf8
 
-   # VITALLY IMPORTANT: THE "DIRECTORY" ARGUMENT MUST ALREADY BE DECODED FROM UTF-8 TO RAW UNICODE,
-   # OTHERWISE THIS FUNCTION WILL GENERATE "WIDE CHARACTER" ERRORS AND CRASH THE CALLING PROGRAM.
-   # THIS SHOULD AUTOMATICALLY BE DONE FOR YOU IF YOU USE "d(getcwd)" TO PROVIDE THE DIRECTORY.
-   # USING RAW "glob()" OR "<* .*>" OR "readdir", HOWEVER, WILL CAUSE MANY ERRORS ON EITHER LINUX OR CYGWIN
-   # IF THE CALLING PROGRAM ATTEMPTS TO PROCESS FILE NAMES IN ANY LANGUAGE OTHER THAN ENGLISH.
-   # (NAMES SUCH AS "Говорю Русский", "ॐ नमो भगवते वासुदेवाय", "看的星星，知道你是爱。" WOULD CRASH HORRIBLY.)
+Returns a sorted list of paths, not including "." or "..", in a given directory which match a given
+target, regexp, and predicate:
 
-   # If debugging, announce inputs:
+glob_regexp_utf8($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate='1')
+
+This sub is like glob(), but using UTF-8, a given directory, a target type, a regular expression
+(instead of a csh-style wildcard), and a boolean file-type predicate as inputs, and returning matching
+fully-qualified paths as output, with '.' and '..' stripped-out.
+
+Vitally important: the "directory" argument must already be decoded from utf-8 to raw unicode,
+otherwise this function will generate "wide character" errors and crash the calling program.
+This should automatically be done for you if you use cpan modules "utf8::all" and "cwd::utf8",
+or if you use "d(getcwd)", to provide the directory. Using raw "glob()" or "<* .*>" or "readdir",
+however, will cause many errors on either linux or cygwin if the calling program attempts to process
+file names in any language other than english. (Names such as "Говорю Русский", "ॐ नमो भगवते वासुदेवाय",
+"看的星星，知道你是爱。" would crash horribly.)
+=cut
+sub glob_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate='1') {
+
+   # NOTE, RH 2025-04-10: I noticed that this entire subroutine is a duplicate of "readdir_regexp_utf8" except
+   # giving fully-qualified paths instead of raw directory entries. But that can be done with "path" and
+   # "map", so I just removed most of the content of this subrountine; it's now just a wrapper around
+   # "readdir_regexp_utf8".
+
+   my @names = readdir_regexp_utf8($dir, $target, $regexp, $predicate);
+   my @paths = map {path($dir, $_)} @names;
+
+   # If debugging, print paths:
    if ($db) {
-      say STDERR "                                       ";
-      say STDERR "In sub \"glob_regexp_utf8\", near top. ";
-      say STDERR "\$dir    = $dir                        ";
-      say STDERR "\$target = $target                     ";
-      say STDERR "\$regex  = $regexp                     ";
-      say STDERR "                                       ";
-   }
-
-   # But do those inputs even make any sense?? Let's check now!
-   if ( !-e(e($dir)) || !-d(e($dir)) ) {
-      die "Fatal error in glob_regexp_utf8: Invalid directory \'$dir\'.\n$!\n";
-   }
-   if ( $target !~ m/^[FDBA]$/ ) {
-      die "Fatal error in glob_regexp_utf8: Invalid target \'$target\'.\n$!\n";
-   }
-   my $re;
-   if ( !eval {$re = qr/$regexp/} ) {
-      die "Fatal error in glob_regexp_utf8: Invalid regular expression \'$regexp\'.\n$!\n";
-   }
-
-   # Try to open, read, and close $dir; if any of those operations fail, die:
-   my $dh = undef;
-   opendir $dh, e $dir
-   or die "Fatal error in glob_regexp_utf8: Couldn't open  directory \"$dir\".\n$!\n";
-
-   my @names = sort {$a cmp $b} d(readdir($dh));
-   scalar(@names) < 2 # $dir should contain at least '.' and '..'!
-   and die "Fatal error in glob_regexp_utf8: Couldn't read  directory \"$dir\".\n$!\n";
-
-   closedir $dh
-   or die "Fatal Error in glob_regexp_utf8: Couldn't close directory \"$dir\".\n$!\n";
-
-   # Riffle through @names. Skip '.', '..', and names not matching $regex, construct paths from names,
-   # skip paths that don't exist if target is F or D or B, skip paths to objects of types not matching target,
-   # and push remaining paths onto @paths:
-   my $path;
-   my @paths;
-   foreach my $name (@names) {
-      say "IN glob_regexp_utf8. NAME FROM readdir: $name" if $db;
-      next if $name eq '.';
-      next if $name eq '..';
-      next if $name !~ m/$re/;
-
-      # Construct fully-qualified path from $dir and $name:
-      if ($dir eq '/')  {$path = "/$name";}
-      else              {$path = "$dir/$name";}
-      say "IN glob_regexp_utf8. CONSTRUCTED PATH: $path" if $db;
-
-      # Don't test for existence or type here unless target is 'F', 'D', or 'B'. For target 'A', we want
-      # GetFiles (or other caller) to be able to note any non-existent directory entries and flag them "noex":
-      if ($target eq 'A') {
-         ; # Do nothing.
-      }
-      else {
-         next if ! -e e $path;
-         lstat e $path;
-         # NOTE: DON'T test for -b -c -p -S -t here; wastes too much time; use "is_data_file" for that:
-         if    ($target eq 'F') {next if  -l _ || !-f _ ||  -d _ }
-         elsif ($target eq 'D') {next if  -l _ ||  -f _ || !-d _ }
-         elsif ($target eq 'B') {next if  -l _ || !-f _ && !-d _ }
-         else {die "Fatal error in glob_regexp_utf8: Invalid target \"$target\".\n$!\n";}
-      }
-
-      # Discard files which don't match our predicate:
-      if ( '1' ne "$predicate" ) {
-         local $_ = $name;
-         next if ! eval $predicate;
-      }
-
-      # If we get to here, the current file has passed all our tests, so push its path to "@paths":
-      push @paths, $path;
-   }
-
-   # If debugging, print diagnostics:
-   if ($db) {
-      say STDERR "                            ";
-      say STDERR "IN glob_regexp_utf8 AT END. ";
-      say STDERR "\@paths:                    ";
+      say STDERR '';
+      say STDERR 'In glob_regexp_utf8 at end.';
+      say STDERR '@paths:';
       say STDERR for @paths;
-      say STDERR "                            ";
+      say STDERR '';
    }
+
+   # Return results:
    return @paths;
 } # end sub glob_regexp_utf8 (;$$$)
 
-# Return the contents of a directory, filtered by target, regexp, and predicate:
-sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate=1) {
+=head2 readdir_regexp_utf8
+
+Returns the contents of a directory, filtered by target, regexp, and predicate:
+
+sub readdir_regexp_utf8($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate='1')
+
+This sub is like readdir(), but using UTF-8, a given directory, a target type, a regular expression
+(instead of a csh-style wildcard), and a boolean file-type predicate as inputs, and returning matching
+entries from the given directory as output, with '.' and '..' stripped-out.
+
+Vitally important: the "directory" argument must already be decoded from utf-8 to raw unicode,
+otherwise this function will generate "wide character" errors and crash the calling program.
+This should automatically be done for you if you use cpan modules "utf8::all" and "cwd::utf8",
+or if you use "d(getcwd)", to provide the directory. Using raw "glob()" or "<* .*>" or "readdir",
+however, will cause many errors on either linux or cygwin if the calling program attempts to process
+file names in any language other than english. (Names such as "Говорю Русский", "ॐ नमो भगवते वासुदेवाय",
+"看的星星，知道你是爱。" would crash horribly.)
+=cut
+sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate='1') {
+
+   # If debugging, announce inputs:
    if ($db) {
-      say "Directory = $dir";
-      say "Target    = $target";
-      say "Regexp    = $regexp";
-      say "Predicate = $predicate";
+      say STDERR "                                          ";
+      say STDERR "In sub \"readdir_regexp_utf8\", near top. ";
+      say STDERR "\$dir    = $dir                           ";
+      say STDERR "\$target = $target                        ";
+      say STDERR "\$regex  = $regexp                        ";
+      say STDERR "                                          ";
    }
+
+   # But do those inputs even make any sense?? Let's check now!
+   if ( !(-e e($dir)) || !(-d e($dir)) ) {
+      die "Fatal error in readdir_regexp_utf8: Invalid directory \'$dir\'.\n$!\n";
+   }
+   if ( $target !~ m/^[FDBA]$/ ) {
+      die "Fatal error in readdir_regexp_utf8: Invalid target \'$target\'.\n$!\n";
+   }
+   my $re;
+   if ( !eval {$re = qr/$regexp/} ) {
+      die "Fatal error in readdir_regexp_utf8: Invalid regular expression \'$regexp\'.\n$!\n";
+   }
+
    # Try to open, read, and close $dir; if any of those operations fail, die:
    my $dh = undef;
    opendir($dh, e($dir))
@@ -455,21 +466,29 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
    or die "Fatal error in readdir_regexp_utf8(): Couldn't close directory \"$dir\".\n$!\n";
 
    # Iterate through @names, rejecting '.', '..',  and everything that doesn't match $target, $regexp, and
-   # $predicate, and restoring remainder in an array called @names:
+   # $predicate, and storing remainder in an array called @names:
    my @names = ();
    NAME: foreach my $name (@raw) {
-      next if '.'  eq $name;
-      next if '..' eq $name;
+      if ($db) {say STDERR "In readdir_regexp_utf8. Name from readdir: $name"}
+
+      # Skip '.' and '..':
+      next NAME if '.'  eq $name;
+      next NAME if '..' eq $name;
+
+      # Skip this file if it does not exist:
       if ( ! -e e($name) ) {
          warn "Warning in readdir_regexp_utf8(): File \"$name\" in \"$dir\" does not exist.\n";
-         next;
+         next NAME;
       }
-      my @stats = lstat e $name;
+
+      # Skip this file if we can't stat it:
+      my @stats = lstat e($name);
       if ( scalar(@stats) < 13 ) {
          warn "Warning in readdir_regexp_utf8(): Can't lstat \"$name\" in \"$dir\".\n";
-         next;
+         next NAME;
       }
-      # Skip $name if it doesn't match $target:
+
+      # Skip this file if it doesn't match our target:
       switch($target) {
          case 'F' { next NAME if !     -f _                 }
          case 'D' { next NAME if !                 -d _     }
@@ -477,34 +496,54 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
          case 'A' {                     ;                   } # Do nothing.
          else     {                     ;                   } # Do nothing.
       }
-      # Skip $name if it doesn't match $regexp:
-      next if $name !~ m/$regexp/;
-      # Skip $name if it doesn't match $predicate:
-      local $_ = $name;
-      next if !eval($predicate);
-      # If we get to here, push name to @names:
+
+      # Skip this file if it doesn't match our regexp:
+      next NAME if $name !~ m/$regexp/;
+
+      # Skip this file if it doesn't match our predicate:
+      if ( '1' ne "$predicate" ) {
+         local $_ = e($name);
+         next NAME if ! eval $predicate;
+      }
+
+      # If we get to here, include this file among those to be returned:
       push @names, $name;
    }
+
+   # If debugging, print names:
+   if ($db) {
+      say STDERR '';
+      say STDERR 'In readdir_regexp_utf8 at end.';
+      say STDERR '@names:';
+      say STDERR for @names;
+      say STDERR '';
+   }
+
    # Return results:
    return @names;
 } # end sub readdir_regexp_utf8
 
 # ======= SECTION 3, MAJOR SUBROUTINES: ======================================================================
 
-# GetFiles returns a reference to an array of filerecords for all files in a user-specified directory.
-# Optionally, user can also specify a regular expression to match names against and a single-letter "target"
-# specifying which types of directory entries to process (files, dirs, both, or all).
-#
-# First argument is mandatory and must be a fully-qualified directory, starting with a '/' character.
-#
-# Second argument, if present, must be a Perl-Compliant Regular Expression to match directory entries against.
-#
-# Third argument, if present, must be one of the following letters:
-# F = regular Files only
-# D = Directories only (but not SYMLINKDs).
-# B = Both regular files and directories (but not SYMLINKDs).
-# A = All files (regular, directories, links, SYMLINKDs, pipes, etc, etc, etc)
-sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$', $predicate = '1') {
+=head2 GetFiles
+
+GetFiles returns a reference to an array of filerecords for all files in a user-specified directory.
+Optionally, user can also specify a regular expression to match names against and a single-letter "target"
+specifying which types of directory entries to process (files, dirs, both, or all):
+
+GetFiles($dir = d(getcwd), $target = 'A', $regexp = qr(^.+$)o, $predicate = '1')
+
+First argument, if present, must be a fully-qualified directory, starting with a '/' character.
+
+Second argument, if present, must be a Perl-Compliant Regular Expression to match directory entries against.
+
+Third argument, if present, must be one of the following letters:
+F = regular Files only
+D = Directories only (but not SYMLINKDs).
+B = Both regular files and directories (but not SYMLINKDs).
+A = All files (regular, directories, links, SYMLINKDs, pipes, etc, etc, etc)
+=cut
+sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.+$)o, $predicate = '1') {
    # "$dir"     =  What directory does user want a list of file-info packets for?
    # "$target"  =  'F' = 'Files'; 'D' = 'Directories'; 'B' = 'Both'; 'A' = 'All'.
    # "$regexp"  =  What regular expression should we use for selecting files?
@@ -519,7 +558,7 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$
    if ($dir !~ m/^\//) {
       say STDERR "Error in GetFiles: Directory \"$dir\" is invalid.\n"
                 ."Directory must start with \"/\".\"\n"
-                 ."Returning reference to empty anonymous array.";
+                ."Returning reference to empty anonymous array.";
       return [];
    }
 
@@ -671,13 +710,20 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = '^.+$
    return \@filerecords;
 } # end sub GetFiles (;$$)
 
-# GetRegularFilesBySize returns a reference to a hash of arrays of same-size file records for all regular
-# files in the current directory, with the outer hash keyed by file size. This sub can take one optional
-# argument which, if present, must be a regular expression specifying which regular files to get records for.
-# This sub is especially useful for programs which compare regular files for identicalness, preperatory to
-# making decisions regarding copying or deleting of files. To make such comparisons FAST, this sub stores
-# files records in same-file-size arrays and does not collect any stats other than $totfcount and $regfcount
-# (which will be equal).
+=head2 GetRegularFilesBySize
+
+Given a file-name regular expression to search for, this subroutine returns a reference to a hash of
+arrays of same-size file records for all matching regular files in the current directory, with the
+outer hash keyed by file size. This sub can take one optional argument which, if present, must be a
+regular expression specifying which regular files to get records for:
+
+GetRegularFilesBySize :prototype(;$) ($regexp = '^.+$')
+
+This sub is especially useful for programs which compare regular files for identicalness, preperatory to
+making decisions regarding copying or deleting of files. To make such comparisons FAST, this sub stores
+files records in same-file-size arrays and does not collect any stats other than $totfcount and $regfcount
+(which will be equal).
+=cut
 sub GetRegularFilesBySize :prototype(;$) ($regexp = '^.+$') {
    my $cwd    = d(getcwd)                                  ; # Current Working Directory.
    my $target = 'F'                                        ; # Target is "regular files only".
@@ -763,9 +809,12 @@ sub GetRegularFilesBySize :prototype(;$) ($regexp = '^.+$') {
    return \%filerecords;
 } # end sub GetRegularFilesBySize ()
 
-# Compare the contents of two files;
-# return 1 if files are identical;
-# return 0 if files are different.
+=head2 FilesAreIdentical
+
+FilesAreIdentical($filepath1, $filepath2)
+
+Compares the contents of two files. Returns 1 if files are identical, or 0 if the files are different.
+=cut
 sub FilesAreIdentical :prototype($$) ($filepath1, $filepath2) {
    # Get path of first file, make sure it exists, get its stats, make sure it's a regular file,
    # and get its size:
@@ -884,7 +933,14 @@ sub FilesAreIdentical :prototype($$) ($filepath1, $filepath2) {
    return !$different;
 } # end sub FilesAreIdentical
 
-# Navigate a directory tree recursively, applying code at each node on the tree:
+=head2 RecurseDirs
+
+Given a subroutine name as input, THIS subroutine will apply THAT subroutine in every directory in the
+directory tree decending from the current working directory:
+
+RecurseDirs {MySubName}
+
+=cut
 sub RecurseDirs :prototype(&) ($f) {
 
    # ------- WHO'S CALLING? ----------------------------------------------------------------------------------
@@ -2051,13 +2107,13 @@ sub enumerate_file_name :prototype($) ($name) {
    return $prefix . $suffix;
 } # end sub enumerate_file_name
 
-# Annotate a file's name (with a parenthetical note):
+# Annotate a file's name with a note:
 sub annotate_file_name :prototype($$) ($oldname, $note) {
    # $oldname  =  Original file name.
-   # $note     =  Note to be appended, NOT including the (parentheses)!
+   # $note     =  Note to append.
    my $oldpref = get_prefix($oldname);
    my $oldsuff = get_suffix($oldname);
-   return $oldpref . '(' . $note . ')' . $oldsuff;
+   return $oldpref . '_' . $note . $oldsuff;
 } # end sub annotate_file_name
 
 # Find an enumerated version of a file name which is NOT the name of any file in a given directory:
@@ -2078,7 +2134,12 @@ sub find_avail_enum_name :prototype($;$) ($name, $dir = d(getcwd)) {
       return '***ERROR***';
    }
 
-   # First try up to 20 different random numerators:
+   # If an un-enumerated version doesn't exist, then just use that:
+   if ( ! -e e(path($dir, $name)) ) {
+      return $name;
+   }
+
+   # Next, try up to 20 different random numerators:
    RAN: for ( 1 .. 20 ) {
       $numerator = sprintf("-(%04d)", rand_int(0,9999));
       $tryname   = $prefix . $numerator . $suffix;
@@ -2393,23 +2454,23 @@ sub hash :prototype($$;$)
 
    # Set $hash to the hash type user requested:
    my $hash;                                                   # Hash of file contents
-   for ($hash_type) {
-      if ( /^md5$/ ) {
+   switch ($hash_type) {
+      case 'md5' {
          $hash = md5_hex($data);                               # Get MD-5 file hash.
       }
-      elsif ( /^sha1$/ ) {
+      case 'sha1' {
          $hash = sha1_hex($data);                              # Get SHA-1 file hash.
       }
-      elsif ( /^sha224$/ ) {
+      case 'sha224' {
          $hash = sha224_hex($data);                            # Get SHA-224 file hash.
       }
-      elsif ( /^sha256$/ ) {
+      case 'sha256' {
          $hash = sha256_hex($data);                            # Get SHA-256 file hash.
       }
-      elsif ( /^sha384$/ ) {
+      case 'sha384' {
          $hash = sha384_hex($data);                            # Get SHA-384 file hash.
       }
-      elsif ( /^sha512$/ ) {
+      case 'sha512' {
          $hash = sha512_hex($data);                            # Get SHA-512 file hash.
       }
       else {
@@ -2423,18 +2484,9 @@ sub hash :prototype($$;$)
          return $hash;                                         # Return hash.
       }
       elsif ( /^name$/ ) {                                     # If mode-of-operation is "name":
-         if
-         (
-               ''     eq $suff                                 # If suffix is blank,
-            || '.unk' eq $suff                                 # or suffix is '.unk' (unknown type),
-            || '.xyz' eq $suff                                 # or suffix is '.xyz' (type placeholder),
-         ) {
-            $suff = get_correct_suffix($path);                 # then try to get correct suffix for file,
-         }
-         else {
-            ;                                                  # else leave suffix as it was.
-         }
-         return $hash . $suff;                                 # Return hash with suffix tacked on.
+         my $newname = $hash . $suff;                          # Make a new file name based on hash.
+         ! -e e $newname and return $newname                   # If the new name doesn't exist, return it,
+         or return find_avail_enum_name($newname);             # else return enumerated version.
       }
       else {                                                   # If $operation_mode is invalid:
          return '***ERROR***';                                 # Return "***ERROR***".
@@ -2483,23 +2535,25 @@ sub shorten_sl_names :prototype($$$$) ($src_dir, $src_fil, $dst_dir, $dst_fil) {
 # Return 1 if-and-only-if a path points to a data file (an existing, non-dir, non-link, non-empty plain file).
 # (Note: All "meta" files are "data" files, but most "data" files are not "meta" files; see next subroutine.)
 sub is_data_file :prototype($) ($path) {
-   my @stats = lstat e $path;
-   return 0 if 13 != scalar @stats; # Nonexistent files contain no data.
+   return 0 if ! -e $path;          # Nonexistent files contain no data.
+   my @stats = lstat e $path;       # Try to get statistics for file.
+   return 0 if 13 != scalar @stats; # Files with no statistics contain no data.
    return 0 if   -d _ ;             # Directories contain no data.
    return 0 if   -l _ ;             # Links contain no data.
    return 0 if ! -f _ ;             # Special files contain no data that we should be messing with.
    return 0 if   -z _ ;             # Empty files contain no data.
-   return 1;
+   return 1;                        # This file contains data. :-)
 } # end sub is_data_file :prototype($) ($path)
 
 # Return 1 if-and-only-if a given string is a path to a "meta" file (a file which is hidden, desktop-settings,
 # windows-picture-thumbnails, paint-shop-pro-browse-thumbnails, or ID-Token). Keep in mind that "hidden"
 # includes ALL files with names starting with ".", which include application settings, Free-File-Sync
 # synchronization files, Dolphin ".directory" files, Kate project files, hidden directories, etc; these are
-# all "meta" files, not intended for direct use by humans. Also note that this subroutine examines only the
-# NAME of a file, and does not test if it exists, or what kind of file it is; this is by design; my intention
-# is that you should test a file first with "is_data_file" to make sure it's an existing, non-empty plain file
-# before using THIS subroutine to see if it's "meta".
+# all "meta" files, not intended for direct use by humans.
+#
+# Also note that this subroutine examines only the NAME of a file, and does not test if it exists, or what
+# kind of file it is. This is by design. If you want to see if a file EXISTS and/or contains DATA, then use
+# "is_data_file" instead. THIS subroutine tells you only whether a file has a "meta" name.`
 sub is_meta_file :prototype($) ($path) {
    my $name = get_name_from_path($path);
    return 1 if $name =~ m/^\./;
@@ -2535,5 +2589,136 @@ sub is_valid_qual_dir :prototype($) ($path) {
    }
    return $valid;
 } # end sub is_valid_qual_dir ($)
+
+=head2  update_sha1
+
+Updates the ".sha1" SHA-1 file-hash hash-table file in a given directory (or creates it if it doesn't exist)
+and returns a reference to a hash table of all non-meta, non-empty data files in the given directory, giving
+their names, sizes, timestamps, and SHA-1 hashes of their contents:
+
+update_sha1($dir=d(getcwd))
+=cut
+sub update_sha1 :prototype(;$) ($dir=d(getcwd)) {
+   # Make a hash table to hold info on files:
+   my %ht;
+
+   # Get a list of names of all non-meta data files in current directory:
+   my @raw = readdir_regexp_utf8($dir, 'F');
+   my $nr = scalar(@raw);
+   my @names;
+   my $nf = 0;
+   foreach my $name (@raw) {
+      next if !is_data_file($name);
+      next if  is_meta_file($name);
+      push @names, $name;
+      ++$nf;
+   }
+   if ($db) {say STDERR "In update_sha1; got $nr raw files and $nf data files."}
+
+   # Get path to ".sha1" file, if any:
+   my $sha1_path = path($dir, ".sha1");
+
+   # Do we need to make a new ".sha1" in this directory?
+   my $new_flag = !(-e e($sha1_path));
+
+   # Make a flag to indicate whether we update an existing ".sha1" file:
+   my $upd_flag = 0;
+
+   # If ".sha1" does not exist, load %ht from @names:
+   if ($new_flag) {
+      foreach my $name (@names) {
+         my $path   = path($dir, $name);
+         my @stats  = lstat e($path);
+         my $size   = $stats[7];
+         my $modt   = $stats[9];
+         my $sha1   = sha1($path);
+         $ht{$name} = {Size => $size, Modt => $modt, Sha1 => $sha1};
+      }
+   } # end if (".sha1" does NOT exist)
+
+   # Else if ".sha1" DOES exist, load %ht from ".sha1",
+   # then make sure that every directory entry exists in %ht and every %ht entry exists in directory:
+   else {
+      # Load info from ".sha1" into %ht:
+      my $fh = undef;
+      open($fh, '<', $sha1_path)
+      or say STDERR "Error: Couldn't open file \".sha1\" in directory \"$dir\"."
+      and return 0;
+      while (<$fh>) {
+         chomp;
+         my ($name, $size, $modt, $sha1) = split '/', $_ ;
+         $ht{$name} = {Size => $size, Modt => $modt, Sha1 => $sha1};
+      }
+      close($fh)
+      or say STDERR "Error: Couldn't close file \".sha1\" in directory \"$dir\"."
+      and return 0;
+      # Make sure that every name in directory is accurately recorded in %ht:
+      foreach my $name (@names) {
+         my $path  = path($dir,$name);
+         my @stats = lstat e($path);
+         my $size  = $stats[7];
+         my $modt  = $stats[9];
+         # If $name isn't in table, or if size or mod-date have changed,
+         # get new hash and update entry in table:
+         if ( ! defined $ht{$name} || $size != $ht{$name}->{Size} || $modt != $ht{$name}->{Modt} ) {
+            if ($db) {say STDERR "File \"$name\" in directory \"$dir\" is not in hash table.";}
+            my $sha1 = sha1($path);
+            $ht{$name} = {Size => $size, Modt => $modt, Sha1 => $sha1};
+            $upd_flag = 1;
+         }
+      } # end for each directory entry
+      # Delete any %ht entries that don't correspond to anything in @names:
+      foreach my $key (keys %ht) {
+         if ( none { $_ eq $key } @names ) {
+            if ($db) {say STDERR "Hash-table key \"$key\" is not in directory \"$dir\".";}
+            delete $ht{$key};
+            $upd_flag = 1;
+         } # end if nothing in directory corresonds to $key
+      } # end foreach key in %ht
+   } # end else (".sha1" DOES exist)
+
+   # If we need a new or updated ".sha1" file, write %ht to ".sha1":
+   if ($new_flag || $upd_flag) {
+      my $fh = undef;
+      open($fh, '>', $sha1_path)
+      or say STDERR "Error: Couldn't open file \".sha1\" for writing in directory \"$dir\"."
+      and return 0;
+      foreach my $key (sort {$a cmp $b} keys %ht) {
+         my $name = $key;
+         my $size = $ht{$name}->{Size};
+         my $modt = $ht{$name}->{Modt};
+         my $sha1 = $ht{$name}->{Sha1};
+         say $fh join('/', $name, $size, $modt, $sha1);
+      }
+      close($fh)
+      or say STDERR "Error: Couldn't close file \".sha1\" in directory \"$dir\"."
+      and return 0;
+      # Always say path, to STDOUT:
+      if ($new_flag) {say "Wrote new \".sha1\" file to directory \"$dir\"."}
+      if ($upd_flag) {say "Wrote updated \".sha1\" file to directory \"$dir\"."}
+   }
+   my $htref = \%ht;
+   return ($htref, $nf, $new_flag, $upd_flag);
+}
+
+=head2 sha1
+
+Given a path to a file, this subroutine returns the SHA-1 hash of the given file:
+
+sha1($path)
+=cut
+sub sha1 :prototype($) ($path) {
+   my   $fh = undef;                           # File handle (initially undefined).
+   local $/ = undef;                           # Set "input record separator" to EOF.
+   open($fh, '< :raw', $path)                  # Try to open the file for reading in "raw" mode.
+   or warn "Error: couldn't open \"$path\".\n" # If file-open failed, warn user
+   and return '***ERROR***';                   # and return error code.
+   my $data = <$fh>;                           # Slurp file into $data as one big string of unprocessed bytes.
+   defined $data                               # Test if $data is defined.
+   or warn "Error: couldn't read \"$path\".\n" # If file-read failed, warn user
+   and return '***ERROR***';                   # and return error code.
+   close($fh);                                 # Close file.
+   return sha1_hex($data);                     # Return SHA-1 hash of file.
+} # end sub sha1
 
 1;

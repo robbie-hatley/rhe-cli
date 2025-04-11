@@ -1,0 +1,7 @@
+#!/usr/bin/python
+# celskelv
+import sys
+if 2 != len(sys.argv) : sys.exit()
+cels = float(sys.argv[1])
+kelv = cels + 273.15
+print(kelv)

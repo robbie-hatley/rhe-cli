@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -28,15 +28,17 @@
 #                   to STDERR and file header to STDOUT. Fixed some errors in comments and help.
 # Thu Oct 03, 2024: Got rid of Sys::Binmode.
 # Thu Feb 06, 2025: Got rid of "strict" and "warnings". Corrected "120" to "110" above. help -> STDERR.
+# Thu Apr 10, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e". Now using "cwd" instead of "d getcwd".
 ##############################################################################################################
 
 # Pragmas:
 use v5.36;
-use utf8;
 
 # CPAN modules:
-use Cwd;
-use Time::HiRes 'time';
+use utf8::all   qw( :DEFAULT );
+use Cwd::utf8   qw( :DEFAULT );
+use Time::HiRes qw( time );
 use Digest::MD5 qw( md5_hex );
 use Digest::SHA qw( sha1_hex sha224_hex sha256_hex sha384_hex sha512_hex );
 
@@ -53,10 +55,10 @@ sub help    ; # Print help and exit.
 
 # ======= PAGE-GLOBAL LEXICAL VARIABLES: =====================================================================
 
-# Settings:   Default:     Meaning of setting:       Range:   Meaning of default:
-my $Help    = 0        ; # Print help and exit?      0,1      Don't print help.
-my $Recurse = 0        ; # Recurse subdirectories?   bool     Don't recurse.
-my $RegExp  = qr/^.+$/ ; # Regular Expression.       regexp   Process all file names.
+# Settings:   Default:      Meaning of setting:       Range:   Meaning of default:
+my $Help    = 0         ; # Print help and exit?      0,1      Don't print help.
+my $Recurse = 0         ; # Recurse subdirectories?   bool     Don't recurse.
+my $RegExp  = qr/^.+$/o ; # Regular Expression.       regexp   Process all file names.
 
 # Counters:
 my $direcount = 0; # Count of directories processed by curdire().
@@ -71,7 +73,7 @@ my $skipcount = 0; # Count of files skipped.
    # Set time, program, and cwd variables:
    my $t0    = time;
    my $pname = get_name_from_path($0);
-   my $cwd   = d getcwd;
+   my $cwd   = cwd;
 
    # Process arguments:
    argv;
@@ -83,7 +85,7 @@ my $skipcount = 0; # Count of files skipped.
    say    STDERR "\$RegExp  = $RegExp"    ;
 
    # Print file header to STDOUT:
-   $cwd = d getcwd;
+   $cwd = getcwd;
    say STDOUT "File hashes for all non-meta regular files matching regular expression \"$RegExp\"";
    say STDOUT "in directory \"$cwd\".";
    say STDOUT "(And in all subdirectories thereof.)" if $Recurse;
@@ -117,15 +119,17 @@ sub argv {
    my $end = 0;               # end-of-options flag
    my $s = '[a-zA-Z0-9]';     # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]';  # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {
-      /^--$/                  # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1            # so if we see that, then set the "end-of-options" flag
+   for ( @ARGV ) {            # For each item in @ARGV:
+      !$end                   # If we haven't yet reached end-of-options,
+      && /^--$/               # and we see "--",
+      and $end = 1            # then set the "end-of-options" flag
       and next;               # and skip to next element of @ARGV.
       !$end                   # If we haven't yet reached end-of-options,
       && ( /^-(?!-)$s+$/      # and if we get a valid short option
       ||   /^--(?!-)$d+$/ )   # or a valid long option,
       and push @opts, $_      # then push item to @opts
-      or  push @args, $_;     # else push item to @args.
+      and next;               # and skip to next element of @ARGV.
+      push @args, $_;         # Otherwise, push item to @args.
    }
 
    # Process options:
@@ -135,7 +139,7 @@ sub argv {
    }
 
    # Set $RegExp to first arg (if there is one), and ignore remaining args (if any):
-   @args and $RegExp = qr/$args[0]/;
+   @args and $RegExp = qr/$args[0]/o;
 
    # Return success code 1 to caller:
    return 1;
@@ -146,7 +150,7 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $cwd = d getcwd;
+   my $cwd = cwd;
    say "\nDirectory # $direcount: $cwd";
 
    # Get list of all regular-file entries in $cwd:
@@ -167,7 +171,7 @@ sub curfile ($path) {                          # Enter subroutine "curfile".
    my $name = get_name_from_path($path);       # Get name of current file.
    my   $fh = undef;                           # File handle (initially undefined).
    local $/ = undef;                           # Set "input record separator" to EOF.
-   open($fh, '< :raw', e $path)                # Try to open the file for reading in "raw" mode.
+   open($fh, '< :raw', $path)                  # Try to open the file for reading in "raw" mode.
    or warn "Error: couldn't open \"$name\".\n" # If file-open failed, warn user
    and ++$errocount                            # and increment error counter
    and return 0;                               # and return failure code.

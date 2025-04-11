@@ -22,10 +22,7 @@
 ##############################################################################################################
 
 use v5.36;
-use strict;
-use warnings;
-use warnings FATAL => "utf8";
-use utf8;
+
 use utf8::all;
 use Cwd::utf8;
 use Time::HiRes qw( time );
@@ -56,11 +53,13 @@ my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $Verbose   = 1         ; # Be verbose?               bool      Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 # No "$Target" variable because it doesn't make sense to get the SHA1 data hash of a non-data object.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
+my $OriDir    = cwd       ; # Original Directory.       dir       Current working directory.
+my $Yes       = 0         ; # Don't prompt; just do it. bool      Be safe: ask user.
 
 # Counters:
 my $direcount = 0; # Count of directories navigated.
@@ -82,65 +81,77 @@ sub help    ; # Print help.
 { # begin main
    # Start execution timer:
    my $t0 = time;
+   my @s0 = localtime($t0);
 
    # Process @ARGV and set settings:
    argv;
 
    # Print program entry message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
-      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
-      say STDERR '';
+   if ( $Verbose >= 1 ) {
+      printf STDERR "Now entering program \"%s\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $pname, $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
    }
 
    # Also print compilation time if being verbose:
-   if ( 2 == $Verbose ) {
-      printf(STDERR "Compilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
-      say STDERR '';
+   if ( $Verbose >= 2 ) {
+      printf STDERR "Compilation time was %.3fms\n\n",
+                    1000 * ($cmpl_end - $cmpl_beg);
    }
 
-   # Print the values of all variables if debugging:
-   if ( 1 == $Debug ) {
-      say STDERR "pname     = $pname";
-      say STDERR "cmpl_beg  = $cmpl_beg";
-      say STDERR "cmpl_end  = $cmpl_end";
-      say STDERR "Options   = (@Opts)";
-      say STDERR "Arguments = (@Args)";
-      say STDERR "Debug     = $Debug";
-      say STDERR "Help      = $Help";
-      say STDERR "Verbose   = $Verbose";
-      say STDERR "Recurse   = $Recurse";
-
-      say STDERR "RegExp    = $RegExp";
-      say STDERR "Predicate = $Predicate";
-      say STDERR '';
+   # Print the values of all variables if debugging or being verbose:
+   if ( $Debug >= 1 || $Verbose >= 2 ) {
+      print STDERR "pname     = $pname\n",
+                   "cmpl_beg  = $cmpl_beg\n",
+                   "cmpl_end  = $cmpl_end\n",
+                   "Options   = (@Opts)\n",
+                   "Arguments = (@Args)\n",
+                   "Debug     = $Debug\n",
+                   "Help      = $Help\n",
+                   "Verbose   = $Verbose\n",
+                   "Recurse   = $Recurse\n",
+                   "RegExp    = $RegExp\n",
+                   "Predicate = $Predicate\n",
+                   "OriDir    = $OriDir\n\n";
    }
 
-   # If user wants help, just print help and exit:
-   $Help and help and exit;
+   # If user wants help, print help:
+   if ( $Help ) {
+      help
+   }
 
-   warn
-   "WARNING!!! THIS PROGRAM CONVERTS THE NAMES OF (NEARLY) ALL FILES IN THE\n".
-   "CURRENT DIRECTORY (AND ALSO ALL SUBDIRECTORIES IF A -r OR --recurse OPTION\n".
-   "IS USED) TO THE SHA1 HASHES OF THE FILES. (BYPASSES '.', '..', '*.ini',\n".
-   "'*.db', AND '*.jbf' FILES.) ALL EXISTING FILE NAMES WILL BE OBLITERATED!!!\n".
-   "ARE YOU SURE THIS IS REALLY WHAT YOU WANT TO DO???\n".
-   "PRESS 'G' (shift-g) TO CONTINUE, OR ANY OTHER KEY TO ABORT.\n";
-   my $char = get_character;
-   if ($char ne 'G') {exit 0;}
+   # Else if in yesman mode, "just do it":
+   elsif ( $Yes ) {
+      $Recurse and RecurseDirs {curdire} or curdire;
+      stats;
+   }
 
-   # If we get to here, run program, recursing if user so desires, then print stats:
-   $Recurse and RecurseDirs {curdire} or curdire;
-   stats;
+   # Otherwise, print warning, prompt user, and if user agrees, change file names to SHA1:
+   else {
+      warn
+      "WARNING!!! THIS PROGRAM CONVERTS THE NAMES OF (NEARLY) ALL FILES IN THE\n".
+      "CURRENT DIRECTORY (AND ALSO ALL SUBDIRECTORIES IF A -r OR --recurse OPTION\n".
+      "IS USED) TO THE SHA1 HASHES OF THE FILES. (BYPASSES '.', '..', '*.ini',\n".
+      "'*.db', AND '*.jbf' FILES.) ALL EXISTING FILE NAMES WILL BE OBLITERATED!!!\n".
+      "ARE YOU SURE THIS IS REALLY WHAT YOU WANT TO DO???\n".
+      "PRESS 'G' (shift-g) TO CONTINUE, OR ANY OTHER KEY TO ABORT.\n";
+      my $char = get_character;
+      if ($char eq 'G') {
+         $Recurse and RecurseDirs {curdire} or curdire;
+         stats;
+      }
+   }
 
    # Stop execution timer:
    my $t1 = time;
+   my @s1 = localtime($t1);
 
    # Print exit message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
-      say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
-      printf STDERR "Execution time was %.3fms.", $ms;
+      printf STDERR
+         "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n"
+        ."Execution time was %.3fms.",
+        $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5], $ms;
    }
 
    # Exit program, returning success code "0" to caller:
@@ -171,11 +182,12 @@ sub argv {
    for ( @Opts ) {
       /^-$s*h/ || /^--help$/    and $Help    =  1  ;
       /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default.
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
+      /^-$s*y/ || /^--yes$/     and $Yes     =  1  ; # DANGER: BE SURE YOU KNOW WHAT YOU'RE DOING!
    }
 
    # Get number of arguments:
@@ -208,12 +220,16 @@ sub curdire {
    # Increment directory counter:
    ++$direcount;
 
-   # Get and announce current working directory:
-   my $curdir = cwd;
-   say "\nDir # $direcount: $curdir\n";
+   # Get current working directory:
+   my $cwd = cwd;
 
-   # Get a list of all paths in current directory matching target "F" and $RegExp:
-   my @paths = glob_regexp_utf8($curdir, 'F', $RegExp);
+   # Announce current working directory if being verbose:
+   if ( $Verbose >= 2 ) {
+      say STDERR "\nDirectory # $direcount: $cwd\n";
+   }
+
+   # Get sorted list of paths in $cwd matching $Target, $RegExp, and $Predicate:
+   my @paths = sort {$a cmp $b} glob_regexp_utf8($cwd, 'F', $RegExp, $Predicate);
 
    # Send each matching path to curfile:
    foreach my $path (@paths) {
@@ -221,13 +237,7 @@ sub curdire {
       next if !is_data_file($path);
       # Bypass all meta files (hidden, settings, metadata, etc):
       next if is_meta_file($path);
-      # Count all non-meta data files matching regexp "$RegExp":
-      ++$filecount;
-      # Skip all paths not matching $Predicate:
-      local $_ = $path;
-      next if !eval($Predicate);
-      # If we get to here, increment $predcount and send path to curfile:
-      ++$predcount;
+      # If we get to here, send path to curfile():
       curfile($path);
    }
    return 1;
@@ -235,10 +245,15 @@ sub curdire {
 
 # Process current file.
 sub curfile ($path) {
+   # Increment file counter:
+   ++$filecount;
+   # Get old and new file names:
    my $oldname = get_name_from_path($path);
-
    my $newname = hash($path, 'sha1', 'name');
-   '***ERROR***' eq $newname and say "Couldn't find available SHA1 name for $path" and return 0;
+   if ( '***ERROR***' eq $newname ) {
+      say "Couldn't find available SHA1 name for $path";
+      return 0;
+   }
    rename_file($oldname, $newname)
    and ++$renacount
    and say "Renamed \"$oldname\" to \"$newname\"."
@@ -250,12 +265,15 @@ sub curfile ($path) {
 
 # Print stats:
 sub stats {
-   print("\nStats for program \"pname\":\n");
-   printf("Navigated %6u directories.\n",                                                         $direcount);
-   printf("Found     %6u non-meta data files matching regexp \"$RegExp\".\n",                     $filecount);
-   printf("Found     %6u such files also matching predicate \"$Predicate\".\n",                   $predcount);
-   printf("Renamed   %6u files.\n",                                                               $renacount);
-   printf("Failed    %6u file-rename attempts.\n",                                                $failcount);
+   if ( $Verbose >= 1 ) {
+      print STDERR ((<<"      END_OF_STATS") =~ s/^      //gmr);
+
+      Stats for running "$pname" in directory tree "$OriDir":
+      Navigated $direcount directories.
+      Found $filecount data files matching regexp "$RegExp" and predicate "$Predicate".
+      Renamed $renacount files and failed $failcount file-rename attempts.
+      END_OF_STATS
+   }
    return 1;
 } # end sub stats
 
@@ -274,17 +292,16 @@ sub help {
    SHA-1 hashes of files.
 
    -------------------------------------------------------------------------------
-   WARNING!!! THIS PROGRAM CONVERTS THE NAMES OF (NEARLY) ALL REGULAR FILES IN THE
+   WARNING: THIS PROGRAM CONVERTS THE NAMES OF (NEARLY) ALL REGULAR FILES IN THE
    CURRENT DIRECTORY (AND ALSO ALL SUBDIRECTORIES IF A -r or --recurse OPTION
-   IS USED) TO THE SHA1 HASHES OF THE FILES. (Bypasses '.', '..', 'desktop*.ini',
-   'thumbs*.db', and 'pspbrwse*.jbf'.) IT OBLITERATES ALL EXISTING FILE NAMES!!!
-   ONLY USE THIS PROGRAM IF THAT'S WHAT YOU REALLY WANT TO DO!!!
-
+   IS USED) TO THE SHA1 HASHES OF THE FILES. IT OBLITERATES EXISTING FILE NAMES!
+   ONLY USE THIS PROGRAM IF THAT'S WHAT YOU REALLY WANT TO DO!
 
    -------------------------------------------------------------------------------
-   Command line:
+   Command lines:
 
-   file-names-to-sha1.pl [options] [arguments]
+   file-names-to-sha1.pl --help | -h             (to print this help and exit)
+   file-names-to-sha1.pl [options] [arguments]   (to give SHA1 names to files)
 
    -------------------------------------------------------------------------------
    Description of Options:
@@ -297,6 +314,7 @@ sub help {
    -v or --verbose    Be verbose.
    -l or --local      DON'T recurse subdirectories.     (DEFAULT)
    -r or --recurse    DO    recurse subdirectories.
+   -y or --yes        Don't prompt; just do it. (DANGEROUS!!!)
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
@@ -351,12 +369,8 @@ sub help {
    A number of arguments greater than 2 will cause this program to print an error
    message and abort.
 
-   -------------------------------------------------------------------------------
-   Final warning:
 
-   This program is DANGEROUS!!!
-   My Vishnu and Laxmi have mercy on you!
-
+   Happy file renaming!
 
    Cheers,
    Robbie Hatley,

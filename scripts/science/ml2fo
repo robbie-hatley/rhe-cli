@@ -1,0 +1,7 @@
+#!/usr/bin/python
+# ml2fo
+import sys
+if 2 != len(sys.argv) : sys.exit()
+ml = float(sys.argv[1])
+fo = ml / 29.5735295625
+print(fo)

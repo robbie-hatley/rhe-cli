@@ -1,0 +1,7 @@
+#!/usr/bin/python
+# in2cm
+import sys
+if 2 != len(sys.argv) : sys.exit()
+ic = float(sys.argv[1])
+cm = ic * 2.54
+print(cm)
