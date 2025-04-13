@@ -87,11 +87,20 @@ sub new {
       return $text;
    }
 
+   # Render certain control codes visible and safe:
+   sub safe3 {
+      join '',
+      map {chr}
+      map {$_ < 32 ? $_ + 0x2400 : $_}
+      map {ord}
+      split(//,shift);
+   }
+
 sub match {
    my $self    = shift;
    my $regexp  = $self->{RegExp};
    my $text    = shift;
-   my $safe    = safe2($text);
+   my $safe    = safe3($text);
    say '';
    say "New regexp test with \$text = \"$safe\".";
    say 'Length of $text = ', length($text), '.';
