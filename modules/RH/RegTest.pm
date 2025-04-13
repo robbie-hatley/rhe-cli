@@ -96,11 +96,16 @@ sub new {
       split(//,shift);
    }
 
+   # Render control codes with ordinals 0x00 through 0x1f visible and safe,
+   # by adding 0x2400 to their ordinals:
+   sub safe4 {shift =~ s/([\x00-\x1F]{1})/chr(ord($1)+0x2400)/egr}
+
+# Match
 sub match {
    my $self    = shift;
    my $regexp  = $self->{RegExp};
    my $text    = shift;
-   my $safe    = safe3($text);
+   my $safe    = safe4($text);
    say '';
    say "New regexp test with \$text = \"$safe\".";
    say 'Length of $text = ', length($text), '.';
