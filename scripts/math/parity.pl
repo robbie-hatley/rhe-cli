@@ -5,8 +5,8 @@ my $odds = 0;
 my $evns = 0;
 for (@ARGV) {
    if ($_ % 2) {
-   	   ++$odds;
-   	   say "$_ is odd"
+      ++$odds;
+      say "$_ is odd"
    }
    else {
       ++$evns;

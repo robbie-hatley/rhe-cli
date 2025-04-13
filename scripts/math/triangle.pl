@@ -106,7 +106,8 @@ sub argv {
 argv;
 
 # If we get to here, @sides will now be three positive numbers in ascending order.
-# These sides represent a triangle if-and-only-if $sides[0]+$sides[1] > $sides[2]:
+# These sides represent a triangle if-and-only-if $sides[0]+$sides[1] >= $sides[2]:
 say "Sides = (@sides)";
-if ( $sides[0]+$sides[1] > $sides[2] ) {say "YES, a triangle CAN be formed with sides of these lengths."}
-else                                   {say "NO, a triangle CAN'T be formed with sides of these lengths."}
+if    ( $sides[0]+$sides[1] >  $sides[2] ) {say "YES, a triangle CAN be formed with sides of these lengths."}
+elsif ( $sides[0]+$sides[1] == $sides[2] ) {say "A degenerate triangle is formed by sides of these lengths."}
+elsif ( $sides[0]+$sides[1] <  $sides[2] ) {say "NO, a triangle CAN'T be formed with sides of these lengths."}

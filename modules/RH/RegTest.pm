@@ -48,6 +48,7 @@ use open         IN  => ':encoding(UTF-8)';
 use open         OUT => ':encoding(UTF-8)';
 # NOTE: these may be over-ridden later. Eg, "open($fh, '< :raw', e $path)".
 
+# Make a new regexp tester:
 sub new {
    my $class  = shift;
    my $re = @_ ? shift : '^.+$';
@@ -60,18 +61,46 @@ sub new {
    return bless $self, $class;
 }
 
+   # Render certain control codes visible and safe:
+   sub safe1 {
+      local $_ = shift;
+      my $forbid;
+      $forbid .= "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f";
+      $forbid .= "\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f";
+      my $replac;
+      $replac .= "\x{2400}\x{2401}\x{2402}\x{2403}\x{2404}\x{2405}\x{2406}\x{2407}";
+      $replac .= "\x{2408}\x{2409}\x{240a}\x{240b}\x{240c}\x{240d}\x{240e}\x{240f}";
+      $replac .= "\x{2410}\x{2411}\x{2412}\x{2413}\x{2414}\x{2415}\x{2416}\x{2417}";
+      $replac .= "\x{2418}\x{2419}\x{241a}\x{241b}\x{241c}\x{241d}\x{241e}\x{241f}";
+      return eval("tr/$forbid/$replac/r");
+   }
+
+   # Render certain control codes visible and safe:
+   sub safe2 {
+      my $text = shift;
+      foreach my $idx (0..length($text)-1) {
+         my $o = ord(substr($text,$idx,1));
+         if ( $o < 32 ) {
+            substr($text, $idx, 1, chr($o+0x2400));
+         }
+      }
+      return $text;
+   }
+
 sub match {
-   my $Self    = shift;
-   my $RegExp  = $Self->{RegExp};
-   my $Text    = shift;
+   my $self    = shift;
+   my $regexp  = $self->{RegExp};
+   my $text    = shift;
+   my $safe    = safe2($text);
    say '';
-   say "New RegExp test: \$Text = \"$Text\"";
-   my @Matches = $Text =~ m/$RegExp/;
+   say "New regexp test with \$text = \"$safe\".";
+   say 'Length of $text = ', length($text), '.';
+   my @matches = $text =~ m/$regexp/;
    # If match, the above will return the list (1) if no captures, or the list ($1, $2, $3...) if captures.
    # If no match, the above will return the list (). So either way, we can easily determine match/no-match
-   # by if (@Matches), because "if" forces scalar context, same as "if (scalar(@Matches))".
-   if (@Matches) {
-      say "Text matches RegExp.";
+   # by if (@matches), because "if" forces scalar context, same as "if (scalar(@matches))".
+   if (@matches) {
+      say "Text matches regexp.";
       say ( "Length  of \$` = "  ,   length($`) ,        );
       say ( "Content of \$` = \"",          $`  , "\""   );
       say ( "Length  of \$& = "  ,   length($&) ,        );
@@ -81,14 +110,14 @@ sub match {
       # If there were 1-or-more captures, $1 will be set; otherwise, $1 will be undefined.
       # So the easiest way to determine "Were there captures?" is "if (defined $1) {...} else {...}".
       if ( defined $1 ) {
-         say scalar(@Matches), " captures: ", join(', ', map {"\"$_\""} @Matches);
+         say scalar(@matches), " captures: ", join(', ', map {"\"$_\""} @matches);
       }
       else {
          say('No captures.');
       }
    }
    else {
-      say "Text does NOT match Regex.";
+      say "Text does NOT match regexp.";
    }
 }
 
