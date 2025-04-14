@@ -1,5 +1,3 @@
-#! /usr/bin/perl
-
 # This is a 120-character-wide UTF-8 Unicode Perl source-code text file with hard Unix line breaks ("\x{0A}").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
@@ -24,6 +22,8 @@
 #                   Added some comments to clarify various tricky bits.
 # Mon Aug 28, 2023: Fixed bug in which, if capture $1 is "0", it will be reported as "no captures".
 # Thu Oct 03, 2024: Got rid of Sys::Binmode.
+# Sun Apr 13, 2025: Got rid of shebang (not used by modules, because not executable).
+#                   Added "sub safe" to safely display control characters.
 ##############################################################################################################
 
 # Package:
@@ -34,19 +34,17 @@ use v5.36;
 use strict;
 use warnings;
 use utf8;
-use warnings FATAL => 'utf8';
 
-# CPAN modules:
-# (none)
-# Note: Don't use "use parent 'Exporter';" here, because this module doesn't export anything,
-# because it is a class. Also, don't put -CSDA on the shebang, because it's too late for that.
+# NOTE: Don't use "use parent 'Exporter';" here, because this module doesn't export anything,
+# because it is a class.
 
 # Encodings:
 use open ':std', IN  => ':encoding(UTF-8)';
 use open ':std', OUT => ':encoding(UTF-8)';
 use open         IN  => ':encoding(UTF-8)';
 use open         OUT => ':encoding(UTF-8)';
-# NOTE: these may be over-ridden later. Eg, "open($fh, '< :raw', e $path)".
+# NOTE: These may be over-ridden later. Eg, "open($fh, '< :raw', e $path)".
+# NOTE: Can't use "utf8::all" here, because it's only for package "main".
 
 # Make a new regexp tester:
 sub new {
@@ -61,51 +59,20 @@ sub new {
    return bless $self, $class;
 }
 
-   # Render certain control codes visible and safe:
-   sub safe1 {
-      local $_ = shift;
-      my $forbid;
-      $forbid .= "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f";
-      $forbid .= "\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f";
-      my $replac;
-      $replac .= "\x{2400}\x{2401}\x{2402}\x{2403}\x{2404}\x{2405}\x{2406}\x{2407}";
-      $replac .= "\x{2408}\x{2409}\x{240a}\x{240b}\x{240c}\x{240d}\x{240e}\x{240f}";
-      $replac .= "\x{2410}\x{2411}\x{2412}\x{2413}\x{2414}\x{2415}\x{2416}\x{2417}";
-      $replac .= "\x{2418}\x{2419}\x{241a}\x{241b}\x{241c}\x{241d}\x{241e}\x{241f}";
-      return eval("tr/$forbid/$replac/r");
-   }
+# Render control codes with ordinals 0x00 through 0x1f visible and safe,
+# by adding 0x2400 to their ordinals:
+sub safe {
+   my $text = shift;
+   $text =~ s/([\x00-\x1f\x7f])/chr(ord($1)+0x2400)/eg;
+   return $text;
+}
 
-   # Render certain control codes visible and safe:
-   sub safe2 {
-      my $text = shift;
-      foreach my $idx (0..length($text)-1) {
-         my $o = ord(substr($text,$idx,1));
-         if ( $o < 32 ) {
-            substr($text, $idx, 1, chr($o+0x2400));
-         }
-      }
-      return $text;
-   }
-
-   # Render certain control codes visible and safe:
-   sub safe3 {
-      join '',
-      map {chr}
-      map {$_ < 32 ? $_ + 0x2400 : $_}
-      map {ord}
-      split(//,shift);
-   }
-
-   # Render control codes with ordinals 0x00 through 0x1f visible and safe,
-   # by adding 0x2400 to their ordinals:
-   sub safe4 {shift =~ s/([\x00-\x1F]{1})/chr(ord($1)+0x2400)/egr}
-
-# Match
+# Match input against regexp:
 sub match {
    my $self    = shift;
    my $regexp  = $self->{RegExp};
    my $text    = shift;
-   my $safe    = safe4($text);
+   my $safe    = safe($text);
    say '';
    say "New regexp test with \$text = \"$safe\".";
    say 'Length of $text = ', length($text), '.';
@@ -116,11 +83,11 @@ sub match {
    if (@matches) {
       say "Text matches regexp.";
       say ( "Length  of \$` = "  ,   length($`) ,        );
-      say ( "Content of \$` = \"",          $`  , "\""   );
+      say ( "Content of \$` = \"",     safe($`) , "\""   );
       say ( "Length  of \$& = "  ,   length($&) ,        );
-      say ( "Content of \$& = \"",          $&  , "\""   );
+      say ( "Content of \$& = \"",     safe($&) , "\""   );
       say ( "Length  of \$' = "  ,   length($') ,        );
-      say ( "Content of \$' = \"",          $'  , "\""   );
+      say ( "Content of \$' = \"",     safe($') , "\""   );
       # If there were 1-or-more captures, $1 will be set; otherwise, $1 will be undefined.
       # So the easiest way to determine "Were there captures?" is "if (defined $1) {...} else {...}".
       if ( defined $1 ) {

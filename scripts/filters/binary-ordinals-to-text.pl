@@ -25,18 +25,31 @@ use utf8::all;
 # Get lines of binary ordinals:
 my @lines = <>;
 
-# Die if any line of input is invalid:
-foreach my $idx (0..$#lines) {
-   if ($lines[$idx] !~ m/^[01 \n]$/) {
-      die "Fatal error in \"binary-ordinals-to-tex.pl\": Invalid characters on line $idx.\n"
+# Die if any line of input contains any characters except zeros, ones, spaces, and ending newlines:
+foreach my $idx (0..$#lines) {                # Riffle through indexs of @lines.
+   local $_ = $lines[$idx];                   # Set local copy of $_ to current line.
+   chomp;                                     # Delete ending newline if any.
+   /^[01 ]*$/                                 # Remainder should be zeros, ones, and spaces only, else die.
+   or die "Fatal error in \"binary-ordinals-to-tex.pl\": Invalid characters on line $idx.\n"
          ."(Input should contain zeros, ones, spaces, and newlines only.)\n";
-   }
 }
 
-foreach my $line (@lines) {
-   $line s/\s+$//;
-   for (split / /) {
-      if (/^[01]+$/) {print chr oct '0b'.$_;}
-      else           {print "\x{FFFD}"     ;}
-   }
-}
+for (@lines) {                                # Riffle through @lines, setting $line to each line in turn.
+   chomp;                                     # Delete ending newline, if present, from current line.
+   for my $cluster (split / /) {              # Split line into clusters of 0s and 1s and riffle through them.
+      my $o = oct( '0b' . $cluster );         # Get ordinal from cluster.
+      if    ((32 > $o || 127 == $o)           # If control character
+             && 9 != $o && 10 != $o) {        # other than tab or newline,
+         print chr(9216+$o);                  # print visual representation.
+      }
+      elsif (127 < $o && $o < 160) {          # If extended control character,
+         print chr($o+0x1FA80);               # print some weird blocky black angular symbols.
+      }
+      elsif ($o > 0x10FFFF) {                 # If out-of-range,
+         print '�';                           # print replacement character "\x{FFFD}".
+      }
+      else {                                  # Otherwise,
+         print(chr($o));                      # print character mapped-to by ordinal.
+      } # end else (print char)
+   } # end for (each ordinal)
+} # end for (each line)

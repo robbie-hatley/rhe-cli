@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -22,10 +22,11 @@
 #                   subroutine "error()" as it's no-longer needed. (If no args, program simply does nothing.)
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
 # Sat Mar 15, 2025: Modernized. Added debug. Removed "use RH::Util".
+# Sun Apr 13, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
+use utf8::all;
 
 use Time::HiRes 'time';
 
@@ -52,6 +53,7 @@ my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $Scalar    = 0         ; # Use scalar input?         bool      No, use list input.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -133,9 +135,11 @@ sub argv {
    for ( @Opts ) {
       /^-$s*h/ || /^--help$/    and $Help    = 1 ;
       /^-$s*e/ || /^--debug$/   and $Debug   = 1 ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
-      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose = 0 ; # DEFAULT
+      /^-$s*t/ || /^--terse$/   and $Verbose = 1 ;
+      /^-$s*v/ || /^--verbose$/ and $Verbose = 2 ;
+      /^-$s*l/ || /^--list$/    and $Scalar  = 0 ; # DEFAULT
+      /^-$s*s/ || /^--scalar$/  and $Scalar  = 1 ;
    }
 
    # No processing needs to be done to @Args; it will be construed as a list of RegExps to be tested.
@@ -145,11 +149,23 @@ sub argv {
 } # end sub argv
 
 sub test {
+   if ($Debug) {
+      say STDERR "Just entered test.";
+   }
    my @input_lines = <STDIN>;
+   if ($Debug) {
+      say STDERR "In test; input lines are:";
+      say STDERR for @input_lines;
+   }
    foreach my $RE ( @Args ) {
       my $tester = RH::RegTest->new($RE);
-      foreach my $line ( @input_lines ) {
-         $tester->match($line);
+      if ($Scalar) {
+         $tester->match(join '', @input_lines);
+      }
+      else {
+         foreach my $line ( @input_lines ) {
+            $tester->match($line);
+         }
       }
    }
 }

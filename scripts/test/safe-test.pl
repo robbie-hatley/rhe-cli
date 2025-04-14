@@ -1,23 +1,36 @@
 #!/usr/bin/env perl
 # safe-test.pl
 # Time-tests various subroutines for making characters with ordinals in the
-# 0-31 range safe and visible.
+# 0-31 range safe and visible. Sends input text to subroutines formatted as
+# a list of lines.
 
+use utf8::all;
 use Time::HiRes 'time';
+
+# Shall we debug?
+my $db = 0;
+
+# Use list? (Default is no, use scalar.)
+my $List  = 0;
+my $Input = "Scalar";
+for ( my $i = 0 ; $i <= $#ARGV ; ++$i ) {
+   local $_ = $ARGV[$i];
+   if ( /^-/ ) {
+      if ( /^-l$/ || /^--list$/   ) { $List = 1 ; $Input = "List"   }
+      if ( /^-s$/ || /^--scalar$/ ) { $List = 0 ; $Input = "Scalar" } # DEFAULT
+   }
+   splice @ARGV, $i, 1;
+   --$i;
+}
 
 # Render control codes with ordinals 0x00 through 0x1f visible and safe,
 # by adding 0x2400 to their ordinals:
-my $forbid;
-$forbid .= "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f";
-$forbid .= "\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f";
-my $replac;
-$replac .= "\x{2400}\x{2401}\x{2402}\x{2403}\x{2404}\x{2405}\x{2406}\x{2407}";
-$replac .= "\x{2408}\x{2409}\x{240a}\x{240b}\x{240c}\x{240d}\x{240e}\x{240f}";
-$replac .= "\x{2410}\x{2411}\x{2412}\x{2413}\x{2414}\x{2415}\x{2416}\x{2417}";
-$replac .= "\x{2418}\x{2419}\x{241a}\x{241b}\x{241c}\x{241d}\x{241e}\x{241f}";
+my $forbid = join '', map {chr} (    0 ..   31 ,  127 );
+my $replac = join '', map {chr} ( 9216 .. 9247 , 9249 );
 sub safe1 {
    local $_ = shift;
-   return eval("tr/$forbid/$replac/r");
+   eval("tr/$forbid/$replac/");
+   return $_;
 }
 
 # Render control codes with ordinals 0x00 through 0x1f visible and safe,
@@ -26,7 +39,7 @@ sub safe2 {
    my $text = shift;
    foreach my $idx (0..length($text)-1) {
       my $o = ord(substr($text,$idx,1));
-      if ( $o < 32 ) {
+      if ( $o < 32 || 127 == $o ) {
          substr($text, $idx, 1, chr($o+0x2400));
       }
    }
@@ -36,48 +49,54 @@ sub safe2 {
 # Render control codes with ordinals 0x00 through 0x1f visible and safe,
 # by adding 0x2400 to their ordinals:
 sub safe3 {
-   join '',
-   map {chr}
-   map {$_ < 32 ? $_ + 0x2400 : $_}
-   map {ord}
-   split(//,shift);
+   join '', map {chr} map {32 > $_ || 127 == $_ ? $_ + 0x2400 : $_} map {ord} split(//,shift);
 }
 
-# Render control codes with ordinals 0x00 through 0x1f
-# visible and safe, by adding 0x2400 to their ordinals:
-sub safe4 {shift =~ s/([\x00-\x1F]{1})/chr(ord($1)+0x2400)/egr}
+# Render control codes with ordinals 0x00 through 0x1f visible and safe,
+# by adding 0x2400 to their ordinals:
+sub safe4 {
+   my $text = shift;
+   $text =~ s/([\x00-\x1f\x7f])/chr(ord($1)+0x2400)/eg;
+   return $text;
+}
 
-# Get lines of test text:
+# Get lines of test text and dump them into an array variable called "lines":
 my @lines = <>;
-my @safe;
+
+# Also dump lines into a giant scalar block of text:
+my $text = join '', @lines;
+
+# Make a scalar variable called "$safe" to hold the joined output from a "safe" routine:
+my $safe;
 
 # Make timer variables:
 my ($t0, $t1, $ms); # time 0, time 1, time elapsed in ms
 
-# Test method 1:
-$t0 = time;
-@safe = map {safe1} @lines;
-$t1 = time;
-$ms = 1000 * ($t1 - $t0);
-printf("Elapsed time for method 1 = %7.3fms\n", $ms);
+# Make array of methods:
+my @methods =
+(
+   [\&safe1, 1, "(translit)  "],
+   [\&safe2, 2, "(substring) "],
+   [\&safe3, 3, "(split/join)"],
+   [\&safe4, 4, "(regexp)    "],
+);
 
-# Test method 2:
-$t0 = time;
-@safe = map {safe2} @lines;
-$t1 = time;
-$ms = 1000 * ($t1 - $t0);
-printf("Elapsed time for method 2 = %7.3fms\n", $ms);
-
-# Test method 3:
-$t0 = time;
-@safe = map {safe3} @lines;
-$t1 = time;
-$ms = 1000 * ($t1 - $t0);
-printf("Elapsed time for method 3 = %7.3fms\n", $ms);
-
-# Test method 4:
-$t0 = time;
-@safe = map {safe4} @lines;
-$t1 = time;
-$ms = 1000 * ($t1 - $t0);
-printf("Elapsed time for method 4 = %7.3fms\n", $ms);
+# Test all methods:
+foreach my $method (@methods) {
+   print "\n\n\n\n\n" if $db;
+   $t0 = time;
+   if ($List) {
+      $safe = join '', map {&{$method->[0]}($_)} @lines;
+   }
+   else {
+      $safe = &{$method->[0]}($text);
+   }
+   $t1 = time;
+   $ms = 1000 * ($t1 - $t0);
+   if ($db) {
+      print "Text from method $method->[1]:\n";
+      print $safe;
+      print "\n";
+   }
+   printf "Elapsed time for method %d %s using %s input = %9.3fms\n", $method->[1], $method->[2], $Input, $ms;
+}

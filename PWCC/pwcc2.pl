@@ -31,7 +31,7 @@ IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
 single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
 
-./ch-1.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -41,7 +41,6 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # PRAGMAS, MODULES, AND SUBS:
 
 use v5.36;
-use utf8;
 use utf8::all;
 
 #

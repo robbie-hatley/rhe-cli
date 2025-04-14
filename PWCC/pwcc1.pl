@@ -41,7 +41,6 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # PRAGMAS, MODULES, AND SUBS:
 
 use v5.36;
-use utf8;
 use utf8::all;
 
 #
