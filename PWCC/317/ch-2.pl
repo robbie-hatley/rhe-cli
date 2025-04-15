@@ -9,7 +9,7 @@ written by Robbie Hatley on Dow Mon Dm, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task 317-2: Task 2: Friendly Strings
+Task 317-2: Friendly Strings
 Submitted by: Mohammad Sajid Anwar
 You are given two strings. Write a script to return true if
 swapping any two letters in one string match the other string,
