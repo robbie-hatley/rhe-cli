@@ -35,7 +35,7 @@ Output: true
 PROBLEM NOTES:
 I didn't like the examples, so I substituted my own. I'll take the approach of first returning false unless
 the two strings are equal length, then making an array of subarrays of differences and returning false unless
-the array is size 2, then returning false unless the one subarray is the reverse of the other. Then if I
+the array is size 2, then returning false unless one subarray is the reverse of the other. Then if I
 haven't returned false, I'll return true.
 
 --------------------------------------------------------------------------------------------------------------
