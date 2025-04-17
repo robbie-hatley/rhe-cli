@@ -171,8 +171,8 @@ my $db = 0; # Set to 1 for debugging, 0 for no debugging.
 # Section 1, Private subroutines (NOT exported):
 sub rand_int               :prototype($$)   ; # Get a random integer in closed interval [arg1, arg2].
 sub is_ascii               :prototype($)    ; # Is a given text string encoded in ASCII?
-sub is_iso_8859_1          :prototype($)    ; # Is a given text string encoded in ASCII?
-sub is_utf8                :prototype($)    ; # Is a given text string encoded in ASCII?
+sub is_iso_8859_1          :prototype($)    ; # Is a given text string encoded in ISO-8859-1?
+sub is_utf8                :prototype($)    ; # Is a given text string encoded in UTF-8?
 sub eight_rand_lc_letters  :prototype()     ; # Get a random string of 8 lower-case English letters.
 
 # Section 2, UTF-8-related subroutines:
@@ -252,7 +252,7 @@ our @EXPORT_OK =
 
 # ======= SECTION 1, PRIVATE SUBROUTINES: ====================================================================
 
-# Is a line of text encoded in ASCII?
+# Does a given scalar consist only of commonly-used ASCII whitespace and/or glyphical (visible) characters?
 sub is_ascii :prototype($) ($text) {
    my ($cpac, $cfil) = caller;
    die "Fatal error: function \"is_ascii\" in module \"RH::Dir\" is private.\n"
@@ -260,11 +260,13 @@ sub is_ascii :prototype($) ($text) {
    my $is_ascii = 1;
    foreach my $ord (map {ord} split //, $text) {
       if ($db) {say STDERR "In is_ascii(), at top of foreach. \$ord = $ord"}
+      # Is this character a commonly-used ASCII white-space character?
       next if (  9 == $ord ); # HT
       next if ( 10 == $ord ); # LF
       next if ( 11 == $ord ); # VT
       next if ( 13 == $ord ); # CR
       next if ( 32 == $ord ); # SP
+      # Is this character an ASCII glyphical (visible) character?
       next if ( $ord >=  33
              && $ord <= 126); # ASCII glyph
       # If we get to here, all of the above tests failed, which means that our current character
@@ -475,14 +477,18 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
       next NAME if '.'  eq $name;
       next NAME if '..' eq $name;
 
-      # Skip this file if it does not exist:
-      if ( ! -e e($name) ) {
-         warn "Warning in readdir_regexp_utf8(): File \"$name\" in \"$dir\" does not exist.\n";
-         next NAME;
-      }
+      # Do NOT run an existence check here, else we will get a constant stream of nuisance warnings,
+      # because it is NORMAL for many links to point to things that will not exist until some program
+      # is launched or until some media is mounted:
+      # if ( ! -e e($name) ) {
+      #    warn "Warning in readdir_regexp_utf8(): File \"$name\" in \"$dir\" does not exist.\n";
+      #    next NAME;
+      # }
 
-      # Skip this file if we can't stat it:
+      # However, DO run lstat, which should return some info even if this file IS a broken link:
       my @stats = lstat e($name);
+
+      # If lstat failed, print warning and move on to next file:
       if ( scalar(@stats) < 13 ) {
          warn "Warning in readdir_regexp_utf8(): Can't lstat \"$name\" in \"$dir\".\n";
          next NAME;
