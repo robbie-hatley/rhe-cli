@@ -26,6 +26,7 @@
 #                   Increased min ver from "5.32" to "5.36" to get signatures. Removed all prototypes.
 # Wed Mar 05, 2025: Consolidated changes from Glide and home. (Corrected help, etc.)
 # Fri Mar 07, 2025: Refactored. Now also using $Predicate. Updated variables, argv(), and help().
+# Thu Apr 17, 2025: Fixed "applies command to dirs in files-only mode" bug (don't reset target if pred used).
 ##############################################################################################################
 
 # Pragmas:
@@ -173,8 +174,7 @@ sub argv {
 
    # Third argument, if present, sets $Predicate:
    if ( $NA >= 3 ) {           # If number of arguments >= 3,
-      $Predicate = $args[2];   # set $Predicate to $args[2]
-      $Target = 'A';           # and set $Target to 'A' to avoid conflicts with $Predicate.
+      $Predicate = $args[2];   # set $Predicate to $args[2].
    }
 
    # Return success code 1 to caller:
