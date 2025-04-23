@@ -41,7 +41,7 @@ IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
 single-quoted array of double-quoted strings of any characters, in proper Perl syntax, like so:
 
-./ch-1.pl '("01101010001011011100101000","ppiiiiigg","茶銀銀金銀銀銀金茶茶銀銀銀銀銀金金金金茶茶茶")'
+./ch-1.pl '("01101010001011011100101000","ppiiiiigg","茶銀銀金銀銀銀金茶茶銀銀銀金金金金茶茶茶")'
 
 
 Output is to STDOUT and will be each input followed by the corresponding output.
