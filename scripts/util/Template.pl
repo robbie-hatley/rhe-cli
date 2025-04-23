@@ -114,28 +114,25 @@ use strict;
 use warnings;
 
 # Essential CPAN Modules:
-use utf8::all   qw( :DEFAULT );
-use Cwd::utf8   qw( :DEFAULT );
-use Time::HiRes qw( time     );
-
-# Essential RH Modules:
-use RH::Dir     qw( :DEFAULT );
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes qw( time );
 
 # Extra CPAN Modules:
-use Scalar::Util       qw( looks_like_number reftype );
-use List::AllUtils     qw( :DEFAULT                  );
-use Hash::Util         qw( :DEFAULT                  );
-use Regexp::Common     qw( :DEFAULT                  );
-use charnames          qw( :full :short              );
-use Unicode::Normalize qw( NFD NFC                   );
-use Unicode::Collate   qw( :DEFAULT                  );
-use MIME::QuotedPrint  qw( :DEFAULT                  );
+use Scalar::Util qw( looks_like_number reftype );
+use Regexp::Common;
+use Unicode::Normalize;
+use Unicode::Collate;
+use MIME::QuotedPrint;
+
+# Essential RH Modules:
+use RH::Dir;        # Recurse directories; get list of file-info packets for names matching a regexp; etc.
+use RH::Util;       # Unbuffered single-keystroke inputs; etc.
 
 # Extra RH modules:
-use RH::Util;       # Unbuffered single-keystroke inputs, etc.
 use RH::Math;       # Math routines.
 use RH::RegTest;    # Test regular expressions.
-use RH::WinChomp;   # "chomp" for Microsoft Windows
+use RH::WinChomp;   # "chomp" for Microsoft Windows.
 
 # ======= VARIABLES: =========================================================================================
 
@@ -281,7 +278,7 @@ sub help    ; # Print help and exit.
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-# Process @ARGV and set settings:
+# Process @ARGV:
 sub argv {
    # Get options and arguments:
    my $end = 0;              # end-of-options flag
@@ -439,16 +436,16 @@ sub help {
    -f or --files      Target Files.
    -d or --dirs       Target Directories.
    -b or --both       Target Both.
-   -a or --all        Target All. (Default.)
+   -a or --all        Target All.                       (DEFAULT)
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
    For example, use -vr to verbosely and recursively process items.
 
-   If two piled-together single-letter options conflict, the option
-   appearing lowest on the options chart above will prevail.
-   If two separate (not piled-together) options conflict, the right
-   overrides the left.
+   If multiple conflicting separate options are given, latter overrides former.
+
+   If multiple conflicting single-letter options are piled after a single hyphen,
+   the precedence is the inverse of the options in the above table.
 
    If you want to use an argument that looks like an option (say, you want to
    search for files which contain "--recurse" as part of their name), use a "--"

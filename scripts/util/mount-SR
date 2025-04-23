@@ -2,3 +2,4 @@
 sudo mount /home/aragorn/net/SR/Imladris
 sudo mount /home/aragorn/net/SR/Lothlorien
 sudo mount /home/aragorn/net/SR/Gondor
+sudo mount /home/aragorn/net/SR/Amroth
