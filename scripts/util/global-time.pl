@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -22,14 +22,18 @@
 # Tue Mar 11, 2025: -C63. Reduced width from 120 to 110. Increased min ver from "5.32" to "5.36". Got rid of
 #                   all prototypes. Added signatures. Changed bracing to C-style. Got rid of all given/when.
 #                   Added "Hawaii", "Aleutian", "Arizona", and "Navajo" time zones.
+# Thu Apr 24, 2025: Added "use utf8::all". Simplified shebang to "#!/usr/bin/env perl". Corrected error in
+#                   regexps for custom zone in which [+-] was mandatory instead of optional as it should have
+#                   been. ("--zone=3" should be construed as +3.) Now using "Switch" instead of if/elsif/else.
+# Fri Apr 25, 2025: Got rid of "use RH::Util" (not needed).
 ##############################################################################################################
 
 # Pragmas:
 use v5.36;
-use utf8;
 
-# RH modules:
-use RH::Util;
+# CPAN modules:
+use utf8::all;
+use Switch;
 
 # Constants:
 my @days_per_month = (31,28,31,30,31,30,31,31,30,31,30,31);
@@ -39,7 +43,7 @@ $"          = ', ';
 my @Opts    = ();
 my @Args    = ();
 my $Help    = 0;
-my $Db      = 0;
+my $Debug   = 0;
 my $Zone    = 'pacific';
 my $Style   = '12h';
 my $Length  = 'short';
@@ -54,7 +58,7 @@ sub help           ; # Print help.
 
 { # begin main
    argv;
-   $Db and print_settings;
+   $Debug and print_settings;
    $Help and help and exit(777);
    my  ($time_string, $date_string) = format_time(time, $Zone, $Style, $Length);
    say "$time_string, $date_string";
@@ -64,24 +68,25 @@ sub help           ; # Print help.
 # Process @ARGV and set settings:
 sub argv {
    # Get options and arguments:
-   my $end = 0;              # end-of-options flag
-   my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
-   my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {           # For each element of @ARGV,
-      /^--$/ && !$end        # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1           # so if we see that, then set the "end-of-options" flag
-      and push @Opts, $_     # and push the "--" to @Opts
-      and next;              # and skip to next element of @ARGV.
-      !$end                  # If we haven't yet reached end-of-options,
-      && ( /^-(?!-)$s+$/     # and if we get a valid short option
-      ||  /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @Opts, $_     # then push item to @Opts
-      or  push @Args, $_;    # else push item to @Args.
+   my $end = 0;               # end-of-options flag
+   my $s = '[a-zA-Z0-9]';     # single-hyphen allowable chars (English letters, numbers)
+   my $d = '[a-zA-Z0-9=.+-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, +, -)
+   for ( @ARGV ) {            # For each element of @ARGV,
+      /^--$/ && !$end         # "--" = end-of-options marker = construe all further CL items as arguments,
+      and $end = 1            # so if we see that, then set the "end-of-options" flag
+      and push @Opts, $_      # and push the "--" to @Opts
+      and next;               # and skip to next element of @ARGV.
+      !$end                   # If we haven't yet reached end-of-options,
+      && ( /^-(?!-)$s+$/      # and if we get a valid short option
+      ||  /^--(?!-)$d+$/ )    # or a valid long option,
+      and push @Opts, $_      # then push item to @Opts
+      or  push @Args, $_;     # else push item to @Args.
    }
 
    # Process options:
    for ( @Opts ) {
       /^-$s*h/ || /^--help$/     and $Help   = 1          ;
+      /^-$s*d/ || /^--debug$/    and $Debug  = 1          ;
       /^-$s*w/ || /^--hawaii$/   and $Zone   = 'hawaii'   ;
       /^-$s*i/ || /^--aleutian$/ and $Zone   = 'aleutian' ;
       /^-$s*k/ || /^--alaska$/   and $Zone   = 'alaska'   ;
@@ -93,7 +98,7 @@ sub argv {
       /^-$s*e/ || /^--eastern$/  and $Zone   = 'eastern'  ;
       /^-$s*a/ || /^--atlantic$/ and $Zone   = 'atlantic' ;
       /^-$s*u/ || /^--utc$/      and $Zone   = 'utc'      ;
-      /^--zone=([+-]\d+)$/       and $Zone   = $1         ; # Custom time zone offset, including DST.
+      /^--zone=(.+)$/            and $Zone   = $1         ; # Custom time zone offset, including DST.
       /^-$s*1/ || /^--12h$/      and $Style  = '12h'      ;
       /^-$s*2/ || /^--24h$/      and $Style  = '24h'      ;
       /^-$s*l/ || /^--long$/     and $Length = 'long'     ;
@@ -110,7 +115,7 @@ sub print_settings {
    print STDERR "\@Opts    = (@Opts)\n"
                ."\@Args    = (@Args)\n"
                ."\$Help    = $Help\n"
-               ."\$Db      = $Db\n"
+               ."\$Debug   = $Debug\n"
                ."\$Zone    = $Zone\n"
                ."\$Style   = $Style\n"
                ."\$Length  = $Length\n";
@@ -161,89 +166,81 @@ sub format_time ($time, $zone, $style, $length) {
    my $offset;       # ZoneTime - UtcTime
 
    # Where in The World are we???
-   foreach ( $Zone ) {
-      if ( m/hawaii/i ) {                         # Hawaii   Time Zone (no  DST)
+   switch ( $Zone ) {
+      case m/hawaii/i {                           # Hawaii   Time Zone (no  DST)
          $acro   =                        'HST' ;
          $offset =                          -10 ;
-         last                                   ;
       }
 
-      if ( m/aleutian/i ) {                       # Aleutian Time Zone (yes DST)
+      case m/aleutian/i {                         # Aleutian Time Zone (yes DST)
          $acro   = $lt_is_dst ?  'HDT' :  'HST' ;
          $offset = $lt_is_dst ?     -9 :    -10 ;
-         last                                   ;
       }
 
-      if ( m/alaska/i ) {                         # Alaska   Time Zone (yes DST)
+      case m/alaska/i {                           # Alaska   Time Zone (yes DST)
          $acro   = $lt_is_dst ? 'AKDT' : 'AKST' ;
          $offset = $lt_is_dst ?     -8 :     -9 ;
-         last                                   ;
       }
 
-      if ( m/pacific/i ) {                        # Pacific  Time Zone
+      case m/pacific/i {                          # Pacific  Time Zone
          $acro   = $lt_is_dst ?  'PDT' :  'PST' ;
          $offset = $lt_is_dst ?     -7 :     -8 ;
-         last                                   ;
       }
 
-      if ( m/arizona/i ) {                        # Non-Navajo Arizona Time Zone (no DST)
+      case m/arizona/i {                          # Non-Navajo Arizona Time Zone (no DST)
          $acro   =                        'MST' ;
          $offset =                           -7 ;
-         last                                   ;
       }
 
-      if ( m/navajo/i ) {                         # Navajo Arizona Time Zone (yes DST)
+      case m/navajo/i {                           # Navajo Arizona Time Zone (yes DST)
          $acro   = $lt_is_dst ?  'MDT' :  'MST' ;
          $offset = $lt_is_dst ?     -6 :     -7 ;
-         last                                   ;
       }
 
-      if ( m/mountain/i ) {                       # Mountain Time Zone
+      case m/mountain/i {                         # Mountain Time Zone
          $acro   = $lt_is_dst ?  'MDT' :  'MST' ;
          $offset = $lt_is_dst ?     -6 :     -7 ;
-         last                                   ;
       }
 
-      if ( m/central/i ) {                        # Central  Time Zone
+      case m/central/i {                          # Central  Time Zone
          $acro   = $lt_is_dst ?  'CDT' :  'CST' ;
          $offset = $lt_is_dst ?     -5 :     -6 ;
-         last                                   ;
       }
 
-      if ( m/eastern/i ) {                        # Eastern  Time Zone
+      case m/eastern/i {                          # Eastern  Time Zone
          $acro   = $lt_is_dst ?  'EDT' :  'EST' ;
          $offset = $lt_is_dst ?     -4 :     -5 ;
-         last                                   ;
       }
 
-      if ( m/atlantic/i ) {                       # Atlantic  Time Zone
+      case m/atlantic/i {                         # Atlantic  Time Zone
          $acro   = $lt_is_dst ?  'ADT' :  'AST' ;
          $offset = $lt_is_dst ?     -3 :     -4 ;
-         last                                   ;
       }
 
-      if ( m/utc/i ) {                            # UTC (never uses DST)
+      case m/utc/i {                              # UTC (never uses DST)
          $acro   =                        'UTC' ;
          $offset = 0                            ;
-         last                                   ;
       }
 
-      if ( m/^[+-](0|[1-9]\d*)$/ ) {              # Custom time-zone offset, including DST if in-use.
+      case m/^[+-]?\d+$/ {                        # Custom time-zone offset, including DST if in-use.
          $acro = 'Z'.$zone                      ;
          $offset = $zone                        ;
-         last                                   ;
       }
-                                                  # Unknown time zone.
-      die "Unknown time zone.\n"                ;
+
+      else {                                      # Unknown time zone.
+         die "Unknown time zone.\n"             ;
+      }
    }
+   $Debug and print "After time-zone switch:\n"
+                   ."Zone = \"$Zone\", Acro = \"$acro\", Offset = \"$offset\".\n";
 
    # ======= TIME: ===========================================================================================
    $zt_hour = $gt_hour + $offset;
-   $Db and say "\$zt_hour, after adding offset, = $zt_hour";
+   $Debug and say "\$zt_hour, after adding offset, = $zt_hour";
    if ($zt_hour < 0) {             # if this zone is previous day relative to London
       $zt_hour += 24;              #    add 24 to hour
       --$zt_day_of_week;           #    subtract 1 from day-of-week
-      $Db and say "Diminished \$zt_day_of_week = $zt_day_of_week";
+      $Debug and say "Diminished \$zt_day_of_week = $zt_day_of_week";
       if ($zt_day_of_week == -1) { #    if DOW == -1,
          $zt_day_of_week = 6;      #       set DOW to 6.
       }
@@ -360,8 +357,10 @@ sub help {
       indicate that your location doesn't use DST, or uses non-standard
       DST. In those cases, USA's main time zones (Pacific, Mountain,
       Central, Eastern) may show times that are off by 1 hour.
+
    Maybe some day if I get bored, I'll put all of Earth's time zones in here
    and fix all of the bugs and problems. But today is not that day
+
    Cheers,
    Robbie Hatley,
    Programmer.

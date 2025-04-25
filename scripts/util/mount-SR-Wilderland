@@ -1,2 +1,2 @@
 #!/usr/bin/bash
-sudo mount /home/aragorn/net/SR/Wilderland
+sudo mount  /home/aragorn/net/SR/Wilderland

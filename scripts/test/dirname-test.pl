@@ -69,8 +69,10 @@ my $slkdcount = 0 ; # Count of all symbolic links to directories.
 my $linkcount = 0 ; # Count of all symbolic links to regular files.
 my $weircount = 0 ; # Count of all symbolic links to weirdness (things other than files or dirs).
 my $sdircount = 0 ; # Count of all directories.
-my $hlnkcount = 0 ; # Count of all regular files with multiple hard links.
-my $regfcount = 0 ; # Count of all regular files.
+my $hlnkcount = 0 ; # Count of all regular files with  > 1 hard links.
+my $regfcount = 0 ; # Count of all regular files with == 1 hard links.
+my $orphcount = 0 ; # Count of all regular files with == 0 hard links.
+my $zombcount = 0 ; # Count of all regular files with  < 0 hard links.
 my $unkncount = 0 ; # Count of all unknown files.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================

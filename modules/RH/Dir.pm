@@ -103,7 +103,7 @@ package RH::Dir;
 
 # ======= PRAGMAS: ===========================================================================================
 
-# Boilerplate:
+# Pragmas:
 use v5.36;
 use strict;
 use warnings;
@@ -146,8 +146,8 @@ $" = ', ' ; # Quoted-array element separator = ", ".
 # two subs runs, so if you want to accumulate counts of events over multiple
 # entries to those subs, you need to store those accumulations in separate
 # variables.
-our $totfcount = 0; # Count of all directory entities seen, of all types.
-our $noexcount = 0; # Count of all errors encountered.
+our $totfcount = 0; # Count of all directory entries seen, of all types.
+our $noexcount = 0; # Count of all files which do not exist.
 our $ottycount = 0; # Count of all tty files.
 our $cspccount = 0; # Count of all character special files.
 our $bspccount = 0; # Count of all block special files.
@@ -158,9 +158,11 @@ our $slkdcount = 0; # Count of all symbolic links to directories.
 our $linkcount = 0; # Count of all symbolic links to non-directories.
 our $weircount = 0; # Count of all symbolic links to weirdness.
 our $sdircount = 0; # Count of all directories.
-our $hlnkcount = 0; # Count of all regular files with multiple hard links.
-our $regfcount = 0; # Count of all regular files.
-our $unkncount = 0; # Count of all unknown files.
+our $hlnkcount = 0; # Count of all regular files with  > 1 hard links (extroverts).
+our $regfcount = 0; # Count of all regular files with == 1 hard links (normies).
+our $orphcount = 0; # Count of all regular files with == 0 hard links (orphans).
+our $zombcount = 0; # Count of all regular files with  < 0 hard links (zombies).
+our $unkncount = 0; # Count of all files of unknown nature.
 
 # ------- Local variables: -----------------------------------------------------------------------------------
 
@@ -247,7 +249,8 @@ our @EXPORT_OK =
    (
       $totfcount $noexcount $ottycount $cspccount $bspccount
       $sockcount $pipecount $brkncount $slkdcount $linkcount
-      $weircount $sdircount $hlnkcount $regfcount $unkncount
+      $weircount $sdircount $hlnkcount $regfcount $orphcount
+      $zombcount $unkncount
    );
 
 # ======= SECTION 1, PRIVATE SUBROUTINES: ====================================================================
@@ -394,7 +397,7 @@ sub glob_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(
 
    # NOTE, RH 2025-04-10: I noticed that this entire subroutine is a duplicate of "readdir_regexp_utf8" except
    # giving fully-qualified paths instead of raw directory entries. But that can be done with "path" and
-   # "map", so I just removed most of the content of this subrountine; it's now just a wrapper around
+   # "map", so I just removed most of the content of this subroutine; it's now just a wrapper around
    # "readdir_regexp_utf8".
 
    my @names = readdir_regexp_utf8($dir, $target, $regexp, $predicate);
@@ -583,8 +586,10 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
    $linkcount = 0; # Count of all symbolic links to files.
    $weircount = 0; # Count of all symbolic links to weirdness.
    $sdircount = 0; # Count of all directories.
-   $hlnkcount = 0; # Count of all regular files with multiple hard links.
-   $regfcount = 0; # Count of all regular files.
+   $hlnkcount = 0; # Count of all regular files with  > 1 hard links.
+   $regfcount = 0; # Count of all regular files with == 1 hard links.
+   $orphcount = 0; # Count of all regular files with == 0 hard links.
+   $zombcount = 0; # Count of all regular files with  < 0 hard links.
    $unkncount = 0; # Count of all unknown files.
 
    # Get fully-qualified paths of all entries (except for '.' and '..') in directory "$dir" which match
@@ -623,8 +628,8 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
       # Type of file:
       my $type;
 
-      # Target of file (for links):
-      my $l_targ;
+      # Target of link:
+      my $ltarg;
 
       # Stats variables:
       my @stats;
@@ -638,7 +643,7 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
 
       # Non-existent paths require special handling because stat or lstat returns empty array. So if @stats
       # has fewer than 13 elements, set $type to 'N', increment $noexcount, set our stats variables to 0,
-      # set $l_targ to 'NONEXISTENT FILE', and print warning:
+      # set $ltarg to 'NONEXISTENT FILE', and print warning:
       if ( scalar(@stats) < 13 ) {
          warn "Warning from GetFiles: Can't lstat path \"$path\" in directory \"$dir\".\n";
          $type = 'N' ;  # $type = nonexistent
@@ -647,7 +652,7 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
          ($Ldev,   $Linode, $Lmode,  $Lnlink,
           $Luid,   $Lgid,   $Lrdev,  $Lsize,
           $Latime, $Lmtime, $Lctime, $Lbsize, $Lblcks) = (0,0,0,0,0,0,0,0,0,0,0,0,0);
-         $l_targ = 'NONEXISTENT FILE';
+         $ltarg = 'NONEXISTENT FILE';
       } # end if path does NOT exist
 
       # Otherwise, set our stats variables to the 13 elements of @stats, and determine number of links,
@@ -657,30 +662,32 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
           $Luid,   $Lgid,   $Lrdev,  $Lsize,
           $Latime, $Lmtime, $Lctime, $Lbsize, $Lblcks) = @stats;
          my $ml = $Lnlink > 1 ? 1 : 0;  # Do multiple incoming hard links exist to this inode?
-         $l_targ = 'NO TARGET';         # Assume for now that no outgoing link target exists.
-         if       (   -l _       ) {                            # IS a symbolic link to something.
-            if    ( ! -e e $path ) {$type = 'X'; ++$brkncount;} # Symbolic link to nowhere.
-            elsif (   -d _       ) {$type = 'R'; ++$slkdcount;} # Symbolic link to directory.
-            elsif (   -f _       ) {$type = 'L'; ++$linkcount;} # Symbolic link to file.
-            else                   {$type = 'W'; ++$weircount;} # Symbolic link to weirdness.
-            $l_targ = d(readlink(e($path)));
-            if (not defined $l_targ) {
-               $l_targ = 'UNDEFINED TARGET';
+         $ltarg = 'NO TARGET';         # Assume for now that no outgoing link target exists.
+         if       (   -l _       ) {                            # If $path IS a symbolic link to something:
+            if    ( ! -e e $path ) {$type = 'X'; ++$brkncount;}    # Symbolic link to nowhere.
+            elsif (   -d _       ) {$type = 'R'; ++$slkdcount;}    # Symbolic link to directory.
+            elsif (   -f _       ) {$type = 'L'; ++$linkcount;}    # Symbolic link to file.
+            else                   {$type = 'W'; ++$weircount;}    # Symbolic link to weirdness.
+            $ltarg = d(readlink(e($path)));
+            if (not defined $ltarg) {
+               $ltarg = 'UNDEFINED TARGET';
             }
          }
-         else {                                                 # Is NOT a symbolic link to anything.
-            if    ( ! -e e $path ) {$type = 'N'; ++$noexcount;} # Nonexistent.
-            elsif (   -d _       ) {$type = 'D'; ++$sdircount;} # Directory.
-            elsif (   -b _       ) {$type = 'B'; ++$bspccount;} # Block special file.
-            elsif (   -c _       ) {$type = 'C'; ++$cspccount;} # Character special file.
-            elsif (   -p _       ) {$type = 'P'; ++$pipecount;} # Pipe.
-            elsif (   -S _       ) {$type = 'S'; ++$sockcount;} # Socket.
-            elsif (   -t _       ) {$type = 'T'; ++$ottycount;} # Opened to tty.
-            elsif (   -f _       ) {                            # Regular file.
-               if ($ml)            {$type = 'H'; ++$hlnkcount;} # File with multiple hard links.
-               else                {$type = 'F'; ++$regfcount;} # Regular file.
+         else {                                                 # If $path is NOT a symbolic link to anything:
+            if    ( ! -e e $path ) {$type = 'N'; ++$noexcount;}    # Nonexistent.
+            elsif (   -d _       ) {$type = 'D'; ++$sdircount;}    # Directory.
+            elsif (   -b _       ) {$type = 'B'; ++$bspccount;}    # Block special file.
+            elsif (   -c _       ) {$type = 'C'; ++$cspccount;}    # Character special file.
+            elsif (   -p _       ) {$type = 'P'; ++$pipecount;}    # Pipe.
+            elsif (   -S _       ) {$type = 'S'; ++$sockcount;}    # Socket.
+            elsif (   -t _       ) {$type = 'T'; ++$ottycount;}    # Opened to tty.
+            elsif (   -f _       ) {                               # File.
+                  if ($Lnlink  > 1){$type = 'H'; ++$hlnkcount;}       # File with multiple hard links.
+               elsif ($Lnlink == 1){$type = 'F'; ++$regfcount;}       # File with exactly one hard link.
+               elsif ($Lnlink == 0){$type = 'O'; ++$orphcount;}       # File with zero hard links (orphan).
+               else                {$type = 'Z'; ++$zombcount;}       # File with  < 0 hard links (zombie).
             }
-            else                   {$type = 'U'; ++$unkncount;} # Object of unknown type.
+            else                   {$type = 'U'; ++$unkncount;}    # Object of unknown type.
          }
       } # end else if path DOES exist
 
@@ -710,7 +717,9 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
          'Ctime'  => $Lctime, # lstat[10]
          'Bsize'  => $Lbsize, # lstat[11]
          'Blocks' => $Lblcks, # lstat[12]
-         'Target' => $l_targ, # link target (or "NO TARGET" if not link, or "UNDEFINED TARGET" if bad link)
+         'Target' => $ltarg,  # link target (or "NO TARGET"        if not link,
+                              #              or "UNDEFINED TARGET" if bad link,
+                              #              or "NONEXISTENT FILE" if link doesn't exist)
       };
    }; # end foreach (@filepaths)
    return \@filerecords;
@@ -727,8 +736,7 @@ GetRegularFilesBySize :prototype(;$) ($regexp = '^.+$')
 
 This sub is especially useful for programs which compare regular files for identicalness, preperatory to
 making decisions regarding copying or deleting of files. To make such comparisons FAST, this sub stores
-files records in same-file-size arrays and does not collect any stats other than $totfcount and $regfcount
-(which will be equal).
+files records in same-file-size arrays and does not collect or return any stats.
 =cut
 sub GetRegularFilesBySize :prototype(;$) ($regexp = '^.+$') {
    my $cwd    = d(getcwd)                                  ; # Current Working Directory.
@@ -750,31 +758,11 @@ sub GetRegularFilesBySize :prototype(;$) ($regexp = '^.+$') {
    # ZEBRA : The following line is wrong! It's not an error to receive no files! Some directories are empty!
    # or die "Can't read  directory \"$cwd\"\n$!\n";
 
-   # Zero all RH::Dir counters here. You should save a copy in main:: if you want to keep this info, because
-   # it gets zeroed each time GetFiles or GetRegularFilesBySize are run. These are "per directory info fetch"
-   # only.
-   $totfcount = 0; # Count of all directory entities seen, of all types.
-   $noexcount = 0; # Count of all errors encountered.
-   $ottycount = 0; # Count of all tty files.
-   $cspccount = 0; # Count of all character special files.
-   $bspccount = 0; # Count of all block special files.
-   $sockcount = 0; # Count of all sockets.
-   $pipecount = 0; # Count of all pipes.
-   $slkdcount = 0; # Count of all symbolic links to directories.
-   $linkcount = 0; # Count of all symbolic links to non-directories.
-   $sdircount = 0; # Count of all directories.
-   $hlnkcount = 0; # Count of all regular files with multiple hard links.
-   $regfcount = 0; # Count of all regular files.
-   $unkncount = 0; # Count of all unknown files.
+   # NOTE RH 2025-04-25: I got rid of code here that zeros all of our RH::Dir counters, because they're not
+   # used in this subroutine, only in GetFiles().
 
    # Iterate through current directory, collecting info on all "regular" files:
    for $path (@filepaths) {
-      # Increment $totfcount and $regfcount here. The glob_regexp_utf8 call above will ensure that every $path
-      # we see here is the fully-qualified path of an existing regular file in the current working directory,
-      # so these two counts will always be equal:
-      ++$totfcount;
-      ++$regfcount;
-
       # Get the name of this file from its path:
       $name = get_name_from_path($path);
 

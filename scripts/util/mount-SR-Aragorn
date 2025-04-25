@@ -1,2 +1,2 @@
 #!/usr/bin/bash
-sudo mount /home/aragorn/net/SR/Aragorn
+sudo mount  /home/aragorn/net/SR/Aragorn
