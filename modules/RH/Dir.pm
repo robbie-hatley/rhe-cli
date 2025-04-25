@@ -1195,8 +1195,9 @@ sub RecurseDirs :prototype(&) ($f) {
 #    path of destination directory
 # Optional arguments:
 #    'rename=newname'  =>  Set copied file's name to newname in destination directory.
-#    'sha1'            =>  Set copy's name root to SHA1 hash of file. (Doesn't change file name extension.)
-#    'sl'              =>  Shorten names for Spotlight image processing.
+#    'sha1'            =>  Set copy's name root to SHA1 hash of file.
+#    'sl'              =>  Make short display names for Spotlight image processing.
+#    'corr'            =>  Set suffix of destination file name to correct suffix for file.
 # All other arguments are ignored.
 # Note: if contradictory arguments are given (eg, 'sha1', 'rename=Fred'), later arguments override previous.
 # Returns 0 for error, 1 for success, 2 for "skipped file because duplicate exists in destination".
@@ -1208,10 +1209,16 @@ sub copy_file :prototype($$;@)
 )
 {
    my $dpath    = '';                         # Path of destination file, full  version.
-   my $src      =  get_dir_from_path($spath); # Directory of   source    file.
+   my $sdire    =  get_dir_from_path($spath); # Directory of   source    file.
    my $sname    = get_name_from_path($spath); #   Name    of   source    file.
-   my $dname    = '';                         #   Name    of destination file. (Defaults to $sname.)
-   my $mode     = 'reg';                      # Naming Mode: nrm = normal, sha = sha1, ren = rename.
+   my $spref    = get_prefix($sname);         #  Prefix   of   source    file.
+   my $ssuff    = get_suffix($sname);         #  Suffix   of   source    file.
+   my $dname    = $sname;                     #   Name    of destination file. (Defaults to $sname.)
+   my $mode     = 'normal';                   # Operating mode: 'normal', 'rename', or 'sha1'.
+   my $uname;                                 # User-provided name (for use in 'rename' mode).
+   my $suff     = 'orig';                     # Suffix    mode: 'orig' (original) or 'corr' (correct)?
+   my $
+   my $dsuff;                                 # File-name suffix for destination file name.
    my $sl       = 0;                          # Shorten names for Spotlight image processing?
 
    # If debugging, print diagnostics:
@@ -1247,15 +1254,21 @@ sub copy_file :prototype($$;@)
    }
 
    # Process remaining arguments:
-   foreach (@args) {
-      if ( $_ eq 'sha1' ) {        # if SHA1-ing file
-         $mode = 'sha';            # set $mode to 'sha' (SHA-1 Mode)
-      }
-      elsif ( m/^rename=(.+)$/ ) { # elsif renaming file,
-         $mode = 'ren';            # set $mode to 'ren' (Rename Mode)
-      }
-      elsif ( $_ eq 'sl' ) {       # elsif Spotlight,
-         $sl   =  1;               # set $sl     to 1
+   foreach my $arg (@args) {
+      switch ($arg) {
+         case 'sha1' { # Make a SHA1 file name.
+            $mode = 'sha1';
+         }
+         case m/^rename=(.+)$/ { # Rename file.
+            $mode = 'rename';
+            $uname = $1;
+         }
+         case 'corr' { # Correct the file-name suffix.
+            $suff = 'corr';
+         }
+         case 'sl' { # Spotlight.
+            $sl = 1;
+         }
       }
    }
 
@@ -1263,52 +1276,47 @@ sub copy_file :prototype($$;@)
    if ($db) {
       say STDERR "                                          ";
       say STDERR "In copy_file, after processing arguments. ";
-      say STDERR "\$mode = \"$mode\"                        ";
-      say STDERR "\$sl   = \"$sl\"                          ";
+      say STDERR "\$mode  = \"$mode\"                       ";
+      say STDERR "\$uname = \"$uname\"                      ";
+      say STDERR "\$sl    = \"$sl\"                         ";
+      say STDERR "\$suff  = \"$suff\"                       ";
       say STDERR "                                          ";
    }
 
-   # Take different actions depending on naming mode:
-   for ($mode) {
-      # "Rename" Naming Mode:
-      if ( /^ren$/ ) {
-         # Set destination name to name user provided:
-         $dname = $1;
+   # Set destination name $dname depending on mode:
+   switch ($mode) {
+      case 'rename' {
+         $dpref = get_prefix($uname);
+         if ('corr' eq $suff) {$dsuff = get_correct_suffix($spath);}
+         else                 {$dsuff = get_suffix($uname)}
       }
-
-      # "SHA-1" Naming Mode:
-      elsif ( /^sha$/ ) {
-         # Set $dname to SHA1-hash-based file name:
-         $dname = hash($spath, 'sha1', 'name');
-
-         # If $dname is now '***ERROR***', set $dname to $sname and warn user:
-         if ($dname eq '***ERROR***') {
-            $dname = $sname;
+      case 'sha1' {
+         $dpref = hash($spath, 'sha1');
+         if ($dpref eq '***ERROR***') {
+            $dpref = $spref;
             warn
-               "\n",
-               "Warning from copy_file(): bad hash.\n",
-               "Retaining original file name.\n",
-               "\n";
+            "\n",
+            "Warning from copy_file(): bad hash.\n",
+            "Retaining original file-name prefix.\n",
+            "\n";
          }
+         if ('corr' eq $suff) {$dsuff = get_correct_suffix($spath);}
+         else                 {$dsuff = get_suffix($sname)}
       }
-
-      # "Normal" Naming Mode:
-      else {
-         # Set destination name equal to source name:
-         $dname = $sname;
+      else { # Otherwise we default to 'normal' mode:
+         $dpref = $spref;
+         if ('corr' eq $suff) {$dsuff = get_correct_suffix($spath);}
+         else                 {$dsuff = get_suffix($sname)}
       }
-   } # end for($mode)
+      $dname = $dpref . $dsuff;
+   }
 
-   # Print diagnostics if debugging:
-   say STDERR "\nIn copy_file, after for(\$mode).\n\$dname = \"$dname\".\n" if $db;
-
-   # Regardless of what Naming Mode we just used, if $dname already exists in $dst,
-   # we'll have to come up with a new name! Let's try enumerating:
+   # If $dname already exists in $dst, try enumerating:
    if ( -e e "$dst/$dname" ) {
       $dname = find_avail_enum_name($dname,$dst);
    }
 
-   # If, for whateve reason, $dname is now '***ERROR***', warn user and return "0" to indicate failure:
+   # If, for whatever reason, $dname is now '***ERROR***', warn user and return "0" to indicate failure:
    if ( $dname eq '***ERROR***' ) {
       warn
          "\n",
@@ -1326,7 +1334,7 @@ sub copy_file :prototype($$;@)
    }
 
    # Make "display" versions of directory and file names:
-   my $srcdsh = $src;   #   Source    directory, short version. (Defaults to $src.)
+   my $srcdsh = $sdire; #   Source    directory, short version. (Defaults to $sdire.)
    my $srcfsh = $sname; #   Source      file,    short version. (Defaults to $sname.)
    my $dstdsh = $dst;   # Destination directory, short version. (Defaults to $dst.)
    my $dstfsh = $dname; # Destination   file,    short version. (Defaults to $dname.)
@@ -2419,21 +2427,22 @@ sub win2cyg :prototype($) ($path) {
 # Mandatory arguments:
 #    $path   (Path of file to make hash for. Eg: /home/Bob/myfile.txt)
 #    $type   (Type of hash to generate. Options are: md5 sha1 sha224 sha256 sha384 sha512)
-# Optional argument:
+# Optional arguments:
 #    $mode   (Options are: "name" (hash-based file name, eg "9e5a...b071.txt")
 #                       or "hash" (default: just the hash).)
-sub hash :prototype($$;$)
+#    $suff   (Options are: "orig" (use original file-name suffix)
+#                          "corr" (use correct  file-name suffix)
+sub hash :prototype($$;$$)
 (
    $path,                                                      # Path to source file.
-   $hash_type,                                                 # What type of hash?
-   $operation_mode = 'hash'                                    # Return raw hash, or hash-based file name?
+   $type,                                                      # What type of hash?
+   $mode = 'hash',                                             # Return raw hash, or hash-based file name?
+   $suff = 'original',                                         # Use original suffix or get correct?
 )
 {
    return '***ERROR***' unless is_data_file($path);            # Bail unless file at $path is a data file.
-   my $name = get_name_from_path($path);                       # Get name of source file.
-   my $suff = get_suffix($name);                               # Get suffix of source file.
-   local $/ = undef;                                           # Sets input record separator to EOF.
 
+   local $/ = undef;                                           # Set input record separator to EOF.
    my $fh;                                                     # File handle (initially undefined).
    open($fh, '< :raw', e($path))                               # Try to open the file for reading;
    or warn "Error in sub \"hash()\" in module \"Dir.pm\":\n".  # if file-open failed for any reason,
@@ -2448,7 +2457,7 @@ sub hash :prototype($$;$)
 
    # Set $hash to the hash type user requested:
    my $hash;                                                   # Hash of file contents
-   switch ($hash_type) {
+   switch ($type) {
       case 'md5' {
          $hash = md5_hex($data);                               # Get MD-5 file hash.
       }
@@ -2473,12 +2482,21 @@ sub hash :prototype($$;$)
    } # end for ($type)
 
    # Take different actions depending on what mode-of-operation we're in:
-   for ($operation_mode) {
-      if ( /^hash$/ ) {                                        # If mode-of-operation is "hash":
+   switch ($mode) {
+      case 'hash' {                                            # If mode-of-operation is "hash":
          return $hash;                                         # Return hash.
       }
-      elsif ( /^name$/ ) {                                     # If mode-of-operation is "name":
-         my $newname = $hash . $suff;                          # Make a new file name based on hash.
+      case 'name' {                                            # If mode-of-operation is "name":
+         my $suffix;
+         switch ($suff) {
+            case 'corr' {                                      # If user asked for suffix correction,
+               $suffix = get_correct_suffix($path);            # get correct file-name suffix for this file.
+            }
+            else {                                             # Otherwise,
+               $suffix = get_suffix($path);                    # just use the original suffix
+            }                                                  # (or no suffix if there was none).
+         }
+         my $newname = $hash . $suffix;                        # Make new file name.
          ! -e e $newname and return $newname                   # If the new name doesn't exist, return it,
          or return find_avail_enum_name($newname);             # else return enumerated version.
       }

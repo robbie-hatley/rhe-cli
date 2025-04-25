@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
 # This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -53,16 +53,19 @@
 # Fri Sep 01, 2023: Reduced width from 120 to 110. Upgraded from "v5.32" to "v5.36". Got rid of CPAN module
 #                   "common::sense" (antiquated). Got rid of all prototypes.
 # Sat Sep 02, 2023: Improved help and argv.
+# Fri Apr 25, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl". Nixed "e".
 ##############################################################################################################
 
+# Pragmas:
 use v5.36;
 use strict;
 use warnings;
-use utf8;
-use warnings FATAL => 'utf8';
 
+# CPAN Modules:
+use utf8::all;
 use Time::HiRes 'time';
 
+# RH Modules:
 use RH::Dir;
 
 # ============================================================================================================
@@ -72,9 +75,9 @@ sub argv; # Process @ARGV.
 sub help; # Provide user with help.
 
 # ============================================================================================================
-# GLOBAL VARIABLES:
+# VARIABLES:
 
-my $Db      = 0;
+my $Debug   = 0;
 my $Current = 0;
 
 # ============================================================================================================
@@ -106,7 +109,7 @@ my $Current = 0;
               );
 
    # If debugging, print all user/directory key/value pairs:
-   if ($Db) {
+   if ($Debug) {
       for ( sort keys %USLs ) {
          say "key = \"$_\"; value = \"$USLs{$_}\".";
       }
@@ -118,16 +121,16 @@ my $Current = 0;
    my $valid = 0            ; # Do all needed directories exist?
    if ( $Current ) {
       $valid =
-         -e e($cusl)   && -d e($cusl)
-      && -e e('/d/sl') && -d e('/d/sl');
+         -e $cusl   && -d $cusl
+      && -e '/d/sl' && -d '/d/sl';
    }
    else {
       $valid =
-         -e e('/usl1') && -d e('/usl1')
-      && -e e('/usl2') && -d e('/usl2')
-      && -e e('/usl3') && -d e('/usl3')
-      && -e e('/usl4') && -d e('/usl4')
-      && -e e('/d/sl') && -d e('/d/sl');
+         -e '/usl1' && -d '/usl1'
+      && -e '/usl2' && -d '/usl2'
+      && -e '/usl3' && -d '/usl3'
+      && -e '/usl4' && -d '/usl4'
+      && -e '/d/sl' && -d '/d/sl';
    }
 
    # If all needed directories exist, print verification message;
@@ -147,7 +150,7 @@ my $Current = 0;
       next if $Current && $user ne $cusr;
       say '';
       say "User = \"$user\".";
-      copy_files($USLs{$user}, '/d/sl', 'large', 'unique', 'sha1', 'sl');
+      copy_files($USLs{$user}, '/d/sl', 'large', 'unique', 'sha1', 'sl', 'corr');
    }
 
    # Print exit message, including elapsed time, and exit:
@@ -164,10 +167,10 @@ sub argv {
    my $s = '[a-zA-Z0-9]';
    for ( @ARGV ) {
       /^-$s*h/ || /^--help$/    and help and exit;
-      /^-$s*e/ || /^--debug$/   and $Db = 1;
+      /^-$s*e/ || /^--debug$/   and $Debug = 1;
       /^-$s*c/ || /^--current$/ and $Current = 1;
    }
-} # end sub argv ()
+} # end sub argv
 
 # Provide help:
 sub help {
@@ -252,4 +255,3 @@ sub help {
    END_OF_HELP
    return 1;
 }
-__END__
