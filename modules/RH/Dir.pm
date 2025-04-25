@@ -431,7 +431,7 @@ otherwise this function will generate "wide character" errors and crash the call
 This should automatically be done for you if you use cpan modules "utf8::all" and "cwd::utf8",
 or if you use "d(getcwd)", to provide the directory. Using raw "glob()" or "<* .*>" or "readdir",
 however, will cause many errors on either linux or cygwin if the calling program attempts to process
-file names in any language other than english. (Names such as "Говорю Русский", "ॐ नमो भगवते वासुदेवाय",
+file names in any language other than English. (Names such as "Говорю Русский", "ॐ नमो भगवते वासुदेवाय",
 "看的星星，知道你是爱。" would crash horribly.)
 =cut
 sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate='1') {
@@ -492,11 +492,11 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
       # broken link. (WARNING: MUST use full path here, not the name, because there is NO guaranty that
       # $dir is the same as our current working directory!!!):
       my @stats = lstat e(path($dir,$name));
-      my $nstats = scalar(@stats);
 
       # If lstat failed, print warning and move on to next file:
       if ( scalar(@stats) < 13 ) {
-         warn "Warning in readdir_regexp_utf8(): Can't lstat \"$name\" in \"$dir\". nstats = $nstats\n";
+         warn "Warning in readdir_regexp_utf8(): Can't lstat \"$name\" in \"$dir\".\n"
+             ."Moving on to next file.\n";
          next NAME;
       }
 
@@ -1290,8 +1290,7 @@ sub copy_file :prototype($$;@)
    switch ($mode) {
       case 'rename' {
          $dpref = get_prefix($uname);
-         if ('corr' eq $suff) {$dsuff = get_correct_suffix($spath);}
-         else                 {$dsuff = get_suffix($uname)}
+         $dsuff = get_suffix($uname);
       }
       case 'sha1' {
          $dpref = hash($spath, 'sha1');
@@ -1303,15 +1302,14 @@ sub copy_file :prototype($$;@)
             "Retaining original file-name prefix.\n",
             "\n";
          }
-         if ('corr' eq $suff) {$dsuff = get_correct_suffix($spath);}
-         else                 {$dsuff = get_suffix($sname)}
+         $dsuff = get_suffix($sname);
       }
       else { # Otherwise we default to 'normal' mode:
          $dpref = $spref;
-         if ('corr' eq $suff) {$dsuff = get_correct_suffix($spath);}
-         else                 {$dsuff = get_suffix($sname)}
+         $dsuff = get_suffix($sname);
       }
    }
+   if ('corr' eq $suff) {$dsuff = get_correct_suffix($spath);
    $dname = $dpref . $dsuff;
 
    # If $dname already exists in $dst, try enumerating:
@@ -1331,10 +1329,8 @@ sub copy_file :prototype($$;@)
       return 0;
    }
 
-   # Otherwise, set $dpath from $dst and $dname:
-   else {
-      $dpath = path($dst, $dname);
-   }
+   # Set $dpath from $dst and $dname:
+   $dpath = path($dst, $dname);
 
    # Make "display" versions of directory and file names:
    my $srcdsh = $sdire; #   Source    directory, short version. (Defaults to $sdire.)
