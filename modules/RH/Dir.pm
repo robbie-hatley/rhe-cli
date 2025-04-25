@@ -211,7 +211,7 @@ sub is_large_image         :prototype($)    ; # Does a file contain a large imag
 sub get_correct_suffix     :prototype($)    ; # Return correct file-name suffix for file at given path.
 sub cyg2win                :prototype($)    ; # Convert Cygwin  path to Windows path.
 sub win2cyg                :prototype($)    ; # Convert Windows path to Cygwin  path.
-sub hash                   :prototype($$;$) ; # Return hash or hash-based file-name of a file.
+sub hash                   :prototype($$;$$); # Return hash or hash-based file-name of a file.
 sub shorten_sl_names       :prototype($$$$) ; # Shorten directory and file names for Spotlight.
 sub is_data_file           :prototype($)    ; # Return 1 if a given string is a path to a -f !-l !-d file.
 sub is_meta_file           :prototype($)    ; # Return 1 if a given string is a path to a meta-data file.
@@ -488,12 +488,15 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
       #    next NAME;
       # }
 
-      # However, DO run lstat, which should return some info even if this file IS a broken link:
-      my @stats = lstat e($name);
+      # However, DO run lstat on this name's path, which should return some info even if this file is a
+      # broken link. (WARNING: MUST use full path here, not the name, because there is NO guaranty that
+      # $dir is the same as our current working directory!!!):
+      my @stats = lstat e(path($dir,$name));
+      my $nstats = scalar(@stats);
 
       # If lstat failed, print warning and move on to next file:
       if ( scalar(@stats) < 13 ) {
-         warn "Warning in readdir_regexp_utf8(): Can't lstat \"$name\" in \"$dir\".\n";
+         warn "Warning in readdir_regexp_utf8(): Can't lstat \"$name\" in \"$dir\". nstats = $nstats\n";
          next NAME;
       }
 
@@ -1213,13 +1216,13 @@ sub copy_file :prototype($$;@)
    my $sname    = get_name_from_path($spath); #   Name    of   source    file.
    my $spref    = get_prefix($sname);         #  Prefix   of   source    file.
    my $ssuff    = get_suffix($sname);         #  Suffix   of   source    file.
-   my $dname    = $sname;                     #   Name    of destination file. (Defaults to $sname.)
    my $mode     = 'normal';                   # Operating mode: 'normal', 'rename', or 'sha1'.
    my $uname;                                 # User-provided name (for use in 'rename' mode).
    my $suff     = 'orig';                     # Suffix    mode: 'orig' (original) or 'corr' (correct)?
-   my $
-   my $dsuff;                                 # File-name suffix for destination file name.
    my $sl       = 0;                          # Shorten names for Spotlight image processing?
+   my $dpref;                                 # File-name prefix for destination file.
+   my $dsuff;                                 # File-name suffix for destination file.
+   my $dname;                                 # File-name        for destination file.
 
    # If debugging, print diagnostics:
    if ($db) {
@@ -1308,8 +1311,8 @@ sub copy_file :prototype($$;@)
          if ('corr' eq $suff) {$dsuff = get_correct_suffix($spath);}
          else                 {$dsuff = get_suffix($sname)}
       }
-      $dname = $dpref . $dsuff;
    }
+   $dname = $dpref . $dsuff;
 
    # If $dname already exists in $dst, try enumerating:
    if ( -e e "$dst/$dname" ) {

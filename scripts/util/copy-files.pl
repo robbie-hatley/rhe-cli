@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -29,12 +29,13 @@
 # Thu Aug 15, 2024: -C63; erased unnecessary "use" statements; put protos & sigs on all subs.
 # Tue Mar 04, 2025: Got rid of prototypes and empty sigs. Added comments to subroutine predeclarations.
 #                   Now using "BEGIN" and "END" blocks to print entry and exit messages.
+# Fri Apr 25, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl". Nixed "d", "e".
 ##############################################################################################################
 
 # ======= PRAGMAS AND MODULES: ===============================================================================
 use v5.36;
-use utf8;
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -82,13 +83,13 @@ sub help  ; # Print help.
    argv;
 
    # Get current working directory:
-   $cur = d getcwd;
+   $cur = cwd;
 
    # Get FULLY-QUALIFIED versions of source and destination directories by CDing to each, running getcwd,
    # then CDing back to $cur. WARNING: ALWAYS CD BACK TO $cur BEFORE TRYING TO CD TO $src or $dst, BECAUSE
    # $src AND $dst ARE RELATIVE TO $cur!!!
-   chdir e $src; $src = d getcwd; chdir e $cur;
-   chdir e $dst; $dst = d getcwd; chdir e $cur;
+   chdir $src; $src = cwd; chdir $cur;
+   chdir $dst; $dst = cwd; chdir $cur;
 
    # If debugging, just emulate:
    if ( $Db ) {
@@ -151,18 +152,19 @@ sub argv {
       /^-$s*s/ || /^--sha1$/    and push @copy_args, 'sha1'  ;
       /^-$s*u/ || /^--unique$/  and push @copy_args, 'unique';
       /^-$s*l/ || /^--large$/   and push @copy_args, 'large' ;
+      /^-$s*c/ || /^--correct$/ and push @copy_args, 'corr'  ;
    }
 
    # Set settings and check their validity:
    if ($NA < 2 || $NA > 3)
                       {say STDERR "Error: Must have 2 or 3 arguments. ".
-                                  "Use -h or --help to get help."                        ; exit(666) }
+                                  "Use -h or --help to get help."                      ; exit(666) }
    $src = $args[0];
-   if ( ! -e e $src ) {say STDERR "Error: source directory $src doesn't exist."          ; exit(666) }
-   if ( ! -d e $src ) {say STDERR "Error: source directory $src isn't a directory."      ; exit(666) }
+   if ( ! -e $src ) {say STDERR "Error: source directory $src doesn't exist."          ; exit(666) }
+   if ( ! -d $src ) {say STDERR "Error: source directory $src isn't a directory."      ; exit(666) }
    $dst = $args[1];
-   if ( ! -e e $dst ) {say STDERR "Error: destination directory $dst doesn't exist."     ; exit(666) }
-   if ( ! -d e $dst ) {say STDERR "Error: destination directory $dst isn't a directory." ; exit(666) }
+   if ( ! -e $dst ) {say STDERR "Error: destination directory $dst doesn't exist."     ; exit(666) }
+   if ( ! -d $dst ) {say STDERR "Error: destination directory $dst isn't a directory." ; exit(666) }
    if ( 3 == $NA ) {push @copy_args, 'regexp=' . $args[2];}
 
    # If debugging, print @Db, @copy_args, $src, $dst:
@@ -203,6 +205,7 @@ sub help {
    "-s" or "--sha1"    Change name root of each file to its own hash.
    "-u" or "--unique"  Don't copy files for which duplicates exist in destination.
    "-l" or "--large"   Move only large image files (W=1200+, H=600+).
+   "-c" or "--correct" Correct missing or wrong file name suffixes.
    "--"                All items to right are arguments, not options.
    All other options will be ignored.
    Multiple single-letter options can be stacked after a single hypen.
