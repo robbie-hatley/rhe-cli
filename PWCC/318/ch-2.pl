@@ -55,35 +55,34 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use v5.36;
    use utf8::all;
 
-   # Do two arrays of integers have the same elements?
-   sub same_elements ($aref1, $aref2) {
+   # Are a pair of refs a pair of refs to equal-length arrays?
+   sub check_arrays ($aref1, $aref2) {
       return 0 if 'ARRAY' ne ref $aref1;
       return 0 if 'ARRAY' ne ref $aref2;
       my $m = scalar @$aref1;
       my $n = scalar @$aref2;
       return 0 if $m != $n;
-      return 1 if 0 == $m && 0 == $n;
+      for (@$aref1) {return 0 if $_ !~ m/^-[1-9]\d*$|^0$|^[1-9]\d*$/}
+      for (@$aref2) {return 0 if $_ !~ m/^-[1-9]\d*$|^0$|^[1-9]\d*$/}
+      return 1}
+
+   # Do two arrays of integers have the same elements?
+   sub same_elements ($aref1, $aref2) {
+      return 0 if !check_arrays($aref1, $aref2);
+      my $m = scalar @$aref1;
+      return 1 if 0 == $m;
       my @sorted1 = sort {$a<=>$b}  @$aref1;
       my @sorted2 = sort {$a<=>$b}  @$aref2;
-      for (0..$m-1){
-         return 0 if $sorted1[$_] != $sorted2[$_];
-      }
-      return 1;
-   }
+      for (0..$m-1){return 0 if $sorted1[$_] != $sorted2[$_]}
+      return 1}
 
    # Are two arrays of integers equal?
    sub are_equal ($aref1, $aref2) {
-      return 0 if 'ARRAY' ne ref $aref1;
-      return 0 if 'ARRAY' ne ref $aref2;
+      return 0 if !check_arrays($aref1, $aref2);
       my $m = scalar @$aref1;
-      my $n = scalar @$aref2;
-      return 0 if $m != $n;
-      return 1 if 0 == $m && 0 == $n;
-      for (0..$m-1){
-         return 0 if $$aref1[$_] != $$aref2[$_];
-      }
-      return 1;
-   }
+      return 1 if 0 == $m;
+      for (0..$m-1){return 0 if $$aref1[$_] != $$aref2[$_]}
+      return 1}
 
    # Can one array of integers be made equal to another by
    # reversing exactly 1 contiguous subarray?
@@ -103,11 +102,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
             push @altered, @$aref1[0..$i-1];
             push @altered, @$aref1[reverse $i..$i+$s-1];
             push @altered, @$aref1[$i+$s..$m-1];
-            if (are_equal(\@altered,$aref2)) {return 'True.'}
-         }
-      }
-      return 'False.';
-   }
+            if (are_equal(\@altered,$aref2)) {return 'True.'}}}
+      return 'False.'}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
