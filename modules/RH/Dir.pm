@@ -1211,7 +1211,7 @@ sub RecurseDirs :prototype(&) ($f) {
 sub copy_file :prototype($$;@)
 (
    $spath, # Path of source file.
-   $dst,   # Destination directory.
+   $ddire, # Destination directory.
    @args   # Additional arguments, if any, go in here.
 )
 {
@@ -1222,7 +1222,7 @@ sub copy_file :prototype($$;@)
    my $ssuff    = get_suffix($sname);         #  Suffix   of   source    file.
    my $mode     = 'normal';                   # Operating mode: 'normal', 'rename', or 'sha1'.
    my $uname;                                 # User-provided name (for use in 'rename' mode).
-   my $suff     = 'orig';                     # Suffix    mode: 'orig' (original) or 'corr' (correct)?
+   my $corr     = 0;                          # Correct suffix?
    my $sl       = 0;                          # Shorten names for Spotlight image processing?
    my $dpref;                                 # File-name prefix for destination file.
    my $dsuff;                                 # File-name suffix for destination file.
@@ -1233,8 +1233,8 @@ sub copy_file :prototype($$;@)
       say STDERR "                      ";
       say STDERR "In copy_file, at top. ";
       say STDERR "\$spath = \"$spath\"  ";
-      say STDERR "\$dst   = \"$dst\"    ";
-      say STDERR "\@arg     = (@args)   ";
+      say STDERR "\$ddire = \"$ddire\"  ";
+      say STDERR "\@args  = (@args)     ";
       say STDERR "                      ";
    }
 
@@ -1250,11 +1250,11 @@ sub copy_file :prototype($$;@)
    }
 
    # Bail if destination directory doesn't exist or isn't a directory:
-   if ( ! -e e $dst || ! -d e $dst ) {
+   if ( ! -e e $ddire || ! -d e $ddire ) {
       warn
          "\n",
          "Error in copy_file: Given destination directory does not exist:\n",
-         "$dst\n",
+         "$ddire\n",
          "File was not copied.\n",
          "\n";
       return 0;
@@ -1271,9 +1271,9 @@ sub copy_file :prototype($$;@)
             $uname = $1;
          }
          case 'corr' { # Correct the file-name suffix.
-            $suff = 'corr';
+            $corr = 1;
          }
-         case 'sl' { # Spotlight.
+         case 'sl' { # Generate short display names for Spotlight.
             $sl = 1;
          }
       }
@@ -1286,11 +1286,11 @@ sub copy_file :prototype($$;@)
       say STDERR "\$mode  = \"$mode\"                       ";
       say STDERR "\$uname = \"$uname\"                      ";
       say STDERR "\$sl    = \"$sl\"                         ";
-      say STDERR "\$suff  = \"$suff\"                       ";
+      say STDERR "\$corr  = \"$corr\"                       ";
       say STDERR "                                          ";
    }
 
-   # Set destination name $dname depending on mode:
+   # Set destination prefix and suffix depending on mode:
    switch ($mode) {
       case 'rename' {
          $dpref = get_prefix($uname);
@@ -1313,33 +1313,37 @@ sub copy_file :prototype($$;@)
          $dsuff = get_suffix($sname);
       }
    }
-   if ('corr' eq $suff) {$dsuff = get_correct_suffix($spath)};
+
+   # If user requested suffix correction, correct the suffix:
+   if ($corr) {$dsuff = get_correct_suffix($spath);}
+
+   # Make $dname (destination name) from $dpref (destination prefix) and $dsuff (destination suffix):
    $dname = $dpref . $dsuff;
 
-   # If $dname already exists in $dst, try enumerating:
-   if ( -e e "$dst/$dname" ) {
-      $dname = find_avail_enum_name($dname,$dst);
+   # If $dname already exists in $ddire, try enumerating:
+   if ( -e e "$ddire/$dname" ) {
+      $dname = find_avail_enum_name($dname,$ddire);
    }
 
    # If, for whatever reason, $dname is now '***ERROR***', warn user and return "0" to indicate failure:
    if ( $dname eq '***ERROR***' ) {
       warn
          "\n",
-         "Error in copy_file: Couldn't find available name for this name and directory:\n",
-         "Name:      $dname     \n",
-         "Directory: $dst       \n",
-         "File was not copied.  \n",
+         "Error in copy_file: Couldn't find an available name for this name and directory:\n",
+         "Original file name:    $sname \n",
+         "Destination directory: $ddire \n",
+         "File was not copied.          \n",
          "\n";
       return 0;
    }
 
-   # Set $dpath from $dst and $dname:
-   $dpath = path($dst, $dname);
+   # Set $dpath from $ddire and $dname:
+   $dpath = path($ddire, $dname);
 
    # Make "display" versions of directory and file names:
    my $srcdsh = $sdire; #   Source    directory, short version. (Defaults to $sdire.)
    my $srcfsh = $sname; #   Source      file,    short version. (Defaults to $sname.)
-   my $dstdsh = $dst;   # Destination directory, short version. (Defaults to $dst.)
+   my $dstdsh = $ddire; # Destination directory, short version. (Defaults to $ddire.)
    my $dstfsh = $dname; # Destination   file,    short version. (Defaults to $dname.)
 
    # If user specified 'sl', shorten directory and file names for Spotlight use:
@@ -1610,7 +1614,7 @@ sub copy_files :prototype($$;@)
       my $s2 = '/AppData/Local/Packages';
       my $s3 = '/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy';
       my $s4 = '/LocalState/Assets';
-      my $s5 = '/cygdrive/d/sl';
+      my $s5 = '/cygdrive/sl';
       my $u1 = '/Aragorn';
       my $u2 = '/Urgabor';
       my $u3 = '/Zebulon';
@@ -1794,7 +1798,7 @@ sub move_files :prototype($$;@)
       my $s2 = '/AppData/Local/Packages';
       my $s3 = '/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy';
       my $s4 = '/LocalState/Assets';
-      my $s5 = '/cygdrive/d/sl';
+      my $s5 = '/cygdrive/sl';
       my $u1 = '/Aragorn';
       my $u2 = '/Urgabor';
       my $u3 = '/Zebulon';
@@ -2527,7 +2531,7 @@ sub shorten_sl_names :prototype($$$$) ($src_dir, $src_fil, $dst_dir, $dst_fil) {
    my $s2 = '/AppData/Local/Packages';
    my $s3 = '/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy';
    my $s4 = '/LocalState/Assets';
-   my $s5 = '/cygdrive/d/sl';
+   my $s5 = '/cygdrive/sl';
    my $u1 = '/Aragorn';
    my $u2 = '/Urgabor';
    my $u3 = '/Zebulon';

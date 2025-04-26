@@ -1,0 +1,44 @@
+/proc/1/attr/apparmor
+/proc/1/attr/smack
+/proc/1/attr
+/proc/1/net/dev_snmp6
+/proc/1/net/netfilter
+/proc/1/net/r8168/enp5s0/debug
+/proc/1/net/r8168/enp5s0/test
+/proc/1/net/r8168/enp5s0
+/proc/1/net/r8168
+/proc/1/net/stat
+/proc/1/net
+/proc/1/task/1/attr/apparmor
+/proc/1/task/1/attr/smack
+/proc/1/task/1/attr
+/proc/1/task/1/net/dev_snmp6
+/proc/1/task/1/net/netfilter
+/proc/1/task/1/net/r8168/enp5s0/debug
+/proc/1/task/1/net/r8168/enp5s0/test
+/proc/1/task/1/net/r8168/enp5s0
+/proc/1/task/1/net/r8168
+/proc/1/task/1/net/stat
+/proc/1/task/1/net
+/proc/1/task/1
+/proc/1/task
+/proc/1
+
+Now entering program "directory-walk-test.pl" at timestamp 1742758803.55759.
+
+Compilation time was 0.272ms
+
+pname     = directory-walk-test.pl
+cmpl_beg  = 1742758803.55732
+cmpl_end  = 1742758803.55759
+Options   = ()
+Arguments = ()
+Help      = 0
+
+Warning from RecurseDirs: return value of getcwd is "/proc/1",but that doesn't match our presumed current directory which is "/proc/1/fdinfo".
+Skipping this subdirectory and moving on to next.
+Warning from RecurseDirs: return value of getcwd is "/proc/1/task/1",but that doesn't match our presumed current directory which is "/proc/1/task/1/fdinfo".
+Skipping this subdirectory and moving on to next.
+
+Now exiting program "directory-walk-test.pl" at timestamp 1742758803.5631.
+Execution time was 5.510ms.

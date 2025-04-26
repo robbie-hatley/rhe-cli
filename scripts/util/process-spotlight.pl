@@ -54,6 +54,8 @@
 #                   "common::sense" (antiquated). Got rid of all prototypes.
 # Sat Sep 02, 2023: Improved help and argv.
 # Fri Apr 25, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl". Nixed "e".
+# Sat Apr 26, 2025: Now using "/sl" as symbolic link to Spotlight directory, which has been moved to
+#                   "/home/aragorn/Data/Celephais/Gallery/Photographs/Scenic/Spotlight".
 ##############################################################################################################
 
 # Pragmas:
@@ -122,7 +124,7 @@ my $Current = 0;
    if ( $Current ) {
       $valid =
          -e $cusl   && -d $cusl
-      && -e '/d/sl' && -d '/d/sl';
+      && -e '/sl' && -d '/sl';
    }
    else {
       $valid =
@@ -130,7 +132,7 @@ my $Current = 0;
       && -e '/usl2' && -d '/usl2'
       && -e '/usl3' && -d '/usl3'
       && -e '/usl4' && -d '/usl4'
-      && -e '/d/sl' && -d '/d/sl';
+      && -e '/sl'   && -d '/sl';
    }
 
    # If all needed directories exist, print verification message;
@@ -145,12 +147,12 @@ my $Current = 0;
       exit 666;
    }
 
-   # Update directory /d/sl from user directories:
+   # Update directory /sl from user directories:
    foreach my $user ( sort keys %USLs ) {
       next if $Current && $user ne $cusr;
       say '';
       say "User = \"$user\".";
-      copy_files($USLs{$user}, '/d/sl', 'large', 'unique', 'sha1', 'sl', 'corr');
+      copy_files($USLs{$user}, '/sl', 'large', 'unique', 'sha1', 'sl', 'corr');
    }
 
    # Print exit message, including elapsed time, and exit:
