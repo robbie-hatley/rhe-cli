@@ -78,6 +78,10 @@
 # Fri Mar 14, 2025: Changed settings for "d" and "e" so that they leave source intact, use substitution
 #                   characters, warn on error, and continue until encoding or decoding is FINISHED.
 #                   (They now don't "return on error"). Also, trimmed all dividers and lines to 110 max.
+# Fri Apr 25, 2025: Fixed bug in readdir_regexp_utf8 which was causing files NOT in the current working
+#                   directory to be erroneously reported as not existing, due to lstat being called on the
+#                   file's NAME instead of the file's PATH. Added "corr" option to hash() and copy_file(),
+#                   telling them to correct the file-name suffix of the target file if necessary.
 ##############################################################################################################
 
 # ======= POD: ===============================================================================================
@@ -520,7 +524,7 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
 
       # If we get to here, include this file among those to be returned:
       push @names, $name;
-   }
+   } # end foreach my $name (@raw)
 
    # If debugging, print names:
    if ($db) {
@@ -1309,7 +1313,7 @@ sub copy_file :prototype($$;@)
          $dsuff = get_suffix($sname);
       }
    }
-   if ('corr' eq $suff) {$dsuff = get_correct_suffix($spath);
+   if ('corr' eq $suff) {$dsuff = get_correct_suffix($spath)};
    $dname = $dpref . $dsuff;
 
    # If $dname already exists in $dst, try enumerating:

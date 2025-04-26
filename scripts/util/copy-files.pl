@@ -29,7 +29,9 @@
 # Thu Aug 15, 2024: -C63; erased unnecessary "use" statements; put protos & sigs on all subs.
 # Tue Mar 04, 2025: Got rid of prototypes and empty sigs. Added comments to subroutine predeclarations.
 #                   Now using "BEGIN" and "END" blocks to print entry and exit messages.
-# Fri Apr 25, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl". Nixed "d", "e".
+# Fri Apr 25, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d" and "e". Added [-c|--correct] option, telling program to correct the
+#                   file-name suffix of each copied file if necessary.
 ##############################################################################################################
 
 # ======= PRAGMAS AND MODULES: ===============================================================================
