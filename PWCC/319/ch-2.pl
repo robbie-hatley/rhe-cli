@@ -42,25 +42,51 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
 use v5.36;
 use utf8::all;
-
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
+no warnings 'uninitialized';
+# Return minimum common integer between
+# two arrays of integers:
+sub min_com ($aref1, $aref2) {
+   my %hash;
+   for (@$aref1) {$hash{$_}|=1}
+   for (@$aref2) {$hash{$_}|=2}
+   my @common;
+   foreach my $key (sort {$a<=>$b} keys %hash) {
+      if (3 == $hash{$key}) {
+         push @common, $key;
+      }
+   }
+   return @common[0];
 }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) :
+(
+   [
+      [1, 2, 3, 4],
+      [3, 4, 5, 6],
+   ],
+
+   [
+      [1, 2, 3],
+      [2, 4],
+   ],
+
+   [
+      [1, 2, 3, 4],
+      [5, 6, 7, 8],
+   ],
+);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   my $aref1 = $aref->[0];
+   my $aref2 = $aref->[1];
+   say "First  array = (@$aref1).";
+   say "Second array = (@$aref2).";
+   my $min_com = min_com($aref1,$aref2);
+   say "Minimum common integer = ", $min_com // 'none';
 }
