@@ -44,7 +44,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use utf8::all;
    use List::Util 'first';
    no warnings 'uninitialized';
-   # Return minimum common integer between two arrays of integers:
+   # Return minimum common integer
+   # between two arrays of integers:
    sub min_com ($aref1, $aref2) {
       my %hash;
       for (@$aref1) {$hash{$_}|=1}
