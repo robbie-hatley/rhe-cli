@@ -40,23 +40,17 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
-no warnings 'uninitialized';
-# Return minimum common integer between
-# two arrays of integers:
-sub min_com ($aref1, $aref2) {
-   my %hash;
-   for (@$aref1) {$hash{$_}|=1}
-   for (@$aref2) {$hash{$_}|=2}
-   my @common;
-   foreach my $key (sort {$a<=>$b} keys %hash) {
-      if (3 == $hash{$key}) {
-         push @common, $key;
-      }
+   use v5.36;
+   use utf8::all;
+   use List::Util 'first';
+   no warnings 'uninitialized';
+   # Return minimum common integer between two arrays of integers:
+   sub min_com ($aref1, $aref2) {
+      my %hash;
+      for (@$aref1) {$hash{$_}|=1}
+      for (@$aref2) {$hash{$_}|=2}
+      first {3 == $hash{$_}} sort {$a<=>$b} keys %hash;
    }
-   return @common[0];
-}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
@@ -85,8 +79,8 @@ for my $aref (@arrays) {
    say '';
    my $aref1 = $aref->[0];
    my $aref2 = $aref->[1];
-   say "First  array = (@$aref1).";
-   say "Second array = (@$aref2).";
+   say "First  array = (@$aref1)";
+   say "Second array = (@$aref2)";
    my $min_com = min_com($aref1,$aref2);
    say "Minimum common integer = ", $min_com // 'none';
 }
