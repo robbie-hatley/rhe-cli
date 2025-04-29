@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -15,13 +15,12 @@
 #                   "Sys::Binmode".
 # Thu Nov 25, 2021: Cleaned up formatting and comments, and added debugging.
 # Tue Aug 08, 2023: Upgraded from "v5.32" to "v5.36". Reduced width from 120 to 110.
+# Sun Apr 27, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
 ##############################################################################################################
 
 use v5.36;
-use strict;
-use warnings;
-use utf8;
-use warnings FATAL => 'utf8';
+use utf8::all;
 use Time::HiRes 'time';
 
 my $db        = 0;
@@ -89,9 +88,3 @@ while ( <> ) {
 for my $key (sort {$Ab{$b}<=>$Ab{$a}} keys %Ab) { # Index hash by reverse order of abundance.
    say "$key => $Ab{$key}";                       # Display how many strings were received for each key.
 }
-
-# We be done, so exit 0:
-exit 0;
-
-# As Nelly Furtado once said, "All good things come to an end."
-__END__

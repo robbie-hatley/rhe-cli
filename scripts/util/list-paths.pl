@@ -15,7 +15,7 @@
 #                   its first argument, target as second, and regexp (instead of wildcard) as third.
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and
 #                   "Sys::Binmode".
-# Sat Nov 27, 2021: Fixed a wide character (missing e) bug and shortened sub names. Tested: Works.
+# Sat Nov 27, 2021: Fixed a wide character (missing "e") bug and shortened sub names. Tested: Works.
 # Thu Sep 07, 2023: Reduced width from 120 to 110. Upgraded from "v5.32" to "v5.36". Got rid of CPAN module
 #                   "common::sense" (antiquated). Added "use strict", "use warnings", "use utf8",
 #                   "warning FATAL => 'utf8'", "use Cwd", and "use Time::HiRes 'time'". Changed "cwd_utf8" to
@@ -28,18 +28,14 @@
 #                   Brought formatting of dividers, etc up to my current standards. Put "-C63" in shebang.
 #                   Added system variables, global variables, BEGIN, INIT, and compilation timing.
 #                   Fixed "count all files twice" bug. Changed default verbosity from "terse" to "quiet".
-# Thu Apr 10, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
-#                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use strict;
-use warnings;
-
-use utf8::all   qw( :DEFAULT );
-use Cwd::utf8   qw( :DEFAULT );
-use Time::HiRes qw( time     );
-
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes 'time';
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================

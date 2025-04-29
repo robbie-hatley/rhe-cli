@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -22,14 +22,14 @@
 # Mon Mar 10, 2025: Got rid of given/when.
 # Thu Apr 03, 2025: Reduced width from 120 to 110. Got rid of "cwd_utf8". Got rid of prototypes. Increased
 #                   min ver from "5.32" to "5.36". Changed shebang from "-CSDA" to "-C63". Bracing->C.
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-
-use Cwd          qw( cwd getcwd );
-use Time::HiRes  qw( time       );
-
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes 'time';
 use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
@@ -54,7 +54,7 @@ my $direcount  = 0  ; # Count of directories processed by process_current_direct
    say "\nNow entering program \"$pname\".";
    my $t0 = time;
    argv();
-   $StartDir = d(getcwd);
+   $StartDir = cwd;
    my $SubDirs = GetFiles($StartDir, 'D');
    foreach my $SubDir (@{$SubDirs})
    {
@@ -90,17 +90,17 @@ sub curdire ($SubDir) {
    ++$direcount;
 
    # cd to subdirectory:
-   chdir e $SubDir;
+   chdir $SubDir;
 
    # Announce subdirectory:
    say "\nSubdir # $direcount: \"$SubDir\"\n";
 
    # Execute Command:
    say("Executing command \"$Command\"");
-   system(e $Command) if not $db;
+   system($Command) if not $db;
 
    # cd back to starting directory and return:
-   chdir e $StartDir;
+   chdir $StartDir;
    return 1;
 } # end sub curdire
 

@@ -26,15 +26,10 @@
 #                   "Cwd::utf" instead of "Cwd", and nixed all uses of "d" and "e"
 ##############################################################################################################
 
-# Pragmas:
 use v5.36;
-
-# CPAN modules:
 use utf8::all;
 use Cwd::utf8;
 use Time::HiRes 'time';
-
-# RH modules:
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================

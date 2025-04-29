@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -21,15 +21,10 @@
 #                   predicate.
 ##############################################################################################################
 
-# Pragmas:
 use v5.36;
-use utf8;
-
-# CPAN modules:
-use Cwd         qw( cwd getcwd );
-use Time::HiRes qw( time       );
-
-# RH modules:
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes 'time';
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================
@@ -191,13 +186,13 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
+   my $cwd = cwd;
 
    # Announce current working directory:
    say "\nDirectory # $direcount: $cwd\n";
 
    # Git "ls -l" listing of current directory:
-   my @dir_lines = `/usr/bin/ls -l`; # map {d($_)} `/usr/bin/ls -l`;
+   my @dir_lines = `/usr/bin/ls -l`;
 
    # Make hash of directory lines for regular files only, keyed by file-name extension:
    my %exts;
@@ -210,8 +205,7 @@ sub curdire {
       if ($Debug) {say "\$name = $name";} # Say name if debugging.
       next if $name !~ m/$RegExp/;    # Skip files not matching $RegExp.
       ++$filecount;                   # If we get to here, file matches $RegExp.
-      local $_ = e($name);            # Temporarily set $_ to e($name).
-
+      local $_ = $name;               # Temporarily set $_ to $name.
       next if !eval($Predicate);      # Skip files not matching $Predicate.
       ++$predcount;                   # If we get to here, file also matches $Predicate.
       push @{$exts{ext(gnfl($line))}}, $line; # Store line in hash.

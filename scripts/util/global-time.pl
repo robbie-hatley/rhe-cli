@@ -25,13 +25,10 @@
 # Thu Apr 24, 2025: Added "use utf8::all". Simplified shebang to "#!/usr/bin/env perl". Corrected error in
 #                   regexps for custom zone in which [+-] was mandatory instead of optional as it should have
 #                   been. ("--zone=3" should be construed as +3.) Now using "Switch" instead of if/elsif/else.
-# Fri Apr 25, 2025: Got rid of "use RH::Util" (not needed).
+# Sun Apr 27, 2025: Got rid of "use RH::Util" (not needed).
 ##############################################################################################################
 
-# Pragmas:
 use v5.36;
-
-# CPAN modules:
 use utf8::all;
 use Switch;
 

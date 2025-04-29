@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -18,13 +18,13 @@
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
 # Sun Mar 17, 2025: Reduced width from 120 to 110. Increased min ver from "5.32" to "5.36". Got rid of all
 #                   prototypes.
-# Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
+use utf8::all;
 use Cwd::utf8;
-
 use RH::Dir;
 use RH::Util;
 

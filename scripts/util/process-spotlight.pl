@@ -58,16 +58,9 @@
 #                   "/home/aragorn/Data/Celephais/Gallery/Photographs/Scenic/Spotlight".
 ##############################################################################################################
 
-# Pragmas:
 use v5.36;
-use strict;
-use warnings;
-
-# CPAN Modules:
 use utf8::all;
 use Time::HiRes 'time';
-
-# RH Modules:
 use RH::Dir;
 
 # ============================================================================================================

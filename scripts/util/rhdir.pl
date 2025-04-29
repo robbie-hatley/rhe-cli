@@ -46,17 +46,14 @@
 # Wed Mar 19, 2025: Changed shebang to "-C63". Cleaned-up quoting of CPAN module functions. Typing more than 2
 #                   arguments now just triggers a warning, rather than aborting the program. Help, recurse,
 #                   and stats are now all on one line, controlled by "and" and "or" for coordination.
-# Thu Apr 10, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
 ##############################################################################################################
 
 use v5.36;
-use strict;
-use warnings;
-
 use utf8::all;
 use Cwd::utf8;
-use Time::HiRes qw( time );
+use Time::HiRes 'time';
 use Data::Dumper;
 
 use RH::Dir;

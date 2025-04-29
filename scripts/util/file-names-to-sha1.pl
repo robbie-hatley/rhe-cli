@@ -22,11 +22,9 @@
 ##############################################################################################################
 
 use v5.36;
-
 use utf8::all;
 use Cwd::utf8;
-use Time::HiRes qw( time );
-
+use Time::HiRes 'time';
 use RH::Dir;
 use RH::Util;
 

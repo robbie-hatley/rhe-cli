@@ -10,23 +10,16 @@
 # Written by Robbie Hatley.
 # Edit history:
 # Sat Mar 22, 2025: Wrote it.
-# Thu Apr 10, 2025: Now using "utf8::all" and "Cwd::utf8". Simplifed shebang to "#!/usr/bin/env perl".
-#                   Nixed all "d", "e". Now using "cwd" instead of "d getcwd".
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
-# Pragmas:
 use v5.36;
-use strict;
-use warnings;
-
-# CPAN modules:
-use utf8::all   qw( :DEFAULT );
-use Cwd::utf8   qw( :DEFAULT );
-use Time::HiRes qw( time     );
-use List::Util  qw( any      );
-use Digest::SHA qw( sha1_hex );
-
-# RH modules:
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes 'time';
+use List::Util 'any';
+use Digest::SHA 'sha1_hex';
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================

@@ -1,3 +1,0 @@
-#!/usr/bin/bash
-sudo umount /home/aragorn/net/SR/Hoarwell
-sudo umount /home/aragorn/net/SR/Wilderland

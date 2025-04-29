@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -15,7 +15,7 @@
 #                   work now. Also, simplified dir names, and now moving to 2021 instead of 2020.
 # Fri Jan 29, 2021: Now also renames and files-away screenshots in appropriate year/month directories.
 # Sat Feb 13, 2021: Simplified. Now an ASCII file. No-longer uses -CSDA. Runs on all Perl versions.
-# Sat Jul 31, 2021: File is now UTF-8, 120 characters wide. Now using "use utf8", "use Sys::Binmode", and e.
+# Sat Jul 31, 2021: File is now UTF-8, 120 characters wide. Now using "use utf8", "use Sys::Binmode", and "e".
 # Wed Oct 27, 2021: Added Help() function.
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate. Now using "common::sense".
 # Thu Nov 25, 2021: Fixed regexp bug that was causing program to find no files. Added timestamping.
@@ -30,13 +30,15 @@
 # Mon Aug 28, 2023: Changed all "$db" to "$Db". Now using "d getcwd" instead of "cwd_utf8".
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
 # Wed Feb 26, 2025: Trimmed one horizontal divider.
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
 ##############################################################################################################
 
 # ======= PRELIMINARIES: =====================================================================================
 
 use v5.36;
-use utf8;
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -112,7 +114,7 @@ sub aggregate {
       }
 
       # Aggregate Toontown screenshots from the all-accounts program directory to Arcade:
-      system(e("move-files.pl '$program_dir_1' '$screenshots_dir' '$image_regexp'"));
+      system("move-files.pl '$program_dir_1' '$screenshots_dir' '$image_regexp'");
    }
    elsif ( $platform eq 'Win64' ) {
       # Set directory variables for Windows:
@@ -130,8 +132,8 @@ sub aggregate {
       }
 
       # Aggregate Toontown screenshots from both per-account program directories to Arcade:
-      system(e("move-files.pl '$program_dir_1' '$screenshots_dir' '$image_regexp'"));
-      system(e("move-files.pl '$program_dir_2' '$screenshots_dir' '$image_regexp'"));
+      system("move-files.pl '$program_dir_1' '$screenshots_dir' '$image_regexp'");
+      system("move-files.pl '$program_dir_2' '$screenshots_dir' '$image_regexp'");
    }
    else {
       if ( $Db ) {
@@ -149,7 +151,7 @@ sub aggregate {
    # Re-name Screenshots:
 
    # Enter screenshots directory:
-   chdir(e($screenshots_dir));
+   chdir($screenshots_dir);
 
    # Get ref to list of file-info hashes for all jpg and png files in screenshots directory:
    my $ImageFiles1 = GetFiles($screenshots_dir, 'F', $image_regexp);
@@ -160,7 +162,7 @@ sub aggregate {
       say STDERR 'In ATT, about to rename files.';
       say STDERR "Screenshots dir = \"$screenshots_dir\".";
       # Sanity check!!! Are we actually where we think we are???
-      my $cwd = d getcwd;
+      my $cwd = cwd;
       say STDERR "CWD = \"$cwd\".";
       say STDERR "Number of files before renaming = $num1";
       say STDERR "Names  of files before renaming:";
@@ -171,7 +173,7 @@ sub aggregate {
    # Rename Toontown screenshot files as necessary:
    say STDOUT '';
    say STDOUT 'Now canonicalizing names of Toontown screenshots....';
-   system(e('rename-toontown-images.pl -v'));
+   system('rename-toontown-images.pl -v');
 
    # Get ref to FRESH list of file-info hashes for all jpg and png files in screenshots directory
    # (NOTE: all the names will have changed, so we can't re-use old list):
@@ -183,7 +185,7 @@ sub aggregate {
       say STDERR 'In ATT, after renaming files.';
       say STDERR "Screenshots dir = \"$screenshots_dir\".";
       # Sanity check!!! Are we actually where we think we are???
-      my $cwd = d(getcwd);
+      my $cwd = cwd;
       say STDERR "CWD = \"$cwd\".";
       say STDERR "Number of files after renaming = $num2";
       say STDERR "Names  of files after renaming:";
@@ -205,7 +207,7 @@ sub aggregate {
       my $year  = $Parts[2];
       my $month = $Parts[3];
       my $dir   = $year . '/' . $month;
-      if ( ! -e e $dir ) {mkdir e $dir;}
+      if ( ! -e $dir ) {mkdir $dir;}
       move_file($path, $dir);
    }
    say STDOUT '';

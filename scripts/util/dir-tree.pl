@@ -23,13 +23,10 @@
 # Thu Mar 13, 2025: Reduced min ver from "5.36" to (tacit) "5.00".
 # Thu Apr 03, 2025: Increased min ver from "5.00" to "5.16" to get "say". Now using CPAN modules "utf8::all"
 #                   and "Cwd::utf8". Got rid of "d" and "e". Shebang = "#!/usr/bin/env perl".
+# Sun Apr 27, 2025: Increased min ver from "5.16" to "5.36" to get automatic "strict" and "warnings".
 ##############################################################################################################
 
-use v5.16;
-use strict;
-use warnings;
-use warnings FATAL => "utf8";
-use utf8;
+use v5.36;
 use utf8::all;
 use Cwd::utf8;
 use RH::Dir;

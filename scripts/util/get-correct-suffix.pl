@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -18,35 +18,18 @@
 # Wed Sep 06, 2023: Added & edited some comments.
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
 # Fri Mar 14, 2024: Got rid of "return on error".
+# Sun Apr 27, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl". Got rid of "d" and "e"
+#                   subroutines and nixed all "d" and "e" in script.
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-
-use Time::HiRes qw( time );
-use Encode      qw( :DEFAULT encode decode :fallbacks :fallback_all );
-use File::Type  qw( :DEFAULT );
-use List::Util  qw( sum0 );
+use utf8::all;
+use Time::HiRes 'time';
+use File::Type;
+use List::Util 'sum0';
+use Encode qw( encode decode :fallbacks :fallback_all );
 
 my $Db = 0; # Debug?
-
-# Prepare constant "EFLAGS" which contains bitwise-OR'd flags for Encode::encode and Encode::decode;
-# leave source intact and warn on error, but don't return or die on error:
-use constant EFLAGS => LEAVE_SRC | WARN_ON_ERR | ;
-
-# Decode from UTF-8 to Unicode:
-sub d {
-      if (0 == scalar @_) {return Encode::decode('UTF-8', $_,    EFLAGS);}
-   elsif (1 == scalar @_) {return Encode::decode('UTF-8', $_[0], EFLAGS);}
-   else              {return map {Encode::decode('UTF-8', $_,    EFLAGS)} @_ };
-} # end sub d
-
-# Encode from Unicode to UTF-8:
-sub e {
-      if (0 == scalar @_) {return Encode::encode('UTF-8', $_,    EFLAGS);}
-   elsif (1 == scalar @_) {return Encode::encode('UTF-8', $_[0], EFLAGS);}
-   else              {return map {Encode::encode('UTF-8', $_,    EFLAGS)} @_ };
-} # end sub e
 
 # Is a line of text encoded in ASCII?
 sub is_ascii ($text) {
@@ -109,8 +92,8 @@ sub is_utf8 ($text) {
 
 # Return 1 if-and-only-if a path points to a data file (an existing, non-link, non-dir, regular file):
 sub is_data_file ($path) {
-   return 0 if ! -e e $path;
-   lstat e $path;
+   return 0 if ! -e $path;
+   lstat $path;
    return 0 if   -l _ ;
    return 0 if   -d _ ;
    return 0 if ! -f _ ;
@@ -238,18 +221,18 @@ sub get_correct_suffix ($path) {
    # If we get to here, we haven't returned a suffix yet, which means that checktype_filename() from CPAN
    # module "File::Type" was NOT able to determine the type of this file. So we'll have to use other methods.
 
-   # If this file is at-least 32 bytes in size, let's grab AT-LEAST the first 32 bytes of its contents,
-   # up to a max of 1048576 bytes, and examine the contents for clues as to what kind of file this is,
-   # or if we CAN'T read at least 32 bytes, return "***ERROR***":
-   my $size = -s e $path;
+   # If this file is at-least 10 bytes in size, let's grab AT-LEAST the first 10 bytes of its contents,
+   # up to a max of 512 bytes, and examine the contents for clues as to what kind of file this is,
+   # or if we CAN'T read at least 10 bytes, return "***ERROR***":
+   my $size = -s $path;
    my $buffer = '';
-   if ( $size >= 32 ) {
+   if ( $size >= 10 ) {
       my $fh = undef;
-      open($fh, '< :raw', e $path)                    or return '***ERROR***' ; # File can't be opened.
-      read($fh, $buffer, 1048576)                     or return '***ERROR***' ; # File can't be read.
+      open($fh, '< :raw', $path)                      or return '***ERROR***' ; # File can't be opened.
+      read($fh, $buffer, 512)                         or return '***ERROR***' ; # File can't be read.
       close($fh)                                      or return '***ERROR***' ; # File can't be closed.
       my $bytes = length($buffer);
-      $bytes >= 32                                    or return '***ERROR***' ; # Didn't read 32 bytes.
+      $bytes >= 10                                    or return '***ERROR***' ; # Didn't read 10 bytes.
 
       if ( $Db ) {
          say STDERR '';
@@ -259,18 +242,30 @@ sub get_correct_suffix ($path) {
       }
 
       # Pore over the contents of $buffer and try to glean clues as to what type of file this is:
-      if ( $type eq 'application/octet-stream' ) {
-         'wOFF' eq substr($buffer,0,4)                     and return '.woff' ; # Web Open Font Format
-         is_ascii($buffer)                                 and return '.txt'  ; # ASCII      text file.
-         is_iso_8859_1($buffer)                            and return '.txt'  ; # ISO-8859-1 text file.
-         is_utf8($buffer)                                  and return '.txt'  ; # UTF-8      text file.
+
+      # Is this a Linux executable?
+      "\x{7F}ELF" eq substr($buffer, 0, 4)                 and return ''      ; # Linux ELF executable
+
+      # Is this a hashbang script?
+      if ( '#!' eq substr($buffer, 0, 2) ) {
+         my $fl = ($buffer =~ s/^(.+?)\n.*$/$1/rs);
+         if ($Db) {say STDERR "in if(#!). \$fl = \"$fl\".";}
+         $fl =~ m%^#!.*apl%i                               and return '.apl'  ; # APL
+         $fl =~ m%^#!.*awk%i                               and return '.awk'  ; # AWK
+         $fl =~ m%^#!.*bash%i                              and return '.sh'   ; # BASH
+         $fl =~ m%^#!.*node%i                              and return '.js'   ; # Javascript
+         $fl =~ m%^#!.*perl%i                              and return '.pl'   ; # Perl
+         $fl =~ m%^#!.*python%i                            and return '.py'   ; # Python
+         $fl =~ m%^#!.*raku%i                              and return '.raku' ; # Raku
+         $fl =~ m%^#!.*sed%i                               and return '.sed'  ; # Sed
       }
+
+      # Next, see if this file is any of various non-text non-executable types:
       "AVI" eq substr($buffer, 8, 3)                       and return '.avi'  ; # AVI (Windows video)
       pack('C4',195,202,4,193) eq substr($buffer,0,4)      and return '.ccf'  ; # CCF (Chrome Cache File)
       'fLaC' eq substr($buffer,0,4)                        and return '.flac' ; # fLaC (high-quality sound)
       'FLV' eq substr($buffer,0,3)                         and return '.flv'  ; # FLV (FLash Video)
       'GIF' eq substr($buffer,0,3)                         and return '.gif'  ; # GIF (lo-color grphcs; anim)
-      $buffer =~ m%^<!DOCTYPE HTML%                        and return '.html' ; # HTML (markup)
       '\xFF\xD8\xFF' eq substr($buffer,0,3)                and return '.jpg'  ; # JPG (lossy compression)
       'ftypmp4' eq substr($buffer,4,7)                     and return '.mp4'  ; # MP4 (good video format)
       'PAR2' eq substr($buffer,0,4)                        and return '.par2' ; # PAR2 (checksum)
@@ -278,12 +273,35 @@ sub get_correct_suffix ($path) {
       'PNG' eq substr($buffer,1,3)                         and return '.png'  ; # PNG (Portable Network Grph.)
       'Rar' eq substr($buffer,0,3)                         and return '.rar'  ; # RAR (compressed archive)
       'WAVEfmt' eq substr($buffer,8,7)                     and return '.wav'  ; # WAV (lossless sound)
+      'WEBP' eq substr($buffer,8,4)                        and return '.webp' ; # WEBP (photo or video)
       pack('C[16]',  48,  38, 178, 117, 142, 102, 207,  17,
                     166, 217,   0, 170,   0,  98, 206, 108)
          eq substr($buffer,0,16)                           and return '.wma'  ; # WMA (Windows Media Audio)
       '\x30\x26\xB2\x75\x8E\x66\xCF\x11'.
       '\xA6\xD9\x00\xAA\x00\x62\xCE\x6C'
          eq substr($buffer,0,16)                           and return '.wmv'  ; # WMV (Windows Media Video)
+      'wOFF' eq substr($buffer,0,4)                        and return '.woff' ; # Web Open Font Format
+
+      # Might this be a CSS file?
+      # WOMBAT RH 2023-09-06: For now, I'm commenting this out, as it's too dangerous to search the entire
+      # buffer for these terms, as the buffer may be huge and these terms are a bit ubiquitous:
+      # $buffer =~
+      # m% background.*: | border.*:      | margin.*:    |
+      #    padding.*:    | font-family.*: | font-size.*: |
+      #    font-weight.*:                                %ix and return '.css'  ; # CSS (style sheets)
+
+      # Might this be an HTML file?
+      $type eq 'application/octet-stream'
+      && is_utf8($buffer)
+      && substr($buffer, 0, 75) =~ m%^<!doctype\s*html%i   and return '.html' ; # HTML (markup)
+
+      # Save "txt" for last, else other types (eg, html)
+      # may falsely be reported as being "txt":
+      if ( $type eq 'application/octet-stream' ) {
+         is_ascii($buffer)                                 and return '.txt'  ; # ASCII      text file.
+         is_iso_8859_1($buffer)                            and return '.txt'  ; # ISO-8859-1 text file.
+         is_utf8($buffer)                                  and return '.txt'  ; # UTF-8      text file.
+      }
    }
 
    # If we get to here, we've failed to definitively determine the correct suffix for-sure, so return the
@@ -333,7 +351,7 @@ sub help {
 
 my $NA = scalar @ARGV;
 for ( @ARGV ) { /-h/ || /--help/ and help and exit ; }
-($NA != 1) || !-e(e($ARGV[0])) || !-f(e($ARGV[0])) || -d(e($ARGV[0])) || -l(e($ARGV[0]))
+($NA != 1) || !-e($ARGV[0]) || !-f($ARGV[0]) || -d($ARGV[0]) || -l($ARGV[0])
 and die "Error: this program must have one argument, which must be \n".
         "-h or --help or a path to an existing regular file.\n";
 say get_correct_suffix($ARGV[0]);

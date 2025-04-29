@@ -27,19 +27,14 @@
 # Wed Mar 05, 2025: Consolidated changes from Glide and home. (Corrected help, etc.)
 # Fri Mar 07, 2025: Refactored. Now also using $Predicate. Updated variables, argv(), and help().
 # Thu Apr 17, 2025: Fixed "applies command to dirs in files-only mode" bug (don't reset target if pred used).
-# Fri Apr 18, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
-#                   Nixed all "e", "d". Changed all "d getcwd" to just "cwd".
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
-# Pragmas:
 use v5.36;
-
-# CPAN modules:
-use utf8::all   qw( :DEFAULT );
-use Cwd::utf8   qw( :DEFAULT );
-use Time::HiRes qw( time     );
-
-# RH modules:
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes 'time';
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================

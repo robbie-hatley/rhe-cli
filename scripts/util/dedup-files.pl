@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide UTF-8 Unicode Perl source-code text file with hard Unix line breaks ("\x{0A}").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -97,11 +97,13 @@
 # Wed Aug 14, 2024: Removed unnecessary "use" statements. Changed short option for debug from "-d" to "-e".
 # Wed Feb 26, 2025: Trimmed horizontal dividers and reformated over-length comment lines.
 # Tue Mar 04, 2025: Now using global "t0" and "BEGIN" block to start timer.
+# Sun Apr 27, 2025: Fixed stats bug (due to changes in GetRegularFilesBySize()). Now using "utf8::all" and
+#                   "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl". Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
 use RH::Util;
@@ -286,7 +288,7 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $curdir = d getcwd;
+   my $curdir = cwd;
    say '';
    say "Dir # $direcount: \"$curdir\"";
 
@@ -294,15 +296,13 @@ sub curdire {
    # in current directory, keyed by size:
    my $curdirfiles = GetRegularFilesBySize($RegExp);
 
-   # Append regular-files count from RH::Dir:: to main:: and to local:
-   $regfcount += $RH::Dir::regfcount;
-   $regfdirec += $RH::Dir::regfcount;
-
    # Iterate through the keys of the hash, in inverse order of size:
    my @sizes = sort {$b<=>$a} keys %{$curdirfiles};
    SIZE: foreach my $size (@sizes) {
       # How many files in this size group?
       my $count = scalar @{$curdirfiles->{$size}};
+      $regfcount += $count;
+      $regfdirec += $count;
 
       # If fewer than two files exist of this size, go to next size group:
       next SIZE if ($count < 2);
@@ -623,7 +623,7 @@ sub unlink_file ($file) {
    }
    # Otherwise, try to actually unlink the file:
    else {
-      my $success = unlink e $file->{Name};
+      my $success = unlink $file->{Name};
       if ( $success ) {
          say "Successfully unlinked $file->{Name}";
          $file->{Name} = "***DELETED***";

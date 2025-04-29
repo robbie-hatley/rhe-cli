@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -10,20 +10,17 @@
 # Written by Robbie Hatley.
 # Edit history:
 # Thu Mar 27, 2025: Wrote it.
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
-# Pragmas:
 use v5.36;
-use utf8;
 no warnings 'uninitialized';
-
-# CPAN modules:
-use Cwd;
-use Time::HiRes     qw( time     );
-use Image::ExifTool qw( :Public  );
-use Data::Dumper    qw( :DEFAULT );
-
-# RH modules:
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes 'time';
+use Image::ExifTool ':Public';
+use Data::Dumper;
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================
@@ -52,7 +49,7 @@ my $Verbose   = 0         ; # Be verbose?               0,1,2     Shhh! Be quiet
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all image names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all image types.
-my $OriDir    = d getcwd  ; # Original directory.       cwd       Directory on program entry.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
@@ -188,7 +185,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
+   my $cwd = cwd;
 
    # Announce current working directory if being verbose:
    if ( 2 == $Verbose) {

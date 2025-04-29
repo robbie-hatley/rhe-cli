@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -21,6 +21,8 @@
 # Mon Mar 17, 2025: Shebang to "-C63". Reduced width from 120 to 110. Increased min ver from "5.32" to "5.36".
 #                   Shortened sub names. Got rid of prototypes. Added signature to curfile().
 # Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
@@ -216,7 +218,7 @@ sub curdire {
       # Count all non-meta data files matching regexps "$Gib" and "$RegExp":
       ++$filecount;
       # Skip all paths not matching $Predicate:
-      local $_ = e $path;
+      local $_ = $path;
       next if !eval($Predicate);
       # If we get to here, increment $predcount and send path to curfile:
       ++$predcount;

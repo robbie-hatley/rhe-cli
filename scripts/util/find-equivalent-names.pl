@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -27,15 +27,15 @@
 # Tue Apr 01, 2025: Corrected description above to specify "case-folding" and "non-alphanumeric characters"
 #                   instead of just " ", "_", "-". Now announces directory only for those directories which
 #                   have clusters of 2-or-more "equivalent" names.
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-
-use Cwd                qw( cwd getcwd   );
-use Time::HiRes        qw( time         );
-use Switch             qw( :DEFAULT     );
-
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes 'time';
+use Switch;
 use RH::Util;
 use RH::Dir;
 
@@ -67,7 +67,7 @@ my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
-my $OriDir    = d getcwd  ; # Original directory.       cwd       Directory on program entry.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
 # Counters:
 my $direcount = 0; # Count of directories processed by curdire().
@@ -205,13 +205,13 @@ sub argv {
 
 sub curdire {
    # Get current working directory and increment directory counter:
-   my $cwd = d getcwd;
+   my $cwd = cwd;
    ++$direcount;
 
    # Read list of all file names from current directory into array "@names" and increment file counter:
    my $dh = undef;
-   opendir $dh, e $cwd or die "Fatal error: Couldn't open  directory \"$cwd\".\n$!\n";
-   my @names = d(readdir($dh));
+   opendir $dh, $cwd or die "Fatal error: Couldn't open  directory \"$cwd\".\n$!\n";
+   my @names = readdir($dh);
    scalar(@names) >= 2 or die "Fatal error: Couldn't read  directory \"$cwd\".\n$!\n";
    closedir $dh or die "Fatal Error: Couldn't close directory \"$cwd\".\n$!\n";
    $filecount += scalar(@names);
@@ -222,8 +222,8 @@ sub curdire {
    NAME: for my $name (@names) {
       next if '.'  eq $name;
       next if '..' eq $name;
-      next if ! -e e $name;
-      my @stats = lstat e $name;
+      next if ! -e $name;
+      my @stats = lstat $name;
       switch($Target) {
          case 'F' { next NAME if !  -f _            }
          case 'D' { next NAME if !            -d _  }

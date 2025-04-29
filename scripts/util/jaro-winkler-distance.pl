@@ -1,6 +1,9 @@
-#!/usr/bin/env -S perl -CSDA
-
+#!/usr/bin/env perl
 # jaro-winkler-distance.pl
+# by Robbie Hatley.
+# Edit history:
+# Thu Aug 29, 2024: Wrote it.
+# Sun Apr 27, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl".
 
 =pod
 
@@ -43,6 +46,7 @@ order in string2 opposite of index order in string1).
 
 # Pragmas and modules:
 use v5.15;                       # To get say and fc.
+use utf8::all;                   # To automate UTF-8.
 use POSIX      qw( floor ceil ); # To get floor and ceiling functions.
 use List::Util qw( min   max  ); # To get min and max of list of numbers.
 

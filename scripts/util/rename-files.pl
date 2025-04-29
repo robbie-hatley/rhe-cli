@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide UTF-8 Unicode Perl source-code text file with hard Unix line breaks ("\x{0A}").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -60,12 +60,13 @@
 # Mon Oct 07, 2024: Added "use warnings FATAL => 'utf8';". Removed "_END_".
 # Wed Apr 02, 2025: Fixed bug which was making it impossible to use "--" as a regexp to search for.
 #                   (Trick is to first use "--" as an option, then use "--" again as an argument.)
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-use warnings FATAL => 'utf8';
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Util;
 use RH::Dir;
@@ -98,7 +99,7 @@ my $Recurse   = 0         ; # Recurse subdirectories?            bool           
 my $Target    = 'F'       ; # Files, directories, both, or All?  F|D|B|A        Files.
 my $RegExp    = qr/^.+$/o ; # RegExp.                            RegExp         Match all file names.
 my $Predicate = 1         ; # Boolean file-test predicate.       bool           All file-type combos.
-my $OriDir    = d getcwd  ; # Original directory.       cwd       Directory on program entry.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Mode      = 'P'       ; # Prompt mode                        P|S|Y          Prompt user.
 my $Replace   = '$1'      ; # Replacement string.                string         Replacement is same as match.
 my $Flags     = ''        ; # Flags for s/// operator.           imsxopdualgre  No flags.
@@ -264,7 +265,7 @@ sub curdire {
    ++$dircount;
 
    # Get and announce current working directory:
-   my $curdir = d getcwd;
+   my $curdir = cwd;
    if ( $Verbose >= 1 ) {
       say STDOUT "\nDirectory # $dircount: $curdir";
    }
@@ -276,7 +277,7 @@ sub curdire {
    foreach my $file (sort {$a->{Name} cmp $b->{Name}} @$curdirfiles) {
       ++$filecount;
       say STDERR "Debug msg in rnf, in curdire, in foreach: filename = $file->{Name}" if $Debug;
-      local $_ = e $file->{Path};
+      local $_ = $file->{Path};
       if (eval($Predicate)) {
          ++$predcount;
          curfile($file);

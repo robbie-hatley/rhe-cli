@@ -128,7 +128,7 @@ use POSIX 'floor', 'ceil', 'strftime';
 use Cwd;
 use Digest::MD5   qw( md5_hex );
 use Digest::SHA   qw( sha1_hex sha224_hex sha256_hex sha384_hex sha512_hex );
-use Encode        qw( :DEFAULT encode decode :fallbacks :fallback_all );
+use Encode        qw( encode decode :fallbacks :fallback_all );
 use File::Type;
 use File::Copy;
 use Image::Size;
@@ -504,22 +504,29 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
          next NAME;
       }
 
+      $db and say "Successfully got 13 stats for name \"$name\".";
+
       # Skip this file if it doesn't match our target:
       switch($target) {
-         case 'F' { next NAME if !     -f _                 }
-         case 'D' { next NAME if !                 -d _     }
-         case 'B' { next NAME if ! ( ( -f _ ) || ( -d _ ) ) }
-         case 'A' {                     ;                   } # Do nothing.
-         else     {                     ;                   } # Do nothing.
+         case 'F' { if ( !     -f _                 ) {$db and say STDERR "Failed  F."; next NAME;} }
+         case 'D' { if ( !                 -d _     ) {$db and say STDERR "Failed  D."; next NAME;} }
+         case 'B' { if ( ! ( ( -f _ ) || ( -d _ ) ) ) {$db and say STDERR "Failed  B."; next NAME;} }
+         case 'A' {                     ;             {$db and say STDERR "Skipped A."; next NAME;} } # Do nothing.
+         else     {                     ;             {$db and say STDERR "Skipped E."; next NAME;} } # Do nothing.
       }
 
       # Skip this file if it doesn't match our regexp:
-      next NAME if $name !~ m/$regexp/;
+      if ($name !~ m/$regexp/) {
+         $db and say STDERR "Skipping named \"$name\" because it doesn't match regexp.";
+         next NAME;
+      }
 
       # Skip this file if it doesn't match our predicate:
       if ( '1' ne "$predicate" ) {
          local $_ = e($name);
-         next NAME if ! eval $predicate;
+         if ( ! eval $predicate ) {
+            $db and say STDERR "Skipping named \"$name\" because it doesn't match predicate.";
+         }
       }
 
       # If we get to here, include this file among those to be returned:
@@ -2330,18 +2337,18 @@ sub get_correct_suffix :prototype($) ($path) {
    # If we get to here, we haven't returned a suffix yet, which means that checktype_filename() from CPAN
    # module "File::Type" was NOT able to determine the type of this file. So we'll have to use other methods.
 
-   # If this file is at-least 32 bytes in size, let's grab AT-LEAST the first 32 bytes of its contents,
+   # If this file is at-least 10 bytes in size, let's grab AT-LEAST the first 10 bytes of its contents,
    # up to a max of 512 bytes, and examine the contents for clues as to what kind of file this is,
-   # or if we CAN'T read at least 32 bytes, return "***ERROR***":
+   # or if we CAN'T read at least 10 bytes, return "***ERROR***":
    my $size = -s e $path;
    my $buffer = '';
-   if ( $size >= 32 ) {
+   if ( $size >= 10 ) {
       my $fh = undef;
       open($fh, '< :raw', e $path)                    or return '***ERROR***' ; # File can't be opened.
       read($fh, $buffer, 512)                         or return '***ERROR***' ; # File can't be read.
       close($fh)                                      or return '***ERROR***' ; # File can't be closed.
       my $bytes = length($buffer);
-      $bytes >= 32                                    or return '***ERROR***' ; # Didn't read 32 bytes.
+      $bytes >= 10                                    or return '***ERROR***' ; # Didn't read 10 bytes.
 
       if ( $db ) {
          say STDERR '';
@@ -2357,13 +2364,15 @@ sub get_correct_suffix :prototype($) ($path) {
 
       # Is this a hashbang script?
       if ( '#!' eq substr($buffer, 0, 2) ) {
-         substr($buffer, 0, 75) =~ m%^#!.*apl%i            and return '.apl'  ; # APL
-         substr($buffer, 0, 75) =~ m%^#!.*awk%i            and return '.awk'  ; # AWK
-         substr($buffer, 0, 75) =~ m%^#!.*node%i           and return '.js'   ; # Javascript
-         substr($buffer, 0, 75) =~ m%^#!.*perl%i           and return '.pl'   ; # Perl
-         substr($buffer, 0, 75) =~ m%^#!.*python%i         and return '.py'   ; # Python
-         substr($buffer, 0, 75) =~ m%^#!.*raku%i           and return '.raku' ; # Raku
-         substr($buffer, 0, 75) =~ m%^#!.*sed%i            and return '.sed'  ; # Sed
+         my $fl = ($buffer =~ s/^(.+?)\n.*$/$1/rs);
+         $fl =~ m%^#!.*apl%i                               and return '.apl'  ; # APL
+         $fl =~ m%^#!.*awk%i                               and return '.awk'  ; # AWK
+         $fl =~ m%^#!.*bash%i                              and return '.sh'   ; # BASH
+         $fl =~ m%^#!.*node%i                              and return '.js'   ; # Javascript
+         $fl =~ m%^#!.*perl%i                              and return '.pl'   ; # Perl
+         $fl =~ m%^#!.*python%i                            and return '.py'   ; # Python
+         $fl =~ m%^#!.*raku%i                              and return '.raku' ; # Raku
+         $fl =~ m%^#!.*sed%i                               and return '.sed'  ; # Sed
       }
 
       # Next, see if this file is any of various non-text non-executable types:

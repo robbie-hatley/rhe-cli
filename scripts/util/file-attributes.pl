@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -17,18 +17,18 @@
 # Thu Aug 15, 2024: Width 120->110, upgraded from "v5.32" to "v5.36", removed unnecessary "use" statements.
 # Thu Mar 06, 2025: Refactored to provide recursion, and to use regexp and predicate to select files, and
 #                   to provide F|D|B|A target selection.
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 # ======= PRAGMAS AND MODULES: ===============================================================================
 
 use v5.36;
-use utf8;
-
-use Cwd;
-use POSIX 'floor', 'ceil', 'strftime';
-
-use RH::Util;
+use utf8::all;
+use Cwd::utf8;
+use POSIX qw( floor ceil strftime );
 use RH::Dir;
+use RH::Util;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -138,7 +138,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
+   my $cwd = cwd;
 
    # Announce current working directory:
    say "\nDirectory # $direcount: $cwd\n";
@@ -149,7 +149,7 @@ sub curdire {
    # Print attributes for each file that matches $RegExp, $Target, and $Predicate:
    foreach my $path (@paths) {
       ++$filecount;
-      local $_ = e $path;
+      local $_ = $path;
       if (eval($Predicate)) {
          ++$predcount;
          attr($path);
@@ -168,18 +168,18 @@ sub attr ($path) {
    printf("Name =         %s\n", get_name_from_path($path));
 
    # Bail if file does not exist:
-   if (!-e e $path) {
+   if ( ! -e $path ) {
       say "Error: File does not exist.";
       return 0; # Can't get attributes of something that doesn't exist.
    }
 
    # Determine if file is directory (must do that HERE, above the lstat below, because lstat doesn't give info
    # on a link's TARGET, only on the link itself, and I want to include SYMLINKDs as being "directories"):
-   my $is_dir = -d e $path;
+   my $is_dir = -d $path;
 
    # Get current file's info, using lstat instead of stat, so that for
    # links, we get info for the link ITSELF, rather than what it links to:
-   my ($dev, $inode, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime) = lstat e $path;
+   my ($dev, $inode, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime) = lstat $path;
    # From this point on in this subroutine, use "_" as target of all file test operators, to save time.
 
    # Is this file a link to something?
@@ -212,7 +212,7 @@ sub attr ($path) {
    printf("Directory?     %s\n", (-d _) ? 'Yes' : 'No');
    printf("Symbolic Link? %s\n", $is_lnk ? 'Yes' : 'No');
    printf("SYMLINKD?      %s\n", ($is_lnk && $is_dir) ? 'Yes' : 'No');
-   printf("Target =       %s\n", d(readlink(e($path)))) if $is_lnk;
+   printf("Target =       %s\n", readlink($path)) if $is_lnk;
    printf("Block special? %s\n", (-b _) ? 'Yes' : 'No');
    printf("Char special?  %s\n", (-c _) ? 'Yes' : 'No');
    printf("Pipe?          %s\n", (-p _) ? 'Yes' : 'No');

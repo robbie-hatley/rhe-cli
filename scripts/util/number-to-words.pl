@@ -1,10 +1,9 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
-# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# This is a 110-character-wide ASCII Perl-source-code text file with hard Unix line breaks ("\x0A").
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
-########################################################################################################################
+##############################################################################################################
 # /rhe/scripts/math/number-to-words.pl
 # Writes a number in words.
 # Example: given "398", outputs "three hundred and ninety-eight"
@@ -23,41 +22,42 @@
 #                   through 1e102-1. The fractional part of a non-integer input is truncated and the
 #                   integral part is converted to a Math::BigInt object. Non-numeric, negative, and
 #                   too-large inputs are rejected. Argument lists of length other than 1 are rejected.
-# Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
-# Mon Jul 11, 2022: Added help; renamed "argv" to "process_arguments"; subsumed "error" into "process_arguments";
-#                   made $number a global varible; fixed "number_to_words" so that it prints its own own result;
-#                   removed unnecessary error checking of string representation of $number in "number_to_words";
-#                   and drastically simplified main body of script so that it only has 3 short, simple lines.
+# Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
+# Mon Jul 11, 2022: Added help; renamed "argv" to "process_arguments"; subsumed "error" into
+#                   "process_arguments". Made $number a page-lexical varible. Fixed "number_to_words" so that
+#                   it prints its own own result. Removed unnecessary error checking of string representation
+#                   of $number in "number_to_words". Drastically simplified main body of script so that it
+#                   only has 3 short, simple lines.
 # Mon Mar 03, 2025: Got rid of "common::sense".
-########################################################################################################################
+# Sun Apr 27, 2025: Reduced width from 120 to 110. Increased min ver from "v5.32" to "v5.36" to get
+#                   automatic strict and warnings. Converted from UTF-8 Unicode to ASCII. Simplified shebang.
+#                   Shortened subroutine names. Got rid of all prototypes. Converted bracing to C-style.
+##############################################################################################################
 
-use v5.32;
+use v5.36;
 use bignum;
 use List::Util 'sum';
 
-sub process_arguments () ; # Process arguments.
-sub number_to_words   () ; # Convert number to words.
-sub help              () ; # Print help.
+sub argv ; # Process arguments.
+sub n2w  ; # Convert number to words.
+sub help ; # Print help.
 
 my $db = 0; # set to 1 for debug, 0 for normal
 my $number;
 
 { # begin main body of script
-   process_arguments;
-   number_to_words;
-   exit 0;
+   argv;
+   n2w;
+   exit;
 } # end main body of script
 
 # Subroutine definitions follow:
 
-sub process_arguments ()
-{
+sub argv {
    # First, process and splice-out all non-argument options from @ARGV :
-   for ( my $i = 0 ; $i < @ARGV ; ++$i )
-   {
+   for ( my $i = 0 ; $i < @ARGV ; ++$i ) {
       $_ = $ARGV[$i];
-      if (/^-[\pL]{1,}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/)
-      {
+      if (/^-[\pL]{1,}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/) {
          if ( $_ eq '-h' || $_ eq '--help' ) {help; exit 777;}
          splice @ARGV, $i, 1;
          --$i;
@@ -77,16 +77,14 @@ sub process_arguments ()
 
    # If we get to here, we successfully processed all arguments, so return 1:
    return 1;
-} # end sub process_arguments()
+} # end sub argv
 
-sub number_to_words ()
-{
+sub n2w {
    # Get string representation of $number :
    my $string = $number->bstr();
 
    # If debugging, print info on $string:
-   if ($db)
-   {
+   if ($db) {
       say "string = $string";
       say "Length of string = ", length($string);
    }
@@ -101,14 +99,12 @@ sub number_to_words ()
    # Right-zero-pad @digits as necessary so that it will have
    # exactly 102 elements (usually most of them zeros):
    my $index   = 0;
-   for ( $index = scalar(@digits) ; $index < 102 ; ++$index )
-   {
+   for ( $index = scalar(@digits) ; $index < 102 ; ++$index ) {
       push @digits, 0;
    }
 
    # If debugging, print info on @digits:
-   if ($db)
-   {
+   if ($db) {
       local $, = '';
       say "digits = @digits";
       print "Number of digits = "; say scalar(@digits);
@@ -152,16 +148,13 @@ sub number_to_words ()
    # most-significant to least-significant, remembering that @digits is
    # written BACKWARDS, so that $digits[i] is the 10^i column,
    # and separate out each group in turn as a slice:
-   for (reverse 0..33)
-   {
+   for (reverse 0..33) {
       my @slice = @digits[3*$_+0, 3*$_+1, 3*$_+2];
 
       #If this slice is populated:
-      if (sum(@slice))
-      {
+      if (sum(@slice)) {
          # if hundreds:
-         if ($slice[2] > 0)
-         {
+         if ($slice[2] > 0) {
             $output .= $hundreds[$slice[2]];
 
             # if we also have tens or ones, append ' and ':
@@ -172,29 +165,24 @@ sub number_to_words ()
          }
 
          # if teens:
-         if ($slice[1] == 1 && $slice[0] > 0) # eleven through nineteen
-         {
+         if ($slice[1] == 1 && $slice[0] > 0) { # eleven through nineteen
             $output .= $teens[$slice[0]];
          }
 
          # else if NOT in the teens:
-         else
-         {
+         else {
             # if tens:
-            if ($slice[1] > 0)
-            {
+            if ($slice[1] > 0) {
                $output .= $tens[$slice[1]];
 
                # if we also have ones, append '-':
-               if ($slice[0] > 0)
-               {
+               if ($slice[0] > 0) {
                   $output .= '-';
                }
             }
 
             # if ones:
-            if ($slice[0] > 0)
-            {
+            if ($slice[0] > 0) {
                $output .= $ones[$slice[0]];
             }
          }
@@ -203,12 +191,10 @@ sub number_to_words ()
          # append group name (thousand, million, billion, whatever),
          # and also append ', ' if any less-significant digits are
          # non-zero:
-         if ($_ > 0)
-         {
+         if ($_ > 0) {
             $output .= ' ';
             $output .= $groups[$_];
-            if (sum(@digits[0 .. 3*$_-1]) > 0)
-            {
+            if (sum(@digits[0 .. 3*$_-1]) > 0) {
                $output .= ', ';
             } # end appending ', ' if necessary
          } # end if (not least-significant group)
@@ -216,21 +202,18 @@ sub number_to_words ()
    } # end for (each group)
 
    # Print $output, unless it's empty, in which case print "zero":
-   if (length($output) > 0 )
-   {
+   if (length($output) > 0 ) {
       say $output;
    }
-   else
-   {
+   else {
       say "zero";
    }
 
    # We're done, so return 1:
    return 1;
-} # end sub number_to_words()
+} # end sub n2w
 
-sub help ()
-{
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
    Welcome to "number-to-words.pl". This program prints the words for the integer
    part of the number given as its argument, provided that that number is a real
@@ -253,4 +236,4 @@ sub help ()
    programmer.
    END_OF_HELP
    return 1;
-} # end sub help ()
+} # end sub help

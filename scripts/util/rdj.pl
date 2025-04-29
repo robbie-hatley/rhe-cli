@@ -1,6 +1,6 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
@@ -29,17 +29,14 @@
 #                   Updated argv to my latest @ARGV-handling technology. Moved all regexps to qr// variables.
 #                   Updated help to my latest formatting standard. Changed most bracing to C-style.
 #                   Got rid of "quiet" and "verbose" options; just print everything.
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
 ##############################################################################################################
 
 use v5.36;
-use strict;
-use warnings;
-use utf8;
-use warnings FATAL => 'utf8';
-
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
-
 use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS ========================================================================
@@ -131,12 +128,11 @@ sub argv {
    return 1;
 } # end sub argv
 
-sub curdire
-{
+sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $curdir = d getcwd;
+   my $curdir = cwd;
 
    # Announce current working directory:
    say STDOUT '';
@@ -144,9 +140,9 @@ sub curdire
 
    # Get list of directory entries:
    my $dh = undef;
-   opendir($dh, e $curdir)     or die "Can't open  directory \"$curdir\"\n$!\n";
-   my @entries = d readdir $dh or die "Can't read  directory \"$curdir\"\n$!\n";
-   closedir($dh)               or die "Can't close directory \"$curdir\"\n$!\n";
+   opendir($dh, $curdir)     or die "Can't open  directory \"$curdir\"\n$!\n";
+   my @entries = readdir $dh or die "Can't read  directory \"$curdir\"\n$!\n";
+   closedir($dh)             or die "Can't close directory \"$curdir\"\n$!\n";
 
    if ( $Db ) {
       say STDERR '';
@@ -170,9 +166,9 @@ sub curdire
       # Skip '.', '..', directories, and non-regular files:
       next ENTRY if $entry eq '.';
       next ENTRY if $entry eq '..';
-      next ENTRY if   -d e $entry;
-      next ENTRY if   -l e $entry;
-      next ENTRY if ! -f e $entry;
+      next ENTRY if   -d $entry;
+      next ENTRY if   -l $entry;
+      next ENTRY if ! -f $entry;
 
       if ( $entry =~ $thmpat ) {
          say STDERR " db: $entry" if $Db;
@@ -208,29 +204,28 @@ sub curdire
 
    # Try to erase each file in @db :
    foreach ( @db ) {
-      unlink(e($_)) and ++$Dbercount and say STDOUT "erased: $_"
-                     or ++$Dbnecount and say STDOUT "couldn't erase: $_";
+      unlink $_ and ++$Dbercount and say STDOUT "erased: $_"
+                 or ++$Dbnecount and say STDOUT "couldn't erase: $_";
    }
 
    # Try to erase each file in @jbf :
    foreach ( @jbf ) {
-      unlink(e($_)) and ++$jbercount and say STDOUT "erased: $_"
-                     or ++$jbnecount and say STDOUT "couldn't erase: $_";
+      unlink $_ and ++$jbercount and say STDOUT "erased: $_"
+                 or ++$jbnecount and say STDOUT "couldn't erase: $_";
    }
 
    # If also erasing ini files, try to erase each file in @ini :
    if ($Ini) {
       foreach ( @ini ) {
-         unlink(e($_)) and ++$diercount and say STDOUT "erased: $_"
-                        or ++$dinecount and say STDOUT "couldn't erase: $_";
+         unlink $_ and ++$diercount and say STDOUT "erased: $_"
+                    or ++$dinecount and say STDOUT "couldn't erase: $_";
       }
    }
 
    return 1;
 } # end sub curdire
 
-sub stats
-{
+sub stats {
    say STDERR ''                                                                     ;
    say STDERR 'Statistics for "rdj.pl":'                                             ;
    say STDERR "Navigated $direcount directories."                                    ;

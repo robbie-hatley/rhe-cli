@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -27,11 +27,13 @@
 # Wed Jul 31, 2024: Added both :prototype() and signatures () to all subroutines.
 # Thu Aug 15, 2024: -C63; Width 120->110; erased unnecessary "use ..."; added protos & sigs to all subs.
 # Wed Feb 26, 2025: Got rid of all prototypes and empty signatures. Commented subroutine predeclarations.
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-use Cwd 'getcwd';
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -130,7 +132,7 @@ sub argv {
 
 # Process current directory:
 sub curdire {
-   my $curdir = d getcwd;
+   my $curdir = cwd;
    my @paths = glob_regexp_utf8($curdir, 'F', $Regexp);
    for my $path (@paths) {
       next unless is_data_file($path);
@@ -172,7 +174,7 @@ sub curfile ($path) {
    else                   {die "Error in \"file-files-by-type.pl\": Invalid \$Levels.\n$!\n";}
 
    # If the directory we need doesn't already exist, create it:
-   mkdir $dir unless -e e $dir;
+   mkdir $dir unless -e $dir;
 
    # Move current file to correct directory:
    move_file($name, $dir)

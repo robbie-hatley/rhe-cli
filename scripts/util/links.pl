@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
 # This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -21,9 +21,14 @@
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
 # Mon Mar 03, 2025: Got rid of "common::sense".
 # Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e". Increased min var "5.32" -> "5.36".
 ########################################################################################################################
 
-use v5.32;
+use v5.36;
+use strict;
+use warnings;
+use utf8::all;
 use Cwd::utf8;
 use RH::Dir;
 
@@ -43,19 +48,19 @@ foreach my $file (@$files)
    my $p = $file->{Path};
    my $n = $file->{Name};
    my $t = $file->{Target};
-   if ( ! -e e $p )                       # NOEX
+   if ( ! -e $p )                       # NOEX
    {
       say "Warning: File \"$n\" does not exist.";
       next;
    }
 
-   lstat e $p;
+   lstat $p;
 
    if ( -l _ )
    {
       # Now that we've established that this is a link,
       # get stats on what the link points to:
-      stat e $p;
+      stat $p;
 
       if ( -d _ )                         # SYMLINKD
       {
@@ -67,7 +72,7 @@ foreach my $file (@$files)
          say "SYMLINKF: $p => $t";
       }
 
-      if ( ! -e e $t )                    # NOTARG
+      if ( ! -e $t )                    # NOTARG
       {
          say "Warning: Target \"$t\" does not exist.";
          next;

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -22,14 +22,14 @@
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
 # Mon Mar 17, 2025: Now accepts both RegExp and predicate arguments. Now has "end of options" marker "--".
 #                   Now accepts multiple single-letter options piled-up after a single hyphen.
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-
-use Cwd         qw( cwd getcwd );
-use Time::HiRes qw( time       );
-
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes 'time';
 use RH::Dir;
 use RH::Util;
 
@@ -199,7 +199,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
+   my $cwd = cwd;
 
    # Announce current working directory:
    say "\nDirectory # $direcount: $cwd\n";
@@ -210,7 +210,7 @@ sub curdire {
    # Process each path that matches $RegExp, $Target, and $Predicate:
    foreach my $path (@paths) {
       ++$filecount;
-      local $_ = e $path;
+      local $_ = $path;
       if (eval($Predicate)) {
          ++$predcount;
          curfile($path);

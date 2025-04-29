@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -16,10 +16,11 @@
 # Mon Jul 22, 2024: Improved error() and help().
 # Thu Aug 15, 2024: -C63; improved comments and help().
 # Wed Feb 26, 2025: Added missing "use utf8;".
+# Sun Apr 27, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl". Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
+use utf8::all;
 use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
@@ -38,7 +39,7 @@ my $Db        = 0  ; # Set to 1 for debugging, 0 for no debugging.
 my $Command   = '' ; # Command to be executed.
 my $Count     = 0  ; # Count of files processed.
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
    say "\nNow entering \"for-each-file-in-stdin.pl\".\n";
@@ -46,13 +47,13 @@ my $Count     = 0  ; # Count of files processed.
    say "\$Command = $Command" if $Db;
 
    foreach (<STDIN>) {
-      my $FilePath = e($_);
+      my $FilePath = $_;
       $FilePath =~ s/[\r\n]+$//;
       say "\$FilePath = \"$FilePath\"" if $Db;
       my $command  = $Command; # Capitalized version is template.
       $command =~ s/FilePath/$FilePath/g;
       say "\$command = \"$command\"" if $Db;
-      system(e($command)); # DO encode here! (-C63 doesn't help with system calls.)
+      system($command);
       ++$Count;
    }
 
@@ -61,7 +62,7 @@ my $Count     = 0  ; # Count of files processed.
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
 sub argv {
    my $help   = 0;  # Just print help and exit?

@@ -1,35 +1,38 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
-########################################################################################################################
+##############################################################################################################
 # list-gib.pl
 # Lists files in which have wsl names.
 #
 # Edit history:
 # Wed Nov 11, 2020: Wrote first draft.
 # Fri Feb 26, 2021: Heavily refactored. Now fully functional.
-# Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
+# Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
 # Mon Mar 03, 2025: Got rid of "common::sense" and "Sys::Binmode".
 # Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
-########################################################################################################################
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e". Got rid of all prototypes. Now using signatures. Width 120->110.
+#                   Min ver "v5.32" -> "v5.36".
+##############################################################################################################
 
-use v5.32;
+use v5.36;
+use utf8::all;
 use Cwd::utf8;
-
-use RH::Util;
 use RH::Dir;
+use RH::Util;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub process_argv              ()  ;
-sub process_current_directory ()  ;
-sub stats                     ()  ;
-sub help                      ()  ;
+sub argv    ;
+sub curdire ;
+sub stats   ;
+sub help    ;
 
-# ======= VARIABLES: ===================================================================================================
+# ======= VARIABLES: =========================================================================================
 
 # Gibberish pattern:
 my $gib      = qr(^[a-z]{8}(?:-\(\d{4}\))?(?:\.\w+)?$);
@@ -44,19 +47,18 @@ my $Recurse   = 0          ; # Recurse subdirectories?  (bool)     0
 my $direcount = 0; # Count of directories processed.
 my $gibfcount = 0; # Count of files with gibberish names.
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   process_argv();
-   $Recurse and RecurseDirs {process_current_directory} or process_current_directory;
+   argv;
+   $Recurse and RecurseDirs {curdire} or curdire;
    stats;
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-sub process_argv ()
-{
+sub argv {
    my $help = 0;  # Just print help and exit?
    my $i    = 0;  # Index for @ARGV.
    for ( $i = 0 ; $i < @ARGV ; ++$i )
@@ -72,39 +74,35 @@ sub process_argv ()
    }
    if ($help) {help; exit 777;} # If user wants help, print help and exit 777.
    return 1;
-} # end sub process_argv ()
+} # end sub argv
 
-sub process_current_directory ()
-{
+sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
    my $cwd = cwd;
    say "\nDir # $direcount: $cwd\n";
 
-   # Get list of paths of gib files in this dir:
-   my @paths = glob_regexp_utf8($cwd, 'F', $gib);
+   # Get list of paths of gib file names in this dir:
+   my @names = readdir_regexp_utf8($cwd, 'F', $gib);
 
-   # List @paths:
-   foreach my $path (@paths)
-   {
+   # List names:
+   foreach my $name (@names) {
       ++$gibfcount;
-      say(get_name_from_path($path));
+      say $name;
    }
    return 1;
-} # end sub process_current_directory ()
+} # end sub curdire
 
-sub stats ()
-{
+sub stats {
    say '';
    say "Statistics from \"list-gib.pl\":";
    say "Navigated $direcount directories.";
    say "Found $gibfcount gib files.";
    return 1;
-} # end sub stats ()
+} # end sub stats
 
-sub help ()
-{
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
    Welcome to "list-gib.pl". This program lists all regular files in the current
    directory (and all subdirectories if a -r or --recurse option is used) which

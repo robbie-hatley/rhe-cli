@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -47,11 +47,13 @@
 #                   Changed short option for debugging from "-e" to "-d".
 # Wed Aug 14, 2024: Removed unnecessary "use" statements. Changed short option for debug from "-d" to "-e".
 # Tue Mar 04, 2025: Now using global "t0" and "BEGIN" block to start timer.
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -174,7 +176,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
+   my $cwd = cwd;
 
    # Announce current working directory:
    say STDOUT '';
@@ -209,7 +211,7 @@ sub curfile ($file) {
    my $newname = denumerate_file_name($name);
 
    # Skip this file if a file with the same base name already exists in this directory:
-   if ( -e e $newname ) {
+   if ( -e $newname ) {
       say STDOUT '';
       say STDOUT "Can't denumerate \"$name\" because file with same base name already exists.";
       ++$skipcount;

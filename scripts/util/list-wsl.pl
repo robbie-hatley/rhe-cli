@@ -1,34 +1,37 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
 # This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
-########################################################################################################################
+##############################################################################################################
 # list-wsl.pl
 # Lists files in which have wsl names.
 #
 # Edit history:
 # Wed Nov 11, 2020: Wrote first draft.
 # Fri Feb 26, 2021: Heavily refactored. Now fully functional.
-# Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
+# Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
 # Mon Mar 03, 2025: Got rid of "common::sense" and "Sys::Binmode".
 # Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
-########################################################################################################################
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e". Nixed prototypes. Min ver "5.32" -> "5.36". Now using signatures.
+#                   Reduced width from 120 to 110.
+##############################################################################################################
 
-use v5.32;
+use v5.36;
+use utf8::all;
 use Cwd::utf8;
-
 use RH::Dir;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv    ()  ; # Process @ARGV.
-sub curdire ()  ; # Process current directory.
-sub stats   ()  ; # Print statistics.
-sub help    ()  ; # Print help and exit.
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub stats   ; # Print statistics.
+sub help    ; # Print help and exit.
 
-# ======= VARIABLES: ===================================================================================================
+# ======= VARIABLES: =========================================================================================
 
 # Windows SpotLight pattern:
 my $wsl  = qr(^[0-9a-f]{64}(?:-\(\d{4}\))?(?:\.\w+)?$);
@@ -43,19 +46,18 @@ my $Recurse   = 0          ; # Recurse subdirectories?  (bool)     0
 my $direcount = 0; # Count of directories processed.
 my $wslfcount = 0; # Count of files with wsl names.
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   argv();
+   argv;
    $Recurse and RecurseDirs {curdire} or curdire;
    stats;
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-sub argv ()
-{
+sub argv {
    my $help = 0;  # Just print help and exit?
    my $i    = 0;  # Index for @ARGV.
    for ( $i = 0 ; $i < @ARGV ; ++$i )
@@ -71,10 +73,9 @@ sub argv ()
    }
    if ($help) {help; exit 777;} # If user wants help, print help and exit 777.
    return 1;
-} # end sub argv ()
+} # end sub argv
 
-sub curdire ()
-{
+sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
@@ -91,19 +92,17 @@ sub curdire ()
       say(get_name_from_path($path));
    }
    return 1;
-} # end sub curdire ()
+} # end sub curdire
 
-sub stats ()
-{
+sub stats {
    say '';
    say "Statistics from \"list-wsl.pl\":";
    say "Navigated $direcount directories.";
    say "Found $wslfcount wsl files.";
    return 1;
-} # end sub stats ()
+} # end sub stats
 
-sub help ()
-{
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
    Welcome to "list-wsl.pl". This program lists all regular files in the current
    directory (and all subdirectories if a -r or --recurse option is used) which
@@ -126,4 +125,4 @@ sub help ()
    programmer.
    END_OF_HELP
    return 1;
-} # end sub help ()
+} # end sub help

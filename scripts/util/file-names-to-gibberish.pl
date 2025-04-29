@@ -50,14 +50,9 @@
 ##############################################################################################################
 
 use v5.36;
-use strict;
-use warnings;
-use warnings FATAL => "utf8";
-use utf8;
 use utf8::all;
 use Cwd::utf8;
-use Time::HiRes qw( time );
-
+use Time::HiRes 'time';
 use RH::Dir;
 use RH::Util;
 

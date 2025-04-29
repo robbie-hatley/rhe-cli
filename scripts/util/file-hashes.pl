@@ -32,14 +32,11 @@
 #                   Nixed all "d", "e". Now using "cwd" instead of "d getcwd".
 ##############################################################################################################
 
-# Pragmas:
 use v5.36;
-
-# CPAN modules:
-use utf8::all   qw( :DEFAULT );
-use Cwd::utf8   qw( :DEFAULT );
-use Time::HiRes qw( time );
-use Digest::MD5 qw( md5_hex );
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes 'time';
+use Digest::MD5 'md5_hex';
 use Digest::SHA qw( sha1_hex sha224_hex sha256_hex sha384_hex sha512_hex );
 
 # Homebrew modules:

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -18,12 +18,14 @@
 #                   using "glob_regexp_utf8" (faster, as we only need paths, not other info). Fixed bug which
 #                   attempted to rename current working directory (causes errors in BASH). Now sending all
 #                   error, help, stats, and debug messages to STDERR; only renaming messages go to STDOUT.
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
-use Cwd 'getcwd';
 use RH::Dir;
 use RH::Util;
 
@@ -135,7 +137,7 @@ sub argv {
 sub curdire
 {
    # Get list of subdirectory-info packets in cwd matching $RegExp:
-   my $cwd = d getcwd;
+   my $cwd = cwd;
    my @subdirs = glob_regexp_utf8($cwd, 'D', $RegExp);
 
    # Iterate through @subdirs and send each file to curfile():

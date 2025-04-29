@@ -30,19 +30,10 @@
 # Fri Apr 04, 2025: Shebang->"#!/usr/bin/env perl". Now using "utf8::all" and "Cwd::utf8". Nixed "cwd_utf8".
 ##############################################################################################################
 
-# Pragmas:
 use v5.36;
-use strict;
-use warnings;
-use warnings FATAL => "utf8";
-use utf8;
 use utf8::all;
-
-# CPAN Modules:
 use Cwd::utf8;
 use Time::HiRes qw( time );
-
-# RH Modules:
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================
@@ -212,7 +203,7 @@ sub curdire {
    # Hlola indlela ngayinye, wenqabe abangalungile:
    foreach my $indlela (@izindlela) {
       ++$filecount;
-      local $_ = e $indlela;
+      local $_ = $indlela;
       if (eval($Predicate)) {
          ++$predcount;
          curfile($indlela);

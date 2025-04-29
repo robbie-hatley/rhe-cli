@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -30,14 +30,14 @@
 #                   debug, and help messages are to STDERR, but size distribution is now to STDOUT.
 # Thu Oct 03, 2024: Got rid of Sys::Binmode.
 # Thu Feb 06, 2025: Got rid of "strict" and "warnings".
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
-
 use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
@@ -167,7 +167,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $curdir = d getcwd;
+   my $curdir = cwd;
 
    # Get list of entries in current directory matching $RegExp:
    my $curdirfiles = GetFiles($curdir, 'F', $RegExp);

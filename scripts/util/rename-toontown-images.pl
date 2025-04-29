@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -37,19 +37,16 @@
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
 # Mon Oct 07, 2024: Got rid of "use warnings FATAL => 'utf8';" (unnecessary).
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
 ##############################################################################################################
 
 # ======= PRELIMINARIES: =====================================================================================
 
-# Pragmas:
 use v5.36;
-use utf8;
-
-# CPAN modules:
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
-
-# Homebrew modules:
 use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
@@ -164,7 +161,7 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $curdir = d getcwd;
+   my $curdir = cwd;
    say '';
    say "Directory # $direcount: $curdir";
    say '';
@@ -324,7 +321,7 @@ sub curfile ($file) {
    my $newpath = path($cwd, $newname);
 
    # If $newpath already exists in $cwd, we need to file an available enumerated name:
-   if ( -e e $newpath ) {
+   if ( -e $newpath ) {
       my $avaname = find_avail_enum_name($newname, $cwd);
       # If we failed to find an available name, skip this file:
       if ('***ERROR***' eq $avaname) {

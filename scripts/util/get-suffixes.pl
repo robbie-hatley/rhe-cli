@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -14,22 +14,22 @@
 # Sun Aug 13, 2023: Fleshed-out help section. Renamed to "get-suffixes.pl". No-longer skips files < 50 bytes.
 #                   Changed all "warn" to "say STDERR" and all "say" and "print" to "say STDOUT".
 #                   Changed file-renaming code to file-name-printing code. Made fully-functional.
-# Sat Sep 02, 2023: Changed all $db to $Debug. Got rid of all "/o" on all qr(). Entry and exit messages are now
-#                   always printed to STDERR regardless of $Verbose. Got rid of "--nodebug" as that's already
-#                   default. Updated argv. Updated help. Increased parallelism "(g|s)et-suffixes.pl".
+# Sat Sep 02, 2023: Changed all $db to $Debug. Got rid of all "/o" on all qr(). Entry and exit messages are
+#                   now always printed to STDERR regardless of $Verbose. Got rid of "--nodebug" as that's
+#                   already default. Updated argv. Updated help. Increased parallelism "(g|s)et-suffixes.pl".
 #                   Stats now always print to STDERR. Got rid of "quiet" and "verbose" options.
 #                   Instead, I'm now using STDERR for messages, stats, diagnostics, STDOUT for dirs/files.
 # Thu Aug 15, 2024: -C63; Width 120->110; erased unnecessary "use ..."; added protos & sigs to all subs.
 # Thu Mar 13, 2025: Got rid of all prototypes. Added predicate.
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-
-use Cwd 'getcwd';
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
 use File::Type;
-
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================
@@ -182,14 +182,14 @@ sub argv {
 # Process current directory:
 sub curdire {
    ++$direcount;
-   my $curdir = d getcwd;
+   my $curdir = cwd;
    say STDOUT '';
    say STDOUT "Directory # $direcount: $curdir";
    say STDOUT '';
    my @paths = glob_regexp_utf8($curdir, 'F', $RegExp);
    foreach my $path (@paths) {
       next unless is_data_file($path);
-      local $_ = e $path;
+      local $_ = $path;
       if (eval($Predicate)) {
          curfile($path);
       }
