@@ -36,6 +36,7 @@ Output: -1
 PROBLEM NOTES:
 I disagree with the part about "if none found, return -1", becuase -1 is a valid possible "minimum common
 integer". (Negative integers are "integers".) So I'll return undef if no "minimum common integer" is found.
+
 The rest is just a matter of flagging the common integers (which I do by using a hash and bitwise OR),
 then returning the minimum (sort by ascending numerical value then return first (least) common integer).
 

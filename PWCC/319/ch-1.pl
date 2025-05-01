@@ -31,15 +31,17 @@ Output: 0
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
 I'll interpret "alphabetic character" to mean any character matching "\pL". But that includes alphabets where
-the characters don't correspond to "consonants" or "vowels", but rather, to syllables or even ideas. What's
-a "vowel"? In English, Spanish, French, and German, a vowel is anything which, when stripped of diacritical
-marks and case-folded, matches "[aeiou]". But Greek and Russian also have vowels and so do many others. In
+the characters don't correspond to "consonants" or "vowels", but rather, to syllables or even ideas.
+
+What's a "vowel"? In English, Spanish, French, and German, a vowel is anything which, when stripped of diacritical
+marks and case-folded, matches "[aeiou]". But Greek and Russian also have vowels, and so do many other languages. In
 fact, 65 written languages have "alphabets" consisting of "vowels" and "consonants". But most of them are
 either little-used languages or languages with characters I can't recognize. So for the purpose of this
 exercise, I'll consider only English, Greek, and Russian vowels: [aeiou] [аеёиоуыэюя] [αεηιου]. And Russian
-"" decomposes and the double-umlaut will be stripped, so my "vowel" collection is [aeiouаеиоуыэюяαεηιου].
+"ё" decomposes and the double-umlaut will be stripped, so my "vowel" collection is [aeiouаеиоуыэюяαεηιου].
+
 The rest is just a matter of decomposing, stripping, case-folding, and comparing first and last characters
-to our vowel collect using a regular expression in a m// operator.
+to my vowel collect using a regular expression in a m// operator.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
