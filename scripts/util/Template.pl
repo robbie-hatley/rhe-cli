@@ -269,7 +269,7 @@ sub help    ; # Print help and exit.
       my $te = $t1 - $t0; my $ms = 1000 * $te;
       printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
                     $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
-      printf STDERR "Execution time was %.3fms.", $ms;
+      printf STDERR "Execution time was %.3fms.\n", $ms;
    }
 
    # Exit program, returning success code "0" to caller:
