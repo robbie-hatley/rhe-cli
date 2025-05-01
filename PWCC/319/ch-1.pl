@@ -41,7 +41,7 @@ exercise, I'll consider only English, Greek, and Russian vowels: [aeiou] [аеё
 "ё" decomposes and the double-umlaut will be stripped, so my "vowel" collection is [aeiouаеиоуыэюяαεηιου].
 
 The rest is just a matter of decomposing, stripping, case-folding, and comparing first and last characters
-to my vowel collect using a regular expression in a m// operator.
+to my vowel collection using a regular expression in a m// operator.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
