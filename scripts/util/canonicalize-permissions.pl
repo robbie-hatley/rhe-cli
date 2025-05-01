@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -22,25 +22,68 @@
 # Fri Aug 25, 2023: Added "quiet" and "verbose" options to control output. Added "nodebug" option.
 #                   Fixed bug in which all image files were having their perms set TWICE.
 #                   Added stipulation that this program does not process hidden files.
-# Wed Aug 30, 2023: Entry & Exit messages are now controlled by $Verbose only, not $Db.
+# Wed Aug 30, 2023: Entry & Exit messages are now controlled by $Verbose only, not $Debug.
 # Thu Aug 31, 2023: Clarified sub argv().
 #                   Got rid of "/...|.../" in favor of "/.../ || /.../" (speeds-up program).
 #                   Simplified way in which options and arguments are printed if debugging.
 #                   Removed "$" = ', '" and "$, = ', '". Got rid of "/o" from all instances of qr().
-#                   Changed all "$db" to $Db". Debugging now simulates renames instead of exiting in main.
+#                   Changed all "$db" to $Debug". Debugging now simulates renames instead of exiting in main.
 #                   Removed "no debug" option as that's already default in all of my programs.
 #                   Variable "$Verbose" now means "print per-file info", and default is to NOT do that.
 #                   STDERR = "stats and serious errors". STDOUT = "file permissions set, and dirs if verbose".
 # Wed Sep 06, 2023: Predicate now overrides target and forces it to 'A' to avoid conflicts with predicate.
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
 # Tue Mar 04, 2025: Shebang is now "#!/usr/bin/env -S perl -C63". Nixed "__END__" marker.
+# Thu May 01, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
+
+# ======= VARIABLES: =========================================================================================
+
+# ------- System Variables: ----------------------------------------------------------------------------------
+
+$" = ', ' ; # Quoted-array element separator = ", ".
+
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+our    $cmpl_beg;                              # Declare compilation begin time.
+BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
+our    $cmpl_end;                              # Declare compilation end   time.
+INIT  {$cmpl_end = time}                       # Set     compilation end   time.
+
+# ------- Local variables: -----------------------------------------------------------------------------------
+
+# Settings:     Default:       Meaning of setting:           Range:    Meaning of default:
+my @Opts      = ()        ; # options                   array     Options.
+my @Args      = ()        ; # arguments                 array     Arguments.
+my $Debug     = 0         ; # Debug?                    bool      Don't debug.
+my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
+my $Verbose   = 0         ; # Be verbose?               0,1,2     Shhh! Be quiet!
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
+my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
+my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
+my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
+my $Hidden    = 0         ; # Process hidden items?     bool      Don't process hidden items.
+
+# Counters:
+my $direcount = 0         ; # Count of directories processed by curdire().
+my $filecount = 0         ; # Count of dir entries matching $Target, $RegExp, and $Predicate.
+my $hiskcount = 0         ; # Count of all hidden  files skipped.
+my $opencount = 0         ; # Count of all regular files we could    open.
+my $noopcount = 0         ; # Count of all regular files we couldn't open.
+my $readcount = 0         ; # Count of all regular files we could    read.
+my $nordcount = 0         ; # Count of all regular files we couldn't read.
+my $permcount = 0         ; # Count of all permissions set.
+my $simucount = 0         ; # Count of all simulated setting of permissions.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -54,54 +97,85 @@ sub stats    ; # Print statistics.
 sub error    ; # Handle errors.
 sub help     ; # Print help and exit.
 
-# ======= VARIABLES: =========================================================================================
-
-# Settings:     Default:       Meaning of setting:           Range:    Meaning of default:
-my $Db        = 0          ; # Print diagnostics?            bool      Don't print diagnostics.
-my $Verbose   = 0          ; # Print stats?                  bool      Don't print stats.
-my $Recurse   = 0          ; # Recurse subdirectories?       bool      Don't recurse.
-my $RegExp    = qr/^.+$/   ; # Regular Expression.           regexp    Process all file names.
-my $Target    = 'A'        ; # Files, dirs, both, all?       F|D|B|A   Process regular files only.
-my $Predicate = 1          ; # Boolean file-type predicate.  bool      Process files of all types.
-my $Hidden    = 0          ; # Also process hidden items?    bool      Don't process hidden items.
-
-# Counters:
-my $direcount = 0          ; # Count of directories processed by curdire().
-my $filecount = 0          ; # Count of dir entries matching $RegExp and $Target
-my $predcount = 0          ; # Count of dir entries also matching $Predicate.
-my $hidncount = 0          ; # Count of all hidden entries encountered.
-my $opencount = 0          ; # Count of all regular files we could    open.
-my $noopcount = 0          ; # Count of all regular files we couldn't open.
-my $readcount = 0          ; # Count of all regular files we could    read.
-my $nordcount = 0          ; # Count of all regular files we couldn't read.
-my $permcount = 0          ; # Count of all permissions set.
-my $simucount = 0          ; # Count of all simulated setting of permissions.
-
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 { # begin main
+   # Start execution timer:
    my $t0 = time;
-   my $pname = get_name_from_path($0);
+   my @s0 = localtime($t0);
+
+   # Process @ARGV and set settings:
    argv;
-   say    STDERR '';
-   say    STDERR "Now entering program \"$pname\"." ;
-   say    STDERR "\$Db        = $Db"                ;
-   say    STDERR "\$Verbose   = $Verbose"           ;
-   say    STDERR "\$Recurse   = $Recurse"           ;
-   say    STDERR "\$RegExp    = $RegExp"            ;
-   say    STDERR "\$Target    = $Target"            ;
-   say    STDERR "\$Predicate = $Predicate"         ;
-   say    STDERR "\$Hidden    = $Hidden"            ;
 
-   # Run sub curdire() for desired directories:
-   $Recurse and RecurseDirs {curdire} or curdire;
+   # Print program entry message if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
+   }
 
-   # Print closing newline if we've just been printing $direcount repeatedly on top of itself:
-   print STDOUT "\n" if !$Verbose && !$Db;
+   # Print compilation time if being verbose:
+   if ( $Verbose >= 2 ) {
+      printf STDERR "Compilation time was %.3fms\n\n",
+                    1000 * ($cmpl_end - $cmpl_beg);
+   }
 
-   stats;
-   say    STDERR '';
-   say    STDERR "Now exiting program \"$pname\".";
-   printf STDERR "Execution time was %.3f seconds.", time - $t0;
+   # Print basic settings if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      say STDERR "OriDir    = $OriDir";
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "Target    = $Target";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
+      say STDERR '';
+   }
+
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   if ( $Debug >= 1 ) {
+      say STDERR 'Debug: Values of variables after processing @ARGV:';
+      say STDERR "pname     = $pname";
+      say STDERR "cmpl_beg  = $cmpl_beg";
+      say STDERR "cmpl_end  = $cmpl_end";
+      say STDERR "Options   = (@Opts)";
+      say STDERR "Arguments = (@Args)";
+      say STDERR "Debug     = $Debug";
+      say STDERR "Help      = $Help";
+      say STDERR "Verbose   = $Verbose";
+      say STDERR "OriDir    = $OriDir";
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "Target    = $Target";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
+      say STDERR "Hidden    = $Hidden";
+      say STDERR '';
+   }
+
+   # Process current directory (and all subdirectories if recursing) and print stats,
+   # unless user requested help, in which case just print help:
+   if ($Help) {
+      help;
+   }
+   # Otherwise, canonicalize permissions:
+   else {
+      # Either run curdire() recursively if recursing, else run it on cwd only:
+      $Recurse and RecurseDirs {curdire} or curdire;
+      # Print closing newline if we've just been printing $direcount repeatedly on top of itself:
+      print STDOUT "\n" if !$Verbose;
+      # Print stats:
+      stats;
+   }
+
+   # Stop execution timer:
+   my $t1 = time;
+   my @s1 = localtime($t1);
+
+   # Print exit message if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      my $te = $t1 - $t0; my $ms = 1000 * $te;
+      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                    $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
+      printf STDERR "Execution time was %.3fms.\n", $ms;
+   }
+
+   # Exit program, returning success code "0" to caller:
    exit 0;
 } # end main
 
@@ -110,55 +184,58 @@ my $simucount = 0          ; # Count of all simulated setting of permissions.
 # Process @ARGV :
 sub argv {
    # Get options and arguments:
-   my @opts = ();             # options
-   my @args = ();             # arguments
-   my $end = 0;               # end-of-options flag
-   my $s = '[a-zA-Z0-9]';     # single-hyphen allowable chars (English letters, numbers)
-   my $d = '[a-zA-Z0-9=.-]';  # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {
-      /^--$/                  # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1            # so if we see that, then set the "end-of-options" flag
-      and next;               # and skip to next element of @ARGV.
-      !$end                   # If we haven't yet reached end-of-options,
-      && ( /^-(?!-)$s+$/      # and if we get a valid short option
-      ||   /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @opts, $_      # then push item to @opts
-      or  push @args, $_;     # else push item to @args.
+   my $end = 0;              # end-of-options flag
+   my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
+   my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
+   for ( @ARGV ) {           # For each element of @ARGV:
+      !$end                  # If we have not yet reached end-of-options,
+      && /^--$/              # and we see an "--" option,
+      and $end = 1           # set the "end-of-options" flag
+      and push @Opts, '--'   # and push "--" to @Opts
+      and next;              # and skip to next element of @ARGV.
+      !$end                  # If we have not yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we see a valid short option
+      ||  /^--(?!-)$d+$/ )   # or a valid long option,
+      and push @Opts, $_     # then push item to @Opts
+      and next;              # and skip to next element of @ARGV.
+      push @Args, $_;        # Otherwise, push item to @Args.
    }
 
    # Process options:
-   for ( @opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit 777 ;
-      /^-$s*e/ || /^--debug$/   and $Db      =  1     ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0     ;
-      /^-$s*v/ || /^--verbose$/ and $Verbose =  1     ;
-      /^-$s*l/ || /^--local$/   and $Recurse =  0     ;
-      /^-$s*r/ || /^--recurse$/ and $Recurse =  1     ;
-      /^-$s*f/ || /^--files$/   and $Target  = 'F'    ;
-      /^-$s*d/ || /^--dirs$/    and $Target  = 'D'    ;
-      /^-$s*b/ || /^--both$/    and $Target  = 'B'    ;
-      /^-$s*a/ || /^--all$/     and $Target  = 'A'    ;
-      /^-$s*n/ || /^--hidden$/  and $Hidden  =  1     ;
-   }
-   if ( $Db ) {
-      say STDERR '';
-      say STDERR "\$opts = (", join(', ', map {"\"$_\""} @opts), ')';
-      say STDERR "\$args = (", join(', ', map {"\"$_\""} @args), ')';
+   for ( @Opts ) {
+      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
+      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
+      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
+      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
+      /^-$s*f/ || /^--files$/   and $Target  = 'F' ;
+      /^-$s*d/ || /^--dirs$/    and $Target  = 'D' ;
+      /^-$s*b/ || /^--both$/    and $Target  = 'B' ;
+      /^-$s*a/ || /^--all$/     and $Target  = 'A' ; # Default.
+      /^-$s*n/ || /^--hidden$/  and $Hidden  =  1  ;
    }
 
-   # Process arguments:
-   my $NA = scalar(@args);     # Get number of arguments.
-   if ( $NA >= 1 ) {           # If number of arguments >= 1,
-      $RegExp = qr/$args[0]/;  # set $RegExp to $args[0].
+   # Get number of arguments:
+   my $NA = scalar(@Args);
+
+   # If user typed more than 2 arguments, and we're not debugging or getting help,
+   # then print error and help messages and exit:
+   if ( $NA >= 3 && !$Debug ) {  # If number of arguments >= 3 and we're not debugging,
+      error($NA);                # print error message,
+      help;                      # and print help message,
+      exit 666;                  # and exit, returning The Number Of The Beast.
    }
-   if ( $NA >= 2 ) {           # If number of arguments >= 2,
-      $Predicate = $args[1];   # set $Predicate to $args[1]
-      $Target = 'A';           # and set $Target to 'A' to avoid conflicts with $Predicate.
+
+   # First argument, if present, is a file-selection regexp:
+   if ( $NA >= 1 ) {             # If number of arguments >= 1,
+      $RegExp = qr/$Args[0]/o;   # set $RegExp to $args[0].
    }
-   if ( $NA >= 3 && !$Db ) {   # If number of arguments >= 3 and we're not debugging,
-      error($NA);              # print error message,
-      help;                    # and print help message,
-      exit 666;                # and exit, returning The Number Of The Beast.
+
+   # Second argument, if present, is a file-selection predicate:
+   if ( $NA >= 2 ) {             # If number of arguments >= 2,
+      $Predicate = $Args[1];     # set $Predicate to $args[1].
    }
 
    # Return success code 1 to caller:
@@ -167,15 +244,18 @@ sub argv {
 
 # Process current directory:
 sub curdire {
-   # Increment directory counter:
+   # Increment "directories navigated" counter:
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
-   # Announce current working directory:
-   if ( $Verbose || $Db ) {
+   my $cwd = cwd;
+
+   # Announce each current working directory separately if being terse or verbose:
+   if ( $Verbose >= 1 ) {
       say STDOUT "\nDirectory # $direcount: $cwd\n";
    }
+
+   # Otherwise, just write "Directory # " once, then write the numbers on top of each other:
    else {
       if ( 1 == $direcount ) {
          printf STDOUT "\nDirectory # %6d", $direcount;
@@ -185,85 +265,30 @@ sub curdire {
       }
    }
 
+   # Get list of file-info packets in $cwd matching $Target, $RegExp, and $Predicate:
+   my $curdirfiles = GetFiles($cwd, $Target, $RegExp, $Predicate);
+   if ($Debug) {say STDERR "Debug msg in canoperm, in curdire; just got ", scalar(@$curdirfiles), " file records.";}
 
-   # Get list of file-info packets in $cwd matching $Target and $RegExp:
-   my $curdirfiles = GetFiles($cwd, $Target, $RegExp);
-
-   # Send each file that matches $RegExp, $Target, and $Predicate to curfile():
+   # Send each file that matches $RegExp, $Target, and $Predicate to curfile()
+   # (unless the file is hidden and we're not processing hidden files):
    foreach my $file (@$curdirfiles) {
-      # Count ALL files, even ones we skip (because hidden or doesn't match predicate), in $filecount:
-      ++$filecount;
+      if ($Debug) {say STDERR "Debug msg in canoperm, in curdire, in foreach; curr file = \"$file->{Name}\".";}
       # Don't process hidden items unless user requests that:
       if ( '.' eq substr($file->{Name}, 0, 1) && ! $Hidden ) {
-         ++$hidncount;
+         ++$hiskcount; # Increment "hidden skip" counter.
          next;
       }
-      # If we're NOT skipping this item, if it matches predicate, increment $predcount and send it to curfile:
-      local $_ = e $file->{Path};
-      if (eval($Predicate)) {
-         ++$predcount;
-         curfile($file);
-      }
+      # Send item to curfile():
+      curfile($file);
    }
    return 1;
 } # end sub curdire
 
-# Set a directory to "navigable":
-sub set_navi ($file) {
-   # If debugging, just simulate:
-   if ( $Db ) {
-      ++$simucount;
-      say STDOUT "Simulation: would have set directory \"$file->{Name}\" to navigable.";
-   }
-
-   # Else if NOT debugging, change permissions:
-   else {
-      ++$permcount;
-      chmod 0775, e($file->{Path});
-      if ( $Verbose ) {
-         say STDOUT "Set directory \"$file->{Name}\" to navigable.";
-      }
-   }
-}
-
-# Set a file to "executable":
-sub set_exec ($file) {
-   # If debugging, just simulate:
-   if ( $Db ) {
-      ++$simucount;
-      say STDOUT "Simulation: would have set file \"$file->{Name}\" to executable.";
-   }
-
-   # Else if NOT debugging, change permissions:
-   else {
-      ++$permcount;
-      chmod 0775, e($file->{Path});
-      if ( $Verbose ) {
-         say STDOUT "Set file \"$file->{Name}\" to executable.";
-      }
-   }
-}
-
-# Set a file to "not executable":
-sub set_noex ($file) {
-   # If debugging, just simulate:
-   if ( $Db ) {
-      ++$simucount;
-      say STDOUT "Simulation: would have set file \"$file->{Name}\" to NOT-executable.";
-   }
-
-   # Else if NOT debugging, change permissions:
-   else {
-      ++$permcount;
-      chmod 0664, e($file->{Path});
-      if ( $Verbose ) {
-         say STDOUT "Set file \"$file->{Name}\" to NOT-executable.";
-      }
-   }
-}
-
 # Process current file:
 sub curfile ($file) {
+   # Increment "files processed" counter:
+   ++$filecount;
+
    # If this is a directory, set it to "navigable":
    if    ( 'D' eq $file->{Type} ) {
       set_navi($file);
@@ -282,7 +307,7 @@ sub curfile ($file) {
 
       # If $lsuf is NOT blank:
       if ( length($lsuf) > 0 ) {
-         say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} has suffix \"$lsuf\"." if $Db;
+         say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} has suffix \"$lsuf\"." if $Debug;
          for ( $lsuf ) {
             # Scripts in known languages need to be executable:
             # NOTE RH 2024-09-06: I removed "au3", "bat", "ps1", "vbs" because from the standpoint of Linux,
@@ -301,15 +326,15 @@ sub curfile ($file) {
 
       # Else if $lsuf is blank, try to open the file and grab its first 4 bytes:
       else {
-         say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} has blank suffix." if $Db;
+         say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} has blank suffix." if $Debug;
          my $buffer = ''    ;
          my $fh     = undef ;
          my $bytes  = 0     ;
-         if ( open($fh, '< :raw', e $file->{Path}) ) {
+         if ( open($fh, '< :raw', $file->{Path}) ) {
             ++$opencount;
             if ( read($fh, $buffer, 4) ) {
                $bytes = length($buffer);
-               say "Debug msg in canoperm, in curfile: Read $bytes bytes from file \"$file->{Name}\"." if $Db;
+               say "Debug msg in canoperm, in curfile: Read $bytes bytes from file \"$file->{Name}\"." if $Debug;
             }
             close($fh);
          }
@@ -321,15 +346,15 @@ sub curfile ($file) {
          if ( 4 == $bytes ) {
             ++$readcount;
             if ( '#!' eq substr($buffer, 0, 2) ) {             # Hashbang script.
-               say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} is a hashbang script" if $Db;
+               say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} is a hashbang script" if $Debug;
                set_exec($file);                                # Set it to "executable".
             }
             elsif ( "\x{7F}ELF" eq substr($buffer, 0, 4) ) {   # Linux ELF "executable".
-               say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} is an ELF executable" if $Db;
+               say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} is an ELF executable" if $Debug;
                set_exec($file);                                # Set it to "executable".
             }
             else {                                             # Data file.
-               say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} is a datafile" if $Db;
+               say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} is a datafile" if $Debug;
                set_noex($file);                                # Set it to "NOT executable".
             }
          }
@@ -337,7 +362,7 @@ sub curfile ($file) {
          # Else if we did NOT manage to read the first 128 bytes of data from the file, don't mess with it:
          else {
             ++$nordcount;
-            say STDERR "Debug msg in canoperm, in curfile: couldn't read file $file->{Name}" if $Db;
+            say STDERR "Debug msg in canoperm, in curfile: couldn't read file $file->{Name}" if $Debug;
             ; # Do nothing.
          }
       } # end else ($lsuf is blank)
@@ -345,7 +370,7 @@ sub curfile ($file) {
 
    # For things OTHER THAN hidden files, regular files, and directories, do nothing:
    else {
-      say STDERR "Debug msg in canoperm, in curfile: file \"$file->{Name}\" is one of the weird ones." if $Db;
+      say STDERR "Debug msg in canoperm, in curfile: file \"$file->{Name}\" is one of the weird ones." if $Debug;
       ; # Do nothing.
    } # end else (neither dir nor file)
 
@@ -353,14 +378,67 @@ sub curfile ($file) {
    return 1;
 } # end sub curfile ($file)
 
+# Set a directory to "navigable":
+sub set_navi ($file) {
+   # If debugging, just simulate:
+   if ( $Debug ) {
+      ++$simucount;
+      say STDOUT "Simulation: would have set directory \"$file->{Name}\" to navigable.";
+   }
+
+   # Else if NOT debugging, change permissions:
+   else {
+      ++$permcount;
+      chmod 0775, $file->{Path};
+      if ( $Verbose ) {
+         say STDOUT "Set directory \"$file->{Name}\" to navigable.";
+      }
+   }
+}
+
+# Set a file to "executable":
+sub set_exec ($file) {
+   # If debugging, just simulate:
+   if ( $Debug ) {
+      ++$simucount;
+      say STDOUT "Simulation: would have set file \"$file->{Name}\" to executable.";
+   }
+
+   # Else if NOT debugging, change permissions:
+   else {
+      ++$permcount;
+      chmod 0775, $file->{Path};
+      if ( $Verbose ) {
+         say STDOUT "Set file \"$file->{Name}\" to executable.";
+      }
+   }
+}
+
+# Set a file to "not executable":
+sub set_noex ($file) {
+   # If debugging, just simulate:
+   if ( $Debug ) {
+      ++$simucount;
+      say STDOUT "Simulation: would have set file \"$file->{Name}\" to NOT-executable.";
+   }
+
+   # Else if NOT debugging, change permissions:
+   else {
+      ++$permcount;
+      chmod 0664, $file->{Path};
+      if ( $Verbose ) {
+         say STDOUT "Set file \"$file->{Name}\" to NOT-executable.";
+      }
+   }
+}
+
 # Print statistics for this program run:
 sub stats {
    say STDERR '';
    say STDERR "Statistics for this directory tree:";
    say STDERR "Navigated $direcount directories.";
-   say STDERR "Processed $filecount directory entries matching regexp and target.";
-   say STDERR "Found $predcount directory entries also matching predicate.";
-   say STDERR "Skipped $hidncount hidden directory entries.";
+   say STDERR "Skipped $hiskcount hidden files.";
+   say STDERR "Processed $filecount files.";
    say STDERR "Was able to open $opencount regular files with unknown or missing file-name extensions.";
    say STDERR "Failed $noopcount file-open attempts.";
    say STDERR "Was able to read $readcount regular files with unknown or missing file-name extensions.";

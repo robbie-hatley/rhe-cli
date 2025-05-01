@@ -318,8 +318,7 @@ sub argv {
 
    # If user typed more than 2 arguments, and we're not debugging or getting help,
    # then print error and help messages and exit:
-   if ( $NA >= 3                 # If number of arguments >= 3
-        && !$Debug && !$Help ) { # and we're not debugging and not getting help,
+   if ( $NA >= 3 && !$Debug ) {  # If number of arguments >= 3 and we're not debugging,
       error($NA);                # print error message,
       help;                      # and print help message,
       exit 666;                  # and exit, returning The Number Of The Beast.

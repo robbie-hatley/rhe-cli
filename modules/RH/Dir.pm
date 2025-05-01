@@ -508,11 +508,11 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
 
       # Skip this file if it doesn't match our target:
       switch($target) {
-         case 'F' { if ( !     -f _                 ) {$db and say STDERR "Failed  F."; next NAME;} }
-         case 'D' { if ( !                 -d _     ) {$db and say STDERR "Failed  D."; next NAME;} }
-         case 'B' { if ( ! ( ( -f _ ) || ( -d _ ) ) ) {$db and say STDERR "Failed  B."; next NAME;} }
-         case 'A' {                     ;             {$db and say STDERR "Skipped A."; next NAME;} } # Do nothing.
-         else     {                     ;             {$db and say STDERR "Skipped E."; next NAME;} } # Do nothing.
+         case 'F' { if ( !     -f _                 ) {$db and say STDERR "Failed F."; next NAME;} }
+         case 'D' { if ( !                 -d _     ) {$db and say STDERR "Failed D."; next NAME;} }
+         case 'B' { if ( ! ( ( -f _ ) || ( -d _ ) ) ) {$db and say STDERR "Failed B."; next NAME;} }
+         case 'A' {                     ;              $db and say STDERR "Accept A.";             }
+         else     {                     ;              $db and say STDERR "Accept E.";             }
       }
 
       # Skip this file if it doesn't match our regexp:
