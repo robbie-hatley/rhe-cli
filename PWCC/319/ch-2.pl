@@ -38,7 +38,9 @@ I disagree with the part about "if none found, return -1", becuase -1 is a valid
 integer". (Negative integers are "integers".) So I'll return undef if no "minimum common integer" is found.
 
 The rest is just a matter of flagging the common integers (which I do by using a hash and bitwise OR),
-then returning the minimum (sort by ascending numerical value then return first (least) common integer).
+then sorting the combined integers from both arrays by ascending numerical value, then using function "first"
+from CPAN module "List::Util" to find the first (hence least) integer for which the hash value is 3
+(indicating that the integer is in both arrays).
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
