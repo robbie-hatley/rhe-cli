@@ -195,6 +195,7 @@ my $filecount = 0 ; # Count of files matching target, regexp, and predicate.
 sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
 sub curfile ; # Process current file.
+sub BLAT    ; # Print messages only if debugging.
 sub stats   ; # Print statistics.
 sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
@@ -379,6 +380,9 @@ sub curfile ($path) {
    # Return success code 1 to caller:
    return 1;
 } # end sub curfile
+
+# Print messages only if debugging:
+sub BLAT ($string) {if ($Debug) {say STDERR $string}}
 
 # Print statistics for this program run:
 sub stats {

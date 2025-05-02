@@ -42,6 +42,7 @@ use v5.36;
 use utf8::all;
 use Cwd::utf8;
 use Time::HiRes 'time';
+use Switch;
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================
@@ -93,6 +94,7 @@ sub set_navi ; # Set a directory to "navigable".
 sub set_exec ; # Set a file to "executable".
 sub set_noex ; # Set a file to "NOT executable".
 sub curfile  ; # Process current file.
+sub BLAT     ; # Print messages only if debugging.
 sub stats    ; # Print statistics.
 sub error    ; # Handle errors.
 sub help     ; # Print help and exit.
@@ -120,6 +122,7 @@ sub help     ; # Print help and exit.
 
    # Print basic settings if being terse or verbose:
    if ( $Verbose >= 1 ) {
+      say STDERR "Settings:";
       say STDERR "OriDir    = $OriDir";
       say STDERR "Recurse   = $Recurse";
       say STDERR "Target    = $Target";
@@ -130,7 +133,7 @@ sub help     ; # Print help and exit.
 
    # If debugging, print the values of all variables except counters, after processing @ARGV:
    if ( $Debug >= 1 ) {
-      say STDERR 'Debug: Values of variables after processing @ARGV:';
+      say STDERR 'Debug: Values of all variables after processing @ARGV:';
       say STDERR "pname     = $pname";
       say STDERR "cmpl_beg  = $cmpl_beg";
       say STDERR "cmpl_end  = $cmpl_end";
@@ -148,19 +151,24 @@ sub help     ; # Print help and exit.
       say STDERR '';
    }
 
-   # Process current directory (and all subdirectories if recursing) and print stats,
-   # unless user requested help, in which case just print help:
-   if ($Help) {
-      help;
-   }
+   # If user requested help, just print help:
+   if ($Help) {help}
    # Otherwise, canonicalize permissions:
    else {
-      # Either run curdire() recursively if recursing, else run it on cwd only:
-      $Recurse and RecurseDirs {curdire} or curdire;
-      # Print closing newline if we've just been printing $direcount repeatedly on top of itself:
-      print STDOUT "\n" if !$Verbose;
+      # Count max levels of recursion:
+      my $mlor = 0;
+      # If recursing, run curdire() on every directory in this tree:
+      if ($Recurse) {
+         $mlor = RecurseDirs {curdire};
+      }
+      # Otherwise, run curdire() on current directory only:
+      else {curdire}
+      # If we've been printing $direcount repeatedly on top of itself, print closing newline:
+      if ($Verbose < 1) {print STDOUT "\n"}
+      # If we recursed, print max levels of recursion:
+      if ($Recurse) {say STDOUT "Maximum levels of recursion reached = $mlor"}
       # Print stats:
-      stats;
+      stats
    }
 
    # Stop execution timer:
@@ -267,12 +275,13 @@ sub curdire {
 
    # Get list of file-info packets in $cwd matching $Target, $RegExp, and $Predicate:
    my $curdirfiles = GetFiles($cwd, $Target, $RegExp, $Predicate);
-   if ($Debug) {say STDERR "Debug msg in canoperm, in curdire; just got ", scalar(@$curdirfiles), " file records.";}
+   my $num_files = scalar(@$curdirfiles);
+   BLAT "Debug msg in canoperm, in curdire; just got $num_files file records.";
 
    # Send each file that matches $RegExp, $Target, and $Predicate to curfile()
    # (unless the file is hidden and we're not processing hidden files):
    foreach my $file (@$curdirfiles) {
-      if ($Debug) {say STDERR "Debug msg in canoperm, in curdire, in foreach; curr file = \"$file->{Name}\".";}
+      BLAT "Debug msg in canoperm, in curdire, in foreach; curr file = \"$file->{Name}\".";
       # Don't process hidden items unless user requests that:
       if ( '.' eq substr($file->{Name}, 0, 1) && ! $Hidden ) {
          ++$hiskcount; # Increment "hidden skip" counter.
@@ -290,8 +299,8 @@ sub curfile ($file) {
    ++$filecount;
 
    # If this is a directory, set it to "navigable":
-   if    ( 'D' eq $file->{Type} ) {
-      set_navi($file);
+   if ( 'D' eq $file->{Type} ) {
+      set($file, 0775);
    }
 
    # Else if this is a regular file, those are mixed bags:
@@ -307,26 +316,26 @@ sub curfile ($file) {
 
       # If $lsuf is NOT blank:
       if ( length($lsuf) > 0 ) {
-         say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} has suffix \"$lsuf\"." if $Debug;
+         BLAT "Debug msg in canoperm, in curfile: file $file->{Name} has suffix \"$lsuf\".";
          for ( $lsuf ) {
             # Scripts in known languages need to be executable:
             # NOTE RH 2024-09-06: I removed "au3", "bat", "ps1", "vbs" because from the standpoint of Linux,
             # such files should NOT be considered "executable" because they're DOS/Windows, not Linux.
             # I also added "elf" and "run" as these ARE executable Linux files.
             if ( /^(apl|awk|elf|pl|perl|py|raku|run|sed|sh)$/ ) {
-               set_exec($file);
+               set($file, 0775);
             }
 
             # Files with any other non-blank suffixes do NOT need to be executable:
             else {
-               set_noex($file);
+               set($file, 0664);
             }
          }
       }
 
       # Else if $lsuf is blank, try to open the file and grab its first 4 bytes:
       else {
-         say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} has blank suffix." if $Debug;
+         BLAT "Debug msg in canoperm, in curfile: file $file->{Name} has no suffix.";
          my $buffer = ''    ;
          my $fh     = undef ;
          my $bytes  = 0     ;
@@ -334,43 +343,44 @@ sub curfile ($file) {
             ++$opencount;
             if ( read($fh, $buffer, 4) ) {
                $bytes = length($buffer);
-               say "Debug msg in canoperm, in curfile: Read $bytes bytes from file \"$file->{Name}\"." if $Debug;
+               BLAT "Debug msg in canoperm, in curfile: Read $bytes bytes from file \"$file->{Name}\".";
             }
             close($fh);
          }
          else {
+            BLAT"Debug msg in canoperm, in curfile: Couldn't open file \"$file->{Name}\".";
             ++$noopcount;
          }
 
-         # If we managed to grab the first 128 bytes of data from the file, make a decision based on that:
+         # If we managed to read 4-or-more bytes of data from the file, make a decision based on that:
          if ( 4 == $bytes ) {
             ++$readcount;
             if ( '#!' eq substr($buffer, 0, 2) ) {             # Hashbang script.
-               say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} is a hashbang script" if $Debug;
-               set_exec($file);                                # Set it to "executable".
+               BLAT "Debug msg in canoperm, in curfile: file $file->{Name} is a hashbang script";
+               set($file, 0775);                               # Set it to "executable".
             }
             elsif ( "\x{7F}ELF" eq substr($buffer, 0, 4) ) {   # Linux ELF "executable".
-               say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} is an ELF executable" if $Debug;
-               set_exec($file);                                # Set it to "executable".
+               BLAT "Debug msg in canoperm, in curfile: file $file->{Name} is an ELF executable";
+               set($file, 0775);                               # Set it to "executable".
             }
             else {                                             # Data file.
-               say STDERR "Debug msg in canoperm, in curfile: file $file->{Name} is a datafile" if $Debug;
-               set_noex($file);                                # Set it to "NOT executable".
+               BLAT "Debug msg in canoperm, in curfile: file $file->{Name} is a datafile";
+               set($file, 0664);                               # Set it to "NOT executable".
             }
          }
 
-         # Else if we did NOT manage to read the first 128 bytes of data from the file, don't mess with it:
+         # Else if we did NOT manage to read 4-or-more bytes of data from the file, do nothing:
          else {
             ++$nordcount;
-            say STDERR "Debug msg in canoperm, in curfile: couldn't read file $file->{Name}" if $Debug;
+            BLAT "Debug msg in canoperm, in curfile: couldn't read file $file->{Name}";
             ; # Do nothing.
          }
       } # end else ($lsuf is blank)
    } # end if (regular file)
 
-   # For things OTHER THAN hidden files, regular files, and directories, do nothing:
+   # For things OTHER THAN regular files and directories, do nothing:
    else {
-      say STDERR "Debug msg in canoperm, in curfile: file \"$file->{Name}\" is one of the weird ones." if $Debug;
+      BLAT "Debug msg in canoperm, in curfile: file \"$file->{Name}\" is one of the weird ones.";
       ; # Do nothing.
    } # end else (neither dir nor file)
 
@@ -378,73 +388,53 @@ sub curfile ($file) {
    return 1;
 } # end sub curfile ($file)
 
-# Set a directory to "navigable":
-sub set_navi ($file) {
+# Set permissions on a file, or simulate doing so:
+sub set ($file, $perm) {
+   # Get a description of the file:
+   my $descr;
+   switch ($file->{Type}) {
+      case 'F' {$descr = "file"}
+      case 'D' {$descr = "directory"}
+      else     {$descr = "item"}
+   }
+   # Get a description of the permissions:
+   my $perms;
+   switch ($perm) {
+      case 0775 {$perms = ("directory" eq $descr) ?     "navigable" :     "executable"}
+      case 0664 {$perms = ("directory" eq $descr) ? "NOT-navigable" : "NOT-executable"}
+      else     {$perms = "unknown"}
+   }
    # If debugging, just simulate:
    if ( $Debug ) {
       ++$simucount;
-      say STDOUT "Simulation: would have set directory \"$file->{Name}\" to navigable.";
+      say STDOUT "Simulation: would have set $descr \"$file->{Name}\" to $perms.";
    }
-
    # Else if NOT debugging, change permissions:
    else {
       ++$permcount;
-      chmod 0775, $file->{Path};
+      chmod $perm, $file->{Path};
       if ( $Verbose ) {
-         say STDOUT "Set directory \"$file->{Name}\" to navigable.";
+         say STDOUT "Set $descr \"$file->{Name}\" to $perms.";
       }
    }
 }
 
-# Set a file to "executable":
-sub set_exec ($file) {
-   # If debugging, just simulate:
-   if ( $Debug ) {
-      ++$simucount;
-      say STDOUT "Simulation: would have set file \"$file->{Name}\" to executable.";
-   }
-
-   # Else if NOT debugging, change permissions:
-   else {
-      ++$permcount;
-      chmod 0775, $file->{Path};
-      if ( $Verbose ) {
-         say STDOUT "Set file \"$file->{Name}\" to executable.";
-      }
-   }
-}
-
-# Set a file to "not executable":
-sub set_noex ($file) {
-   # If debugging, just simulate:
-   if ( $Debug ) {
-      ++$simucount;
-      say STDOUT "Simulation: would have set file \"$file->{Name}\" to NOT-executable.";
-   }
-
-   # Else if NOT debugging, change permissions:
-   else {
-      ++$permcount;
-      chmod 0664, $file->{Path};
-      if ( $Verbose ) {
-         say STDOUT "Set file \"$file->{Name}\" to NOT-executable.";
-      }
-   }
-}
+# Print messages only if debugging:
+sub BLAT ($string) {if ($Debug) {say STDERR $string}}
 
 # Print statistics for this program run:
 sub stats {
    say STDERR '';
-   say STDERR "Statistics for this directory tree:";
-   say STDERR "Navigated $direcount directories.";
-   say STDERR "Skipped $hiskcount hidden files.";
-   say STDERR "Processed $filecount files.";
-   say STDERR "Was able to open $opencount regular files with unknown or missing file-name extensions.";
-   say STDERR "Failed $noopcount file-open attempts.";
-   say STDERR "Was able to read $readcount regular files with unknown or missing file-name extensions.";
-   say STDERR "Failed $nordcount file-read attempts.";
-   say STDERR "Set $permcount permissions.";
-   say STDERR "Simulated $simucount permissions set.";
+   say STDERR "Statistics for directory tree \"$OriDir\":";
+   printf STDERR "Navigated %6d directories.        \n", $direcount;
+   printf STDERR "Skipped   %6d hidden files.       \n", $hiskcount;
+   printf STDERR "Processed %6d files.              \n", $filecount;
+   printf STDERR "Opened    %6d files.              \n", $opencount;
+   printf STDERR "Failed    %6d file-open attempts. \n", $noopcount;
+   printf STDERR "Read      %6d files.              \n", $readcount;
+   printf STDERR "Failed    %6d file-read attempts. \n", $nordcount;
+   printf STDERR "Set       %6d permissions.        \n", $permcount;
+   printf STDERR "Simulated %6d permissions.        \n", $simucount;
    return 1;
 } # end sub stats
 
@@ -452,9 +442,8 @@ sub stats {
 sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
-   Error: you typed $NA arguments, but this program takes at most 1 argument,
-   which, if present, must be a Perl-Compliant Regular Expression specifying
-   which directory entries to process. Help follows:
+   Error: you typed $NA arguments, but \"$pname\" takes
+   no-more-than-2 optional arguments. Help follows:
    END_OF_ERROR
 } # end sub error
 
