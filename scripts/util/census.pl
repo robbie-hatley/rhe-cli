@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -33,11 +33,13 @@
 #                   which obey the restrictions imposed by $RegExp, $Empty, $GB, and $Files. Improved help.
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
 # Tue Mar 04, 2025: Added comments to subroutine predeclarations.
+# Fri May 02, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -52,14 +54,14 @@ sub help       ; # Print help.
 
 # ======= LEXICAL VARIABLES: =================================================================================
 
-# Settings:     Default:   # Meaning of setting:                   Range:        Meaning of default:
-my $Db        = 0        ; # Print diagnostics?                    bool          Don't print diagnostics.
-my $Verbose   = 0        ; # Print entry/stats/exist msgs?         bool          Don't print the messages.
-my $Recurse   = 0        ; # Recurse subdirectories?               bool          Don't recurse.
-my $RegExp    = qr/^.+$/ ; # Regular expression.                   regexp        Process all file names.
-my $Empty     = 0        ; # Show only empty directories?          bool          Show empty AND non-empty.
-my $GB        = 0.0      ; # Show only dirs with >= $GB GB?        non-neg real  Show dirs of all sizes.
-my $Files     = 0        ; # Show only dirs with >= $Files files.  non-neg int   Show dirs of all file counts.
+# Settings:     Default:    # Meaning of setting:                   Range:        Meaning of default:
+my $Db        = 0         ; # Print diagnostics?                    bool          Don't print diagnostics.
+my $Verbose   = 0         ; # Print entry/stats/exist msgs?         bool          Don't print the messages.
+my $Recurse   = 0         ; # Recurse subdirectories?               bool          Don't recurse.
+my $RegExp    = qr/^.+$/o ; # Regular expression.                   regexp        Process all file names.
+my $Empty     = 0         ; # Show only empty directories?          bool          Show empty AND non-empty.
+my $GB        = 0.0       ; # Show only dirs with >= $GB GB?        non-neg real  Show dirs of all sizes.
+my $Files     = 0         ; # Show only dirs with >= $Files files.  non-neg int   Show dirs of all file counts.
 
 # NOTE: One may be forgiven for thinking that we'd OR together the $GB and $Files predicates, but no, we need
 # to AND them together instead. If you think about it, you'll see why: the defaults already allow all files,
@@ -90,7 +92,7 @@ my $gigacount = 0; # Count of gigabytes   processed.
    # Process @ARGV:
    argv;
 
-   # Print entry message if being verbose:
+   # Print entry message if being terse or verbose:
    if ( $Verbose >= 1 ) {
       say STDERR '';
       say STDERR "Now entering program \"$pname\"."  ;
@@ -111,11 +113,11 @@ my $gigacount = 0; # Count of gigabytes   processed.
    # Print stats:
    tree_stats;
 
-   # Print exit message if being verbose
+   # Print exit message if being terse or verbose
    if ( $Verbose >= 1 ) {
       say    STDERR '';
       say    STDERR "Now exiting program \"$pname\".";
-      printf STDERR "Execution time was %.3f seconds.", time - $t0;
+      printf STDERR "Execution time was %.3fms.", 1000 * (time - $t0);
    }
 
    # Exit program, returning success code "0" to caller:
@@ -184,7 +186,7 @@ sub argv {
 # Process current directory:
 sub curdire {
    # Get CWD:
-   my $curdir = d getcwd;
+   my $curdir = cwd;
 
    # Get ref to array of refs to hashes of info on all regular files in current working directory:
    my $curdirfiles = GetFiles($curdir, 'F', $RegExp);
@@ -212,7 +214,7 @@ sub curdire {
    }
 
    # Otherwise, we're NOT in "show empties only" mode, so display info for this directory
-   # if it contains at-least $Files files or at-least $GB gigabytesf data:
+   # if it contains at-least $Files files or at-least $GB gigabytes of data:
    else {
       if ($RH::Dir::totfcount >= $Files && $gigabytes >= $GB) {
          ++$direcount;
@@ -228,12 +230,10 @@ sub curdire {
 } # end sub curdire
 
 sub tree_stats {
-   if ( $Verbose >= 1 ) {
-      say STDERR '';
-      say STDERR "Found $direcount directories matching given files limit and size limit.";
-      say STDERR "Those directories contain $filecount regular files matching given regexp,";
-      say STDERR "and take-up $gigacount GB of storage space.";
-   }
+   say STDERR '';
+   say STDERR "Found $direcount directories matching given files limit and size limit.";
+   say STDERR "Those directories contain $filecount regular files matching given regexp,";
+   say STDERR "and take-up $gigacount GB of storage space.";
    return 1;
 } # end sub tree_stats
 
