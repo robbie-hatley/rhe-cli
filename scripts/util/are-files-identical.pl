@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -17,12 +17,14 @@
 # Thu Oct 03, 2024: Got rid of Sys::Binmode and common::sense; added "use utf8".
 # Thu Mar 06, 2025: Reduced width from 120 to 110. Simplified. Reduced min ver from "5.32" to "5.00".
 #                   Renamed from "files-are-identical.pl" to "are-files-identical.pl".
+# Fri May 02, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl". Increased min ver from
+#                   "v5.00" to "v5.36" to get automatic "strict" and "warnings".
 ##############################################################################################################
 
-use v5.00;
-use utf8;
+use v5.36;
+use utf8::all;
 
-use RH::Dir qw( e FilesAreIdentical );
+use RH::Dir qw( FilesAreIdentical );
 
 sub argv ; # Process @ARGV.
 sub help ; # Print help.
@@ -50,10 +52,10 @@ sub argv {
    ($path1, $path2) = ($ARGV[0], $ARGV[1]);
 
    # Abort if first file does not exist:
-   die "Error: First file does not exist.\n"  if !-e e $path1;
+   die "Error: First file does not exist.\n"  if ! -e $path1;
 
    # Abort if second file does not exist:
-   die "Error: Second file does not exist.\n" if !-e e $path2;
+   die "Error: Second file does not exist.\n" if ! -e $path2;
 }
 
 sub help {
