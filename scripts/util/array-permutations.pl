@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -15,10 +15,11 @@
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
 # Wed Feb 26, 2025: Uncommented printing of permutations.
 # Tue Mar 04, 2025: Simplified main body. Got rid of parents, quotes, and commas in output for now.
+# Thu May 01, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
+use utf8::all;
 use Time::HiRes 'time';
 
 sub permutations ( @array ) {
@@ -39,16 +40,14 @@ sub permutations ( @array ) {
    return @permutations;
 }
 
-#$" = ', ';
+$" = ' ';
 my $t0 = time;
-#my @quoted = map {"\"$_\""} @ARGV;
 say "Array = @ARGV";
 my @permutations = permutations(@ARGV);
 my $n = scalar(@permutations);
 say "Number of permutations = $n";
 say "Permutations:";
 for my $aref ( @permutations ) {
-   # my @quoted = map {"\"$_\""} @$aref;
    say "@$aref";
 }
 my $t1 = time;

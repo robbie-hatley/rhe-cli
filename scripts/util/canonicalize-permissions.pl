@@ -158,9 +158,7 @@ sub help     ; # Print help and exit.
       # Count max levels of recursion:
       my $mlor = 0;
       # If recursing, run curdire() on every directory in this tree:
-      if ($Recurse) {
-         $mlor = RecurseDirs {curdire};
-      }
+      if ($Recurse) {$mlor = RecurseDirs {curdire}}
       # Otherwise, run curdire() on current directory only:
       else {curdire}
       # If we've been printing $direcount repeatedly on top of itself, print closing newline:

@@ -177,7 +177,15 @@ sub help    ;
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+   if ($Help) {help}
+   else {
+      if ($Recurse) {
+         my $mlor = RecurseDirs {curdire};
+         say "Maximum levels of recursion reached = $mlor";
+      }
+      else {curdire}
+      stats
+   }
 
    # Stop execution timer:
    my $t1 = time;

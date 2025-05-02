@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -16,10 +16,11 @@
 # Tue Oct 03, 2023: Updated to "use v5.36". Got rid of "common::sense". Reduced width from 120 to 110.
 # Thu Aug 15, 2024: Deleted unnecessary "use" statements, -C63, moved help() above main.
 # Tue Mar 04, 2025: Got rid of prototypes and empty signatures.
+# Thu May 01, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
+use utf8::all;
 
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
