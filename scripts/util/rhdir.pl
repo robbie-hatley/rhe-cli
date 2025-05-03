@@ -396,7 +396,6 @@ sub dir_stats ($curdir, $nf) {
       printf STDERR "%7u regular files with  < 0 hard links\n",     $zombcount;
       printf STDERR "%7u files of unknown type\n",                  $unkncount;
    }
-   }
    return 1;
 } # end sub dir_stats ($curdir)
 
