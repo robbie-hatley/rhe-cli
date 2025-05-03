@@ -114,21 +114,21 @@ my $Current = 0;
    }
 
    # Determine whether or not all needed directories exist:
-   my $cusr  = d getlogin   ; # Current user.
+   my $cusr  = d(getlogin)  ; # Current user.
    my $cusl  = $USLs{$cusr} ; # Current user's spotlight location.
    my $valid = 0            ; # Do all needed directories exist?
    if ( $Current ) {
       $valid =
-         -e e $cusl   && -d e $cusl
-      && -e e '/sl'   && -d e '/sl';
+         -e e($cusl  ) && -d e($cusl  )
+      && -e e('/sl'  ) && -d e('/sl'  );
    }
    else {
       $valid =
-         -e e '/usl1' && -d e '/usl1'
-      && -e e '/usl2' && -d e '/usl2'
-      && -e e '/usl3' && -d e '/usl3'
-      && -e e '/usl4' && -d e '/usl4'
-      && -e e '/sl'   && -d e '/sl';
+         -e e('/usl1') && -d e('/usl1')
+      && -e e('/usl2') && -d e('/usl2')
+      && -e e('/usl3') && -d e('/usl3')
+      && -e e('/usl4') && -d e('/usl4')
+      && -e e('/sl'  ) && -d e('/sl'  );
    }
 
    # If all needed directories exist, print verification message;
