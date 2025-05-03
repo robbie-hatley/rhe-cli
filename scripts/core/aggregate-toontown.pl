@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -32,13 +32,15 @@
 # Wed Feb 26, 2025: Trimmed one horizontal divider.
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
+# Sat May 03, 2025: Reverted to using "#!/usr/bin/env -S perl -C63" shebang and "utf8" instead of "utf8::all"
+#                   and "Cwd" instead of "Cwd::utf8", for Cygwin compatibility.
 ##############################################################################################################
 
 # ======= PRELIMINARIES: =====================================================================================
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -114,7 +116,7 @@ sub aggregate {
       }
 
       # Aggregate Toontown screenshots from the all-accounts program directory to Arcade:
-      system("move-files.pl '$program_dir_1' '$screenshots_dir' '$image_regexp'");
+      system(e "move-files.pl '$program_dir_1' '$screenshots_dir' '$image_regexp'");
    }
    elsif ( $platform eq 'Win64' ) {
       # Set directory variables for Windows:
@@ -132,8 +134,8 @@ sub aggregate {
       }
 
       # Aggregate Toontown screenshots from both per-account program directories to Arcade:
-      system("move-files.pl '$program_dir_1' '$screenshots_dir' '$image_regexp'");
-      system("move-files.pl '$program_dir_2' '$screenshots_dir' '$image_regexp'");
+      system(e "move-files.pl '$program_dir_1' '$screenshots_dir' '$image_regexp'");
+      system(e "move-files.pl '$program_dir_2' '$screenshots_dir' '$image_regexp'");
    }
    else {
       if ( $Db ) {
@@ -151,7 +153,7 @@ sub aggregate {
    # Re-name Screenshots:
 
    # Enter screenshots directory:
-   chdir($screenshots_dir);
+   chdir(e $screenshots_dir);
 
    # Get ref to list of file-info hashes for all jpg and png files in screenshots directory:
    my $ImageFiles1 = GetFiles($screenshots_dir, 'F', $image_regexp);
@@ -173,7 +175,7 @@ sub aggregate {
    # Rename Toontown screenshot files as necessary:
    say STDOUT '';
    say STDOUT 'Now canonicalizing names of Toontown screenshots....';
-   system('rename-toontown-images.pl -v');
+   system(e 'rename-toontown-images.pl -v');
 
    # Get ref to FRESH list of file-info hashes for all jpg and png files in screenshots directory
    # (NOTE: all the names will have changed, so we can't re-use old list):
@@ -207,7 +209,7 @@ sub aggregate {
       my $year  = $Parts[2];
       my $month = $Parts[3];
       my $dir   = $year . '/' . $month;
-      if ( ! -e $dir ) {mkdir $dir;}
+      if ( ! -e e $dir ) {mkdir e $dir;}
       move_file($path, $dir);
    }
    say STDOUT '';

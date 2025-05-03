@@ -1,0 +1,11 @@
+The scripts in "/d/rhe-cli/scripts/core" are core utility scripts which
+ARE essential core utilities, and are primarily intended to process incoming
+files, rather than massage existing data (or do other things altogether).
+These programs all run fine in both Linux and Cygwin, due to having
+"#!/usr/bin/env -S perl -C63" shebangs and NOT being reliant on CPAN modules
+"utf8::all" or "Cwd::utf8".
+
+(For auxiliary utilities intended mainly for massaging existing data, and
+doing other things, see my "util" collection; those scripts work ONLY on Linux
+due to having "#!/usr/bin/env perl" shebangs and being reliant on CPAN modules
+"utf8::all" and "Cwd::utf8".)

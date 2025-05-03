@@ -249,8 +249,10 @@ sub curdire {
    # Get list of file-info packets in for all files in $cwd matching $Target, $RegExp, and $Predicate:
    my $curdirfiles = GetFiles($cwd, $Target, $RegExp, $Predicate);
    my $NF = scalar @$curdirfiles;
-   BLAT "Debug message from \"age.pl\", in curdire(); got $NF files:";
-   BLAT "$_->{Name}" for @$curdirfiles;
+   if ($Debug) {
+      BLAT "Debug message from \"age.pl\", in curdire(); got $NF files:";
+      BLAT "$_->{Name}" for @$curdirfiles;
+   }
 
    # If being VERY verbose, also accumulate all counters from RH::Dir:: to main:
    if ( $Verbose >= 2 ) {

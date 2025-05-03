@@ -1,12 +1,13 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
 # process-spotlight.pl
 # Processes images scavenged from MS Win 10 Spotlight.
+# WARNING: ONLY run this program within Cygwin on a Microsoft Windows 10 computer.
 #
 # Edit history:
 # Sat Feb 01, 2020: Wrote first draft. Stub.
@@ -56,10 +57,12 @@
 # Fri Apr 25, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl". Nixed "e".
 # Sat Apr 26, 2025: Now using "/sl" as symbolic link to Spotlight directory, which has been moved to
 #                   "/home/aragorn/Data/Celephais/Gallery/Photographs/Scenic/Spotlight".
+# Sat May 03, 2025: Reverted to using "#!/usr/bin/env -S perl -C63" shebang and "utf8" instead of "utf8::all",
+#                   for Cygwin compatibility. (This program can ONLY run in Cygwin.)
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
+use utf8;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -111,21 +114,21 @@ my $Current = 0;
    }
 
    # Determine whether or not all needed directories exist:
-   my $cusr  = getlogin     ; # Current user.
+   my $cusr  = d getlogin   ; # Current user.
    my $cusl  = $USLs{$cusr} ; # Current user's spotlight location.
    my $valid = 0            ; # Do all needed directories exist?
    if ( $Current ) {
       $valid =
-         -e $cusl   && -d $cusl
-      && -e '/sl' && -d '/sl';
+         -e e $cusl   && -d e $cusl
+      && -e e '/sl'   && -d e '/sl';
    }
    else {
       $valid =
-         -e '/usl1' && -d '/usl1'
-      && -e '/usl2' && -d '/usl2'
-      && -e '/usl3' && -d '/usl3'
-      && -e '/usl4' && -d '/usl4'
-      && -e '/sl'   && -d '/sl';
+         -e e '/usl1' && -d e '/usl1'
+      && -e e '/usl2' && -d e '/usl2'
+      && -e e '/usl3' && -d e '/usl3'
+      && -e e '/usl4' && -d e '/usl4'
+      && -e e '/sl'   && -d e '/sl';
    }
 
    # If all needed directories exist, print verification message;

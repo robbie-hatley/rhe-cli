@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -39,13 +39,15 @@
 # Mon Oct 07, 2024: Got rid of "use warnings FATAL => 'utf8';" (unnecessary).
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
+# Sat May 03, 2025: Reverted to using "#!/usr/bin/env -S perl -C63" shebang and "utf8" instead of "utf8::all"
+#                   and "Cwd" instead of "Cwd::utf8", for Cygwin compatibility.
 ##############################################################################################################
 
 # ======= PRELIMINARIES: =====================================================================================
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -161,7 +163,7 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $curdir = cwd;
+   my $curdir = d getcwd;
    say '';
    say "Directory # $direcount: $curdir";
    say '';
@@ -170,9 +172,8 @@ sub curdire {
    my $curdirfiles = GetFiles($curdir, 'F', $RE);
 
    # Iterate through these files and send each one to curfile:
-   foreach my $file (@$curdirfiles) {
-      curfile($file);
-   }
+   foreach my $file (@$curdirfiles) {curfile($file)}
+
    return 1;
 } # end sub curdire
 
@@ -181,7 +182,7 @@ sub curfile ($file) {
    ++$filecount;
 
    my $path = $file->{Path};
-   my $cwd  = get_dir_from_path($path);
+   my $dir  = get_dir_from_path($path);
    my $name = $file->{Name};
    my $pref = denumerate_file_name(get_prefix($name));
    my $suff = get_suffix($name);
@@ -318,11 +319,11 @@ sub curfile ($file) {
 
    my $newname = $newpref . $suff;
 
-   my $newpath = path($cwd, $newname);
+   my $newpath = path($dir, $newname);
 
-   # If $newpath already exists in $cwd, we need to file an available enumerated name:
-   if ( -e $newpath ) {
-      my $avaname = find_avail_enum_name($newname, $cwd);
+   # If $newpath already exists in $dir, we need to file an available enumerated name:
+   if ( -e e $newpath ) {
+      my $avaname = find_avail_enum_name($newname, $dir);
       # If we failed to find an available name, skip this file:
       if ('***ERROR***' eq $avaname) {
          ++$noavcount;
@@ -331,7 +332,7 @@ sub curfile ($file) {
       }
       # Otherwise, make new path based on $avaname:
       else {
-         $newpath = path($cwd,$avaname);
+         $newpath = path($dir,$avaname);
       }
    }
 
@@ -438,4 +439,3 @@ sub help {
    END_OF_HELP
    return 1;
 } # end sub help
-__END__
