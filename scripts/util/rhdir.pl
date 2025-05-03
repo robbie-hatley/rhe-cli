@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -7,8 +7,7 @@
 ##############################################################################################################
 # rhdir.pl
 # Prints information about every file in current working directory (and all subdirectories if a -r or
-# --recurse option is used).
-#
+# --recurse option is used). NOTE: This program works in Cygwin as well as in Linux.
 # Edit history:
 # Sat Dec 06, 2014: Wrote it. (Date is approximate.)
 # Fri Jul 17, 2015: Upgraded for utf8.
@@ -48,14 +47,15 @@
 #                   and stats are now all on one line, controlled by "and" and "or" for coordination.
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
+# Fri May 02, 2025: Reverted "utf8::all" -> "utf8" and "Cwd::utf8" -> "Cwd", due to Cygwin issues.
+#                   Reverted shebang to "#!/usr/bin/env -S perl -C63".
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use Data::Dumper;
-
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================
@@ -85,7 +85,7 @@ my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    List files of all names.
 my $Predicate = '1'       ; # Boolean predicate.        eval      List files of all types.
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
+my $OriDir    = d cwd     ; # Original directory.       cwd       Directory on program entry.
 my $Inodes    = 0         ; # Print inodes?             bool      Don't print inodes.
 
 # Counts of events in this program:
@@ -93,21 +93,23 @@ my $direcount = 0 ; # Count of directories processed.
 my $filecount = 0 ; # Count of files matching given target, regexp, and predicate.
 
 # Accumulations of counters from RH::Dir :
-my $totfcount = 0 ; # Count of all files.
-my $sdircount = 0 ; # Count of all directories.
-my $slkdcount = 0 ; # Count of all symbolic links to directories.
-my $linkcount = 0 ; # Count of all symbolic links to files.
-my $weircount = 0 ; # Count of all symbolic links to weirdness.
-my $brkncount = 0 ; # Count of all symbolic links to nowhere.
-my $bspccount = 0 ; # Count of all block special files.
-my $cspccount = 0 ; # Count of all character special files.
-my $pipecount = 0 ; # Count of all pipes.
-my $sockcount = 0 ; # Count of all sockets.
-my $ottycount = 0 ; # Count of all tty files.
-my $hlnkcount = 0 ; # Count of all regular files with multiple hard links.
-my $regfcount = 0 ; # Count of all regular files.
-my $unkncount = 0 ; # Count of all unknown files.
+my $totfcount = 0 ; # Count of all directory entries encountered.
 my $noexcount = 0 ; # Count of all nonexistent files encountered.
+my $ottycount = 0 ; # Count of all tty files.
+my $cspccount = 0 ; # Count of all character special files.
+my $bspccount = 0 ; # Count of all block special files.
+my $sockcount = 0 ; # Count of all sockets.
+my $pipecount = 0 ; # Count of all pipes.
+my $brkncount = 0 ; # Count of all symbolic links to nowhere
+my $slkdcount = 0 ; # Count of all symbolic links to directories.
+my $linkcount = 0 ; # Count of all symbolic links to regular files.
+my $weircount = 0 ; # Count of all symbolic links to weirdness (things other than files or dirs).
+my $sdircount = 0 ; # Count of all directories.
+my $hlnkcount = 0 ; # Count of all regular files with  > 1 hard links.
+my $regfcount = 0 ; # Count of all regular files with == 1 hard links.
+my $orphcount = 0 ; # Count of all regular files with == 0 hard links.
+my $zombcount = 0 ; # Count of all regular files with  < 0 hard links.
+my $unkncount = 0 ; # Count of all unknown files.
 
 # Hashes:
 my %Targets;
@@ -269,7 +271,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $curdir = cwd;
+   my $curdir = d cwd;
 
    if ($Debug) {say STDERR "In \"rhdir.pl\", in \"curdire()\"; \$curdir = \"$curdir\".";}
 
@@ -279,23 +281,25 @@ sub curdire {
    # Record number of files obtained:
    my $nf = scalar(@{$curdirfiles});
 
-   # If being "very verbose", append all 15 RH::Dir file-type counters to this program's accumulators:
+   # If being VERY verbose, also accumulate all counters from RH::Dir:: to main:
    if ( $Verbose >= 2 ) {
-      $totfcount += $RH::Dir::totfcount; # all files
-      $sdircount += $RH::Dir::sdircount; # directories
-      $slkdcount += $RH::Dir::slkdcount; # symbolic links to directories
-      $linkcount += $RH::Dir::linkcount; # symbolic links to files
-      $weircount += $RH::Dir::weircount; # symbolic links to weirdness
-      $brkncount += $RH::Dir::brkncount; # symbolic links to nowhere
-      $bspccount += $RH::Dir::bspccount; # block special files
-      $cspccount += $RH::Dir::cspccount; # character special files
-      $pipecount += $RH::Dir::pipecount; # pipes
-      $sockcount += $RH::Dir::sockcount; # sockets
+      $totfcount += $RH::Dir::totfcount; # all directory entries found
+      $noexcount += $RH::Dir::noexcount; # nonexistent files
       $ottycount += $RH::Dir::ottycount; # tty files
-      $hlnkcount += $RH::Dir::hlnkcount; # regular files with multiple hard links
-      $regfcount += $RH::Dir::regfcount; # regular files
+      $cspccount += $RH::Dir::cspccount; # character special files
+      $bspccount += $RH::Dir::bspccount; # block special files
+      $sockcount += $RH::Dir::sockcount; # sockets
+      $pipecount += $RH::Dir::pipecount; # pipes
+      $brkncount += $RH::Dir::slkdcount; # symbolic links to nowhere
+      $slkdcount += $RH::Dir::slkdcount; # symbolic links to directories
+      $linkcount += $RH::Dir::linkcount; # symbolic links to regular files
+      $weircount += $RH::Dir::weircount; # symbolic links to weirdness
+      $sdircount += $RH::Dir::sdircount; # directories
+      $hlnkcount += $RH::Dir::hlnkcount; # regular files with  > 1 hard links
+      $regfcount += $RH::Dir::regfcount; # regular files with == 1 hard links
+      $orphcount += $RH::Dir::orphcount; # regular files with == 0 hard links
+      $zombcount += $RH::Dir::zombcount; # regular files with  < 0 hard links
       $unkncount += $RH::Dir::unkncount; # unknown files
-      $noexcount += $RH::Dir::noexcount; # Nonexistent files.
    }
 
    # Make a hash of refs to lists of refs to file-record hashes, keyed by type:
@@ -365,26 +369,33 @@ sub curdire {
 
 sub dir_stats ($curdir, $nf) {
    if ( $Verbose >= 1 ) {
-      say STDERR "\nStatistics for directory \"$curdir\":";
-      say STDERR "Found $nf files in this directory matching given target, regexp, and predicate.";
+      say    STDERR '';
+      say    STDERR "Statistics for running \"$pname\" on \"$OriDir\" directory tree:";
+      say    STDERR "Navigated $direcount directories. Found $filecount files matching";
+      say    STDERR "target \"$Target\", regexp \"$RegExp\", and predicate \"$Predicate\".";
    }
-   if ( $Verbose >= 2 ) {
-      say    STDERR "\nDirectory entries encountered in this directory included:";
-      printf STDERR "%7u total files\n",                            $RH::Dir::totfcount;
-      printf STDERR "%7u directories\n",                            $RH::Dir::sdircount;
-      printf STDERR "%7u symbolic links to directories\n",          $RH::Dir::slkdcount;
-      printf STDERR "%7u symbolic links to files\n",                $RH::Dir::linkcount;
-      printf STDERR "%7u symbolic links to weirdness\n",            $RH::Dir::weircount;
-      printf STDERR "%7u symbolic links to nowhere\n",              $RH::Dir::brkncount;
-      printf STDERR "%7u block special files\n",                    $RH::Dir::bspccount;
-      printf STDERR "%7u character special files\n",                $RH::Dir::cspccount;
-      printf STDERR "%7u pipes\n",                                  $RH::Dir::pipecount;
-      printf STDERR "%7u sockets\n",                                $RH::Dir::sockcount;
-      printf STDERR "%7u tty files\n",                              $RH::Dir::ottycount;
-      printf STDERR "%7u regular files with multiple hard links\n", $RH::Dir::hlnkcount;
-      printf STDERR "%7u regular files\n",                          $RH::Dir::regfcount;
-      printf STDERR "%7u files of unknown type\n",                  $RH::Dir::unkncount;
-      printf STDERR "%7u non-existent directory entries\n",         $RH::Dir::noexcount;
+
+   if ( $Verbose >= 2) {
+      say    STDERR '';
+      say    STDERR 'Directory entries encountered in this tree included:';
+      printf STDERR "%7u total files\n",                            $totfcount;
+      printf STDERR "%7u nonexistent files\n",                      $noexcount;
+      printf STDERR "%7u tty files\n",                              $ottycount;
+      printf STDERR "%7u character special files\n",                $cspccount;
+      printf STDERR "%7u block special files\n",                    $bspccount;
+      printf STDERR "%7u sockets\n",                                $sockcount;
+      printf STDERR "%7u pipes\n",                                  $pipecount;
+      printf STDERR "%7u symbolic links to nowhere\n",              $brkncount;
+      printf STDERR "%7u symbolic links to directories\n",          $slkdcount;
+      printf STDERR "%7u symbolic links to non-directories\n",      $linkcount;
+      printf STDERR "%7u symbolic links to weirdness\n",            $weircount;
+      printf STDERR "%7u directories\n",                            $sdircount;
+      printf STDERR "%7u regular files with  > 1 hard links\n",     $hlnkcount;
+      printf STDERR "%7u regular files with == 1 hard links\n",     $regfcount;
+      printf STDERR "%7u regular files with == 0 hard links\n",     $orphcount;
+      printf STDERR "%7u regular files with  < 0 hard links\n",     $zombcount;
+      printf STDERR "%7u files of unknown type\n",                  $unkncount;
+   }
    }
    return 1;
 } # end sub dir_stats ($curdir)
@@ -436,6 +447,7 @@ sub help
    6. Name of file.
    If a "-i" or "--inodes" option is used, the inode number,
    recommended block size, and number of blocks are also printed.
+   NOTE: This program works in Cygwin as well as in Linux.
 
    -------------------------------------------------------------------------------
    Type Letters:

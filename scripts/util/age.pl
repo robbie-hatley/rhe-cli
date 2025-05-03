@@ -8,6 +8,7 @@
 # age.pl
 # Lists files in current directory (and all subdirs if -r or --recurse is used) in decreasing order of age,
 # and prints age in days for each file.
+# NOTE: This program works on Cygwin as well as Linux.
 #
 # Edit history:
 # Mon Jul 05, 2021: Wrote it.
@@ -23,6 +24,7 @@
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
 # Fri Feb 14, 2025: Refactored: Now using only one RegExp (1st arg), and now using predicate (2nd arg).
 #                   Also got rid of Sys::Binmode, added more options, added "--", added debugging, etc.
+# Fri May 02, 2025: Modernized. Included much material from most-recent template.
 ##############################################################################################################
 
 use v5.36;
@@ -31,33 +33,30 @@ use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
+# ======= VARIABLES: =========================================================================================
 
-sub argv    ; # Process @ARGV.
-sub curdire ; # Process current directory.
-sub curfile ; # Process current file.
-sub stats   ; # Print statistics.
-sub help    ; # Print help and exit.
+# ------- System Variables: ----------------------------------------------------------------------------------
 
-# ======= GLOBAL VARIABLES: ==================================================================================
+$" = ', ' ; # Quoted-array element separator = ", ".
 
-our $t0     ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program entry.
-our $t1     ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program exit.
+# ------- Global Variables: ----------------------------------------------------------------------------------
 
-# ======= START TIMER: =======================================================================================
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+our    $cmpl_beg;                              # Declare compilation begin time.
+BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
+our    $cmpl_end;                              # Declare compilation end   time.
+INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
-BEGIN {$t0 = time}
-
-# ======= LEXICAL VARIABLES: =================================================================================
+# ------- Local variables: -----------------------------------------------------------------------------------
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
-   $"         = ', '      ; # Quoted-array formatting.  string    Comma space.
-my @opts      = ()        ; # options                   array     Options.
-my @args      = ()        ; # arguments                 array     Arguments.
-my $NA        = 0         ; # number of arguments       int       Count of arguments.
-my $Db        = 0         ; # Debug?                    bool      Don't debug.
+my @Opts      = ()        ; # options                   array     Options.
+my @Args      = ()        ; # arguments                 array     Arguments.
+my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $OriDir    = d cwd     ; # Original directory.       cwd       Directory on program entry.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   All directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
@@ -66,7 +65,6 @@ my $Predicate = 1         ; # Boolean predicate.        bool      Process all fi
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed.
 my $filecount = 0 ; # Count of files matching target and regexp.
-my $predcount = 0 ; # Count of files also matching predicate.
 
 # Accumulations of counters from RH::Dir::GetFiles():
 my $totfcount = 0 ; # Count of all directory entries encountered.
@@ -81,54 +79,96 @@ my $slkdcount = 0 ; # Count of all symbolic links to directories.
 my $linkcount = 0 ; # Count of all symbolic links to regular files.
 my $weircount = 0 ; # Count of all symbolic links to weirdness (things other than files or dirs).
 my $sdircount = 0 ; # Count of all directories.
-my $hlnkcount = 0 ; # Count of all regular files with multiple hard links.
-my $regfcount = 0 ; # Count of all regular files.
+my $hlnkcount = 0 ; # Count of all regular files with  > 1 hard links.
+my $regfcount = 0 ; # Count of all regular files with == 1 hard links.
+my $orphcount = 0 ; # Count of all regular files with == 0 hard links.
+my $zombcount = 0 ; # Count of all regular files with  < 0 hard links.
 my $unkncount = 0 ; # Count of all unknown files.
+
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
+
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub BLAT    ; # Print messages only if debugging.
+sub stats   ; # Print statistics.
+sub error   ; # Handle errors.
+sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   # Process @ARGV:
-   argv;
+   # Start execution timer:
+   my $t0 = time;
+   my @s0 = localtime($t0);
 
-   # Set program name:
-   my $pname = substr $0, 1 + rindex $0, '/';
+   # Process @ARGV and set settings:
+   argv;
 
    # Print program entry message if being terse or verbose:
    if ( $Verbose >= 1 ) {
-      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
    }
 
-   # Print the values of the settings variables if debugging:
-   if ( $Db ) {
-      say STDERR '';
-      say STDERR "Options   = (", join(', ', map {"\"$_\""} @opts), ')';
-      say STDERR "Arguments = (", join(', ', map {"\"$_\""} @args), ')';
-      say STDERR "Verbose   = $Verbose";
+   # Print compilation time if being verbose:
+   if ( $Verbose >= 2 ) {
+      printf STDERR "Compilation time was %.3fms\n\n",
+                    1000 * ($cmpl_end - $cmpl_beg);
+   }
+
+   # Print basic settings if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      say STDERR 'Basic settings:';
+      say STDERR "OriDir    = $OriDir";
       say STDERR "Recurse   = $Recurse";
       say STDERR "Target    = $Target";
       say STDERR "RegExp    = $RegExp";
       say STDERR "Predicate = $Predicate";
+      say STDERR '';
    }
 
-   # If user has typed more than 3 arguments, print warning:
-   if ( $NA >= 3 ) {
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   if ( $Debug >= 1 ) {
+      say STDERR 'Values of all variables after processing @ARGV:';
+      say STDERR "pname     = $pname";
+      say STDERR "cmpl_beg  = $cmpl_beg";
+      say STDERR "cmpl_end  = $cmpl_end";
+      say STDERR "Options   = (@Opts)";
+      say STDERR "Arguments = (@Args)";
+      say STDERR "Debug     = $Debug";
+      say STDERR "Help      = $Help";
+      say STDERR "Verbose   = $Verbose";
+      say STDERR "OriDir    = $OriDir";
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "Target    = $Target";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
       say STDERR '';
-      say STDERR "Warning: This program ignores all arguments after the first two.";
-      say STDERR "Use a \"-h\" or \"--help\" option to get help.";
    }
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+   if ($Help) {help}
+   else {
+      if ($Recurse) {
+         my $mlor = RecurseDirs {curdire};
+         say "Maximum levels of recursion reached = $mlor";
+      }
+      else {curdire}
+      stats
+   }
+
+   # Stop execution timer:
+   my $t1 = time;
+   my @s1 = localtime($t1);
 
    # Print exit message if being terse or verbose:
    if ( $Verbose >= 1 ) {
-      $t1 = time;
-      my $ms = 1000 * ($t1-$t0);
-      say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
-      printf STDERR "Execution time was %.3fms.", $ms;
+      my $te = $t1 - $t0; my $ms = 1000 * $te;
+      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                    $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
+      printf STDERR "Execution time was %.3fms.\n", $ms;
    }
 
    # Exit program, returning success code "0" to caller:
@@ -137,28 +177,30 @@ my $unkncount = 0 ; # Count of all unknown files.
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-# Process @ARGV :
+# Process @ARGV:
 sub argv {
    # Get options and arguments:
    my $end = 0;              # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {           # For each element of @ARGV,
-      /^--$/ && !$end        # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1           # so if we see that, then set the "end-of-options" flag
-      and push @opts, $_     # and push the "--" to @opts
+   for ( @ARGV ) {           # For each element of @ARGV:
+      !$end                  # If we have not yet reached end-of-options,
+      && /^--$/              # and we see an "--" option,
+      and $end = 1           # set the "end-of-options" flag
+      and push @Opts, '--'   # and push "--" to @Opts
       and next;              # and skip to next element of @ARGV.
-      !$end                  # If we haven't yet reached end-of-options,
-      && ( /^-(?!-)$s+$/     # and if we get a valid short option
+      !$end                  # If we have not yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we see a valid short option
       ||  /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @opts, $_     # then push item to @opts
-      or  push @args, $_;    # else push item to @args.
+      and push @Opts, $_     # then push item to @Opts
+      and next;              # and skip to next element of @ARGV.
+      push @Args, $_;        # Otherwise, push item to @Args.
    }
 
    # Process options:
-   for ( @opts ) {
+   for ( @Opts ) {
       /^-$s*h/ || /^--help$/    and $Help    =  1  ;
-      /^-$s*e/ || /^--debug$/   and $Db      =  1  ;
+      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
       /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
       /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
@@ -171,17 +213,24 @@ sub argv {
    }
 
    # Get number of arguments:
-   $NA = scalar(@args);
+   my $NA = scalar(@Args);
+
+   # If user typed more than 2 arguments, and we're not debugging,
+   # then print error and help messages and exit:
+   if ( $NA >= 3 && !$Debug ) {  # If number of arguments >= 3 and we're not debugging,
+      error($NA);                # print error message,
+      help;                      # and print help message,
+      exit 666;                  # and exit, returning The Number Of The Beast.
+   }
 
    # First argument, if present, is a file-selection regexp:
-   if ( $NA >= 1 ) {           # If number of arguments >= 1,
-      $RegExp = qr/$args[0]/o; # set $RegExp to $args[0].
+   if ( $NA >= 1 ) {             # If number of arguments >= 1,
+      $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
    }
 
    # Second argument, if present, is a file-selection predicate:
-   if ( $NA >= 2 ) {           # If number of arguments >= 2,
-      $Predicate = $args[1];   # set $Predicate to $args[1]
-      $Target = 'A';           # and set $Target to 'A' to avoid conflicts with $Predicate.
+   if ( $NA >= 2 ) {             # If number of arguments >= 2,
+      $Predicate = $Args[1];     # set $Predicate to $Args[1].
    }
 
    # Return success code 1 to caller:
@@ -194,11 +243,14 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $cwd = d getcwd;
+   my $cwd = d cwd;
    say STDOUT "\nDirectory #$direcount: $cwd\n";
 
-   # Get list of file-info packets in for all files in $cwd matching $Target and $RegExp:
-   my $curdirfiles = GetFiles($cwd, $Target, $RegExp);
+   # Get list of file-info packets in for all files in $cwd matching $Target, $RegExp, and $Predicate:
+   my $curdirfiles = GetFiles($cwd, $Target, $RegExp, $Predicate);
+   my $NF = scalar @$curdirfiles;
+   BLAT "Debug message from \"age.pl\", in curdire(); got $NF files:";
+   BLAT "$_->{Name}" for @$curdirfiles;
 
    # If being VERY verbose, also accumulate all counters from RH::Dir:: to main:
    if ( $Verbose >= 2 ) {
@@ -214,8 +266,10 @@ sub curdire {
       $linkcount += $RH::Dir::linkcount; # symbolic links to regular files
       $weircount += $RH::Dir::weircount; # symbolic links to weirdness
       $sdircount += $RH::Dir::sdircount; # directories
-      $hlnkcount += $RH::Dir::hlnkcount; # regular files with multiple hard links
-      $regfcount += $RH::Dir::regfcount; # regular files
+      $hlnkcount += $RH::Dir::hlnkcount; # regular files with  > 1 hard links
+      $regfcount += $RH::Dir::regfcount; # regular files with == 1 hard links
+      $orphcount += $RH::Dir::orphcount; # regular files with == 0 hard links
+      $zombcount += $RH::Dir::zombcount; # regular files with  < 0 hard links
       $unkncount += $RH::Dir::unkncount; # unknown files
    }
 
@@ -226,15 +280,8 @@ sub curdire {
    say STDOUT '   Age  File  Size      # of   Name   ';
    say STDOUT '(days)  Type  (bytes)   Links  of file';
 
-   # Process each path that matches $RegExp, $Target, and $Predicate:
-   foreach my $file (@FilesByAge) {
-      ++$filecount;
-      local $_ = e $file->{Path};
-      if (eval($Predicate)) {
-         ++$predcount;
-         curfile($file);
-      }
-   }
+   # Send each file of @FilesByAge to curfile():
+   foreach my $file (@FilesByAge) {curfile($file)}
 
    # Return success code 1 to caller:
    return 1;
@@ -242,24 +289,30 @@ sub curdire {
 
 # Process current file:
 sub curfile ($file) {
-   my $age = (time() - $file->{Mtime}) / 86400;
-   printf STDOUT " %5u    %-1s   %-8.2E  %5u  %-s\n", $age, $file->{Type},
-                                                            $file->{Size},
-                                                            $file->{Nlink},
-                                                            $file->{Name};
+   # Increment file counter:
+   ++$filecount;
+
+   # Get time in days since current file was modified:
+   my $age = (time() - $file->{Mtime}) / 86400; # (There are 86400 seconds in each day.)
+
+   # Print directory listing for this file:
+   printf STDOUT " %5u    %-1s   %-8.2E  %5u  %-s\n",
+                 $age, $file->{Type}, $file->{Size}, $file->{Nlink}, $file->{Name};
 
    # Return success code 1 to caller:
    return 1;
 } # end sub curfile
 
+# Print messages only if debugging:
+sub BLAT ($string) {if ($Debug) {say STDERR $string}}
+
 # Print statistics:
 sub stats {
    if ( $Verbose >= 1 ) {
       say    STDERR '';
-      say    STDERR 'Statistics for this directory tree:';
-      say    STDERR "Navigated $direcount directories.";
-      say    STDERR "Found $filecount files matching regexp \"$RegExp\" and target \"$Target\".";
-      say    STDERR "Found $predcount files which also match predicate \"$Predicate\".";
+      say    STDERR "Statistics for running \"$pname\" on \"$OriDir\" directory tree:";
+      say    STDERR "Navigated $direcount directories. Found $filecount files matching";
+      say    STDERR "target \"$Target\", regexp \"$RegExp\", and predicate \"$Predicate\".";
    }
 
    if ( $Verbose >= 2) {
@@ -277,12 +330,25 @@ sub stats {
       printf STDERR "%7u symbolic links to non-directories\n",      $linkcount;
       printf STDERR "%7u symbolic links to weirdness\n",            $weircount;
       printf STDERR "%7u directories\n",                            $sdircount;
-      printf STDERR "%7u regular files with multiple hard links\n", $hlnkcount;
-      printf STDERR "%7u regular files\n",                          $regfcount;
+      printf STDERR "%7u regular files with  > 1 hard links\n",     $hlnkcount;
+      printf STDERR "%7u regular files with == 1 hard links\n",     $regfcount;
+      printf STDERR "%7u regular files with == 0 hard links\n",     $orphcount;
+      printf STDERR "%7u regular files with  < 0 hard links\n",     $zombcount;
       printf STDERR "%7u files of unknown type\n",                  $unkncount;
    }
    return 1;
 } # end sub stats
+
+# Handle errors:
+sub error ($NA) {
+   print STDERR ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+
+   Error: you typed $NA arguments, but this program takes at most
+   2 arguments (an optional file-selection regexp and an optional
+   file-selection predicate). Help follows.
+   END_OF_ERROR
+   return 1;
+} # end sub error
 
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
@@ -299,6 +365,7 @@ sub help {
    2. Type of file (single-letter code, one of NTYXOPSLMDHFU).
    3. Size of file in format #.##E+##
    4. Name of file.
+   NOTE: This program works on Cygwin as well as Linux.
 
    -------------------------------------------------------------------------------
    Meanings of Type Letters:

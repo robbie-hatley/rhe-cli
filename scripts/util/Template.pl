@@ -224,6 +224,7 @@ sub help    ; # Print help and exit.
 
    # Print basic settings if being terse or verbose:
    if ( $Verbose >= 1 ) {
+      say STDERR 'Basic settings:';
       say STDERR "OriDir    = $OriDir";
       say STDERR "Recurse   = $Recurse";
       say STDERR "Target    = $Target";
@@ -319,7 +320,7 @@ sub argv {
    # Get number of arguments:
    my $NA = scalar(@Args);
 
-   # If user typed more than 2 arguments, and we're not debugging or getting help,
+   # If user typed more than 2 arguments, and we're not debugging,
    # then print error and help messages and exit:
    if ( $NA >= 3 && !$Debug ) {  # If number of arguments >= 3 and we're not debugging,
       error($NA);                # print error message,
