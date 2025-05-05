@@ -12,17 +12,10 @@
 # Thu Apr 10, 2025: Wrote it.
 ##############################################################################################################
 
-# Pragmas:
 use v5.36;
-use strict;
-use warnings;
-
-# CPAN Modules:
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
-
-# RH Modules:
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================
@@ -212,7 +205,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = cwd;
+   my $cwd = d getcwd;
 
    # Announce current working directory if being verbose:
    if ( $Verbose >= 2 ) {

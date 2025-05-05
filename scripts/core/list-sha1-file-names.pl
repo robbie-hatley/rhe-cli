@@ -27,8 +27,8 @@
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -205,7 +205,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = cwd;
+   my $cwd = d getcwd;
 
    # Announce current working directory if being verbose:
    if ( $Verbose >= 2 ) {

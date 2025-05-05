@@ -20,11 +20,11 @@
 # Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
 ########################################################################################################################
 
-use v5.32;
-use Cwd::utf8;
-
-use RH::Util;
+use v5.36;
+use utf8;
+use Cwd;
 use RH::Dir;
+use RH::Util;
 
 # ======= SUBROUTINE PRE-DECLARATIONS ==================================================================================
 
@@ -112,7 +112,7 @@ sub process_options_and_arguments
 sub find_missing_files
 {
    # Get current directory:
-   my $curdir = cwd;
+   my $curdir = d getcwd;
 
    # Get list of all regular files in current directory:
    my $curdirfiles = GetFiles($curdir, 'F');

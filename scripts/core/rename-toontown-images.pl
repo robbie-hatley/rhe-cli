@@ -171,7 +171,7 @@ sub curdire {
    # Get list of Regular files matching $RE (ie, old-format Toontown screenshots) in current directory:
    my $curdirfiles = GetFiles($curdir, 'F', $RE);
 
-   # Iterate through these files and send each one to curfile:
+   # Send each file to curfile:
    foreach my $file (@$curdirfiles) {curfile($file)}
 
    return 1;
@@ -208,7 +208,7 @@ sub curfile ($file) {
 
    # If part 2 is an annotation, remove its final "_", change " " to "-",  and tack it onto end of final part:
    if ( $parts[2] =~ m/^_[^_]+_$/ ) {
-      my $note   = ((splice @parts, 2, 1));
+      my $note = ((splice @parts, 2, 1));
       $note =~ s/_$//;
       $note =~ s/ /-/g;
       my $serial = pop @parts;

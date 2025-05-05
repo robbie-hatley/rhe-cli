@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -42,10 +42,11 @@
 # Tue Apr 29, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl". Nixed all "d" and "e".
 #                   Increased min ver from "v5.32" to "v5.36". Reduced width from 120 to 110.
 #                   Shortened subroutine names.
+# Sun May 04, 2025: Reverted from "utf8::all" to "utf8" for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
+use utf8;
 use Time::HiRes 'time';
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
@@ -164,7 +165,7 @@ sub merge {
    # Read source directory:
    my @srcenames  = (); # List of names of files in source directory.
    my $dh1 = undef; # Handle for directory 1.
-   opendir($dh1, $dir1) or die "Can't open dir \"$dir1\"\n$!\n";
+   opendir($dh1, e($dir1)) or die "Can't open dir \"$dir1\"\n$!\n";
    while (my $name1 = readdir $dh1) {
       next if '.'  eq $name1;
       next if '..' eq $name1;
@@ -174,7 +175,7 @@ sub merge {
          say "Current name = \"$name1\".";
       }
       my $path1 = $dir1 . '/' . $name1;
-      next unless -f $path1;
+      next unless -f e($path1);
       next unless $name1 =~ m/^$prefix\d{$digits}$suffix$/;
       my $number = 0 + substr($name1, length($prefix), $digits);
       $min1 = $number if $number < $min1;
@@ -186,7 +187,7 @@ sub merge {
 
    # Read destination directory:
    my $dh2 = undef; # Handle for directory 2.
-   opendir($dh2, $dir2) or die "Can't open dir \"$dir2\"\n$!\n";
+   opendir($dh2, e($dir2)) or die "Can't open dir \"$dir2\"\n$!\n";
    while (my $name2 = readdir $dh2) {
       next if '.'  eq $name2;
       next if '..' eq $name2;
@@ -196,7 +197,7 @@ sub merge {
          say "Current name = \"$name2\".";
       }
       my $path2 = $dir2 . '/' . $name2;
-      next unless -f $path2;
+      next unless -f e($path2);
       next unless $name2 =~m/$prefix\d{$digits}$suffix$/;
       my $number = 0 + substr($name2, length($prefix), $digits);
       $max2 = $number if $number > $max2;

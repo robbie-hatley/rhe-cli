@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -32,8 +32,8 @@
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use Switch;
 use RH::Util;
@@ -67,7 +67,7 @@ my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
+my $OriDir    = d(getcwd) ; # Original directory.       cwd       Directory on program entry.
 
 # Counters:
 my $direcount = 0; # Count of directories processed by curdire().
@@ -205,12 +205,12 @@ sub argv {
 
 sub curdire {
    # Get current working directory and increment directory counter:
-   my $cwd = cwd;
+   my $cwd = d(getcwd);
    ++$direcount;
 
    # Read list of all file names from current directory into array "@names" and increment file counter:
    my $dh = undef;
-   opendir $dh, $cwd or die "Fatal error: Couldn't open  directory \"$cwd\".\n$!\n";
+   opendir $dh, e($cwd) or die "Fatal error: Couldn't open  directory \"$cwd\".\n$!\n";
    my @names = readdir($dh);
    scalar(@names) >= 2 or die "Fatal error: Couldn't read  directory \"$cwd\".\n$!\n";
    closedir $dh or die "Fatal Error: Couldn't close directory \"$cwd\".\n$!\n";
@@ -222,8 +222,8 @@ sub curdire {
    NAME: for my $name (@names) {
       next if '.'  eq $name;
       next if '..' eq $name;
-      next if ! -e $name;
-      my @stats = lstat $name;
+      next if ! -e e($name);
+      my @stats = lstat e($name);
       switch($Target) {
          case 'F' { next NAME if !  -f _            }
          case 'D' { next NAME if !            -d _  }
@@ -262,11 +262,11 @@ sub equiv ($first, $second) {
 } # end sub equiv
 
 sub stats {
-   say STDERR "\nStats for program \"find-duplicate-names.pl\":";
-   say STDERR "Navigated $direcount directories.";
-   say STDERR "Examined $filecount items matching target \"$Target\", regexp \"$RegExp\",";
-   say STDERR "and predicate \"$Predicate\".";
-   say STDERR "Found $equicount equivalent name pairs.";
+   say STDERR "\n"
+             ."Stats for running program \"$pname\" on dir tree \"$OriDir\":\n"
+             ."Navigated $direcount directories. Examined $filecount items matching\n"
+             ."target \"$Target\", regexp \"$RegExp\", and predicate \"$Predicate\".\n"
+             ."Found $equicount equivalent name pairs.";
    return 1;
 } # end sub stats
 

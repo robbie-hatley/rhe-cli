@@ -33,8 +33,8 @@
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -230,7 +230,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = cwd;
+   my $cwd = d getcwd;
 
    # Get list of paths in $cwd matching target, regexp, and predicate:
    my @paths = sort {$a cmp $b} glob_regexp_utf8($cwd, $Target, $RegExp, $Predicate);

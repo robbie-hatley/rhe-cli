@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -52,8 +52,8 @@
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -176,7 +176,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = cwd;
+   my $cwd = d getcwd;
 
    # Announce current working directory:
    say STDOUT '';
@@ -211,7 +211,7 @@ sub curfile ($file) {
    my $newname = denumerate_file_name($name);
 
    # Skip this file if a file with the same base name already exists in this directory:
-   if ( -e $newname ) {
+   if ( -e e($newname) ) {
       say STDOUT '';
       say STDOUT "Can't denumerate \"$name\" because file with same base name already exists.";
       ++$skipcount;

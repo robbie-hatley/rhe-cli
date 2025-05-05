@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -47,8 +47,8 @@
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -166,7 +166,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $curdir = cwd;
+   my $curdir = d getcwd;
 
    # If being terse or verbose, announce directory:
    if ( $Verbose >= 1 ) {
@@ -250,7 +250,7 @@ sub curdire {
                   }
                   # Otherwise, attempt an actual erasure:
                   else {
-                     unlink $file2->{Path} # Unlink second file.
+                     unlink e($file2->{Path}) # Unlink second file.
                      and say STDOUT "Erased $file2->{Path}"
                      and $file2->{Name} = "***DELETED***"
                      and ++$delecount
@@ -271,7 +271,7 @@ sub curdire {
                   }
                   # Otherwise, attempt an actual erasure:
                   else {
-                     unlink $file1->{Path} # Unlink first file.
+                     unlink e($file1->{Path}) # Unlink first file.
                      and say STDOUT "Erased $file1->{Path}"
                      and $file1->{Name} = "***DELETED***"
                      and ++$delecount

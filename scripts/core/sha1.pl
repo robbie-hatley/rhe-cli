@@ -15,19 +15,12 @@
 #                   Nixed all "d" and "e", and now using "cwd" instead of "d getcwd".
 ##############################################################################################################
 
-# Pragmas:
 use v5.36;
-use strict;
-use warnings;
-
-# CPAN modules:
-use utf8::all   qw( :DEFAULT );
-use Cwd::utf8   qw( :DEFAULT );
-use Time::HiRes qw( time     );
-use List::Util  qw( none     );
-use Digest::SHA qw( sha1_hex );
-
-# RH modules:
+use utf8;
+use Cwd;
+use Time::HiRes 'time';
+use List::Util 'none';
+use Digest::SHA 'sha1_hex';
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================
@@ -185,7 +178,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = cwd;
+   my $cwd = d getcwd;
 
    # Announce current working directory if being verbose:
    if ( $Verbose >= 2 ) {

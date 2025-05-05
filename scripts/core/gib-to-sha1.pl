@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -27,10 +27,9 @@
 
 use v5.36;
 use utf8;
-use Cwd::utf8;
+use Cwd;
 use Time::HiRes 'time';
 use List::Util 'all';
-
 use RH::Dir;
 use RH::Util;
 
@@ -58,15 +57,15 @@ my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $OriDir    = d getcwd  ; # Original directory.       dir name  Directory on program entry.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
-# No "$Target" variable because it doesn't make sense to get the SHA1 data hash of a non-data object.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
+# There's no "$Target" variable because it doesn't make sense to get the SHA1 data hash of a non-data object.
 
 # Counters:
 my $direcount = 0; # Count of directories navigated.
-my $filecount = 0; # Count of non-meta paths matching target and regexp.
-my $predcount = 0; # Count of paths also matching $Predicate.
+my $filecount = 0; # Count of non-meta paths matching target, regexp, and predicate.
 my $renacount = 0; # Count of files successfully renamed.
 my $failcount = 0; # Count of failed file-rename attempts.
 
@@ -174,21 +173,21 @@ sub argv {
    my $NA = scalar(@Args);
 
    # If user typed more than 2 arguments, and we're not debugging, print error and help messages and exit:
-   if ( $NA > 2                  # If number of arguments > 2
-        && !$Debug && !$Help ) { # and we're not debugging and not getting help,
-      error($NA);                # print error message,
-      help;                      # and print help message,
-      exit 666;                  # and exit, returning The Number Of The Beast.
+   if ( $NA > 2         # If number of arguments > 2,
+        && !$Debug ) {  # and we're not debugging,
+      error($NA);       # print error message,
+      help;             # and print help message,
+      exit 666;         # and exit, returning The Number Of The Beast (because something evil happened).
    }
 
    # First argument, if present, is a file-selection regexp:
-   if ( $NA > 0 ) {              # If number of arguments > 0,
-      $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
+   if ( $NA > 0 ) {             # If number of arguments > 0,
+      $RegExp = qr/$Args[0]/o;  # set $RegExp to $Args[0].
    }
 
    # Second argument, if present, is a file-selection predicate:
-   if ( $NA > 1 ) {              # If number of arguments >= 2,
-      $Predicate = $Args[1];     # set $Predicate to $Args[1].
+   if ( $NA > 1 ) {           # If number of arguments >= 2,
+      $Predicate = $Args[1];  # set $Predicate to $Args[1].
    }
 
    # Return success code 1 to caller:
@@ -201,11 +200,11 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $curdir = cwd;
+   my $curdir = d getcwd;
    say "\nDir # $direcount: $curdir\n";
 
    # Get a list of all paths in current directory matching target "F", regexp $Gib, and regexp $RegExp:
-   my @paths = glob_regexp_utf8($curdir, 'F', $RegExp);
+   my @paths = glob_regexp_utf8($curdir, 'F', $RegExp, $Predicate);
    #say for @paths; exit;
    # Send each matching path to curfile:
    foreach my $path (@paths) {
@@ -215,13 +214,7 @@ sub curdire {
       next if !is_data_file($path);
       # Bypass all meta files (hidden, settings, metadata, etc):
       next if is_meta_file($path);
-      # Count all non-meta data files matching regexps "$Gib" and "$RegExp":
-      ++$filecount;
-      # Skip all paths not matching $Predicate:
-      local $_ = $path;
-      next if !eval($Predicate);
-      # If we get to here, increment $predcount and send path to curfile:
-      ++$predcount;
+      # Send all remaining files to curfile():
       curfile($path);
    }
    return 1;
@@ -229,6 +222,9 @@ sub curdire {
 
 # Process current file:
 sub curfile ($path) {
+   # Increment file counter:
+   ++$filecount;
+
    my $oldname = get_name_from_path($path);
 
    my $newname = hash($path, 'sha1', 'name');
@@ -244,12 +240,10 @@ sub curfile ($path) {
 
 # Print stats:
 sub stats {
-   print("\nStats for program \"pname\":\n");
-   printf("Navigated %6u directories.\n",                                                         $direcount);
-   printf("Found     %6u non-meta data files with gibberish names matching regexp \"$RegExp\".\n",$filecount);
-   printf("Found     %6u such files also matching predicate \"$Predicate\".\n",                   $predcount);
-   printf("Renamed   %6u files.\n",                                                               $renacount);
-   printf("Failed    %6u file-rename attempts.\n",                                                $failcount);
+   say STDERR "\nStats for running program \"$pname\" on dir tree \"$OriDir\":\n"
+             ."Navigated $direcount directories. Found $filecount non-meta data files with gibberish names\n"
+             ."matching regexp \"$RegExp\" and predicate \"$Predicate\". Renamed $renacount files.\n"
+             ."Failed $failcount file-rename attempts.";
    return 1;
 } # end sub stats
 

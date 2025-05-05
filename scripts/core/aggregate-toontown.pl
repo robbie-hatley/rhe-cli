@@ -164,7 +164,7 @@ sub aggregate {
       say STDERR 'In ATT, about to rename files.';
       say STDERR "Screenshots dir = \"$screenshots_dir\".";
       # Sanity check!!! Are we actually where we think we are???
-      my $cwd = cwd;
+      my $cwd = d getcwd;
       say STDERR "CWD = \"$cwd\".";
       say STDERR "Number of files before renaming = $num1";
       say STDERR "Names  of files before renaming:";
@@ -187,7 +187,7 @@ sub aggregate {
       say STDERR 'In ATT, after renaming files.';
       say STDERR "Screenshots dir = \"$screenshots_dir\".";
       # Sanity check!!! Are we actually where we think we are???
-      my $cwd = cwd;
+      my $cwd = d getcwd;
       say STDERR "CWD = \"$cwd\".";
       say STDERR "Number of files after renaming = $num2";
       say STDERR "Names  of files after renaming:";
@@ -209,7 +209,7 @@ sub aggregate {
       my $year  = $Parts[2];
       my $month = $Parts[3];
       my $dir   = $year . '/' . $month;
-      if ( ! -e e $dir ) {mkdir e $dir;}
+      if ( ! -e e($dir) ) {mkdir e($dir);}
       move_file($path, $dir);
    }
    say STDOUT '';

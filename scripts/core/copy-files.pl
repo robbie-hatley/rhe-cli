@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -32,12 +32,14 @@
 # Fri Apr 25, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d" and "e". Added [-c|--correct] option, telling program to correct the
 #                   file-name suffix of each copied file if necessary.
+# Sun May 04, 2025: Nixed "utf8::all" and "Cwd::utf8" in favor of "utf" and "Cwd". Reverted shebang to
+#                   "#!/usr/bin/env -S perl -C63". Added "d" and "e" back in for Cygwin compatibility.
 ##############################################################################################################
 
 # ======= PRAGMAS AND MODULES: ===============================================================================
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -85,13 +87,17 @@ sub help  ; # Print help.
    argv;
 
    # Get current working directory:
-   $cur = cwd;
+   $cur = d getcwd;
 
    # Get FULLY-QUALIFIED versions of source and destination directories by CDing to each, running getcwd,
    # then CDing back to $cur. WARNING: ALWAYS CD BACK TO $cur BEFORE TRYING TO CD TO $src or $dst, BECAUSE
    # $src AND $dst ARE RELATIVE TO $cur!!!
-   chdir $src; $src = cwd; chdir $cur;
-   chdir $dst; $dst = cwd; chdir $cur;
+   chdir  e($src);
+   $src = d(getcwd);
+   chdir  e($cur);
+   chdir  e($dst);
+   $dst = d(getcwd);
+   chdir  e($cur);
 
    # If debugging, just emulate:
    if ( $Db ) {
@@ -160,13 +166,13 @@ sub argv {
    # Set settings and check their validity:
    if ($NA < 2 || $NA > 3)
                       {say STDERR "Error: Must have 2 or 3 arguments. ".
-                                  "Use -h or --help to get help."                      ; exit(666) }
+                                  "Use -h or --help to get help."                         ; exit(666) }
    $src = $args[0];
-   if ( ! -e $src ) {say STDERR "Error: source directory $src doesn't exist."          ; exit(666) }
-   if ( ! -d $src ) {say STDERR "Error: source directory $src isn't a directory."      ; exit(666) }
+   if ( ! -e e($src) ) {say STDERR "Error: source directory $src doesn't exist."          ; exit(666) }
+   if ( ! -d e($src) ) {say STDERR "Error: source directory $src isn't a directory."      ; exit(666) }
    $dst = $args[1];
-   if ( ! -e $dst ) {say STDERR "Error: destination directory $dst doesn't exist."     ; exit(666) }
-   if ( ! -d $dst ) {say STDERR "Error: destination directory $dst isn't a directory." ; exit(666) }
+   if ( ! -e e($dst) ) {say STDERR "Error: destination directory $dst doesn't exist."     ; exit(666) }
+   if ( ! -d e($dst) ) {say STDERR "Error: destination directory $dst isn't a directory." ; exit(666) }
    if ( 3 == $NA ) {push @copy_args, 'regexp=' . $args[2];}
 
    # If debugging, print @Db, @copy_args, $src, $dst:

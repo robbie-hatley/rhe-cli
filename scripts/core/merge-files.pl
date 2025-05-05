@@ -53,6 +53,7 @@
 ##############################################################################################################
 
 use v5.36;
+use utf8;
 use Cwd;
 use RH::Dir;
 
@@ -118,25 +119,27 @@ sub argv {
 sub merge ($dir1, $dir2) {
    my @spaths = map {d($_)} glob(e("${dir1}/* ${dir1}/.*"));
    if ($Db) {
-      say $dir1;
-      say $dir2;
-      say for @spaths;
+      say STDERR "\nDebug msg in \"merge-files.pl\", in merge():\n"
+                ."Dir1 = $dir1\n"
+                ."Dir2 = $dir2\n"
+                ."spaths:";
+      say STDERR "$_" for @spaths;
    }
 
    say '';
    say "Getting rid of junk in \"${dir1}\" and moving remainder to \"${dir2}\"...";
    foreach my $spath (@spaths) {
       my $sname = get_name_from_path($spath);
-      if    ($sname eq '.' || $sname eq '..') {next;}
-      elsif (-d e $spath)                     {next;}
-      elsif ($sname =~ m/^Thumbs.*\.db$/    ) {unlink(e $spath) and say "unlinked $spath" and ++$delecount;}
-      elsif ($sname =~ m/^pspbrwse.*\.jbf$/ ) {unlink(e $spath) and say "unlinked $spath" and ++$delecount;}
-      elsif ($sname =~ m/^desktop.*\.ini$/  ) {unlink(e $spath) and say "unlinked $spath" and ++$delecount;}
-      else  {move_file($spath,$dir2) and ++$mergcount or  ++$failcount;}
+      if    ( $sname eq '.' || $sname eq '..' ) {next;}
+      elsif ( -d e($spath)                    ) {next;}
+      elsif ( $sname =~ m/^Thumbs.*\.db$/     ) {unlink e($spath) and say "unlinked $spath" and ++$delecount;}
+      elsif ( $sname =~ m/^pspbrwse.*\.jbf$/  ) {unlink e($spath) and say "unlinked $spath" and ++$delecount;}
+      elsif ( $sname =~ m/^desktop.*\.ini$/   ) {unlink e($spath) and say "unlinked $spath" and ++$delecount;}
+      else                                      {move_file($spath,$dir2) and ++$mergcount or  ++$failcount;}
    }
 
    # What contents (if any) is still in dir1?
-   @spaths = map {d($_)} glob(e("${dir1}/* ${dir1}/.*"));
+   @spaths = map {d($_)} glob e("${dir1}/* ${dir1}/.*");
    my $remainder = scalar @spaths;
    if ($Db) {
       say for @spaths;
@@ -148,11 +151,11 @@ sub merge ($dir1, $dir2) {
       # Because we're about to attempt to delete directory $dir1, we first need to get it's absolute address,
       # then chdir to root, so that we will never be attempting to delete a directory at or above our current
       # location on the directory tree, which never works:
-      chdir(e($dir1));
-      $dir1 = d(getcwd);
-      chdir(e('/'));
+      chdir e($dir1);
+      $dir1 = d getcwd;
+      chdir e('/');
       say "\nRemoving directory \"${dir1}\"...";
-      rmdir(e($dir1))
+      rmdir e($dir1)
       and say "Directory \"${dir1}\" has been removed."
       or say "Failed to remove directory \"${dir1}\".";
    }

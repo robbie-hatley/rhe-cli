@@ -1,44 +1,46 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env -S perl -C63
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
-########################################################################################################################
+##############################################################################################################
 # move-files.pl
 # Given the paths of two directories, Source and Destination, this program moves all files matching a regexp
-# from Source to Destination, enumerating each file for which a file exists in Destination with the same name root.
-# Optionally, this program can be instructed to NOT move any files for which duplicates exist in the destination,
-# and/or change the name of the file to its own SHA1 hash.
+# from Source to Destination, enumerating each file for which a file exists in Destination with the same name
+# root. Optionally, this program can be instructed to NOT move any files for which duplicates exist in the
+# destination, and/or change the name of the file to its own SHA1 hash.
 #
 # NOTE: You must have Perl and my RH::Dir module installed in order to use this script. Contact Robbie Hatley
 # at <lonewolf@well.com> and I'll send my RH::Dir module to you.
 #
 # Edit history:
 # Sat Jan 02, 2021: Wrote it.
-# Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and "Sys::Binmode".
-# Mon Nov 22, 2021: Fixed several places which were running file tests on unencoded paths. (Fixed by adding e.)
+# Sat Nov 20, 2021: Now using "common::sense" and "Sys::Binmode".
+# Mon Nov 22, 2021: Now using "e" to avoid running file tests on unencoded paths.
 # Mon Nov 22, 2021: Heavily refactored. Now using sub "move_files" in RH::Dir instead of local, and using
 #                   a regular expression instead of a wildcard to specify files to move. Also, now subsumes
 #                   the script "move-large-images.pl".
 # Tue Nov 23, 2021: Fixed "won't handle relative directories" bug by using the chdir & cwd trick.
 # Mon Mar 03, 2025: Got rid of "common::sense".
 # Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
-########################################################################################################################
+# Sun May 04, 2025: Reverted to "utf8" and "Cwd" for Cygwin compatibility. Increased min ver to "v5.36".
+#                   Nixed prototypes. Reduced width from 120 to 110.
+##############################################################################################################
 
-use v5.32;
-use Cwd::utf8;
+use v5.36;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
-
 use RH::Dir;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =================================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub process_argv  ();
-sub error_msg     ($);
-sub help_msg      ();
+sub argv  ;
+sub error ;
+sub help  ;
 
-# ======= PAGE-GLOBAL LEXICAL VARIABLES: ===============================================================================
+# ======= PAGE-GLOBAL LEXICAL VARIABLES: =====================================================================
 
 # Debugging:
 my $db = 0; # Use debugging? (Ie, print diagnostics?)
@@ -49,16 +51,16 @@ my $dst       = ''; # Dest directory.
 my $cur       = ''; # Curr directory.
 my @MoveArgs  = (); # Arguments for move_files().
 
-# ======= MAIN BODY OF PROGRAM: ========================================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
    say "\nNow entering program \"" . get_name_from_path($0) . "\".\n";
    my $t0 = time;
-   process_argv;
+   argv;
    if ($db)
    {
       warn "In main body of program \"move-files.pl\"\n",
-           "Just ran process_argv().\n",
+           "Just ran argv().\n",
            "\$src = \"$src\"\n",
            "\$dst = \"$dst\"\n",
            "\@MoveArgs = \n",
@@ -69,17 +71,17 @@ my @MoveArgs  = (); # Arguments for move_files().
    # Get FULLY-QUALIFIED versions of current, source, and destination directories:
 
    # Get current working directory:
-   $cur = cwd;
+   $cur = d getcwd;
 
    # CD to src, grab full path, then CD back to cur:
-   chdir(e($src));
-   $src = cwd;
-   chdir(e($cur));
+   chdir  e($src);
+   $src = d(getcwd);
+   chdir  e($cur);
 
    # CD to dst, grab full path, then CD back to cur:
-   chdir(e($dst));
-   $dst = cwd;
-   chdir(e($cur));
+   chdir  e($dst);
+   $dst = d(getcwd);
+   chdir  e($cur);
 
    # Move files:
    move_files($src, $dst, @MoveArgs);
@@ -90,47 +92,41 @@ my @MoveArgs  = (); # Arguments for move_files().
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS: ======================================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-sub process_argv ()
-{
-   my @CLArgs   = ();     # Command-Line Arguments from @ARGV (not including options).
+sub argv {
+   my @CLArgs = (); # Command-Line Arguments from @ARGV (not including options).
 
-   if ($db)
-   {
-      warn "In program \"move-files.pl\", in sub process_argv().\n",
+   if ($db) {
+      warn "In program \"move-files.pl\", in sub argv().\n",
            "\@ARGV = \n",
            join("\n", @ARGV) . "\n";
    }
 
-   foreach (@ARGV)
-   {
-      if (/^-[\pL\pN]{1}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/)
-      {
-            if ( '-h' eq $_ || '--help'   eq $_ ) {help_msg; exit(777)     ;}
+   foreach (@ARGV) {
+      if (/^-[\pL\pN]{1}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/) {
+            if ( '-h' eq $_ || '--help'   eq $_ ) {help; exit(777)     ;}
          elsif ( '-S' eq $_ || '--sl'     eq $_ ) {push @MoveArgs, 'sl'    ;}
          elsif ( '-s' eq $_ || '--sha1'   eq $_ ) {push @MoveArgs, 'sha1'  ;}
          elsif ( '-u' eq $_ || '--unique' eq $_ ) {push @MoveArgs, 'unique';}
          elsif ( '-l' eq $_ || '--large'  eq $_ ) {push @MoveArgs, 'large' ;}
       }
-      else
-      {
+      else {
          push @CLArgs, $_;
       }
    }
    my $NA = scalar(@CLArgs);
-   if ( $NA < 2 || $NA > 3 ) {error_msg($NA); help_msg; exit(666);}
+   if ( $NA < 2 || $NA > 3 ) {error($NA); help; exit(666);}
    $src = $CLArgs[0];
    $dst = $CLArgs[1];
-   if ( ! -e e $src ) {die "Error: $src doesn't exist.    \n";}
-   if ( ! -d e $src ) {die "Error: $src isn't a directory.\n";}
-   if ( ! -e e $dst ) {die "Error: $dst doesn't exist.    \n";}
-   if ( ! -d e $dst ) {die "Error: $dst isn't a directory.\n";}
+   if ( ! -e e($src) ) {die "Error: srce \"$src\" doesn't exist.    \n";}
+   if ( ! -d e($src) ) {die "Error: srce \"$src\" isn't a directory.\n";}
+   if ( ! -e e($dst) ) {die "Error: dest \"$dst\" doesn't exist.    \n";}
+   if ( ! -d e($dst) ) {die "Error: dest \"$dst\" isn't a directory.\n";}
    if ( $NA > 2 ) {push @MoveArgs, 'regexp=' . $CLArgs[2];}
 
-   if ($db)
-   {
-      warn "In move-files.pl, in process_argv, at bottom.\n",
+   if ($db) {
+      warn "In move-files.pl, in argv, at bottom.\n",
            "scalar(\@CLArgs) = " . scalar(@CLArgs) . "\n",
            "\@CLArgs = \n",
            join("\n", @CLArgs) . "\n",
@@ -140,24 +136,22 @@ sub process_argv ()
    }
 
    return 1;
-} # end sub process_argv
+} # end sub argv
 
-sub error_msg ($)
-{
-   my $NA = shift;
+sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+
    Error: \"move-files.pl\" takes 2 mandatory arguments (which must be paths to
    a source directory and a destination directory), and 1 optional argument
    (which, if present, must be a regular expression specifying which files to
    move), but you typed $NA arguments. Help follows:
-
    END_OF_ERROR
    return 1;
-}
+} # end sub error
 
-sub help_msg ()
-{
+sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+
    Welcome to "move-files.pl", Robbie Hatley's nifty file-moving utility.
    This program moves all files matching a regexp from a source directory
    (let's call it "dir1") to a destination directory (let's call it "dir2"),
@@ -205,4 +199,4 @@ sub help_msg ()
    programmer.
    END_OF_HELP
    return 1;
-}
+} # end sub help

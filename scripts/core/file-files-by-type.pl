@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -32,8 +32,8 @@
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -132,7 +132,7 @@ sub argv {
 
 # Process current directory:
 sub curdire {
-   my $curdir = cwd;
+   my $curdir = d getcwd;
    my @paths = glob_regexp_utf8($curdir, 'F', $Regexp);
    for my $path (@paths) {
       next unless is_data_file($path);
@@ -174,7 +174,7 @@ sub curfile ($path) {
    else                   {die "Error in \"file-files-by-type.pl\": Invalid \$Levels.\n$!\n";}
 
    # If the directory we need doesn't already exist, create it:
-   mkdir $dir unless -e $dir;
+   mkdir $dir unless -e e($dir);
 
    # Move current file to correct directory:
    move_file($name, $dir)

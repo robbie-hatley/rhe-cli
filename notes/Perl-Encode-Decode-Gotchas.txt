@@ -1,0 +1,22 @@
+Perl built-in functions which require encoding and/or decoding:
+
+chdir
+chmod
+chown
+chroot
+getlogin
+glob
+link
+lstat
+mkdir
+open
+opendir
+readlink
+rename
+rmdir
+symlink
+system
+unlink
+
+\bchdir\b|\bchmod\b|\bchown\b|\bchroot\b|\bgetlogin\b|\bglob\b|\blink\b|\blstat\b|\bmkdir\b|\bopen\b|\bopendir\b|\breadlink\b|\brename\b|\brmdir\b|\bsymlink\b|\bsystem\b|\bunlink\b
+

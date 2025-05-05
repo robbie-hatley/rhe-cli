@@ -1,8 +1,4 @@
-#!/usr/bin/env perl
-
-# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
-# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+#!/usr/bin/env -S perl -C63
 
 ##############################################################################################################
 # get_correct_suffix.pl
@@ -16,20 +12,38 @@
 # Tue Aug 15, 2023: Wrote first draft.
 # Mon Aug 28, 2023: Changed "$db" to $Db". Got rid of prototypes. Now using Signatures. Improved formatting.
 # Wed Sep 06, 2023: Added & edited some comments.
-# Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
-# Fri Mar 14, 2024: Got rid of "return on error".
-# Sun Apr 27, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl". Got rid of "d" and "e"
-#                   subroutines and nixed all "d" and "e" in script.
+# Sun May 04, 2025: Changed shebang to "-C63". Got rid of "Sys::Binmode" (unnecessary). Got rid of "strict"
+#                   and "warnings" (subsumed into "use v5.36;"). Got rid of "RETURN_ON_ERROR" (no, keep
+#                   processing). Over-wrote get_correct_suffix() with the version from RH::Dir to get latest
+#                   updates. Copied is_data_file() and is_meta_file() from RH::Dir.
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
+use Encode qw( :DEFAULT encode decode :fallbacks :fallback_all );
 use File::Type;
 use List::Util 'sum0';
-use Encode qw( encode decode :fallbacks :fallback_all );
 
 my $Db = 0; # Debug?
+
+# Prepare constant "EFLAGS" which contains bitwise-OR'd flags for Encode::encode and Encode::decode :
+use constant EFLAGS => WARN_ON_ERR | LEAVE_SRC;
+
+# Decode from UTF-8 to Unicode:
+sub d {
+      if (0 == scalar @_) {return Encode::decode('UTF-8', $_,    EFLAGS);}
+   elsif (1 == scalar @_) {return Encode::decode('UTF-8', $_[0], EFLAGS);}
+   else              {return map {Encode::decode('UTF-8', $_,    EFLAGS)} @_ };
+} # end sub d
+
+# Encode from Unicode to UTF-8:
+sub e {
+      if (0 == scalar @_) {return Encode::encode('UTF-8', $_,    EFLAGS);}
+   elsif (1 == scalar @_) {return Encode::encode('UTF-8', $_[0], EFLAGS);}
+   else              {return map {Encode::encode('UTF-8', $_,    EFLAGS)} @_ };
+} # end sub e
 
 # Is a line of text encoded in ASCII?
 sub is_ascii ($text) {
@@ -51,7 +65,7 @@ sub is_ascii ($text) {
    }
    if ($Db) {say STDERR "In is_ascii(), about to return. \$is_ascii = $is_ascii"}
    return $is_ascii;
-} # end sub is_ascii ($text)
+} # end sub is_ascii
 
 # Is a line of text encoded in iso-8859-1?
 sub is_iso_8859_1 ($text) {
@@ -75,7 +89,7 @@ sub is_iso_8859_1 ($text) {
    }
    if ($Db) {say STDERR "In is_iso_8859_1(), about to return. \$is_iso = $is_iso"}
    return $is_iso;
-} # end sub is_iso_8859_1 ($text)
+} # end sub is_iso_8859_1
 
 # Is a line of text encoded in Unicode then transformed to UTF-8?
 sub is_utf8 ($text) {
@@ -88,17 +102,7 @@ sub is_utf8 ($text) {
    }
    if ($Db) {say STDERR "In is_utf8(), about to return. \$is_utf8 = $is_utf8"}
    return $is_utf8;
-} # end sub is_utf8 ($text)
-
-# Return 1 if-and-only-if a path points to a data file (an existing, non-link, non-dir, regular file):
-sub is_data_file ($path) {
-   return 0 if ! -e $path;
-   lstat $path;
-   return 0 if   -l _ ;
-   return 0 if   -d _ ;
-   return 0 if ! -f _ ;
-   return 1;
-} # end sub is_data_file ($path)
+} # end sub is_utf8
 
 # Return the name part of a file path:
 sub get_name_from_path ($path) {
@@ -119,7 +123,7 @@ sub get_name_from_path ($path) {
    else {
       return '';
    }
-} # end sub get_name_from_path ($path)
+} # end sub get_name_from_path
 
 # Given any string, return last dot and following characters:
 sub get_suffix ($string) {
@@ -127,27 +131,59 @@ sub get_suffix ($string) {
    return ''      if -1 == $dotindex;
    return $string if  0 == $dotindex;
    return substr($string, $dotindex);
-} # end sub get_suffix ($string)
+} # end sub get_suffix
 
-# Attempt to get the correct suffix for the name of a file at a given path, ignoring the existing suffix
-# (if any) and basing our type determination on the "checktype_filename" method of modules "File::Type"
-# and/or on direct examination of the contents of the file. If we are unable to determine the correct suffix
-# through these methods, then return the existing suffix (if any), or return '.unk' if there is no existing
-# suffix, or return '***ERROR***' if an error occurs (no file, not-data-file, file open/read/close error,
-# we don't have permission to read the file, etc).
+# Return 1 if-and-only-if a path points to an existing, non-dir, non-link, non-empty plain file:
+sub is_data_file ($path) {
+   return 0 if ! -e e($path);       # Nonexistent files contain no data.
+   my @stats = lstat e($path);      # Try to get statistics for file.
+   return 0 if 13 != scalar @stats; # Files with no statistics contain no data.
+   return 0 if   -d _ ;             # Directories contain no data.
+   return 0 if   -l _ ;             # Links contain no data.
+   return 0 if ! -f _ ;             # Special files contain no data that we should be messing with.
+   return 0 if   -z _ ;             # Empty files contain no data.
+   return 1;                        # This file contains data. :-)
+} # end sub is_data_file :prototype($) ($path)
+
+# Return 1 if-and-only-if a given string is a path with a "meta" name (hidden, desktop-settings,
+# windows-picture-thumbnails, paint-shop-pro-browse-thumbnails, or ID-Token):
+sub is_meta_file ($path) {
+   my $name = get_name_from_path($path);
+   return 1 if $name =~ m/^\./;
+   return 1 if $name =~ m/^desktop.*\.ini$/i;
+   return 1 if $name =~ m/^thumbs.*\.db$/i;
+   return 1 if $name =~ m/^pspbrwse.*\.jbf$/i;
+   return 1 if $name =~ m/id-token/i;
+   return 0;
+}
+
+# Get the correct suffix for the name of a file at a given path, ignoring the existing suffix (if any) and
+# basing our type determination on the "checktype_filename" method of modules "File::Type" and/or on direct
+# examination of the contents of the file. If we are unable to determine the correct suffix through these
+# methods, then return the existing suffix (if any), or return '.unk' if there is no existing suffix,
+# or return '***ERROR***' if an error occurs (no file, not-data-file, file open/read/close error, perms, etc).
 sub get_correct_suffix ($path) {
-   if ( $Db ) {
-      say STDERR '';
-      say STDERR "In get_correct_suffix(), at top.";
-      say STDERR "\$path = $path";
-   }
-
-   # Return an error code unless $path points to an existing data file:
-   return '***ERROR***' unless is_data_file($path);
-
-   # Try to determine the correct suffix using the checktype_filename() method from module "File::Type":
    my $name  = get_name_from_path($path);
    my $suff  = get_suffix($name);
+   if ($Db) {
+      say STDERR '';
+      say STDERR "In get_correct_suffix(), near top.";
+      say STDERR "\$path = $path";
+      say STDERR "\$name = $name";
+      say STDERR "\$suff = $suff";
+   }
+
+   # Return an error code unless $path points to an existing "data file" (non-directory, non-link
+   # regular file which we can read data from):
+   return '***ERROR***' unless is_data_file($path);
+
+   # If this is a "meta" file (hidden, desktop, browse, thumbnails, etc), return old suffix,
+   # else we will end up discarding valid type info and mis-labeling the file:
+   if ( is_meta_file($path) ) {
+      return $suff;
+   }
+
+   # Try to determine the correct suffix using the checktype_filename() method from module "File::Type":
    my $typer = File::Type->new(); # File-typing functor.
    my $type  = $typer->checktype_filename($path); # Get media-type of file at $path.
 
@@ -159,7 +195,7 @@ sub get_correct_suffix ($path) {
    # Now lets "normalize" that type, converting it to all-lower-case and getting rid of cruft:
    $type = lc $type;      # Lower-case the type.
    $type =~ s%/x(-|.)%/%; # Get rid of "unregistered "markers ("x-" and variants).
-   $type =~ s%\+\pL+%%;  # Get rid of alternate type interpretations (eg, xml for svg).
+   $type =~ s%\+\pL+%%;   # Get rid of alternate type interpretations (eg, xml for svg).
 
    # Announce type if debugging:
    if ( $Db ) {
@@ -169,7 +205,7 @@ sub get_correct_suffix ($path) {
    }
 
    # Match normalized type against known types and choose extension if possible:
-   for ( $type ) {
+   for ($type) {
       m%^video/msvideo$%                                   and return '.avi'  ;
       m%^image/bmp$%                                       and return '.bmp'  ;
       m%^application/freearc$%                             and return '.arc'  ;
@@ -183,8 +219,7 @@ sub get_correct_suffix ($path) {
       m%^image/vnd.microsoft.icon$%                        and return '.ico'  ;
       m%^application/java-archive$%                        and return '.jar'  ;
       m%^image/jpeg$%                                      and return '.jpg'  ;
-      m%^text/javascript$%                                 and return '.js'   ;
-      m%^application/javascript$%                          and return '.js'   ;
+      m%javascript%                                        and return '.js'   ;
       m%^application/json$%                                and return '.json' ;
       m%^audio/midi$%                                      and return '.mid'  ;
       m%^audio/mp3$%                                       and return '.mp3'  ;
@@ -224,15 +259,15 @@ sub get_correct_suffix ($path) {
    # If this file is at-least 10 bytes in size, let's grab AT-LEAST the first 10 bytes of its contents,
    # up to a max of 512 bytes, and examine the contents for clues as to what kind of file this is,
    # or if we CAN'T read at least 10 bytes, return "***ERROR***":
-   my $size = -s $path;
+   my $size = -s e $path;
    my $buffer = '';
    if ( $size >= 10 ) {
       my $fh = undef;
-      open($fh, '< :raw', $path)                      or return '***ERROR***' ; # File can't be opened.
-      read($fh, $buffer, 512)                         or return '***ERROR***' ; # File can't be read.
-      close($fh)                                      or return '***ERROR***' ; # File can't be closed.
+      open($fh, '< :raw', e($path)) or return '***ERROR***' ; # File can't be opened.
+      read($fh, $buffer, 512)       or return '***ERROR***' ; # File can't be read.
+      close($fh)                    or return '***ERROR***' ; # File can't be closed.
       my $bytes = length($buffer);
-      $bytes >= 10                                    or return '***ERROR***' ; # Didn't read 10 bytes.
+      $bytes >= 10                  or return '***ERROR***' ; # Should have been able to read 10+ bytes.
 
       if ( $Db ) {
          say STDERR '';
@@ -249,7 +284,6 @@ sub get_correct_suffix ($path) {
       # Is this a hashbang script?
       if ( '#!' eq substr($buffer, 0, 2) ) {
          my $fl = ($buffer =~ s/^(.+?)\n.*$/$1/rs);
-         if ($Db) {say STDERR "in if(#!). \$fl = \"$fl\".";}
          $fl =~ m%^#!.*apl%i                               and return '.apl'  ; # APL
          $fl =~ m%^#!.*awk%i                               and return '.awk'  ; # AWK
          $fl =~ m%^#!.*bash%i                              and return '.sh'   ; # BASH
@@ -302,13 +336,13 @@ sub get_correct_suffix ($path) {
          is_iso_8859_1($buffer)                            and return '.txt'  ; # ISO-8859-1 text file.
          is_utf8($buffer)                                  and return '.txt'  ; # UTF-8      text file.
       }
-   }
+   } # end if(size of file is at least 10 bytes)
 
    # If we get to here, we've failed to definitively determine the correct suffix for-sure, so return the
    # original suffix, unless it was blank, in which case return '.unk':
    $suff eq ''                                             and return '.unk'    # File of unknown type.
                                                             or return $suff   ; # Return original suffix.
-} # end sub get_correct_suffix ($path)
+} # end sub get_correct_suffix
 
 # Give user some help:
 sub help {
@@ -331,8 +365,8 @@ sub help {
    -------------------------------------------------------------------------------
    Description of options:
 
-   The only options are "-h" and "--help". All other command-line arguments will
-   be interpreted as file paths. (See "Description of Arguments".)
+   There are no options. Any option you attempt to use would be interpreted as a
+   file path, so don't try to use options.
 
    -------------------------------------------------------------------------------
    Description of arguments:
@@ -351,7 +385,8 @@ sub help {
 
 my $NA = scalar @ARGV;
 for ( @ARGV ) { /-h/ || /--help/ and help and exit ; }
-($NA != 1) || !-e($ARGV[0]) || !-f($ARGV[0]) || -d($ARGV[0]) || -l($ARGV[0])
-and die "Error: this program must have one argument, which must be \n".
-        "-h or --help or a path to an existing regular file.\n";
+if (1 != $NA) {
+   die "Error: this program must have one argument, which must be\n"
+      ."-h or --help or a path to an existing regular file.\n";
+}
 say get_correct_suffix($ARGV[0]);

@@ -11,8 +11,7 @@
 #                   (antiquated). Downgraded encoding to ASCII. Width now 85.       #
 # Sat Mar 15, 2025: Updated these comments; updated shebang.                        #
 #####################################################################################
-for (1..12)
-{
+for (1..12) {
    my $month = sprintf "%02d", $_ ;
    mkdir "$month";
 }

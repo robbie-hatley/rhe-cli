@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# This is a 110-character-wide ASCII Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
@@ -24,8 +24,6 @@
 #                   when using file-test operators, print statements, etc. We only need decoding & encoding
 #                   when using Unicode semantics, and this program doesn't do that.
 ##############################################################################################################
-
-use v5.00;
 
 # If user wants help, give help and exit:
 for (@ARGV) {
@@ -54,7 +52,6 @@ for (@ARGV) {
 
 # Determine and print the existence or nonexistence of files at paths in @ARGV:
 for my $path (@ARGV) {
-   -e $path
-   and print "File exists:  \"$path\"\n"
-   or  print "No such file: \"$path\"\n";
+   -e $path and print "File exists:  \"$path\"\n"
+            or  print "No such file: \"$path\"\n";
 }

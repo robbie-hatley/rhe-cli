@@ -1,6 +1,6 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
-# This is a 110-character-wide ASCII Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
@@ -17,11 +17,14 @@
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
 # Wed Mar 19, 2025: Removed "use RH::Dir" (now using only built-in Perl "rename"). Removed "-C63" (now using
 #                   "feed-through" approach to Unicode/UTF-8). Removed "use utf8" (no non-ASCII chars).
+# Sun May 04, 2025: Now using "utf8" and shebang "#!/usr/bin/env -S perl -C63" for compatibility with
+#                   Unicode and Cygwin. Now using "RH::Dir
 ##############################################################################################################
 
 use v5.36;
-use RH::Dir;
-if ( 2 != scalar(@ARGV) || ! -e $ARGV[0] ) {
+use utf8;
+use Encode;
+if ( 2 != scalar(@ARGV) || ! -e encode_utf8($ARGV[0]) || -e encode_utf8($ARGV[1]) ) {
    warn "Error: \"rename-file.pl\" needs exactly two arguments.\n"
        ."The first  argument must be a path to an existing file.\n"
        ."The second argument must be a valid path to rename the file to.\n"
@@ -31,6 +34,6 @@ if ( 2 != scalar(@ARGV) || ! -e $ARGV[0] ) {
 say "\"rename-file.pl\" will attempt the following file rename:";
 say "Original file path: $ARGV[0]";
 say "Proposed file path: $ARGV[1]";
-rename($ARGV[0], $ARGV[1])
+rename( encode_utf8($ARGV[0]), encode_utf8($ARGV[1]) )
 and say "Rename succeeded."
 or  say "Rename failed.";

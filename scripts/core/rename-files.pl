@@ -65,11 +65,11 @@
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
-use RH::Util;
 use RH::Dir;
+use RH::Util;
 
 # ======= VARIABLES: =========================================================================================
 
@@ -273,7 +273,7 @@ sub curdire {
    ++$dircount;
 
    # Get and announce current working directory:
-   my $curdir = cwd;
+   my $curdir = d getcwd;
    if ( $Verbose >= 1 ) {
       say STDOUT "\nDirectory # $dircount: $curdir";
    }

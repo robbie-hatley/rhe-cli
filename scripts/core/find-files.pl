@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -82,11 +82,12 @@
 #                   Shortened width from 120 to 110. Put "-C63" in shebang.
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
+# Sun May 04, 2025: Reverted to using "utf8" and "Cwd" and added "d" and "e" back in for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 use RH::Util;
@@ -111,6 +112,7 @@ my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
+my $OriDir    = d(getcwd) ; # Original Directory        dir name  Current working directory.
 my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   All directory entries.
@@ -120,7 +122,6 @@ my $Predicate = 1         ; # Boolean predicate.        bool      Process all fi
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
 my $filecount = 0 ; # Count of files matching target and regexp.
-my $predcount = 0 ; # Count of files also matching predicate.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -227,21 +228,21 @@ sub argv {
    my $NA = scalar(@Args);
 
    # If user typed more than 2 arguments, and we're not debugging, print error and help messages and exit:
-   if ( $NA > 2                  # If number of arguments > 2
-        && !$Debug && !$Help ) { # and we're not debugging and not getting help,
-      error($NA);                # print error message,
-      help;                      # and print help message,
-      exit 666;                  # and exit, returning The Number Of The Beast.
+   if ( $NA > 2         # If number of arguments > 2
+        && !$Debug ) {  # and we're not debugging,
+      error($NA);       # print error message,
+      help;             # and print help message,
+      exit 666;         # and exit, returning The Number Of The Beast.
    }
 
    # First argument, if present, is a file-selection regexp:
-   if ( $NA > 0 ) {              # If number of arguments > 0,
-      $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
+   if ( $NA > 0 ) {             # If number of arguments > 0,
+      $RegExp = qr/$Args[0]/o;  # set $RegExp to $Args[0].
    }
 
    # Second argument, if present, is a file-selection predicate:
-   if ( $NA > 1 ) {              # If number of arguments >= 2,
-      $Predicate = $Args[1];     # set $Predicate to $Args[1].
+   if ( $NA > 1 ) {           # If number of arguments >= 2,
+      $Predicate = $Args[1];  # set $Predicate to $Args[1].
    }
 
    # Return success code 1 to caller:
@@ -254,25 +255,18 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = cwd;
+   my $cwd = d(getcwd);
 
    # Announce current working directory if being verbose:
    if ( 2 == $Verbose) {
       say "\nDirectory # $direcount: $cwd\n";
    }
 
-   # Get list of file-info packets in $cwd matching $Target and $RegExp:
-   my @paths = glob_regexp_utf8($cwd, $Target, $RegExp);
+   # Get list of file-info packets in $cwd matching $Target, $RegExp, and $Predicate:
+   my @paths = glob_regexp_utf8($cwd, $Target, $RegExp, $Predicate);
 
-   # Process each path that matches $RegExp, $Target, and $Predicate:
-   foreach my $path (@paths) {
-      ++$filecount;
-      local $_ = $path;
-      if (eval($Predicate)) {
-         ++$predcount;
-         say $path;
-      }
-   }
+   # For each matching path, increment file counter and say path:
+   foreach my $path (@paths) {++$filecount;say $path}
 
    # Return success code 1 to caller:
    return 1;
@@ -281,11 +275,10 @@ sub curdire {
 # Print stats, if being terse or verbose:
 sub stats {
    if ( $Verbose >= 1 ) {
-      say STDERR '';
-      say STDERR 'Statistics for this directory tree:';
-      say STDERR "Navigated $direcount directories.";
-      say STDERR "Found $filecount files matching regexp \"$RegExp\" and target \"$Target\".";
-      say STDERR "Found $predcount files which also match predicate \"$Predicate\".";
+      say STDERR "\n"
+                ."Statistics running program \"$pname\" on dir tree \"$OriDir\":\n"
+                ."Navigated $direcount directories. Found $filecount files matching\n"
+                ."target \"$Target\", regexp \"$RegExp\", and predicate \"$Predicate\".";
    }
    return 1;
 } # end sub stats
@@ -336,8 +329,8 @@ sub help {
    Option:            Meaning:
    -h or --help       Print help and exit.
    -e or --debug      Print diagnostics.
-   -q or --quiet      Don't print stats or directories.
-   -t or --terse      Print stats but  not directories.   (DEFAULT)
+   -q or --quiet      Don't print stats or directories.   (DEFAULT)
+   -t or --terse      Print stats but  not directories.
    -v or --verbose    Print both stats AND directories.
    -l or --local      Don't recurse subdirectories.       (DEFAULT)
    -r or --recurse    Do    recurse subdirectories.
@@ -407,18 +400,7 @@ sub help {
    error message and abort.
 
    -------------------------------------------------------------------------------
-   Description of Operation:
-
-   "find-files.pl" will first obtain a list of file records for all files
-   matching the regex in Arg1 (or '^.+$' if no regex is given) in the current
-   directory, and the target given by a "--files", "--dirs", "--both", or "--all"
-   option ("--files" is assumed if no target is specified).
-
-   Then for each file record matching the regex and target, the boolean expression
-   given by Arg2 (or 1 if no predicate is given) is then evaluated; if it is true,
-   the file's path is printed; otherwise, the file is skipped. If recursing, this
-   procedure is also followed for each subdirectory of the the current directory;
-   otherwise, only the current directory is searched.
+   Usage Examples:
 
    Example #1: The following would look for all sockets with names containing
    "pig" or "Pig", in the current directory and all subdirectories, and also print
@@ -436,6 +418,7 @@ sub help {
    arguments, the regexp argument can't be skipped, but it can be "bypassed" by
    setting it to '.+' meaning "some characters":
    find-files.pl -rq '.+' '(-l)'
+
 
    Happy file finding!
 

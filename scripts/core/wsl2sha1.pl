@@ -19,16 +19,12 @@
 ##############################################################################################################
 
 use v5.36;
-use strict;
-use warnings;
-use warnings FATAL => "utf8";
 use utf8;
-use Cwd::utf8;
+use Cwd;
 use Time::HiRes 'time';
 use Digest::SHA1 qw(sha1_hex);
-
-use RH::Util;
 use RH::Dir;
+use RH::Util;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -78,7 +74,7 @@ sub argv {
 
 sub curdire {
    ++$direcount;
-   my $curdir = cwd;
+   my $curdir = d getcwd;
    say "\nDir # $direcount: \"$curdir\"\n";
    for my $path ( glob_regexp_utf8($curdir, 'F', $wsl) ) {
       curfile($path);

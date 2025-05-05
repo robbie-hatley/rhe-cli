@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -39,8 +39,8 @@
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use Switch;
 use RH::Dir;
@@ -254,7 +254,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = cwd;
+   my $cwd = d getcwd;
 
    # Announce each current working directory separately if being terse or verbose:
    if ( $Verbose >= 1 ) {
@@ -337,7 +337,7 @@ sub curfile ($file) {
          my $buffer = ''    ;
          my $fh     = undef ;
          my $bytes  = 0     ;
-         if ( open($fh, '< :raw', $file->{Path}) ) {
+         if ( open($fh, '< :raw', e($file->{Path}) ) ) {
             ++$opencount;
             if ( read($fh, $buffer, 4) ) {
                $bytes = length($buffer);
@@ -410,7 +410,7 @@ sub set ($file, $perm) {
    # Else if NOT debugging, change permissions:
    else {
       ++$permcount;
-      chmod $perm, $file->{Path};
+      chmod $perm, e($file->{Path});
       if ( $Verbose ) {
          say STDOUT "Set $descr \"$file->{Name}\" to $perms.";
       }

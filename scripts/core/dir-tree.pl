@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -27,8 +27,8 @@
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use RH::Dir;
 
 for ( @ARGV ) {
@@ -40,15 +40,15 @@ for ( @ARGV ) {
 }
 
 if ( @ARGV ) {
-   my $starting_directory = cwd;
+   my $starting_directory = d getcwd;
    for ( @ARGV ) {
-      chdir $_
+      chdir e $_
       or warn "Couldn't chdir to directory \"$_\".\n"
-      and (chdir $starting_directory
+      and (chdir e $starting_directory
       or warn "Couldn't chdir to directory \"$starting_directory\".\n")
       and next;
       RecurseDirs {say cwd};
-      chdir $starting_directory
+      chdir e $starting_directory
       or die "Couldn't chdir to directory \"$starting_directory\".\n";
    }
 }

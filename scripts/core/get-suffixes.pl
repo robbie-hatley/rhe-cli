@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -23,14 +23,18 @@
 # Thu Mar 13, 2025: Got rid of all prototypes. Added predicate.
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
+# Sun May 04, 2025: Reverted to using "utf8", "Cwd", "-C63", "d", "e", for Cygwin compatibility.
+#                   Now using "Switch".
+# Mon May 05, 2025: Updated with latest changes from RH::Dir::get_correct_suffix() in-mind.
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use File::Type;
 use RH::Dir;
+use Switch;
 
 # ======= VARIABLES: =========================================================================================
 
@@ -53,15 +57,20 @@ my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $OriDir    = d(getcwd) ; # Original directory.       cwd       Directory on program entry.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 
-# Event counters:
+# Counters:
 my $direcount = 0; # Count of directories processed.
 my $filecount = 0; # Count of files processed.
-my $typecount = 0; # Count of files of known type.
+my $errocount = 0; # Count of files which were inaccessible.
+my $nondcount = 0; # Count of non-data files encountered.
+my $metacount = 0; # Count of meta files encountered.
+my $assucount = 0; # Count of files of assumed type.
 my $unkncount = 0; # Count of files of unknown type.
+my $knowcount = 0; # Count of files of known type.
 my $samecount = 0; # Count of files with new name same as old.
 my $diffcount = 0; # Count of files with new name different from old.
 
@@ -99,6 +108,7 @@ sub help    ;
       say STDERR "Debug     = $Debug";
       say STDERR "Help      = $Help";
       say STDERR "Verbose   = $Verbose";
+      say STDERR "OriDir    = $OriDir";
       say STDERR "Recurse   = $Recurse";
       say STDERR "RegExp    = $RegExp";
       say STDERR "Predicate = $Predicate";
@@ -125,7 +135,7 @@ sub help    ;
 
 # ======= SUBROUTINE DEFINITIONS =============================================================================
 
-# Process @ARGV and set settings:
+# Process @ARGV:
 sub argv {
    # Get options and arguments:
    my $end = 0;              # end-of-options flag
@@ -158,21 +168,21 @@ sub argv {
    my $NA = scalar(@Args);
 
    # If user typed more than 2 arguments, and we're not debugging, print error and help messages and exit:
-   if ( $NA > 2                  # If number of arguments > 2
-        && !$Debug && !$Help ) { # and we're not debugging and not getting help,
-      error($NA);                # print error message,
-      help;                      # and print help message,
-      exit 666;                  # and exit, returning The Number Of The Beast.
+   if ( $NA > 2         # If number of arguments > 2
+        && !$Debug ) {  # and we're not debugging,
+      error($NA);       # print error message,
+      help;             # and print help message,
+      exit 666;         # and exit, returning The Number Of The Beast.
    }
 
    # First argument, if present, is a file-selection regexp:
-   if ( $NA > 0 ) {              # If number of arguments > 0,
-      $RegExp = qr/$Args[0]/o;   # set $RegExp to $args[0].
+   if ( $NA > 0 ) {             # If number of arguments > 0,
+      $RegExp = qr/$Args[0]/o;  # set $RegExp to $args[0].
    }
 
    # Second argument, if present, is a file-selection predicate:
-   if ( $NA > 1 ) {              # If number of arguments >= 2,
-      $Predicate = $Args[1];     # set $Predicate to $args[1].
+   if ( $NA > 1 ) {           # If number of arguments >= 2,
+      $Predicate = $Args[1];  # set $Predicate to $args[1].
    }
 
    # Return success code 1 to caller:
@@ -182,103 +192,91 @@ sub argv {
 # Process current directory:
 sub curdire {
    ++$direcount;
-   my $curdir = cwd;
+   my $curdir = d(getcwd);
    say STDOUT '';
    say STDOUT "Directory # $direcount: $curdir";
    say STDOUT '';
-   my @paths = glob_regexp_utf8($curdir, 'F', $RegExp);
-   foreach my $path (@paths) {
-      next unless is_data_file($path);
-      local $_ = $path;
-      if (eval($Predicate)) {
-         curfile($path);
-      }
-   }
+   my @paths = glob_regexp_utf8($curdir, 'F', $RegExp, $Predicate);
+   foreach my $path (@paths) {curfile($path)}
    return 1;
 } # end sub curdire
 
 # Process current file:
 sub curfile ($old_path) {
    ++$filecount;
-   my $old_name  = get_name_from_path($old_path);
-   my $old_dir   = get_dir_from_path ($old_path);
-   my $old_pref  = get_prefix        ($old_name);
-   my $new_suff  = get_correct_suffix($old_path);
-
-   # If new suffix is '.unk', increment $unkncount, otherwise increment $typecount:
-   $new_suff eq '.unk' and ++$unkncount or ++$typecount;
-
-   # Make new name and path:
+   my $old_name = get_name_from_path ($old_path);
+   my $old_dire = get_dir_from_path  ($old_path);
+   my $old_pref = get_prefix         ($old_name);
+   my $old_suff = get_suffix         ($old_name);
+   my $new_pref = $old_pref;
+   my $new_suff = get_correct_suffix ($old_path);
    my $new_name = $old_pref . $new_suff;
-   my $new_path = path($old_dir, $new_name);
+   my $new_path = path($old_dire, $new_name);
 
-   # Increment "same" counter if new name is same as old name, else increment "different" counter:
-   $new_name eq $old_name and ++$samecount or  ++$diffcount;
+   # Take different actions depending on what $new_suff is:
+   switch ($new_suff) {
+      # Error:
+      case '***ERROR***' {
+         ++$errocount;
+         say "Error:     \"$old_name\" is not accessible.";
+      }
+      # Non-data:
+      case '***NON-DATA***' {
+         ++$nondcount;
+         say "Non-Data:  \"$old_name\" is not a data file.";
+      }
+      # Meta:
+      case '***META***' {
+         ++$metacount;
+         say "Meta:      \"$old_name\" is a meta file.";
+      }
+      # Assumed:
+      case '***ASSUMED***' {
+         ++$assucount;
+         say "Assumed:   \"$old_name\" is assumed correct (unable to verify).";
+      }
+      # Unknown:
+      case '.unk' {
+         ++$unkncount;
+         say "Unknown:   \"$old_name\" => \"$new_name\"";
 
-   # If debugging, print values of various variables:
-   if ($Debug) {
-      say STDERR '';
-      say STDERR "In \"get-suffixes.pl\", in curfile, after setting variables.";
-      say STDERR "\$filecount = \"$filecount\".";
-      say STDERR "\$old_path  = \"$old_path\".";
-      say STDERR "\$old_dir   = \"$old_dir\".";
-      say STDERR "\$old_name  = \"$old_name\".";
-      say STDERR "\$old_pref  = \"$old_pref\".";
-      say STDERR "\$new_suff  = \"$new_suff\".";
-      say STDERR "\$new_name  = \"$new_name\".";
-      say STDERR "\$new_path  = \"$new_path\".";
-      say STDERR "old and new names are SAME"      if $new_name eq $old_name;
-      say STDERR "old and new names are DIFFERENT" if $new_name ne $old_name;
-      say STDERR '';
-   }
 
-   # If new name is same as old name, announce that old name is correct and return 1:
-   if ( $new_name eq $old_name ) {
-      say STDOUT "Correct:   \"$old_name\"";
-      return 1;
-   }
+      }
+      # Known (we WERE able to definitively determine the type of this file:):
+      else {
+         ++$knowcount;
+         # Correct:
+         if ($new_suff eq $old_suff) {
+            ++$samecount;
+            say "Correct:   \"$old_name\"";
+         }
+         # Incorrect:
+         else {
+            ++$diffcount;
+            say "Incorrect: \"$old_name\" => \"$new_name\"";
 
-   # Otherwise, announce that old name is incorrect but DON'T attempt to rename anything:
-   else {
-      say STDOUT "Incorrect: \"$old_name\" => \"$new_name\"";
-      # If we were SETTING suffixes,
-      # instead of GETTING suffixes,
-      # we would have code here
-      # for renaming files.
-      # But we aren't,
-      # so we don't.
-      return 1;
-   }
 
-   # We can't possibly get here.
-   # But if we do, something truly bizarre has happened,
-   # so print some cryptic shit and return 666:
+         }
+      } # end else (known type)
+   } # end switch ($new_suff)
 
-   print ((<<'   666') =~ s/^   //gmr);
-
-   Back, he spurred like a madman, shrieking a curse to the sky,
-   With the white road smoking behind him and his rapier brandished high.
-   Blood red were his spurs in the golden noon; wine-red was his velvet coat;
-   When they shot him down on the highway,
-           Down like a dog on the highway,
-   And he lay in his blood on the highway, with a bunch of lace at his throat.
-   666
-
-   return 666;
+   # Return success code 1 to caller:
+   return 1;
 } # end sub curfile
 
 # Print statistics:
 sub stats {
-   say STDERR '';
-   say STDERR "Stats for \"get-suffixes.pl\":";
-   say STDERR "Navigated $direcount directories.";
-   say STDERR "Encountered $filecount files.";
-   say STDERR "Found $typecount files of known type.";
-   say STDERR "Found $unkncount files of unknown type.";
-   say STDERR "Found $samecount files with correct suffix.";
-   say STDERR "Found $diffcount files with  wrong  suffix.";
-
-
+   say STDERR "\n"
+             ."Stats for running program \"$pname\" on dir tree \"$OriDir\":\n"
+             ."Navigated $direcount directories and encountered $filecount files.\n"
+             ."Found $errocount inaccessible files.\n"
+             ."Found $nondcount non-data files.\n"
+             ."Found $metacount meta files.\n"
+             ."Found $assucount files of assumed (unverified) type.\n"
+             ."Found $unkncount files of unknown type.\n"
+             ."Found $knowcount files of known type.\n"
+             ."Found $samecount files with correct suffix.\n"
+             ."Found $diffcount files with  wrong  suffix.";
    return 1;
 } # end sub stats
 

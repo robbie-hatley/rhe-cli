@@ -20,8 +20,8 @@
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use RH::Dir;
 use RH::Util;
 
@@ -80,7 +80,7 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $cwd = cwd;
+   my $cwd = d getcwd;
    say "\nDir # $direcount: $cwd\n";
 
    # Get list of paths of gib file names in this dir:
