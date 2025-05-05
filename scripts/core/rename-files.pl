@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide UTF-8 Unicode Perl source-code text file with hard Unix line breaks ("\x{0A}").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -62,6 +62,7 @@
 #                   (Trick is to first use "--" as an option, then use "--" again as an argument.)
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
+# Mon May 05, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
@@ -89,25 +90,24 @@ INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
 # ------- Local variables: -----------------------------------------------------------------------------------
 
-# Settings:     Default:   Meaning of Setting:                Range:         Meaning of default:
-my @Opts      = ()        ; # options                   array     Options.
-my @Args      = ()        ; # arguments                 array     Arguments.
+# Settings:     Default:   Meaning of Setting:                   Range:         Meaning of default:
+my @Opts      = ()        ; # options                            array          Options.
+my @Args      = ()        ; # arguments                          array          Arguments.
 my $Debug     = 0         ; # Debug?                             bool           Don't debug.
-my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
+my $Help      = 0         ; # Just print help and exit?          bool           Don't print-help-and-exit.
 my $Verbose   = 0         ; # Print directories?                 bool           Don't print dirs.
 my $Recurse   = 0         ; # Recurse subdirectories?            bool           Be local.
 my $Target    = 'F'       ; # Files, directories, both, or All?  F|D|B|A        Files.
 my $RegExp    = qr/^.+$/o ; # RegExp.                            RegExp         Match all file names.
 my $Predicate = 1         ; # Boolean file-test predicate.       bool           All file-type combos.
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
+my $OriDir    = d(getcwd) ; # Original directory.                cwd            Directory on program entry.
 my $Mode      = 'P'       ; # Prompt mode                        P|S|Y          Prompt user.
 my $Replace   = '$1'      ; # Replacement string.                string         Replacement is same as match.
 my $Flags     = ''        ; # Flags for s/// operator.           imsxopdualgre  No flags.
 
 # Counters:
 my $dircount  = 0; # Count of directories processed.
-my $filecount = 0; # Count of files matching target and regexp.
-my $predcount = 0; # Count of files also matching $Predicate.
+my $filecount = 0; # Count of files matching target, regexp, and predicate.
 my $samecount = 0; # Count of files for which NewName eq OldName.
 my $diffcount = 0; # Count of files for which NewName ne OldName.
 my $skipcount = 0; # Count of files skipped at user's request.
@@ -128,12 +128,13 @@ $Targets{A} = 'All Directory Entries';
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv    ;
-sub curdire ;
-sub curfile ;
-sub stats   ;
-sub error   ;
-sub help    ;
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub BLAT    ; # Print messages only if debugging.
+sub stats   ; # Print statistics.
+sub error   ; # Handle errors.
+sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
@@ -227,7 +228,8 @@ sub argv {
       /^-$s*h/ || /^--help$/     and help and exit 777 ;
       /^-$s*e/ || /^--debug$/    and $Debug   =  1     ;
       /^-$s*q/ || /^--quiet$/    and $Verbose =  0     ; # DEFAULT
-      /^-$s*v/ || /^--verbose$/  and $Verbose =  1     ;
+      /^-$s*t/ || /^--terse$/    and $Verbose =  1     ;
+      /^-$s*v/ || /^--verbose$/  and $Verbose =  2     ;
       /^-$s*l/ || /^--local$/    and $Recurse =  0     ; # DEFAULT
       /^-$s*r/ || /^--recurse$/  and $Recurse =  1     ;
       /^-$s*f/ || /^--files$/    and $Target  = 'F'    ;
@@ -247,13 +249,13 @@ sub argv {
    # Process arguments:
    my $NA = scalar @Args;      # Get number of arguments.
    if ( ($NA < 2 || $NA > 4)   # If number of arguments < 2 or > 4
-      && !$Debug ) {              # and we're not debugging,
+      && !$Debug ) {           # and we're not debugging,
       error($NA);              # print error message,
       help;                    # and print help message,
       exit 666;                # and exit, returning The Number Of The Beast.
    }
    if ( $NA >= 1 ) {           # If number of arguments >= 1,
-      $RegExp = qr/$Args[0]/;  # set $RegExp to $Args[0].
+      $RegExp = qr/$Args[0]/o; # set $RegExp to $Args[0].
    }
    if ( $NA >= 2 ) {           # If number of arguments >= 2,
       $Replace   = $Args[1];   # set $Replace to $Args[1].
@@ -270,26 +272,22 @@ sub argv {
 } # end sub argv
 
 sub curdire {
+   # Increment directory counter:
    ++$dircount;
 
    # Get and announce current working directory:
-   my $curdir = d getcwd;
+   my $curdir = d(getcwd);
    if ( $Verbose >= 1 ) {
       say STDOUT "\nDirectory # $dircount: $curdir";
    }
 
    # Get list of targeted files in current directory:
-   my $curdirfiles = GetFiles($curdir, $Target, $RegExp);
+   my $curdirfiles = GetFiles($curdir, $Target, $RegExp, $Predicate);
 
    # Process each path that matches $RegExp, $Target, and $Predicate:
    foreach my $file (sort {$a->{Name} cmp $b->{Name}} @$curdirfiles) {
-      ++$filecount;
-      say STDERR "Debug msg in rnf, in curdire, in foreach: filename = $file->{Name}" if $Debug;
-      local $_ = $file->{Path};
-      if (eval($Predicate)) {
-         ++$predcount;
-         curfile($file);
-      }
+      BLAT "Debug msg in rnf, in curdire, in foreach: filename = $file->{Name}";
+      curfile($file);
    }
 
    # Return success code 1 to caller:
@@ -297,6 +295,9 @@ sub curdire {
 } # end sub curdire
 
 sub curfile ($file) {
+   # Increment file counter:
+   ++$filecount;
+
    # Make variables for old and new names and paths:
    my $OldPath = $file->{Path};
    my $OldName = $file->{Name};
@@ -391,11 +392,13 @@ sub curfile ($file) {
    return 1;
 } # end sub curfile
 
+# Print messages only if debugging:
+sub BLAT ($string) {if ($Debug) {say STDERR $string}}
+
 sub stats {
    printf STDERR "\n";
    printf STDERR "Processed %5d directories.\n",                                          $dircount;
-   printf STDERR "Found     %5d files matching target and regexp.\n",                     $filecount;
-   printf STDERR "Found     %5d files also matching predicate.\n",                        $predcount;
+   printf STDERR "Found     %5d files matching target, regexp, and predicate.\n",         $filecount;
    printf STDERR "Bypassed  %5d files because new name was same as old name.\n",          $samecount;
    printf STDERR "Examined  %5d files for which new name was different from old name.\n", $diffcount;
    printf STDERR "Skipped   %5d files at user's request.\n",                              $skipcount;
@@ -408,6 +411,7 @@ sub error ($NA) {
    print STDERR ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
    Error: You typed $NA arguments, but rename-files.pl takes 2, 3, or 4 arguments.
+   Help follows.
    END_OF_ERROR
    return 1;
 } # end sub error
