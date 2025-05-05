@@ -84,8 +84,8 @@ my $Verbose   = 0         ; # Be verbose?               0,1,2     Be quiet.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    List files of all names.
-my $Predicate = '1'       ; # Boolean predicate.        eval      List files of all types.
-my $OriDir    = d cwd     ; # Original directory.       cwd       Directory on program entry.
+my $Predicate = 1         ; # Boolean predicate.        eval      List files of all types.
+my $OriDir    = d(getcwd) ; # Original directory.       cwd       Directory on program entry.
 my $Inodes    = 0         ; # Print inodes?             bool      Don't print inodes.
 
 # Counts of events in this program:
@@ -120,11 +120,13 @@ $Targets{A} = "All Directory Entries";
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv       ; # Process @ARGV and set settings.
-sub curdire    ; # Process current directory.
-sub dir_stats  ; # Print directory stats.
-sub tree_stats ; # Print tree stats.
-sub help       ; # Print help.
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub dir_stats  ; # Print per-directory statistics.
+sub tree_stats ; # Print   per-tree    statistics.
+sub BLAT    ; # Print messages only if debugging.
+sub error   ; # Handle errors.
+sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
@@ -245,20 +247,22 @@ sub argv {
    # Get number of arguments:
    my $NA = scalar(@Args);
 
+   # If user typed more than 2 arguments, and we're not debugging,
+   # then print error and help messages and exit:
+   if ( $NA >= 3 && !$Debug ) {  # If number of arguments >= 3 and we're not debugging,
+      error($NA);                # print error message,
+      help;                      # and print help message,
+      exit 666;                  # and exit, returning The Number Of The Beast.
+   }
+
    # First argument, if present, is a file-selection regexp:
-   if ( $NA >= 1 ) {             # If number of arguments is 1-or-more,
+   if ( $NA >= 1 ) {             # If number of arguments >= 1,
       $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
    }
 
    # Second argument, if present, is a file-selection predicate:
-   if ( $NA >= 2 ) {             # If number of arguments is 2-or-more,
+   if ( $NA >= 2 ) {             # If number of arguments >= 2,
       $Predicate = $Args[1];     # set $Predicate to $Args[1].
-   }
-
-   # If user typed more than 2 arguments, warn that they'll be ignored:
-   if ( $NA >= 3 ) {
-      say STDERR 'Warning: Arguments after first 2 will be ignored.';
-      say STDERR 'Use "-h" or "--help" to get help.';
    }
 
    # Return success code 1 to caller:
@@ -271,7 +275,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $curdir = d cwd;
+   my $curdir = d(getcwd);
 
    if ($Debug) {say STDERR "In \"rhdir.pl\", in \"curdire()\"; \$curdir = \"$curdir\".";}
 
@@ -401,9 +405,10 @@ sub dir_stats ($curdir, $nf) {
 
 sub tree_stats {
    if ( $Verbose >= 1 ) {
-      say STDERR "\nStatistics for running \"$pname\" on tree descending from \"$OriDir\":";
-      say STDERR "Navigated $direcount directories.";
-      say STDERR "Found $filecount files matching given target, regexp, and predicate.";
+      say STDERR "\n"
+                ."Statistics for running \"$pname\" on dir tree \"$OriDir\":\n"
+                ."Navigated $direcount directories. Found $filecount files matching "
+                ."target \"$Target\", regexp \"$RegExp\", and predicate \"$Predicate\".";
    }
    if ( $Verbose >= 2 ) {
       say    STDERR "\nDirectory entries encountered in this tree included:";
@@ -425,6 +430,20 @@ sub tree_stats {
    }
    return 1;
 } # end sub tree_stats
+
+# Print messages only if debugging:
+sub BLAT ($string) {if ($Debug) {say STDERR $string}}
+
+# Handle errors:
+sub error ($NA) {
+   print STDERR ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+
+   Error: you typed $NA arguments, but this program takes at most
+   2 arguments (an optional file-selection regexp and an optional
+   file-selection predicate). Help follows.
+   END_OF_ERROR
+   return 1;
+} # end sub error
 
 sub help
 {

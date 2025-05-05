@@ -5,8 +5,9 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# Template.pl
-# This file serves as a template for making new file and directory maintenance scripts.
+# util-template.pl
+# This file serves as a template for making new "utility" file and directory maintenance scripts, dependent
+# on "utf8::all" and "Cwd::utf8" (NOT compatible with Cygwin). (See "core" for Cygwin-compatible scripts.)
 #
 # Edit history:
 # Mon May 04, 2015: Wrote first draft.
@@ -98,6 +99,9 @@
 # Fri Apr 04, 2025: Now using "utf8::all" and "Cwd::utf8". Nixed "*_utf8", "d", "e". Simplified shebang to
 #                   "#!/usr/bin/env perl".
 # Wed Apr 09, 2025: Got rid of "use warnings FATAL => 'utf8'", as that's subsumed into "use utf8::all".
+# Mon May 05, 2025: Split "Template.pl" into "util/util-template.pl" (dependent on "utf8::all" and "Cwd::utf8"
+#                   and NOT compatible with Cygwin) and "core/core-template.pl" (NOT dependent on "utf8::all"
+#                   or "Cwd::utf8" and hence Cygwin compatible).
 ##############################################################################################################
 
 ##############################################################################################################
@@ -110,8 +114,6 @@
 
 # Pragmas:
 use v5.36;
-use strict;
-use warnings;
 
 # Essential CPAN Modules:
 use utf8::all;
@@ -177,11 +179,11 @@ my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               0,1,2     Shhh! Be quiet!
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
