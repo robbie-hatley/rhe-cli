@@ -260,7 +260,7 @@ sub help    ; # Print help and exit.
    else {
       if ($Recurse) {
          my $mlor = RecurseDirs {curdire};
-         say "Maximum levels of recursion reached = $mlor";
+         say "\nMaximum levels of recursion reached = $mlor";
       }
       else {curdire}
       stats

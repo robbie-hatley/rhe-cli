@@ -38,10 +38,12 @@ use Switch;
 
 # ======= VARIABLES: =========================================================================================
 
-# System Variables:
+# ------- System Variables: ----------------------------------------------------------------------------------
+
 $" = ', ' ; # Quoted-array element separator = ", ".
 
-# Global Variables:
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
 our    $pname;                                 # Declare program name.
 BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
 our    $cmpl_beg;                              # Declare compilation begin time.
@@ -49,7 +51,7 @@ BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
 our    $cmpl_end;                              # Declare compilation end   time.
 INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
-# Local variables:
+# ------- Local variables: -----------------------------------------------------------------------------------
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
 my @Opts      = ()        ; # options                   array     Options.
@@ -57,10 +59,11 @@ my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
-my $OriDir    = d(getcwd) ; # Original directory.       cwd       Directory on program entry.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
+# (It doesn't make sense for this program to have a "$Target" variable because it deals only with data files.)
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
+my $OriDir    = d(getcwd) ; # Original directory.       cwd       Directory on program entry.
 
 # Counters:
 my $direcount = 0; # Count of directories processed.
@@ -78,31 +81,52 @@ my $diffcount = 0; # Count of files with new name different from old.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv    ;
-sub curdire ;
-sub curfile ;
-sub stats   ;
-sub error   ;
-sub help    ;
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub stats   ; # Print statistics.
+sub error   ; # Handle errors.
+sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
    # Start execution timer:
    my $t0 = time;
+   my @s0 = localtime($t0);
 
    # Process @ARGV and set settings:
    argv;
 
    # Print program entry message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
-      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
-      printf(STDERR "Compilation took %.3fms\n",1000*($cmpl_end-$cmpl_beg));
+   if ( $Verbose >= 1 ) {
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
    }
 
-   # Print the values of all 8 settings variables if debugging:
-   if ( 1 == $Debug ) {
+   # Print compilation time if being verbose:
+   if ( $Verbose >= 2 ) {
+      printf STDERR "Compilation time was %.3fms\n\n",
+                    1000 * ($cmpl_end - $cmpl_beg);
+   }
+
+   # Print basic settings if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      say STDERR 'Basic settings:';
+      say STDERR "OriDir    = $OriDir";
+      say STDERR "Recurse   = $Recurse";
+      # (No "$Target" because dealing only with data files.)
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
       say STDERR '';
+   }
+
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   if ( $Debug >= 1 ) {
+      say STDERR 'Debug: Values of variables after processing @ARGV:';
+      say STDERR "pname     = $pname";
+      say STDERR "cmpl_beg  = $cmpl_beg";
+      say STDERR "cmpl_end  = $cmpl_end";
       say STDERR "Options   = (@Opts)";
       say STDERR "Arguments = (@Args)";
       say STDERR "Debug     = $Debug";
@@ -110,23 +134,34 @@ sub help    ;
       say STDERR "Verbose   = $Verbose";
       say STDERR "OriDir    = $OriDir";
       say STDERR "Recurse   = $Recurse";
+      # (No "$Target" because dealing only with data files.)
       say STDERR "RegExp    = $RegExp";
       say STDERR "Predicate = $Predicate";
+      say STDERR '';
    }
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+   if ($Help) {help}
+   else {
+      if ($Recurse) {
+         my $mlor = RecurseDirs {curdire};
+         say "\nMaximum levels of recursion reached = $mlor";
+      }
+      else {curdire}
+      stats
+   }
 
    # Stop execution timer:
    my $t1 = time;
+   my @s1 = localtime($t1);
 
    # Print exit message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
+   if ( $Verbose >= 1 ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
-      say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
-      printf STDERR "Execution time was %.3fms.", $ms;
+      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                    $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
+      printf STDERR "Execution time was %.3fms.\n", $ms;
    }
 
    # Exit program, returning success code "0" to caller:
@@ -238,9 +273,18 @@ sub curfile ($old_path) {
       # Unknown:
       case '.unk' {
          ++$unkncount;
-         say "Unknown:   \"$old_name\" => \"$new_name\"";
+         # Correct:
+         if ($new_suff eq $old_suff) {
+            ++$samecount;
+            say "Unknown:   \"$old_name\"";
+         }
+         # Incorrect:
+         else {
+            ++$diffcount;
+            say "Unknown:   \"$old_name\" => \"$new_name\"";
 
 
+         }
       }
       # Known (we WERE able to definitively determine the type of this file:):
       else {
@@ -277,6 +321,8 @@ sub stats {
              ."Found $knowcount files of known type.\n"
              ."Found $samecount files with correct suffix.\n"
              ."Found $diffcount files with  wrong  suffix.";
+
+
    return 1;
 } # end sub stats
 
@@ -373,10 +419,6 @@ sub help {
     '-d && -l'   # INVALID: missing parentheses       (confuses program      )
     (-d && -l)   # INVALID: missing quotes            (confuses shell        )
      -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
-
-   (Exception: Technically, you can use an integer as a boolean, and it doesn't
-   need quotes or parentheses; but if you use an integer, any non-zero integer
-   will process all paths and 0 will process no paths, so this isn't very useful.)
 
    Arguments and options may be freely mixed, but the arguments must appear in
    the order Arg1, Arg2 (RegExp first, then File-Type Predicate); if you get them

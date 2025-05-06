@@ -163,7 +163,7 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $curdir = d getcwd;
+   my $curdir = d(getcwd);
    say '';
    say "Directory # $direcount: $curdir";
    say '';
@@ -322,7 +322,7 @@ sub curfile ($file) {
    my $newpath = path($dir, $newname);
 
    # If $newpath already exists in $dir, we need to file an available enumerated name:
-   if ( -e e $newpath ) {
+   if ( -e e($newpath) ) {
       my $avaname = find_avail_enum_name($newname, $dir);
       # If we failed to find an available name, skip this file:
       if ('***ERROR***' eq $avaname) {
@@ -340,7 +340,6 @@ sub curfile ($file) {
    if ($Db) {
       ++$simucount;
       say "Simulated rename: \"$name\" => \"$newname\"";
-      return;
    }
 
    # Otherwise, attempt rename:
@@ -348,30 +347,15 @@ sub curfile ($file) {
       if ( rename_file($path, $newpath) ) {
          ++$renacount;
          say "Rename succeeded: \"$name\" => \"$newname\"";
-         return;
       }
       else {
          ++$failcount;
          say "ERROR: Rename failed: $path to $newpath.\n";
-         return;
       }
    }
 
-   # We can't possibly get here.
-
-   # But if we do, then print some cryptic shit to make people say "WTF???":
-
-   print ((<<'   END_OF_TWILIGHT_ZONE') =~ s/^   //gmr);
-
-   Back, he spurred like a madman, shrieking a curse to the sky,
-   With the white road smoking behind him and his rapier brandished high.
-   Blood red were his spurs in the golden noon; wine-red was his velvet coat;
-   When they shot him down on the highway,
-      Down like a dog on the highway,
-   And he lay in his blood on the highway, with a bunch of lace at his throat.
-
-   END_OF_TWILIGHT_ZONE
-   return 666;
+   # Return success code 1 to caller:
+   return 1;
 } # end sub curfile
 
 sub stats {

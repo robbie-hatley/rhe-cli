@@ -153,7 +153,7 @@ sub help    ; # Print help and exit.
    else {
       if ($Recurse) {
          my $mlor = RecurseDirs {curdire};
-         say "Maximum levels of recursion reached = $mlor";
+         say "\nMaximum levels of recursion reached = $mlor";
       }
       else {curdire}
       stats
@@ -243,7 +243,7 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $cwd = d cwd;
+   my $cwd = d(getcwd);
    say STDOUT "\nDirectory #$direcount: $cwd\n";
 
    # Get list of file-info packets in for all files in $cwd matching $Target, $RegExp, and $Predicate:
