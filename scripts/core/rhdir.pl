@@ -411,21 +411,23 @@ sub tree_stats {
    }
    if ( $Verbose >= 2 ) {
       say    STDERR "\nDirectory entries encountered in this tree included:";
-      printf STDERR "%7u total files\n",                            $totfcount;
-      printf STDERR "%7u directories\n",                            $sdircount;
-      printf STDERR "%7u symbolic links to directories\n",          $slkdcount;
-      printf STDERR "%7u symbolic links to files\n",                $linkcount;
-      printf STDERR "%7u symbolic links to weirdness\n",            $weircount;
-      printf STDERR "%7u symbolic links to nowhere\n",              $brkncount;
-      printf STDERR "%7u block special files\n",                    $bspccount;
-      printf STDERR "%7u character special files\n",                $cspccount;
-      printf STDERR "%7u pipes\n",                                  $pipecount;
-      printf STDERR "%7u sockets\n",                                $sockcount;
-      printf STDERR "%7u tty files\n",                              $ottycount;
-      printf STDERR "%7u regular files with multiple hard links\n", $hlnkcount;
-      printf STDERR "%7u regular files\n",                          $regfcount;
-      printf STDERR "%7u files of unknown type\n",                  $unkncount;
-      printf STDERR "%7u non-existent directory entries\n",         $noexcount;
+      printf STDERR "%7u total files\n",                        $totfcount;
+      printf STDERR "%7u non-existent files\n",                 $noexcount;
+      printf STDERR "%7u tty files\n",                          $ottycount;
+      printf STDERR "%7u character special files\n",            $cspccount;
+      printf STDERR "%7u block special files\n",                $bspccount;
+      printf STDERR "%7u sockets\n",                            $sockcount;
+      printf STDERR "%7u pipes\n",                              $pipecount;
+      printf STDERR "%7u symbolic links to nowhere\n",          $brkncount;
+      printf STDERR "%7u symbolic links to directories\n",      $slkdcount;
+      printf STDERR "%7u symbolic links to non-directories\n",  $linkcount;
+      printf STDERR "%7u symbolic links to weirdness\n",        $weircount;
+      printf STDERR "%7u directories\n",                        $sdircount;
+      printf STDERR "%7u regular files with  > 1 hard links\n", $hlnkcount;
+      printf STDERR "%7u regular files with == 1 hard links\n", $regfcount;
+      printf STDERR "%7u regular files with == 0 hard links\n", $orphcount;
+      printf STDERR "%7u regular files with  < 0 hard links\n", $zombcount;
+      printf STDERR "%7u files of unknown type\n",              $unkncount;
    }
    return 1;
 } # end sub tree_stats
