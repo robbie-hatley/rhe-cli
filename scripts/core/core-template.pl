@@ -187,9 +187,9 @@ my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all fi
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 my $OriDir    = d(getcwd) ; # Original directory.       cwd       Directory on program entry.
 
-# Counts of events in this program:
-my $direcount = 0 ; # Count of directories processed by curdire().
-my $filecount = 0 ; # Count of files matching target, regexp, and predicate.
+# Counters:
+my $direcount = 0         ; # Count of directories processed by curdire().
+my $filecount = 0         ; # Count of files matching target, regexp, and predicate.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 

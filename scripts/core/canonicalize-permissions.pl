@@ -17,8 +17,8 @@
 #                   Got rid of "--debug=no", "--local", "--quiet" (already defaults).
 #                   Changed "--debug=yes" to just "--debug". Now using "my $pname = get_name_from_path($0);".
 #                   Elapsed time is now in milliseconds.
-# Wed Aug 09, 2023: Dramatically symplified permission-setting. Created new subs "set_navi", "set_exec", and
-#                   "set_noex". Added several new suffixes. Now handles makefiles (noex).
+# Wed Aug 09, 2023: Dramatically symplified permission-setting. Created new subs "set_nav", "set_exe", and
+#                   "set_nox". Added several new suffixes. Now handles makefiles (noex).
 # Fri Aug 25, 2023: Added "quiet" and "verbose" options to control output. Added "nodebug" option.
 #                   Fixed bug in which all image files were having their perms set TWICE.
 #                   Added stipulation that this program does not process hidden files.
@@ -36,6 +36,7 @@
 # Tue Mar 04, 2025: Shebang is now "#!/usr/bin/env -S perl -C63". Nixed "__END__" marker.
 # Thu May 01, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
+# Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
@@ -68,16 +69,16 @@ my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               0,1,2     Shhh! Be quiet!
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
+my $OriDir    = d(getcwd) ; # Original directory.       cwd       Directory on program entry.
 my $Hidden    = 0         ; # Process hidden items?     bool      Don't process hidden items.
 
 # Counters:
 my $direcount = 0         ; # Count of directories processed by curdire().
-my $filecount = 0         ; # Count of dir entries matching $Target, $RegExp, and $Predicate.
+my $filecount = 0         ; # Count of files matching target, regexp, and predicate.
 my $hiskcount = 0         ; # Count of all hidden  files skipped.
 my $opencount = 0         ; # Count of all regular files we could    open.
 my $noopcount = 0         ; # Count of all regular files we couldn't open.
@@ -88,16 +89,16 @@ my $simucount = 0         ; # Count of all simulated setting of permissions.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv     ; # Process @ARGV.
-sub curdire  ; # Process current directory.
-sub set_navi ; # Set a directory to "navigable".
-sub set_exec ; # Set a file to "executable".
-sub set_noex ; # Set a file to "NOT executable".
-sub curfile  ; # Process current file.
-sub BLAT     ; # Print messages only if debugging.
-sub stats    ; # Print statistics.
-sub error    ; # Handle errors.
-sub help     ; # Print help and exit.
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub set_nav ; # Set a directory to "navigable".
+sub set_exe ; # Set a file to "executable".
+sub set_nox ; # Set a file to "NOT executable".
+sub BLAT    ; # Print messages only if debugging.
+sub stats   ; # Print statistics.
+sub error   ; # Handle errors.
+sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 { # begin main
@@ -164,7 +165,7 @@ sub help     ; # Print help and exit.
       # If we've been printing $direcount repeatedly on top of itself, print closing newline:
       if ($Verbose < 1) {print STDOUT "\n"}
       # If we recursed, print max levels of recursion:
-      if ($Recurse) {say STDOUT "Maximum levels of recursion reached = $mlor"}
+      if ($Recurse) {say STDOUT "\nMaximum levels of recursion reached = $mlor"}
       # Print stats:
       stats
    }
@@ -254,7 +255,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
+   my $cwd = d(getcwd);
 
    # Announce each current working directory separately if being terse or verbose:
    if ( $Verbose >= 1 ) {
@@ -273,8 +274,8 @@ sub curdire {
 
    # Get list of file-info packets in $cwd matching $Target, $RegExp, and $Predicate:
    my $curdirfiles = GetFiles($cwd, $Target, $RegExp, $Predicate);
-   my $num_files = scalar(@$curdirfiles);
-   BLAT "Debug msg in canoperm, in curdire; just got $num_files file records.";
+   my $nf = scalar(@$curdirfiles);
+   BLAT "Debug msg in canoperm, in curdire; just got $nf file records.";
 
    # Send each file that matches $RegExp, $Target, and $Predicate to curfile()
    # (unless the file is hidden and we're not processing hidden files):
@@ -315,17 +316,19 @@ sub curfile ($file) {
       # If $lsuf is NOT blank:
       if ( length($lsuf) > 0 ) {
          BLAT "Debug msg in canoperm, in curfile: file $file->{Name} has suffix \"$lsuf\".";
-         for ( $lsuf ) {
+         switch ($lsuf) {
             # Scripts in known languages need to be executable:
             # NOTE RH 2024-09-06: I removed "au3", "bat", "ps1", "vbs" because from the standpoint of Linux,
             # such files should NOT be considered "executable" because they're DOS/Windows, not Linux.
             # I also added "elf" and "run" as these ARE executable Linux files.
-            if ( /^(apl|awk|elf|pl|perl|py|raku|run|sed|sh)$/ ) {
+            case /^(apl|awk|elf|pl|perl|py|raku|run|sed|sh)$/ {
+               BLAT "Debug msg in canoperm, in curfile: setting file $file->{Name} to \"executable\".";
                set($file, 0775);
             }
 
             # Files with any other non-blank suffixes do NOT need to be executable:
             else {
+               BLAT "Debug msg in canoperm, in curfile: setting file $file->{Name} to \"NOT executable\".";
                set($file, 0664);
             }
          }
@@ -338,10 +341,14 @@ sub curfile ($file) {
          my $fh     = undef ;
          my $bytes  = 0     ;
          if ( open($fh, '< :raw', e($file->{Path}) ) ) {
+            BLAT"Debug msg in canoperm, in curfile: Opened file \"$file->{Name}\".";
             ++$opencount;
             if ( read($fh, $buffer, 4) ) {
                $bytes = length($buffer);
-               BLAT "Debug msg in canoperm, in curfile: Read $bytes bytes from file \"$file->{Name}\".";
+               BLAT "Debug msg in canoperm, in curfile: Read file \"$file->{Name}\".";
+            }
+            else {
+               BLAT"Debug msg in canoperm, in curfile: Couldn't read file \"$file->{Name}\".";
             }
             close($fh);
          }
@@ -352,17 +359,18 @@ sub curfile ($file) {
 
          # If we managed to read 4-or-more bytes of data from the file, make a decision based on that:
          if ( 4 == $bytes ) {
+            BLAT"Debug msg in canoperm, in curfile: Got 4 bytes from file \"$file->{Name}\".";
             ++$readcount;
             if ( '#!' eq substr($buffer, 0, 2) ) {             # Hashbang script.
-               BLAT "Debug msg in canoperm, in curfile: file $file->{Name} is a hashbang script";
+               BLAT "Debug msg in canoperm, in curfile: File $file->{Name} is a hashbang script";
                set($file, 0775);                               # Set it to "executable".
             }
             elsif ( "\x{7F}ELF" eq substr($buffer, 0, 4) ) {   # Linux ELF "executable".
-               BLAT "Debug msg in canoperm, in curfile: file $file->{Name} is an ELF executable";
+               BLAT "Debug msg in canoperm, in curfile: File $file->{Name} is an ELF executable";
                set($file, 0775);                               # Set it to "executable".
             }
             else {                                             # Data file.
-               BLAT "Debug msg in canoperm, in curfile: file $file->{Name} is a datafile";
+               BLAT "Debug msg in canoperm, in curfile: File $file->{Name} is a datafile";
                set($file, 0664);                               # Set it to "NOT executable".
             }
          }
@@ -370,7 +378,7 @@ sub curfile ($file) {
          # Else if we did NOT manage to read 4-or-more bytes of data from the file, do nothing:
          else {
             ++$nordcount;
-            BLAT "Debug msg in canoperm, in curfile: couldn't read file $file->{Name}";
+            BLAT "Debug msg in canoperm, in curfile: Couldn't get 4 bytes from file $file->{Name}";
             ; # Do nothing.
          }
       } # end else ($lsuf is blank)
@@ -400,25 +408,27 @@ sub set ($file, $perm) {
    switch ($perm) {
       case 0775 {$perms = ("directory" eq $descr) ?     "navigable" :     "executable"}
       case 0664 {$perms = ("directory" eq $descr) ? "NOT-navigable" : "NOT-executable"}
-      else     {$perms = "unknown"}
+      else      {$perms = "unknown"}
    }
    # If debugging, just simulate:
    if ( $Debug ) {
       ++$simucount;
-      say STDOUT "Simulation: would have set $descr \"$file->{Name}\" to $perms.";
+      say "Simulation: would have set $descr \"$file->{Name}\" to $perms.";
    }
    # Else if NOT debugging, change permissions:
    else {
       ++$permcount;
       chmod $perm, e($file->{Path});
       if ( $Verbose ) {
-         say STDOUT "Set $descr \"$file->{Name}\" to $perms.";
+         say "Set $descr \"$file->{Name}\" to $perms.";
       }
    }
-}
+   # Return success code 1 to caller:
+   return 1;
+} # end sub set
 
 # Print messages only if debugging:
-sub BLAT ($string) {if ($Debug) {say STDERR $string}}
+sub BLAT ($string) {if ($Debug) {say STDERR $string} return 1}
 
 # Print statistics for this program run:
 sub stats {

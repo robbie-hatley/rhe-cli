@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -30,6 +30,7 @@
 #                   Fixed "count all files twice" bug. Changed default verbosity from "terse" to "quiet".
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
+# Mon May 05, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e" for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
@@ -66,7 +67,7 @@ my $Recurse   = 0         ; # Recurse subdirectories?   bool      Recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   List paths of files of all types.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    List paths of files of all names.
 my $Predicate = 1         ; # Boolean predicate.        bool      List paths of all combos of types.
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
+my $OriDir    = d(getcwd) ; # Original directory.       cwd       Directory on program entry.
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
@@ -201,23 +202,23 @@ sub argv {
    # Get number of arguments:
    my $NA = scalar(@Args);
 
-   # If user typed more than 2 arguments, and we're not debugging or getting help,
+   # If user typed more than 2 arguments, and we're not debugging,
    # then print error and help messages and exit:
-   if ( $NA >= 3                 # If number of arguments >= 3
-        && !$Debug && !$Help ) { # and we're not debugging and not getting help,
-      error($NA);                # print error message,
-      help;                      # and print help message,
-      exit 666;                  # and exit, returning The Number Of The Beast.
+   if ( $NA >= 3        # If number of arguments >= 3
+        && !$Debug ) {  # and we're not debugging,
+      error($NA);       # print error message,
+      help;             # and print help message,
+      exit 666;         # and exit, returning The Number Of The Beast.
    }
 
    # First argument, if present, is a file-selection regexp:
-   if ( $NA >= 1 ) {             # If number of arguments >= 1,
-      $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
+   if ( $NA >= 1 ) {            # If number of arguments >= 1,
+      $RegExp = qr/$Args[0]/o;  # set $RegExp to $Args[0].
    }
 
    # Second argument, if present, is a file-selection predicate:
-   if ( $NA >= 2 ) {             # If number of arguments >= 2,
-      $Predicate = $Args[1];     # set $Predicate to $Args[1].
+   if ( $NA >= 2 ) {          # If number of arguments >= 2,
+      $Predicate = $Args[1];  # set $Predicate to $Args[1].
    }
 
    # Return success code 1 to caller:
@@ -230,7 +231,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
+   my $cwd = d(getcwd);
 
    # Get list of paths in $cwd matching target, regexp, and predicate:
    my @paths = sort {$a cmp $b} glob_regexp_utf8($cwd, $Target, $RegExp, $Predicate);
@@ -260,7 +261,7 @@ sub stats {
    # If being terse or verbose, print stats:
    if ( $Verbose >= 1 ) {
       say STDERR '';
-      say STDERR "Stats for running \"$pname\" on \"$OriDir\" dir tree:";
+      say STDERR "Stats for running \"$pname\" on dir tree \"$OriDir\":";
       say STDERR "Traversed $direcount directories.";
       say STDERR "Found $filecount files matching given target, regexp, and predicate.";
    }

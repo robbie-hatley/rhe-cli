@@ -91,7 +91,7 @@
 #                   Got rid of "/...|.../" in favor of "/.../ || /.../" (speeds-up program).
 #                   Simplified way in which options and arguments are printed if debugging.
 #                   Removed "$" = ', '" and "$, = ', '". Got rid of "/o" from all instances of qr().
-#                   Changed all "$db" to $Db". Debugging now simulates renames instead of exiting in main.
+#                   Changed all "$db" to $Debug". Debugging now simulates renames instead of exiting in main.
 #                   Removed "no debug" option as that's already default in all of my programs.
 #                   Changed short option for debugging from "-e" to "-d".
 # Wed Aug 14, 2024: Removed unnecessary "use" statements. Changed short option for debug from "-d" to "-e".
@@ -99,65 +99,83 @@
 # Tue Mar 04, 2025: Now using global "t0" and "BEGIN" block to start timer.
 # Sun Apr 27, 2025: Fixed stats bug (due to changes in GetRegularFilesBySize()). Now using "utf8::all" and
 #                   "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl". Nixed all "d", "e".
+# Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
 use utf8;
 use Cwd;
 use Time::HiRes 'time';
+use List::Util 'sum0';
+use Switch;
 use RH::Dir;
 use RH::Util;
 
-# ======= GLOBAL VARIABLES: ==================================================================================
-
-our $t0;
-
-# ======= BEGIN AND END BLOCKS: ==============================================================================
-
-BEGIN {
-   $t0 = time;
-}
-
-# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
-
-sub argv        ; # Use contents of @ARGV to set settings.
-sub curdire     ; # Process the files of the current directory.
-sub dup_prompt  ; # DupPrompt Mode (asks user what to do).
-sub spotlight   ; # Spotlight Mode (for processing Microsoft Windows Spotlight photos).
-sub no_prompt   ; # NoPrompt  Mode (does whatever it damn well pleases, fuck you very much).
-sub erase_newer ; # Erases the newer of a pair of identical files by calling unlink_file().
-sub erase_older ; # Erases the older of a pair of identical files by calling unlink_file().
-sub unlink_file ; # Unlink a file.
-sub print_two   ; # Print two file names, with times and dates, aligned.
-sub dire_stats  ; # Print statistics for current directory.
-sub tree_stats  ; # Print statistics for current tree.
-sub error       ; # Print error message.
-sub help        ; # Print help  message.
-
 # ======= VARIABLES: =========================================================================================
 
+# ------- System Variables: ----------------------------------------------------------------------------------
+
+$" = ', ' ; # Quoted-array element separator = ", ".
+
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+our    $cmpl_beg;                              # Declare compilation begin time.
+BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
+our    $cmpl_end;                              # Declare compilation end   time.
+INIT  {$cmpl_end = time}                       # Set     compilation end   time.
+
+# ------- Local variables: -----------------------------------------------------------------------------------
+
+# Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
+my @Opts      = ()        ; # options                   array     Options.
+my @Args      = ()        ; # arguments                 array     Arguments.
+my $Debug     = 0         ; # Debug?                    bool      Don't debug.
+my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 # NOTE: This program has no variable "$Verbose", because this program requires maximum verbosity, always.
+my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
+my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
+my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
+my $OriDir    = d(getcwd) ; # Original directory.       cwd       Directory on program entry.
 
-# Settings:                 # Meaning of setting:      Meanings of values:
-my $Db         =    0     ; # Print diagnostics?       0 => don't debug
-                            #                          1 => debug
+# Modes:
+my $PromptMode = 0 ; # Prompting Mode. 0 => DupPrompt (ask user what to do)
+                     #                 1 => Spotlight (process Spotlight files)
+                     #                 2 => NoPrompt  (act without prompting user)
+my $PrejudMode = 0 ; # Prejudice Mode. 0 => Newer     (erase newer duplicates)
+                     #                 1 => Older     (erase older duplicates)
 
-my $RegExp     = qr/^.+$/ ; # Regular Expression.      Specifies which files to process.
+# Hashes:
+my %PromptHash = ( 0 => 'DupPrompt' , 1 => 'Spotlight' , 2 => 'NoPrompt' );
+my %PrejudHash = ( 0 => 'Newer'     , 1 => 'Older'                       );
 
+# RegExps:
+my $shapat = qr(^[0-9a-f]{40}(?:-\(\d{4}\))?(?:\.\w+)?$); # SHA1 hash pattern
+my $gibpat = qr(^[a-z]{8}(?:-\(\d{4}\))?(?:\.\w+)?$)    ; # Gibberish pattern
+my $wslpat = qr(^[0-9a-f]{64}(?:-\(\d{4}\))?(?:\.\w+)?$); # Windows SpotLight pattern
 
-my $Recurse    =    0     ; # Recurse subdirectories?  0 => Local     (don't traverse subdirs)
-                            #                          1 => Recurse   (do    traverse subdirs)
+# Per-Directory Counters:
+my $filedirec = 0; # Count of regular files processed.
+my $compdirec = 0; # Count of comparisons of file pairs.
+my $dupldirec = 0; # Count of duplicate file pairs found.
+my $ignodirec = 0; # Count of ignored duplicate file pairs.
+my $deledirec = 0; # Count of deleted files.
+my $faildirec = 0; # Count of failed attempts at deleting files.
+my $errodirec = 0; # Count of errors.
+my $simudirec = 0; # Count of simulated file unlinkages.
 
-my $PromptMode =    0     ; # Prompting Mode.          0 => DupPrompt (ask user what to do)
-                            #                          1 => Spotlight (process Spotlight files)
-                            #                          2 => NoPrompt  (act without prompting user)
-
-my $PrejudMode =    0     ; # Prejudice Mode.          0 => Newer     (erase newer duplicates)
-                            #                          1 => Older     (erase older duplicates)
-
-my %PromptHash; $PromptHash{0}='DupPrompt'; $PromptHash{1}='Spotlight'; $PromptHash{2}='NoPrompt';
-
-my %PrejudHash; $PrejudHash{0}='Newer';     $PrejudHash{1}='Older';
+# Per-Tree Counters:
+my $direcount = 0 ; # Count of directories processed by curdire().
+my $filecount = 0 ; # Count of files matching target, regexp, and predicate.
+my $compcount = 0 ; # Count of comparisons of file pairs.
+my $duplcount = 0 ; # Count of duplicate file pairs found.
+my $ignocount = 0 ; # Count of ignored duplicate file pairs.
+my $delecount = 0 ; # Count of deleted files.
+my $failcount = 0 ; # Count of failed attempts at deleting files.
+my $errocount = 0 ; # Count of errors.
+my $simucount = 0 ; # Count of simulated file unlinkages.
 
 # Note regarding settings:
 
@@ -183,54 +201,90 @@ my %PrejudHash; $PrejudHash{0}='Newer';     $PrejudHash{1}='Older';
 # "older" prejudice discriminates against older files.
 # These prejudices don't affect Spotlight Mode or DupPrompt mode.
 
-# SHA1 hash pattern:
-my $shapat = qr(^[0-9a-f]{40}(?:-\(\d{4}\))?(?:\.\w+)?$);
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-# Gibberish pattern:
-my $gibpat = qr(^[a-z]{8}(?:-\(\d{4}\))?(?:\.\w+)?$);
-
-# Windows SpotLight pattern:
-my $wslpat = qr(^[0-9a-f]{64}(?:-\(\d{4}\))?(?:\.\w+)?$);
-
-# Per-Directory Counters:
-my $regfdirec = 0; # Count of regular files processed.
-my $compdirec = 0; # Count of comparisons of file pairs.
-my $dupldirec = 0; # Count of duplicate file pairs found.
-my $ignodirec = 0; # Count of ignored duplicate file pairs.
-my $deledirec = 0; # Count of deleted files.
-my $faildirec = 0; # Count of failed attempts at deleting files.
-my $errodirec = 0; # Count of errors.
-my $simudirec = 0; # Count of simulated file unlinkages.
-
-# Per-Tree Counters:
-my $direcount = 0; # Count of directories traversed.
-my $regfcount = 0; # Count of regular files seen.
-my $compcount = 0; # Count of comparisons of file pairs.
-my $duplcount = 0; # Count of duplicate file pairs found.
-my $ignocount = 0; # Count of ignored duplicate file pairs.
-my $delecount = 0; # Count of deleted files.
-my $failcount = 0; # Count of failed attempts at deleting files.
-my $errocount = 0; # Count of errors.
-my $simucount = 0; # Count of simulated file unlinkages.
+sub argv        ; # Use contents of @ARGV to set settings.
+sub curdire     ; # Process the files of the current directory.
+sub dup_prompt  ; # DupPrompt Mode (asks user what to do).
+sub spotlight   ; # Spotlight Mode (for processing Microsoft Windows Spotlight photos).
+sub no_prompt   ; # NoPrompt  Mode (does whatever it damn well pleases, fuck you very much).
+sub erase_newer ; # Erases the newer of a pair of identical files by calling unlink_file().
+sub erase_older ; # Erases the older of a pair of identical files by calling unlink_file().
+sub unlink_file ; # Unlink a file.
+sub print_two   ; # Print two file names, with times and dates, aligned.
+sub BLAT        ; # Print messages only if debugging.
+sub dire_stats  ; # Print statistics for current directory.
+sub tree_stats  ; # Print statistics for current tree.
+sub error       ; # Print error message.
+sub help        ; # Print help  message.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
+   # Start execution timer:
+   my $t0 = time;
+   my @s0 = localtime($t0);
+
+   # Process @ARGV and set settings:
    argv;
-   my $pname = get_name_from_path($0);
+
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   if ( $Debug >= 1 ) {
+      say STDERR 'Debug msg in dedup-files: Values of variables after calling argv():';
+      say STDERR "pname     = $pname";
+      say STDERR "cmpl_beg  = $cmpl_beg";
+      say STDERR "cmpl_end  = $cmpl_end";
+      say STDERR "Options   = (@Opts)";
+      say STDERR "Arguments = (@Args)";
+      say STDERR "Debug     = $Debug";
+      say STDERR "Help      = $Help";
+      say STDERR "OriDir    = $OriDir";
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
+      say STDERR "Prompt md = $PromptHash{$PromptMode}" ;
+      say STDERR "Prejud md = $PrejudHash{$PrejudMode}" ;
+      say STDERR '';
+   }
+
+   # Print program entry messages:
+   printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                 $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
+   printf STDERR "Compilation time was %.3fms\n\n",
+                 1000 * ($cmpl_end - $cmpl_beg);
+   say STDERR 'Basic settings:';
+   say STDERR "OriDir    = $OriDir"                  ;
+   say STDERR "Recurse   = $Recurse"                 ;
+   say STDERR "Target    = $Target"                  ;
+   say STDERR "RegExp    = $RegExp"                  ;
+   say STDERR "Predicate = $Predicate"               ;
+   say STDERR "prompt md = $PromptHash{$PromptMode}" ;
+   say STDERR "prejud md = $PrejudHash{$PrejudMode}" ;
    say STDERR '';
-   say STDERR "Now entering program \"$pname\".";
-   say STDERR "\$RegExp = $RegExp";
-   say STDERR "prompt    mode = ", $PromptHash{$PromptMode};
-   say STDERR "prejudice mode = ", $PrejudHash{$PrejudMode};
 
-   $Recurse and RecurseDirs {curdire} or curdire;
+   # Process current directory (and all subdirectories if recursing) and print stats,
+   # unless user requested help, in which case just print help:
+   if ($Help) {help}
+   else {
+      if ($Recurse) {
+         my $mlor = RecurseDirs {curdire};
+         say "\nMaximum levels of recursion reached = $mlor";
+      }
+      else {curdire}
+      tree_stats;
+   }
 
-   tree_stats;
-   my $et = time - $t0;
-   say    STDERR '';
-   say    STDERR "Now exiting program \"$pname\".";
-   printf STDERR "Execution time was %.3f seconds.", $et;
+   # Stop execution timer:
+   my $t1 = time;
+   my @s1 = localtime($t1);
+
+   # Print exit messages:
+   my $te = $t1 - $t0; my $ms = 1000 * $te;
+   printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                 $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
+   printf STDERR "Execution time was %.3fms.\n", $ms;
+
+   # Exit program, returning success code "0" to caller:
    exit 0;
 } # end main
 
@@ -238,45 +292,59 @@ my $simucount = 0; # Count of simulated file unlinkages.
 
 sub argv {
    # Get options and arguments:
-   my @opts = ()            ; # options
-   my @args = ()            ; # arguments
-   my $end = 0              ; # end-of-options flag
-   my $s = '[a-zA-Z0-9]'    ; # single-hyphen allowable chars (English letters, numbers)
-   my $d = '[a-zA-Z0-9=.-]' ; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {
-      /^--$/                  # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1            # so if we see that, then set the "end-of-options" flag
-      and next;               # and skip to next element of @ARGV.
-      !$end                   # If we haven't yet reached end-of-options,
-      && ( /^-(?!-)$s+$/      # and if we get a valid short option
-      ||   /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @opts, $_      # then push item to @opts
-      or  push @args, $_;     # else push item to @args.
+   my $end = 0;              # end-of-options flag
+   my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
+   my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
+   for ( @ARGV ) {           # For each element of @ARGV:
+      !$end                  # If we have not yet reached end-of-options,
+      && /^--$/              # and we see an "--" option,
+      and $end = 1           # set the "end-of-options" flag
+      and push @Opts, '--'   # and push "--" to @Opts
+      and next;              # and skip to next element of @ARGV.
+      !$end                  # If we have not yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we see a valid short option
+      ||  /^--(?!-)$d+$/ )   # or a valid long option,
+      and push @Opts, $_     # then push item to @Opts
+      and next;              # and skip to next element of @ARGV.
+      push @Args, $_;        # Otherwise, push item to @Args.
    }
 
    # Process options:
-   for ( @opts ) {
-      /^-$s*h/ || /^--help$/      and help and exit 777;
-      /^-$s*e/ || /^--debug$/     and $Db = 1;
-      # NOTE: There are no verbosity controls here because this program requires maximum verbosity, always,
-      # because of its inherently highly-interactive nature.
-      /^-$s*l/ || /^--local$/     and $Recurse = 0;
-      /^-$s*r/ || /^--recurse$/   and $Recurse = 1;
-      /^-$s*s/ || /^--spotlight$/ and $PromptMode = 1;
+   for ( @Opts ) {
+      /^-$s*h/ || /^--help$/      and $Help       = 1  ;
+      /^-$s*e/ || /^--debug$/     and $Debug      = 1  ;
+      /^-$s*l/ || /^--local$/     and $Recurse    = 0  ; # Default.
+      /^-$s*r/ || /^--recurse$/   and $Recurse    = 1  ;
+      /^-$s*s/ || /^--spotlight$/ and $PromptMode = 1  ;
       /^-$s*n/ || /^--newer$/     and $PromptMode = 2 and $PrejudMode = 0;
       /^-$s*o/ || /^--older$/     and $PromptMode = 2 and $PrejudMode = 1;
    }
-   if ( $Db ) {
-      say STDERR '';
-      say STDERR "\$opts = (", join(', ', map {"\"$_\""} @opts), ')';
-      say STDERR "\$args = (", join(', ', map {"\"$_\""} @args), ')';
+
+   # NOTE: There are no verbosity controls in this program, because this program requires maximum verbosity
+   # always, because of its inherently highly-interactive nature.
+
+   # NOTE: Likewise, there are no target controls, because this program processes data files only.
+
+   # Get number of arguments:
+   my $NA = scalar(@Args);
+
+   # If user typed more than 2 arguments, and we're not debugging,
+   # then print error and help messages and exit:
+   if ( $NA >= 3 && !$Debug ) {  # If number of arguments >= 3 and we're not debugging,
+      error($NA);                # print error message,
+      help;                      # and print help message,
+      exit 666;                  # and exit, returning The Number Of The Beast.
    }
 
-   # Process arguments:
-   my $NA = scalar(@args);
-   if    ( 0 == $NA ) {                              ; } #  0 args => Use default settings.
-   elsif ( 1 == $NA ) { $RegExp = qr/$args[0]/       ; } #  1 arg  => Set $RegExp.
-   elsif ( !$Db     ) { error($NA); help(); exit 666 ; } # >1 args => print error & help if not debugging.
+   # First argument, if present, is a file-selection regexp:
+   if ( $NA >= 1 ) {             # If number of arguments >= 1,
+      $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
+   }
+
+   # Second argument, if present, is a file-selection predicate:
+   if ( $NA >= 2 ) {             # If number of arguments >= 2,
+      $Predicate = $Args[1];     # set $Predicate to $Args[1].
+   }
 
    # Return success code 1 to caller:
    return 1;
@@ -284,25 +352,27 @@ sub argv {
 
 # Process current directory:
 sub curdire {
-   # We just entered a new directory, so increment directory counter:
+   # Increment directory counter:
    ++$direcount;
 
    # Get and announce current working directory:
-   my $curdir = d getcwd;
+   my $cwd = d(getcwd);
    say '';
-   say "Dir # $direcount: \"$curdir\"";
+   say "Dir # $direcount: \"$cwd\"";
 
    # Get hash of arrays of file records for for all regular files
    # in current directory, keyed by size:
-   my $curdirfiles = GetRegularFilesBySize($RegExp);
+   my $curdirfiles = GetRegularFilesBySize($cwd, $RegExp, $Predicate);
+
+   # Increment file counters:
+   $filedirec += $RH::Dir::totfcount;
+   $filecount += $RH::Dir::totfcount;
 
    # Iterate through the keys of the hash, in inverse order of size:
    my @sizes = sort {$b<=>$a} keys %{$curdirfiles};
    SIZE: foreach my $size (@sizes) {
       # How many files in this size group?
       my $count = scalar @{$curdirfiles->{$size}};
-      $regfcount += $count;
-      $regfdirec += $count;
 
       # If fewer than two files exist of this size, go to next size group:
       next SIZE if ($count < 2);
@@ -311,14 +381,16 @@ sub curdire {
       FIRST: foreach my $i (0..$count-2) {
          # Set $file1 to reference to first file record:
          my $file1 = $curdirfiles->{$size}->[$i];
-         say("FIRST file name = ", $file1->{Name}) if $Db;
 
          # "SECOND" LOOP: Iterate through all files of current size which are
          # to the right of file "$i":
          SECOND: foreach my $j ($i+1..$count-1) {
             # Set $file2 to reference to second file record:
             my $file2 = $curdirfiles->{$size}->[$j];
-            say("SECOND file name = ", $file2->{Name}) if $Db;
+            BLAT "\n"
+                ."Debug msg in dedup-files, in curdire(), in SECOND:\n"
+                ."FIRST  file name = $file1->{Name}\n"
+                ."SECOND file name = $file2->{Name}";
 
             # Skip to next FIRST file if $file1 has already been deleted.
             #
@@ -331,15 +403,15 @@ sub curdire {
             # situations which have ALREADY been noted and acted-on.
             # Only print anything if debugging:
             if ( $file1->{Name} eq '***DELETED***' ) {
-               say "FIRST file was deleted. Name = ", $file1->{Name} if $Db;
+               BLAT "FIRST file was deleted. Name = $file1->{Name}";
                next FIRST;
             }
             if ( $file1->{Name} eq '***FAILED***' ) {
-               say "FIRST file was failed. Name = ", $file1->{Name} if $Db;
+               BLAT "FIRST file was failed. Name = $file1->{Name}";
                next FIRST;
             }
             if ( $file1->{Name} eq '***SIMULATED***' ) {
-               say "FIRST file was simulated. Name = ", $file1->{Name} if $Db;
+               BLAT "FIRST file was simulated. Name = $file1->{Name}";
                next FIRST;
             }
 
@@ -350,15 +422,15 @@ sub curdire {
             # situations which have ALREADY been noted and acted-on.
             # Only print anything if debugging:
             if ( $file2->{Name} eq '***DELETED***' ) {
-               say "SECOND file was deleted. Name = ", $file2->{Name} if $Db;
+               BLAT "SECOND file was deleted. Name = $file2->{Name}";
                next SECOND;
             }
             if ( $file2->{Name} eq '***FAILED***' ) {
-               say "SECOND file was failed. Name = ", $file2->{Name} if $Db;
+               BLAT "SECOND file was failed. Name = $file2->{Name}";
                next SECOND;
             }
             if ( $file2->{Name} eq '***SIMULATED***' ) {
-               say "SECOND file was simulated. Name = ", $file2->{Name} if $Db;
+               BLAT "SECOND file was simulated. Name = $file2->{Name}";
                next SECOND;
             }
 
@@ -398,56 +470,26 @@ sub curdire {
                my $result = '';
 
                # Call appropriate subroutine (depending on value of $PromptMode) and store result in $result:
-               # If in DupPrompt mode, call dup_prompt:
-               if (0 == $PromptMode) {
-                  $result = dup_prompt($file1, $file2);
-               }
-               # If in Spotlight mode, call spotlight:
-               elsif (1 == $PromptMode) {
-                  $result = spotlight($file1, $file2);
-               }
-
-               # If in NoPrompt mode, call no_prompt:
-               elsif (2 == $PromptMode) {
-                  $result = no_prompt($file1, $file2);
-               }
-
-               # Otherwise, we're in an unknown prompt mode; this is a fatal error, so die:
-               else {
-                  die "Fatal error in \"dedup-files.pl\": Invalid prompt mode in curdire.\n$!\n";
+               switch ($PromptMode) {
+                  case 0 {$result = dup_prompt($file1, $file2)} # DupPrompt mode
+                  case 1 {$result = spotlight ($file1, $file2)} # Spotlight mode
+                  case 2 {$result = no_prompt ($file1, $file2)} # NoPrompt  mode
+                  # Otherwise, we're in an unknown prompt mode; this is a fatal error, so die:
+                  else {die "Fatal error in \"dedup-files.pl\": Invalid prompt mode in curdire.\n$!\n"}
                }
 
                # We just finished processing a pair of identical files.
                # The result of that was "ignored", "deleted", "failed", "error", "exit", or "simulated".
                # Increment counters (and maybe exit program) accordingly:
-               if ('ignored' eq $result) {
-                  ++$ignodirec;
-                  ++$ignocount;
-               }
-               elsif ('deleted' eq $result) {
-                  ++$deledirec;
-                  ++$delecount;
-               }
-               elsif ('failed' eq $result) {
-                  ++$faildirec;
-                  ++$failcount;
-               }
-               elsif ('error' eq $result) {
-                  ++$errodirec;
-                  ++$errocount;
-               }
-               elsif ('exit' eq $result) {
-                  dire_stats;
-                  tree_stats;
-                  exit 0;
-               }
-               elsif ('simulated' eq $result) {
-                  ++$simudirec;
-                  ++$simucount;
-               }
-               # Otherwise, we received an unknown result code; this is a fatal error, so die:
-               else {
-                  die "Fatal error in \"dedup-files.pl\": Invalid result code in curdire.\n$!\n";
+               switch ($result) {
+                  case 'ignored'   {++$ignodirec;++$ignocount}
+                  case 'deleted'   {++$deledirec;++$delecount}
+                  case 'failed'    {++$faildirec;++$failcount}
+                  case 'error'     {++$errodirec;++$errocount}
+                  case 'exit'      {dire_stats;tree_stats;exit 0}
+                  case 'simulated' {++$simudirec;++$simucount}
+                  # Otherwise, we received an unknown result code; this is a fatal error, so die:
+                  else {die "Fatal error in \"dedup-files.pl\": Invalid result code in curdire.\n$!\n"}
                }
             } # end if identical
             else { # if not identical
@@ -458,7 +500,7 @@ sub curdire {
       } # end FIRST file loop
    } # end SIZE group loop
 
-   if ($Db) {
+   if ($Debug) {
       # Did we ACTUALLY mark any files as being deleted or failed?
       foreach my $size (sort {$b<=>$a} keys %{$curdirfiles}) {
          # Say the names of all of the files in this size group:
@@ -616,7 +658,7 @@ sub erase_older ($file1, $file2) {
 # or if debugging, just SIMULATE unlinking the file:
 sub unlink_file ($file) {
    # If debugging, just go through the motions:
-   if ( $Db ) {
+   if ( $Debug ) {
       say "Simulation: Would have unlinked file $file->{Name}";
       $file->{Name} = "***SIMULATED***";
       return 'simulated';
@@ -660,11 +702,14 @@ sub print_two ($file1, $file2) {
    return 1;
 } # end sub print_two
 
+# Print messages only if debugging:
+sub BLAT ($string) {if ($Debug) {say STDERR $string}}
+
 # Print statistics for current directory:
 sub dire_stats {
    say '';
    say 'Statistics for this directory:';
-   printf("Processed %6d files.\n",                    $regfdirec);
+   printf("Processed %6d files.\n",                    $filedirec);
    printf("Compared  %6d pairs of files.\n",           $compdirec);
    printf("Found     %6d pairs of duplicate files.\n", $dupldirec);
    printf("Ignored   %6d pairs of duplicate files.\n", $ignodirec);
@@ -673,7 +718,7 @@ sub dire_stats {
    printf("Suffered  %6d errors.\n",                   $errodirec);
    printf("Simulated %6d file deletions.\n",           $simudirec);
    # Zero all per-directory counters here so they don't accumulate garbage between calls to curdire:
-   $regfdirec = 0;
+   $filedirec = 0;
    $compdirec = 0;
    $dupldirec = 0;
    $ignodirec = 0;
@@ -689,7 +734,7 @@ sub tree_stats {
    say '';
    say 'Statistics for this tree:';
    printf("Navigated %6d directories.\n",              $direcount);
-   printf("Processed %6d files.\n",                    $regfcount);
+   printf("Processed %6d files.\n",                    $filecount);
    printf("Compared  %6d pairs of files.\n",           $compcount);
    printf("Found     %6d pairs of duplicate files.\n", $duplcount);
    printf("Ignored   %6d pairs of duplicate files.\n", $ignocount);
@@ -697,18 +742,6 @@ sub tree_stats {
    printf("Failed    %6d file deletion attempts.\n",   $failcount);
    printf("Suffered  %6d errors.\n",                   $errocount);
    printf("Simulated %6d file deletions.\n",           $simucount);
-   # As of 2023-08-28, it's impossible for this function to be called twice within one run of this program,
-   # and hence there's currently no need to zero the per-tree counters here. HOWEVER, I do so here anyway,
-   # in case this subroutine ever needs to be called multiple times in future versions of this program:
-   $direcount = 0;
-   $regfcount = 0;
-   $compcount = 0;
-   $duplcount = 0;
-   $ignocount = 0;
-   $delecount = 0;
-   $failcount = 0;
-   $errocount = 0;
-   $simucount = 0;
    return 1;
 } # end sub tree_stats
 
@@ -716,9 +749,9 @@ sub tree_stats {
 sub error ($NA) {
    print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
-   Error: you typed $NA arguments, but this program takes at most 1 argument,
-   which, if present, must be a Perl-Compliant Regular Expression describing
-   which file names to check for duplicates. Help follows:
+   Error: you typed $NA arguments, but this program takes at most 2 optional
+   arguments (file-selection regexp and a file-selection predicate).
+   Help follows:
    END_OF_ERROR
    return 1;
 } # end sub error
@@ -743,7 +776,7 @@ sub help {
 
    Option:             Meaning:
    -h or --help        Print help and exit.
-   -e or --debug       Print diagnostics and simulate renames.
+   -e or --debug       Print diagnostics and simulate deletions.
    -l or --local       DON'T recurse subdirectories. (DEFAULT)
    -r or --recurse     DO    recurse subdirectories.
    -s or --spotlight   Enter Spotlight mode (erase gibberish names).
@@ -807,18 +840,59 @@ sub help {
    not what you want to do, it's better to run dedup-files in interactive mode.
 
    -------------------------------------------------------------------------------
-   Description of arguments:
+   Simulation Mode:
 
-   In addition to options, this program can take one optional argument which, if
-   present, must be a Perl-Compliant Regular Expression specifying which items to
-   process. To specify multiple patterns, use the | alternation operator.
-   To apply pattern modifier letters, use an Extended RegExp Sequence.
-   For example, if you want to search for items with names containing "cat",
-   "dog", or "horse", title-cased or not, you could use this regexp:
-   '(?i:c)at|(?i:d)og|(?i:h)orse'
+   If you use a "-e" or "--debug" option, this program not only prints diagnostics
+   but also goes into "Simulation Mode". Everything will work normally right up to
+   the point where this program would have deleted a file, then it just SIMULATES
+   the deletion without actually deleting anything.
+
+   Thus "--debug" is not primarily for debugging this program (leave that to me),
+   but rather, for debugging the way you go about finding and deleting files.
+   Are you unsure what deletions would result from a certain set of options and
+   arguments? Then use "--debug" Simulation Mode to find out without risking
+   unwanted file deletions.
+
+   -------------------------------------------------------------------------------
+   Description of Arguments:
+
+   In addition to options, this program can take 1 or 2 optional arguments.
+
+   Arg1 (OPTIONAL), if present, must be a Perl-Compliant Regular Expression
+   specifying which file names to process. To specify multiple patterns, use the
+   | alternation operator. To apply pattern modifier letters, use an Extended
+   RegExp Sequence. For example, if you want to process items with names
+   containing "cat", "dog", or "horse", title-cased or not, you could use this
+   regexp: '(?i:c)at|(?i:d)og|(?i:h)orse'
    Be sure to enclose your regexp in 'single quotes', else BASH may replace it
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
+
+   Arg2 (OPTIONAL), if present, must be a boolean predicate using Perl
+   file-test operators. The expression must be enclosed in parentheses (else
+   this program will confuse your file-test operators for options), and then
+   enclosed in single quotes (else the shell won't pass your expression to this
+   program intact). Here are some examples of valid and invalid predicate arguments:
+   '(-d && -l)'  # VALID:   Finds symbolic links to directories
+   '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
+   '(-b)'        # VALID:   Finds block special files
+   '(-c)'        # VALID:   Finds character special files
+   '(-S || -p)'  # VALID:   Finds sockets and pipes.  (S must be CAPITAL S   )
+    '-d && -l'   # INVALID: missing parentheses       (confuses program      )
+    (-d && -l)   # INVALID: missing quotes            (confuses shell        )
+     -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
+
+   Arguments and options may be freely mixed, but the arguments must appear in
+   the order Arg1, Arg2 (RegExp first, then File-Type Predicate); if you get them
+   backwards, they won't do what you want, as most predicates aren't valid regexps
+   and vice-versa.
+
+   NOTE: You can't "skip" Arg1 and go straight to Arg2 because your intended Arg2
+   would be construed as Arg1! But you can "bypass" Arg1 by using '.+' meaning
+   "some characters" which will match every file name.
+
+   A number of arguments greater than 2 will cause this program to print an error
+   message and abort.
 
    Happy duplicate file removing!
    Cheers,

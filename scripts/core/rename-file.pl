@@ -17,13 +17,12 @@
 # Wed Aug 14, 2024: Removed unnecessary "use" statements.
 # Wed Mar 19, 2025: Removed "use RH::Dir" (now using only built-in Perl "rename"). Removed "-C63" (now using
 #                   "feed-through" approach to Unicode/UTF-8). Removed "use utf8" (no non-ASCII chars).
-# Sun May 04, 2025: Now using "utf8" and shebang "#!/usr/bin/env -S perl -C63" for compatibility with
-#                   Unicode and Cygwin. Now using "RH::Dir
+# Mon May 05, 2025: Reverted to "-C63", "utf8", and "Encode::encode_utf8" for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
 use utf8;
-use Encode;
+use Encode 'encode_utf8';
 if ( 2 != scalar(@ARGV) || ! -e encode_utf8($ARGV[0]) || -e encode_utf8($ARGV[1]) ) {
    warn "Error: \"rename-file.pl\" needs exactly two arguments.\n"
        ."The first  argument must be a path to an existing file.\n"

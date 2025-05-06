@@ -49,6 +49,7 @@
 #                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
 # Fri May 02, 2025: Reverted "utf8::all" -> "utf8" and "Cwd::utf8" -> "Cwd", due to Cygwin issues.
 #                   Reverted shebang to "#!/usr/bin/env -S perl -C63".
+# Mon May 05, 2025: Fixed several stats-related bugs.
 ##############################################################################################################
 
 use v5.36;

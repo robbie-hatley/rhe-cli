@@ -32,8 +32,7 @@
 # Fri Apr 25, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d" and "e". Added [-c|--correct] option, telling program to correct the
 #                   file-name suffix of each copied file if necessary.
-# Sun May 04, 2025: Nixed "utf8::all" and "Cwd::utf8" in favor of "utf" and "Cwd". Reverted shebang to
-#                   "#!/usr/bin/env -S perl -C63". Added "d" and "e" back in for Cygwin compatibility.
+# Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 # ======= PRAGMAS AND MODULES: ===============================================================================
@@ -87,7 +86,7 @@ sub help  ; # Print help.
    argv;
 
    # Get current working directory:
-   $cur = d getcwd;
+   $cur = d(getcwd);
 
    # Get FULLY-QUALIFIED versions of source and destination directories by CDing to each, running getcwd,
    # then CDing back to $cur. WARNING: ALWAYS CD BACK TO $cur BEFORE TRYING TO CD TO $src or $dst, BECAUSE

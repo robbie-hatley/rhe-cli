@@ -190,7 +190,7 @@ sub readdir_regexp_utf8    :prototype(;$$$$); # Regexp dir  reader  using opendi
 
 # Section 3, Major Subroutines (code is long and complex):
 sub GetFiles               :prototype(;$$$$); # Get array of filerecords.
-sub GetRegularFilesBySize  :prototype(;$)   ; # Get hash of arrays of same-size filerecords.
+sub GetRegularFilesBySize  :prototype(;$$$) ; # Get hash of arrays of same-size filerecords.
 sub FilesAreIdentical      :prototype($$)   ; # Are two files identical?
 sub RecurseDirs            :prototype(&)    ; # Recursively walk directory tree.
 sub copy_file              :prototype($$;@) ; # Copy a file from source path to destination directory.
@@ -574,9 +574,10 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
 
    # If debugging, print diagnostics:
    if ($Db) {
-      say "IN GetFiles. \$dir    = $dir";
-      say "IN GetFiles. \$target = $target";
-      say "IN GetFiles. \$regexp = $regexp";
+      say "Debug msg in GetFiles: \$dir       = $dir"       ;
+      say "Debug msg in GetFiles: \$target    = $target"    ;
+      say "Debug msg in GetFiles: \$regexp    = $regexp"    ;
+      say "Debug msg in GetFiles: \$predicate = $predicate" ;
    }
 
    if ($dir !~ m/^\//) {
@@ -743,78 +744,27 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
 =head2 GetRegularFilesBySize
 
 Given a file-name regular expression to search for, this subroutine returns a reference to a hash of
-arrays of same-size file records for all matching regular files in the current directory, with the
-outer hash keyed by file size. This sub can take one optional argument which, if present, must be a
-regular expression specifying which regular files to get records for:
+arrays of same-size file records for all matching regular files in a given directory, with the
+outer hash keyed by file size. This sub can take up to three optional arguments: a directory,
+a file-selection regexp, and a file-selection predicate:
 
-GetRegularFilesBySize :prototype(;$) ($regexp = '^.+$')
+   GetRegularFilesBySize ($dir = d(getcwd), $regexp = qr(^.+$)o, $predicate = 1)
 
 This sub is especially useful for programs which compare regular files for identicalness, preperatory to
 making decisions regarding copying or deleting of files. To make such comparisons FAST, this sub stores
 files records in same-file-size arrays and does not collect or return any stats.
 =cut
-sub GetRegularFilesBySize :prototype(;$) ($regexp = '^.+$') {
-   my $cwd    = d(getcwd)                                  ; # Current Working Directory.
-   my $target = 'F'                                        ; # Target is "regular files only".
-   my $path   = ''                                         ; # Path for a file.
-   my $name   = ''                                         ; # Name for a file.
-   my @filepaths   = ()                                    ; # Array of file paths.
-   my %filerecords = ()                                    ; # Hash of file records keyed by size.
-
+sub GetRegularFilesBySize :prototype(;$$$) ($dir = d(getcwd), $regexp = qr(^.+$)o, $predicate = 1) {
    # If debugging, print diagnostics:
    if ($Db) {
-      warn "\nAt top of GetRegularFilesBySize.\n",
-           "Current directory = \"$cwd\".",
-           "Target = \"$target\".",
-           "RegExp = \"$regexp\".";
+      say STDERR "\nDebug msg in GetRegularFilesBySize(), at top:\n"
+                ."\$dir       = $dir\n"
+                ."\$regexp    = $regexp\n"
+                ."\$predicate = $predicate";
    }
-
-   @filepaths = glob_regexp_utf8($cwd, $target, $regexp);
-   # ZEBRA : The following line is wrong! It's not an error to receive no files! Some directories are empty!
-   # or die "Can't read  directory \"$cwd\"\n$!\n";
-
-   # NOTE RH 2025-04-25: I got rid of code here that zeros all of our RH::Dir counters, because they're not
-   # used in this subroutine, only in GetFiles().
-
-   # Iterate through current directory, collecting info on all "regular" files:
-   for $path (@filepaths) {
-      # Get the name of this file from its path:
-      $name = get_name_from_path($path);
-
-      # Get stats for this path:
-      my ($Ldev, $Linode, $Lmode, $Lnlink, $Luid, $Lgid, $Lrdev, $Lsize, $Latime, $Lmtime, $Lctime)
-      = lstat e $path;
-
-      # Get date and time from Lmtime:
-      my @LocalTimeFields = localtime($Lmtime);
-      my $zone = $LocalTimeFields[8] ? 'PDT' : 'PST';
-      my $date = strftime('%F',   @LocalTimeFields);
-      my $time = strftime("%T%Z", @LocalTimeFields);
-
-      # Store file info record for this file in a ref to a hash of refs to arrays of refs to hashes of
-      # file-info records, with outer hash keyed by size. Each new file size found autovivifies a new
-      # "size => array-of-hashes" key/value pair in %filerecords for that file size.
-      push @{$filerecords{$Lsize}},
-      {
-         'Path'   => $path,       # path to file
-         'Name'   => $name,       # name of file
-         'Type'   => 'F',         # always 'F' because regular file
-         'Date'   => $date,       # mod-date of file
-         'Time'   => $time,       # mod-time of file
-         'Dev'    => $Ldev,       # lstat[ 0]
-         'Inode'  => $Linode,     # lstat[ 1]
-         'Mode'   => $Lmode,      # lstat[ 2]
-         'Nlink'  => $Lnlink,     #  stat[ 3]
-         'UID'    => $Luid,       # lstat[ 4]
-         'GID'    => $Lgid,       # lstat[ 5]
-         'Rdev'   => $Lrdev,      # lstat[ 6]
-         'Size'   => $Lsize,      # lstat[ 7]
-         'Atime'  => $Latime,     # lstat[ 8]
-         'Mtime'  => $Lmtime,     # lstat[ 9]
-         'Ctime'  => $Lctime,     # lstat[10]
-         'Target' => 'NO TARGET', # always 'NO TARGET' because regular file
-      }; # end push @{$filerecords{$Lsize}},
-   } # end for (@filepaths)
+   my $files = GetFiles($dir, 'F', $regexp, $predicate);
+   my %filerecords;
+   foreach my $file (@$files) {push @{$filerecords{$file->{Size}}}, $file}
    return \%filerecords;
 } # end sub GetRegularFilesBySize ()
 
@@ -1644,7 +1594,7 @@ sub copy_files :prototype($$;@)
       # cd to source directory and get hash-by-size of files there:
       chdir(e($src)) or die "Couldn't cd to \"$src\".\n";
       $src = d(getcwd);
-      my $ssizes = GetRegularFilesBySize($regexp);
+      my $ssizes = GetRegularFilesBySize($src, $regexp);
 
       # cd back to starting directory:
       chdir(e($startdir)) or die "Couldn't cd to \"$startdir\".\n";
@@ -1652,7 +1602,7 @@ sub copy_files :prototype($$;@)
       # cd to destination directory and get hash-by-size of files there:
       chdir(e($dst)) or die "Couldn't cd to \"$dst\".\n";
       $dst = d(getcwd);
-      my $dsizes = GetRegularFilesBySize($regexp);
+      my $dsizes = GetRegularFilesBySize($dst, $regexp);
 
       # cd back to starting directory:
       chdir(e($startdir)) or die "Couldn't cd to \"$startdir\".\n";
@@ -1828,7 +1778,7 @@ sub move_files :prototype($$;@)
       # cd to source directory and get hash-by-size of files there:
       chdir(e($src)) or die "Couldn't cd to \"$src\".\n";
       $src = d(getcwd);
-      my $ssizes = GetRegularFilesBySize($regexp);
+      my $ssizes = GetRegularFilesBySize($src, $regexp);
 
       # cd back to starting directory:
       chdir(e($startdir)) or die "Couldn't cd to \"$startdir\".\n";
@@ -1836,7 +1786,7 @@ sub move_files :prototype($$;@)
       # cd to destination directory and get hash-by-size of files there:
       chdir(e($dst)) or die "Couldn't cd to \"$dst\".\n";
       $dst = d(getcwd);
-      my $dsizes = GetRegularFilesBySize($regexp);
+      my $dsizes = GetRegularFilesBySize($dst, $regexp);
 
       # cd back to starting directory:
       chdir(e($startdir)) or die "Couldn't cd to \"$startdir\".\n";

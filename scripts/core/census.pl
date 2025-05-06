@@ -35,6 +35,7 @@
 # Tue Mar 04, 2025: Added comments to subroutine predeclarations.
 # Fri May 02, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
+# Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
@@ -43,81 +44,130 @@ use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
+# ======= VARIABLES: =========================================================================================
 
-sub argv       ; # Process @ARGV.
-sub curdire    ; # Process current directory.
-sub dire_stats ; # Print directory statistics.
-sub tree_stats ; # Print tree statistics.
-sub error      ; # Handle errors.
-sub help       ; # Print help.
+# ------- System Variables: ----------------------------------------------------------------------------------
 
-# ======= LEXICAL VARIABLES: =================================================================================
+$" = ', ' ; # Quoted-array element separator = ", ".
 
-# Settings:     Default:    # Meaning of setting:                   Range:        Meaning of default:
-my $Db        = 0         ; # Print diagnostics?                    bool          Don't print diagnostics.
-my $Verbose   = 0         ; # Print entry/stats/exist msgs?         bool          Don't print the messages.
-my $Recurse   = 0         ; # Recurse subdirectories?               bool          Don't recurse.
-my $RegExp    = qr/^.+$/o ; # Regular expression.                   regexp        Process all file names.
-my $Empty     = 0         ; # Show only empty directories?          bool          Show empty AND non-empty.
-my $GB        = 0.0       ; # Show only dirs with >= $GB GB?        non-neg real  Show dirs of all sizes.
-my $Files     = 0         ; # Show only dirs with >= $Files files.  non-neg int   Show dirs of all file counts.
+# ------- Global Variables: ----------------------------------------------------------------------------------
 
-# NOTE: One may be forgiven for thinking that we'd OR together the $GB and $Files predicates, but no, we need
-# to AND them together instead. If you think about it, you'll see why: the defaults already allow all files,
-# so if we OR the restrictions, then neither $GB nor $Files will have any effect at all, because the OTHER
-# restriction will still be at max laxness. So we need to AND them instead; that way, the two restrictions can
-# be used either independently or together.
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+our    $cmpl_beg;                              # Declare compilation begin time.
+BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
+our    $cmpl_end;                              # Declare compilation end   time.
+INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
-# NOTE: There are no $Target or $Predicate variables in this program, because we're interested only in
-# regular files, because those are the files that are using all the storage space, and answering the question
-# "What's using the storage space???" is what this program is all about.
+# ------- Local variables: -----------------------------------------------------------------------------------
 
-# NOTE: When I say "regular files", I mean Perl file-test-operator predicate "-f _ && !-d _ && !-l _".
-# That still allows any of -b -c -p -S -t to be true, but that's OK, because "weird" files can still take-up
-# storage space, and we are interested in tallying ALL files ("weird" or not) that take-up storage space.
+# Settings:     Default:      Meaning of setting:               Range:        Meaning of default:
+my @Opts      = ()        ; # options                           array         Options.
+my @Args      = ()        ; # arguments                         array         Arguments.
+my $Debug     = 0         ; # Debug?                            bool          Don't debug.
+my $Help      = 0         ; # Just print help and exit?         bool          Don't print-help-and-exit.
+my $Verbose   = 0         ; # Print entry/stats/exist msgs?     bool          Don't print the messages.
+my $Recurse   = 0         ; # Recurse subdirectories?           bool          Don't recurse.
+my $RegExp    = qr/^.+$/o ; # Regular expression.               regexp        Process all file names.
+my $Predicate = 1         ; # Boolean predicate.                bool          Process all file types.
+my $Empty     = 0         ; # Show only empty directories?      bool          Show empty AND non-empty.
+my $GB        = 0.0       ; # Show only dirs w >= $GB GB.       non-neg real  Show dirs of all sizes.
+my $Files     = 0         ; # Show only dirs w >= $Files files  non-neg int   Show dirs of all file counts.
+my $OriDir    = d(getcwd) ; # Original directory.               cwd           Cwd on program entry.
+
+# NOTE: There is no "$Target" in this program, because we're only interested in files that use storage space.
+# Those are files obeying file-test-operator predicate "-f _ && !-d _ && !-l _". That still allows any of
+# -b -c -p -S -t to be true, but that's OK, because "weird" files can still take-up storage space, and we
+# are interested in tallying ALL files ("weird" or not) that take-up storage space.
 
 # Counters:
 my $direcount = 0; # Count of directories processed.
 my $filecount = 0; # Count of files       processed.
 my $gigacount = 0; # Count of gigabytes   processed.
 
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
+
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub dstats  ; # Print directory statistics.
+sub tstats  ; # Print tree statistics.
+sub error   ; # Handle errors.
+sub help    ; # Print help.
+
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   # Set time and program variables:
+   # Start execution timer:
    my $t0 = time;
-   my $pname = substr $0, 1 + rindex $0, '/';
+   my @s0 = localtime($t0);
 
-   # Process @ARGV:
+   # Process @ARGV and set settings:
    argv;
 
-   # Print entry message if being terse or verbose:
+   # Print program entry message if being terse or verbose:
    if ( $Verbose >= 1 ) {
-      say STDERR '';
-      say STDERR "Now entering program \"$pname\"."  ;
-      say STDERR "\$Db      = $Db"                   ;
-      say STDERR "\$Verbose = $Verbose"              ;
-      say STDERR "\$Recurse = $Recurse"              ;
-      say STDERR "\$RegExp  = $RegExp"               ;
-      say STDERR "Minimum dir size  = ${GB}GB."      ;
-      say STDERR "Minimum dir files = $Files files." ;
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
    }
 
-   # Print header to STDOUT regardless of verbosity level:
-   say STDOUT 'Storage space in GB used by each directory in this tree:';
+   # Print compilation time if being verbose:
+   if ( $Verbose >= 2 ) {
+      printf STDERR "Compilation time was %.3fms\n\n",
+                    1000 * ($cmpl_end - $cmpl_beg);
+   }
 
-   # Process current directory (and all subdirectories if recursing):
-   $Recurse and RecurseDirs {curdire} or curdire;
-
-   # Print stats:
-   tree_stats;
-
-   # Print exit message if being terse or verbose
+   # Print basic settings if being terse or verbose:
    if ( $Verbose >= 1 ) {
-      say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\".";
-      printf STDERR "Execution time was %.3fms.", 1000 * (time - $t0);
+      say STDERR 'Basic settings:';
+      say STDERR "OriDir    = $OriDir";
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
+      say STDERR "Minimum dir size  = ${GB}GB."      ;
+      say STDERR "Minimum dir files = $Files files." ;
+      say STDERR '';
+   }
+
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   if ( $Debug >= 1 ) {
+      say STDERR 'Debug: Values of variables after processing @ARGV:';
+      say STDERR "pname     = $pname";
+      say STDERR "cmpl_beg  = $cmpl_beg";
+      say STDERR "cmpl_end  = $cmpl_end";
+      say STDERR "Options   = (@Opts)";
+      say STDERR "Arguments = (@Args)";
+      say STDERR "Debug     = $Debug";
+      say STDERR "Help      = $Help";
+      say STDERR "Verbose   = $Verbose";
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
+      say STDERR "Empty     = $Empty";
+      say STDERR "GB        = $GB";
+      say STDERR "Files     = $Files";
+      say STDERR "OriDir    = $OriDir";
+      say STDERR '';
+   }
+
+   # Process current directory (and all subdirectories if recursing) and print stats,
+   # unless user requested help, in which case just print help:
+   if ($Help) {help}
+   else {
+      if ($Recurse) {RecurseDirs {curdire}}
+      else {curdire}
+      tstats
+   }
+
+   # Stop execution timer:
+   my $t1 = time;
+   my @s1 = localtime($t1);
+
+   # Print exit message if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      my $te = $t1 - $t0; my $ms = 1000 * $te;
+      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                    $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
+      printf STDERR "Execution time was %.3fms.\n", $ms;
    }
 
    # Exit program, returning success code "0" to caller:
@@ -128,55 +178,56 @@ my $gigacount = 0; # Count of gigabytes   processed.
 
 sub argv {
    # Get options and arguments:
-   my @opts = ();            # options
-   my @args = ();            # arguments
    my $end = 0;              # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {
-      /^--$/ && !$end        # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1           # so if we see that, then set the "end-of-options" flag
+   for ( @ARGV ) {           # For each element of @ARGV:
+      !$end                  # If we have not yet reached end-of-options,
+      && /^--$/              # and we see an "--" option,
+      and $end = 1           # set the "end-of-options" flag
+      and push @Opts, '--'   # and push "--" to @Opts
       and next;              # and skip to next element of @ARGV.
-      !$end                  # If we haven't yet reached end-of-options,
-      && ( /^-(?!-)$s+$/     # and if we get a valid short option
+      !$end                  # If we have not yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we see a valid short option
       ||  /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @opts, $_     # then push item to @opts
-      or  push @args, $_;    # else push item to @args.
+      and push @Opts, $_     # then push item to @Opts
+      and next;              # and skip to next element of @ARGV.
+      push @Args, $_;        # Otherwise, push item to @Args.
    }
 
    # Process options:
-   for ( @opts ) {
-      /^-$s*h/ || /^--help$/      and help and exit 777 ;
-      /^-$s*d/ || /^--debug$/     and $Db      =  1     ; # Default is 0.
-      /^-$s*q/ || /^--quiet$/     and $Verbose =  0     ; # Default is 0.
-      /^-$s*v/ || /^--verbose$/   and $Verbose =  1     ;
-      /^-$s*l/ || /^--local$/     and $Recurse =  0     ; # Default is 0.
-      /^-$s*r/ || /^--recurse$/   and $Recurse =  1     ;
-      /^-$s*e/ || /^--empty$/     and $Empty   =  1     ;
-      if ( $_ =~ m/^--gb=(\d+\.?\d*)$/ ) {
-         $GB = $1;
-         say "set \$GB = $1" if $Db;
-      }
-      if ( $_ =~ m/^--files=(\d+)$/ ) {
-         $Files = $1;
-         say "set \$Files = $1" if $Db;
-      }
-   }
-   if ( $Db ) {
-      say STDERR '';
-      say STDERR "\$opts = (", join(', ', map {"\"$_\""} @opts), ')';
-      say STDERR "\$args = (", join(', ', map {"\"$_\""} @args), ')';
+   for ( @Opts ) {
+      /^-$s*h/ || /^--help$/    and help and exit 777 ;
+      /^-$s*d/ || /^--debug$/   and $Debug   =  1     ; # Default is 0.
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0     ; # Default is 0.
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1     ;
+      /^-$s*v/ || /^--verbose$/ and $Verbose =  2     ;
+      /^-$s*l/ || /^--local$/   and $Recurse =  0     ; # Default is 0.
+      /^-$s*r/ || /^--recurse$/ and $Recurse =  1     ;
+      /^-$s*e/ || /^--empty$/   and $Empty   =  1     ; # Default is 0.
+      /^--gb=(\d+\.?\d*)$/      and $GB      = $1     ; # Default is 0.0.
+      /^--files=(\d+)$/         and $Files   = $1     ;
    }
 
-   # Process arguments:
-   my $NA = scalar(@args);     # Get number of arguments.
-   if ( $NA >= 1 ) {           # If number of arguments >= 1,
-      $RegExp = qr/$args[0]/;  # set $RegExp to $args[0].
+   # Get number of arguments:
+   my $NA = scalar(@Args);
+
+   # If user typed more than 2 arguments, and we're not debugging,
+   # then print error and help messages and exit:
+   if ( $NA >= 3 && !$Debug ) {  # If number of arguments >= 3 and we're not debugging,
+      error($NA);                # print error message,
+      help;                      # and print help message,
+      exit 666;                  # and exit, returning The Number Of The Beast.
    }
-   if ( $NA >= 2 && !$Db ) {   # If number of arguments >= 2 and we're not debugging,
-      error($NA);              # print error message,
-      help;                    # and print help message,
-      exit 666;                # and exit, returning The Number Of The Beast.
+
+   # First argument, if present, is a file-selection regexp:
+   if ( $NA >= 1 ) {             # If number of arguments >= 1,
+      $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
+   }
+
+   # Second argument, if present, is a file-selection predicate:
+   if ( $NA >= 2 ) {             # If number of arguments >= 2,
+      $Predicate = $Args[1];     # set $Predicate to $Args[1].
    }
 
    # Return success code 1 to caller:
@@ -185,28 +236,28 @@ sub argv {
 
 # Process current directory:
 sub curdire {
-   # Get CWD:
-   my $curdir = d getcwd;
+   # Get current working directory:
+   my $cwd = d(getcwd);
 
-   # Get ref to array of refs to hashes of info on all regular files in current working directory:
-   my $curdirfiles = GetFiles($curdir, 'F', $RegExp);
+   # Get ref to array of refs to hashes of info on all regular files in current working directory which match
+   # given regexp and predicate:
+   my $curdirfiles = GetFiles($cwd, 'F', $RegExp, $Predicate);
    # Note: these files might also be b,c,p,S,t, but those can take-up space also, and we're interested in
    # tallying ALL storage space used, including storage space used by weird files.
 
-   # Tally bytes of data stored in all regular files in current directory:
+   # Tally all bytes of data stored in files in current directory:
    my $bytes = 0;
-   foreach my $file ( @$curdirfiles ) {
-      $bytes += $file->{Size};
-   }
+   foreach my $file (@$curdirfiles) {$bytes += $file->{Size}}
    my $gigabytes = $bytes/1000000000.0;
 
    # If in "show empties only" mode,
    # then only print directories which contain zero regular files:
-   if ($Empty)
-   {
+   if ($Empty) {
       if ( 0 == $RH::Dir::totfcount ) {
          ++$direcount;
-         say STDOUT "Empty: $curdir";
+         $filecount += $RH::Dir::totfcount;
+         $gigacount += $gigabytes;
+         printf STDOUT "%7d Files %9.3fGB: %s\n", $RH::Dir::totfcount, $gigabytes, $cwd;
       }
       else {
          ; # Do nothing.
@@ -214,13 +265,18 @@ sub curdire {
    }
 
    # Otherwise, we're NOT in "show empties only" mode, so display info for this directory
-   # if it contains at-least $Files files or at-least $GB gigabytes of data:
+   # if it contains at-least $Files files AND at-least $GB gigabytes of data.
+   # (NOTE: One may be forgiven for thinking that I'd OR together the $GB and $Files predicates, but no, we
+   # need to AND them together instead. If you think about it, you'll see why: the defaults already allow all
+   # files, so if we OR the restrictions, then neither $GB nor $Files will have any effect at all, because the
+   # OTHER restriction will still be at max laxness. So we need to AND them instead; that way, the two
+   # restrictions can be used either independently or together.)
    else {
       if ($RH::Dir::totfcount >= $Files && $gigabytes >= $GB) {
          ++$direcount;
          $filecount += $RH::Dir::totfcount;
          $gigacount += $gigabytes;
-         printf STDOUT "%7d Files %9.3fGB: %s\n", $RH::Dir::totfcount, $gigabytes, $curdir;
+         printf STDOUT "%7d Files %9.3fGB: %s\n", $RH::Dir::totfcount, $gigabytes, $cwd;
       }
       else {
          ; # Do nothing.
@@ -229,13 +285,13 @@ sub curdire {
    return 1;
 } # end sub curdire
 
-sub tree_stats {
+sub tstats {
    say STDERR '';
-   say STDERR "Found $direcount directories matching given files limit and size limit.";
-   say STDERR "Those directories contain $filecount regular files matching given regexp,";
+   say STDERR "Found $direcount directories matching given limits.";
+   say STDERR "Those directories contain $filecount regular files";
    say STDERR "and take-up $gigacount GB of storage space.";
    return 1;
-} # end sub tree_stats
+} # end sub tstats
 
 sub error ($NA) {
    print ((<<'   END_OF_ERROR') =~ s/^   //gmr);
@@ -270,8 +326,9 @@ sub help {
    Option:            Meaning:
    -h or --help       Print help and exit.
    -d or --debug      Print diagnostics.
-   -q or --quiet      Don't print entry/exit/stats messages.             (DEFAULT)
-   -v or --verbose    Do    print entry/exit/stats messages.
+   -q or --quiet      Don't print     entry/exit/stats messages.         (DEFAULT)
+   -t or --terse      Print limited   entry/exit/stats messages.
+   -v or --verbose    Prtnt exuberant entry/exit/stats messages.
    -l or --local      Don't recurse subdirectories.                      (DEFAULT)
    -r or --recurse    Do    recurse subdirectories.
    -e or --empty      Only display directories containing 0 regular files.
@@ -286,8 +343,8 @@ sub help {
 
    If both "--gb=" and "--files=" are BOTH used, they are logically ANDed
    together. So if you command "census.pl --gb=1.3 --files=500", then
-   census.pl will print info on any directories which contain either
-   1.3GB-or-more of content OR 500+ files.
+   census.pl will print info on any directories which contain both
+   1.3GB-or-more of content AND 500+ files.
 
    If "-e|--empty", "--gb=", or "--files=" are NOT used, then this program prints
    info on ALL directories in the directory tree descending from the cwd.
@@ -304,9 +361,9 @@ sub help {
    All options not listed above are ignored.
 
    -------------------------------------------------------------------------------
-   Description of arguments:
+   Description of Arguments:
 
-   In addition to options, this program can take optional argument.
+   In addition to options, this program can take 1 or 2 optional arguments.
 
    Arg1 (OPTIONAL), if present, must be a Perl-Compliant Regular Expression
    specifying which file names to process. To specify multiple patterns, use the
@@ -318,11 +375,33 @@ sub help {
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
 
-   A number of arguments other than 0 or 1 will cause this program to print an
-   error message and this help message and exit.
+   Arg2 (OPTIONAL), if present, must be a boolean predicate using Perl
+   file-test operators. The expression must be enclosed in parentheses (else
+   this program will confuse your file-test operators for options), and then
+   enclosed in single quotes (else the shell won't pass your expression to this
+   program intact). Here are some examples of valid and invalid predicate arguments:
+   '(-d && -l)'  # VALID:   Finds symbolic links to directories
+   '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
+   '(-b)'        # VALID:   Finds block special files
+   '(-c)'        # VALID:   Finds character special files
+   '(-S || -p)'  # VALID:   Finds sockets and pipes.  (S must be CAPITAL S   )
+    '-d && -l'   # INVALID: missing parentheses       (confuses program      )
+    (-d && -l)   # INVALID: missing quotes            (confuses shell        )
+     -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
+
+   Arguments and options may be freely mixed, but the arguments must appear in
+   the order Arg1, Arg2 (RegExp first, then File-Type Predicate); if you get them
+   backwards, they won't do what you want, as most predicates aren't valid regexps
+   and vice-versa.
+
+   NOTE: You can't "skip" Arg1 and go straight to Arg2 because your intended Arg2
+   would be construed as Arg1! But you can "bypass" Arg1 by using '.+' meaning
+   "some characters" which will match every file name.
+
+   A number of arguments greater than 2 will cause this program to print an error
+   message and abort.
 
    Happy directory storage-space-usage reporting!
-
    Cheers,
    Robbie Hatley,
    programmer.

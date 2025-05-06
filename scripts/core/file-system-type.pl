@@ -13,11 +13,13 @@
 # Thu Mar 06, 2024: Simplified. Reduced min ver from "5.36" to "5.00".
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
+# Mon May 05, 2025: Reverted to "-C63", "utf8", "Cwd", "Encode::decode_utf8" for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
 use utf8;
 use Cwd;
+use Encode 'decode_utf8';
 use Filesys::Type 'fstype';
 
 sub help {
@@ -34,6 +36,6 @@ for (@ARGV) {
 }
 
 # Otherwise, print the file-system type of the current working directory:
-my $cwd = d getcwd;
+my $cwd = decode_utf8(getcwd);
 my $fst = fstype($cwd);
-print "$fst\n";
+print "File system time for directory \"$cwd\" is \"$fst\".\n";
