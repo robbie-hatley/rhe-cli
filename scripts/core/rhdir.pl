@@ -120,13 +120,13 @@ $Targets{A} = "All Directory Entries";
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv    ; # Process @ARGV.
-sub curdire ; # Process current directory.
+sub argv       ; # Process @ARGV.
+sub curdire    ; # Process current directory.
 sub dir_stats  ; # Print per-directory statistics.
 sub tree_stats ; # Print   per-tree    statistics.
-sub BLAT    ; # Print messages only if debugging.
-sub error   ; # Handle errors.
-sub help    ; # Print help and exit.
+sub BLAT       ; # Print messages only if debugging.
+sub error      ; # Handle errors.
+sub help       ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
@@ -374,31 +374,30 @@ sub curdire {
 sub dir_stats ($curdir, $nf) {
    if ( $Verbose >= 1 ) {
       say    STDERR '';
-      say    STDERR "Statistics for running \"$pname\" on \"$OriDir\" directory tree:";
-      say    STDERR "Navigated $direcount directories. Found $filecount files matching";
-      say    STDERR "target \"$Target\", regexp \"$RegExp\", and predicate \"$Predicate\".";
+      say    STDERR "Stats for directory \"$curdir\":";
+      say    STDERR "Found $nf files matching given target, regexp, and predicate.";
    }
 
    if ( $Verbose >= 2) {
       say    STDERR '';
-      say    STDERR 'Directory entries encountered in this tree included:';
-      printf STDERR "%7u total files\n",                            $totfcount;
-      printf STDERR "%7u nonexistent files\n",                      $noexcount;
-      printf STDERR "%7u tty files\n",                              $ottycount;
-      printf STDERR "%7u character special files\n",                $cspccount;
-      printf STDERR "%7u block special files\n",                    $bspccount;
-      printf STDERR "%7u sockets\n",                                $sockcount;
-      printf STDERR "%7u pipes\n",                                  $pipecount;
-      printf STDERR "%7u symbolic links to nowhere\n",              $brkncount;
-      printf STDERR "%7u symbolic links to directories\n",          $slkdcount;
-      printf STDERR "%7u symbolic links to non-directories\n",      $linkcount;
-      printf STDERR "%7u symbolic links to weirdness\n",            $weircount;
-      printf STDERR "%7u directories\n",                            $sdircount;
-      printf STDERR "%7u regular files with  > 1 hard links\n",     $hlnkcount;
-      printf STDERR "%7u regular files with == 1 hard links\n",     $regfcount;
-      printf STDERR "%7u regular files with == 0 hard links\n",     $orphcount;
-      printf STDERR "%7u regular files with  < 0 hard links\n",     $zombcount;
-      printf STDERR "%7u files of unknown type\n",                  $unkncount;
+      say    STDERR 'Entries encountered in this directory included:';
+      printf STDERR "%7u total files\n",                        $RH::Dir::totfcount;
+      printf STDERR "%7u nonexistent files\n",                  $RH::Dir::noexcount;
+      printf STDERR "%7u tty files\n",                          $RH::Dir::ottycount;
+      printf STDERR "%7u character special files\n",            $RH::Dir::cspccount;
+      printf STDERR "%7u block special files\n",                $RH::Dir::bspccount;
+      printf STDERR "%7u sockets\n",                            $RH::Dir::sockcount;
+      printf STDERR "%7u pipes\n",                              $RH::Dir::pipecount;
+      printf STDERR "%7u symbolic links to nowhere\n",          $RH::Dir::brkncount;
+      printf STDERR "%7u symbolic links to directories\n",      $RH::Dir::slkdcount;
+      printf STDERR "%7u symbolic links to non-directories\n",  $RH::Dir::linkcount;
+      printf STDERR "%7u symbolic links to weirdness\n",        $RH::Dir::weircount;
+      printf STDERR "%7u directories\n",                        $RH::Dir::sdircount;
+      printf STDERR "%7u regular files with  > 1 hard links\n", $RH::Dir::hlnkcount;
+      printf STDERR "%7u regular files with == 1 hard links\n", $RH::Dir::regfcount;
+      printf STDERR "%7u regular files with == 0 hard links\n", $RH::Dir::orphcount;
+      printf STDERR "%7u regular files with  < 0 hard links\n", $RH::Dir::zombcount;
+      printf STDERR "%7u files of unknown type\n",              $RH::Dir::unkncount;
    }
    return 1;
 } # end sub dir_stats ($curdir)
