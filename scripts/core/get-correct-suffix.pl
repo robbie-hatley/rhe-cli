@@ -16,6 +16,7 @@
 #                   and "warnings" (subsumed into "use v5.36;"). Got rid of "RETURN_ON_ERROR" (no, keep
 #                   processing). Over-wrote get_correct_suffix() with the version from RH::Dir to get latest
 #                   updates. Copied is_data_file() and is_meta_file() from RH::Dir.
+# Tue May 06, 2025: Clarified "assumed" types vs "unknown" types.
 ##############################################################################################################
 
 use v5.36;
@@ -173,14 +174,16 @@ sub get_correct_suffix ($path) {
       say STDERR "\$suff = $suff";
    }
 
-   # Return an error code unless $path points to an existing "data file" (non-directory, non-link
-   # regular file which we can read data from):
-   return '***ERROR***' unless is_data_file($path);
+   # If file is not a "data file" (non-directory, non-link regular file which we can read data from),
+   # then we can't assign a type:
+   if ( ! is_data_file($path) ) {
+      return 'File is not a data file, so there is no meaningful way to assign a type.';
+   }
 
    # If this is a "meta" file (hidden, desktop, browse, thumbnails, etc), return old suffix,
    # else we will end up discarding valid type info and mis-labeling the file:
    if ( is_meta_file($path) ) {
-      return $suff;
+      return 'File is a meta file; assuming original suffix is correct (unable to verify).';
    }
 
    # Try to determine the correct suffix using the checktype_filename() method from module "File::Type":
@@ -340,8 +343,8 @@ sub get_correct_suffix ($path) {
 
    # If we get to here, we've failed to definitively determine the correct suffix for-sure, so return the
    # original suffix, unless it was blank, in which case return '.unk':
-   $suff eq ''                                             and return '.unk'    # File of unknown type.
-                                                            or return $suff   ; # Return original suffix.
+   $suff eq '' and return 'File is of unknown type.'
+   or return 'Assuming original suffix is correct (unable to verify).';
 } # end sub get_correct_suffix
 
 # Give user some help:

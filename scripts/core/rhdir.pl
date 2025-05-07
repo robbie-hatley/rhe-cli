@@ -230,7 +230,7 @@ sub argv {
    # Process options:
    for ( @Opts ) {
       /^-$s*h/ || /^--help$/    and $Help    =  1  ;
-      /^-$s*e/ || /^--debug$/   and $Debug   =  1 and RH::Dir::debug('yEs');
+      /^-$s*e/ || /^--debug$/   and $Debug   =  1 and RH::Dir::debug('on');
       /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default is "be quiet".
       /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;

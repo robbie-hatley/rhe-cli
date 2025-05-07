@@ -24,7 +24,7 @@
 # Thu Apr 03, 2025: Increased min ver from "5.00" to "5.16" to get "say". Now using CPAN modules "utf8::all"
 #                   and "Cwd::utf8". Got rid of "d" and "e". Shebang = "#!/usr/bin/env perl".
 # Sun Apr 27, 2025: Increased min ver from "5.16" to "5.36" to get automatic "strict" and "warnings".
-# Mon May 05, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
+# Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
@@ -49,8 +49,8 @@ if ( @ARGV ) {
       warn "Couldn't chdir to directory \"$_\".\n"
       and (chdir e($starting_directory) or die "Couldn't chdir to directory \"$starting_directory\".\n")
       and next;
-      RecurseDirs {say d(getcwd)};
-           chdir e($starting_directory) or die "Couldn't chdir to directory \"$starting_directory\".\n";
+      RecurseDirs {say d(getcwd)}
+      and (chdir e($starting_directory) or die "Couldn't chdir to directory \"$starting_directory\".\n");
    }
 }
 else {

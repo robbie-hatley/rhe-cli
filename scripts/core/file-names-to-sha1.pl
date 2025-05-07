@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -19,11 +19,12 @@
 #                   only non-meta regular files, but now uses both regexp and predicate. Increased min ver
 #                   from "v5.32" to "v5.36". Got rid of all prototypes. Added signatures.
 # Thu Apr 03, 2025: Now using "utf8::all" and "Cwd::utf8". Got rid of "cwd_utf8", "d", "e".
+# Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 use RH::Util;
@@ -56,8 +57,8 @@ my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 # No "$Target" variable because it doesn't make sense to get the SHA1 data hash of a non-data object.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
-my $OriDir    = cwd       ; # Original Directory.       dir       Current working directory.
 my $Yes       = 0         ; # Don't prompt; just do it. bool      Be safe: ask user.
+my $OriDir    = cwd       ; # Original Directory.       cwd       Current working directory.
 
 # Counters:
 my $direcount = 0; # Count of directories navigated.
@@ -215,21 +216,10 @@ sub argv {
 
 # Process current directory:
 sub curdire {
-   # Increment directory counter:
    ++$direcount;
-
-   # Get current working directory:
-   my $cwd = cwd;
-
-   # Announce current working directory if being verbose:
-   if ( $Verbose >= 2 ) {
-      say STDERR "\nDirectory # $direcount: $cwd\n";
-   }
-
-   # Get sorted list of paths in $cwd matching $Target, $RegExp, and $Predicate:
+   my $cwd = d(getcwd);
+   say STDOUT "\nDir # $direcount: $cwd\n";
    my @paths = sort {$a cmp $b} glob_regexp_utf8($cwd, 'F', $RegExp, $Predicate);
-
-   # Send each matching path to curfile:
    foreach my $path (@paths) {
       # Bypass all non-data files (dirs, links, pipes, sockets, etc):
       next if !is_data_file($path);
@@ -243,9 +233,7 @@ sub curdire {
 
 # Process current file.
 sub curfile ($path) {
-   # Increment file counter:
    ++$filecount;
-   # Get old and new file names:
    my $oldname = get_name_from_path($path);
    my $newname = hash($path, 'sha1', 'name');
    if ( '***ERROR***' eq $newname ) {

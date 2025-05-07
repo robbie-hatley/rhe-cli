@@ -406,7 +406,7 @@ sub stats {
 sub error ($NA) {
    print STDERR ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
-   Error: you typed $NA arguments, but this program takes at most
+   Error: you typed $NA arguments, but \"$pname\" takes at most
    2 arguments (an optional file-selection regexp and an optional
    file-selection predicate). Help follows.
    END_OF_ERROR

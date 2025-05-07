@@ -19,7 +19,7 @@
 #                   to provide F|D|B|A target selection.
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
-# Sun May 04, 2025: Reverted to "utf8" and "Cwd", shebang to "#!/usr/bin/env -S perl -C63",
+# Tue May 06, 2025: Reverted to "utf8" and "Cwd", shebang to "#!/usr/bin/env -S perl -C63",
 #                   and added "d" and "e" back in, for Cygwin compatibility.
 ##############################################################################################################
 
@@ -28,6 +28,7 @@
 use v5.36;
 use utf8;
 use Cwd;
+use Time::HiRes 'time';
 use POSIX qw( floor ceil strftime );
 use RH::Dir;
 use RH::Util;
@@ -264,7 +265,7 @@ sub curfile ($path) {
    # From this point on in this subroutine, use "_" as target of all file test operators, to save time.
 
    # Is this file a link to something?
-   my $is_lnk = -l _;
+   my $is_lnk = -l _ ;
 
    # Get and format times:
    my @ModTimeFields = localtime($mtime);

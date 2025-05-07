@@ -29,6 +29,7 @@
 #                   have clusters of 2-or-more "equivalent" names.
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
+# Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;

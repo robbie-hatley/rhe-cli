@@ -23,6 +23,7 @@
 # Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
+# Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
@@ -57,7 +58,7 @@ my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
-my $OriDir    = d getcwd  ; # Original directory.       dir name  Directory on program entry.
+my $OriDir    = d(getcwd) ; # Original directory.       dir name  Directory on program entry.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
@@ -82,14 +83,15 @@ sub help    ; # Print help.
 { # begin main
    # Start execution timer:
    my $t0 = time;
+   my @s0 = localtime($t0);
 
    # Process @ARGV and set settings:
    argv;
 
    # Print program entry message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
-      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
-      say STDERR '';
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
    }
 
    # Also print compilation time if being verbose:
@@ -121,13 +123,14 @@ sub help    ; # Print help.
 
    # Stop execution timer:
    my $t1 = time;
+   my @s1 = localtime($t1);
 
    # Print exit message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
+   if ( $Verbose >= 1 ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
-      say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
-      printf STDERR "Execution time was %.3fms.", $ms;
+      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                    $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
+      printf STDERR "Execution time was %.3fms.\n", $ms;
    }
 
    # Exit program, returning success code "0" to caller:

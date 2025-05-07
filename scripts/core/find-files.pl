@@ -82,7 +82,7 @@
 #                   Shortened width from 120 to 110. Put "-C63" in shebang.
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
-# Sun May 04, 2025: Reverted to using "utf8" and "Cwd" and added "d" and "e" back in for Cygwin compatibility.
+# Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
@@ -94,10 +94,14 @@ use RH::Util;
 
 # ======= VARIABLES: =========================================================================================
 
-# System Variables:
+# ------- System Variables: ----------------------------------------------------------------------------------
+
 $" = ', ' ; # Quoted-array element separator = ", ".
 
-# Global Variables:
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
+# WARNING: Do NOT initialize global variables on their declaration line! That wipes-out changes made to them
+#          by BEGIN, UNITCHECK, CHECK, and INIT blocks! Instead, initialize them in those blocks.
 our    $pname;                                 # Declare program name.
 BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
 our    $cmpl_beg;                              # Declare compilation begin time.
@@ -105,29 +109,51 @@ BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
 our    $cmpl_end;                              # Declare compilation end   time.
 INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
-# Local variables:
+# NOTE: Always remember, if using BEGIN blocks, only the declaration half of any "my|our $varname = value;"
+# statement is executed before the begin blocks; the "= value;" part is executed AFTER all BEGIN blocks!!!
+# So, THIS code:
+#    my $dog = 'Spot';
+#    BEGIN {defined $dog ? print("defined\n") : print("undefined\n");}
+#    print("My dog's name is $dog.\n");
+#    END   {print("$dog is a nice dog.\n");}
+# Is the same as THIS code:
+#    my $dog;
+#    defined $dog ? print("defined\n") : print("undefined\n");
+#    $dog = 'Spot';
+#    print("My dog's name is $dog.\n");
+#    print("$dog is a nice dog.\n");
+# And EITHER of those code blocks will print:
+#    undefined
+#    My dog's name is Spot.
+#    Spot is a nice dog.
+
+# ------- Local variables: -----------------------------------------------------------------------------------
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
 my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-my $OriDir    = d(getcwd) ; # Original Directory        dir name  Current working directory.
-my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $Verbose   = 0         ; # Be verbose?               0,1,2     Shhh! Be quiet!
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
-my $Target    = 'A'       ; # Target                    F|D|B|A   All directory entries.
+my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
+my $OriDir    = d(getcwd) ; # Original directory.       cwd       Directory on program entry.
 
-# Counts of events in this program:
-my $direcount = 0 ; # Count of directories processed by curdire().
-my $filecount = 0 ; # Count of files matching target and regexp.
+# Counters:
+my $direcount = 0         ; # Count of directories processed by curdire().
+my $filecount = 0         ; # Count of files matching target, regexp, and predicate.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
+# NOTE: These alert the compiler that these names, when encountered (whether in subroutine definitions,
+# BEGIN, CHECK, UNITCHECK, INIT, END, other subroutines, or in the main body of the program), are subroutines,
+# so it needs to find, compile, and link their definitions:
 sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
 sub curfile ; # Process current file.
+sub BLAT    ; # Print messages only if debugging.
 sub stats   ; # Print statistics.
 sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
@@ -137,32 +163,44 @@ sub help    ; # Print help and exit.
 { # begin main
    # Start execution timer:
    my $t0 = time;
+   my @s0 = localtime($t0);
 
    # Process @ARGV and set settings:
    argv;
 
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   BLAT "Debug msg: Values of variables after running argv():\n"
+       ."pname     = $pname     \n"
+       ."cmpl_beg  = $cmpl_beg  \n"
+       ."cmpl_end  = $cmpl_end  \n"
+       ."Options   = (@Opts)    \n"
+       ."Arguments = (@Args)    \n"
+       ."Debug     = $Debug     \n"
+       ."Help      = $Help      \n"
+       ."Verbose   = $Verbose   \n"
+       ."Recurse   = $Recurse   \n"
+       ."Target    = $Target    \n"
+       ."RegExp    = $RegExp    \n"
+       ."Predicate = $Predicate \n"
+       ."OriDir    = $OriDir    \n"
+       .'';
+
    # Print program entry message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
-      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
-      say STDERR '';
+   if ( $Verbose >= 1 ) {
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
    }
 
-   # Also print compilation time if being verbose:
-   if ( 2 == $Verbose ) {
-      printf(STDERR "Compilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
-      say STDERR '';
+   # Print compilation time if being verbose:
+   if ( $Verbose >= 2 ) {
+      printf STDERR "Compilation time was %.3fms\n\n",
+                    1000 * ($cmpl_end - $cmpl_beg);
    }
 
-   # Print the values of all variables if debugging:
-   if ( 1 == $Debug ) {
-      say STDERR "pname     = $pname";
-      say STDERR "cmpl_beg  = $cmpl_beg";
-      say STDERR "cmpl_end  = $cmpl_end";
-      say STDERR "Options   = (@Opts)";
-      say STDERR "Arguments = (@Args)";
-      say STDERR "Debug     = $Debug";
-      say STDERR "Help      = $Help";
-      say STDERR "Verbose   = $Verbose";
+   # Print basic settings if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      say STDERR 'Basic settings:';
+      say STDERR "OriDir    = $OriDir";
       say STDERR "Recurse   = $Recurse";
       say STDERR "Target    = $Target";
       say STDERR "RegExp    = $RegExp";
@@ -172,17 +210,26 @@ sub help    ; # Print help and exit.
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+   if ($Help) {help}
+   else {
+      if ($Recurse) {
+         my $mlor = RecurseDirs {curdire};
+         say "\nMaximum levels of recursion reached = $mlor";
+      }
+      else {curdire}
+      stats
+   }
 
    # Stop execution timer:
    my $t1 = time;
+   my @s1 = localtime($t1);
 
    # Print exit message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
+   if ( $Verbose >= 1 ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
-      say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
-      printf STDERR "Execution time was %.3fms.", $ms;
+      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                    $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
+      printf STDERR "Execution time was %.3fms.\n", $ms;
    }
 
    # Exit program, returning success code "0" to caller:
@@ -191,22 +238,24 @@ sub help    ; # Print help and exit.
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-# Process @ARGV and set settings:
+# Process @ARGV:
 sub argv {
    # Get options and arguments:
    my $end = 0;              # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {           # For each element of @ARGV,
-      /^--$/ && !$end        # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1           # so if we see that, then set the "end-of-options" flag
-      and push @Opts, $_     # and push the "--" to @Opts
+   for ( @ARGV ) {           # For each element of @ARGV:
+      !$end                  # If we have not yet reached end-of-options,
+      && /^--$/              # and we see an "--" option,
+      and $end = 1           # set the "end-of-options" flag
+      and push @Opts, '--'   # and push "--" to @Opts
       and next;              # and skip to next element of @ARGV.
-      !$end                  # If we haven't yet reached end-of-options,
-      && ( /^-(?!-)$s+$/     # and if we get a valid short option
+      !$end                  # If we have not yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we see a valid short option
       ||  /^--(?!-)$d+$/ )   # or a valid long option,
       and push @Opts, $_     # then push item to @Opts
-      or  push @Args, $_;    # else push item to @Args.
+      and next;              # and skip to next element of @ARGV.
+      push @Args, $_;        # Otherwise, push item to @Args.
    }
 
    # Process options:
@@ -227,22 +276,22 @@ sub argv {
    # Get number of arguments:
    my $NA = scalar(@Args);
 
-   # If user typed more than 2 arguments, and we're not debugging, print error and help messages and exit:
-   if ( $NA > 2         # If number of arguments > 2
-        && !$Debug ) {  # and we're not debugging,
-      error($NA);       # print error message,
-      help;             # and print help message,
-      exit 666;         # and exit, returning The Number Of The Beast.
+   # If user typed more than 2 arguments, and we're not debugging,
+   # then print error and help messages and exit:
+   if ( $NA >= 3 && !$Debug ) {  # If number of arguments >= 3 and we're not debugging,
+      error($NA);                # print error message,
+      help;                      # and print help message,
+      exit 666;                  # and exit, returning The Number Of The Beast.
    }
 
    # First argument, if present, is a file-selection regexp:
-   if ( $NA > 0 ) {             # If number of arguments > 0,
-      $RegExp = qr/$Args[0]/o;  # set $RegExp to $Args[0].
+   if ( $NA >= 1 ) {             # If number of arguments >= 1,
+      $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
    }
 
    # Second argument, if present, is a file-selection predicate:
-   if ( $NA > 1 ) {           # If number of arguments >= 2,
-      $Predicate = $Args[1];  # set $Predicate to $Args[1].
+   if ( $NA >= 2 ) {             # If number of arguments >= 2,
+      $Predicate = $Args[1];     # set $Predicate to $Args[1].
    }
 
    # Return success code 1 to caller:
@@ -258,12 +307,12 @@ sub curdire {
    my $cwd = d(getcwd);
 
    # Announce current working directory if being verbose:
-   if ( 2 == $Verbose) {
-      say "\nDirectory # $direcount: $cwd\n";
+   if ( $Verbose >= 2 ) {
+      say STDERR "\nDirectory # $direcount: $cwd\n";
    }
 
-   # Get list of file-info packets in $cwd matching $Target, $RegExp, and $Predicate:
-   my @paths = glob_regexp_utf8($cwd, $Target, $RegExp, $Predicate);
+   # Get sorted list of paths in $cwd matching $Target, $RegExp, and $Predicate:
+   my @paths = sort {$a cmp $b} glob_regexp_utf8($cwd, $Target, $RegExp, $Predicate);
 
    # For each matching path, increment file counter and say path:
    foreach my $path (@paths) {++$filecount;say $path}
@@ -272,27 +321,32 @@ sub curdire {
    return 1;
 } # end sub curdire
 
+# Print messages only if debugging:
+sub BLAT ($string) {if ($Debug) {say STDERR $string}}
+
 # Print stats, if being terse or verbose:
 sub stats {
    if ( $Verbose >= 1 ) {
       say STDERR "\n"
-                ."Statistics running program \"$pname\" on dir tree \"$OriDir\":\n"
+                ."Statistics for running program \"$pname\" on dir tree \"$OriDir\":\n"
                 ."Navigated $direcount directories. Found $filecount files matching\n"
                 ."target \"$Target\", regexp \"$RegExp\", and predicate \"$Predicate\".";
    }
    return 1;
 } # end sub stats
 
-# Print error and help messages and exit 666:
+# Handle errors:
 sub error ($NA) {
-   print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+   print STDERR ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
-   Error: you typed $NA arguments, but \"find-files.pl\"
-   requires 0, 1, or 2 arguments. Help follows:
+   Error: you typed $NA arguments, but \"$pname\" takes at most
+   2 arguments (an optional file-selection regexp and an optional
+   file-selection predicate). Help follows.
    END_OF_ERROR
-} # end error
+   return 1;
+} # end sub error
 
-# Print help message:
+# Print help:
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 

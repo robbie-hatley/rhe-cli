@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय. 看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -47,11 +47,12 @@
 # Mon Mar 17, 2025: Renamed to "file-names-to-gibberish.pl", and archived "file-names-to-gib.pl" as being a
 #                   duplicate of this program.
 # Thu Apr 03, 2025: Now using "utf8::all" and "Cwd::utf8". Got rid of "cwd_utf8", "d", "e".
+# Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
-use utf8::all;
-use Cwd::utf8;
+use utf8;
+use Cwd;
 use Time::HiRes 'time';
 use RH::Dir;
 use RH::Util;
@@ -86,11 +87,11 @@ my $Firefox   = 0            ; # Ignore all but Firefox?       bool      Don't s
 my $NoReRan   = 0            ; # Ignore ran-name files?        bool      Don't skip random-named files.
 my $Prefix    = ''           ; # Prefix.                       string    Prefix is empty string.
 my $Suffix    = ''           ; # Suffix.                       string    Suffix is empty string.
+my $OriDir    = d(getcwd)    ; # Original Directory.           cwd       Current working directory.
 
 # Counts of events:
 my $direcount = 0; # Count of directories processed by curdire.
-my $filecount = 0; # Count of files matching $RegExp.
-my $findcount = 0; # Count of files also matching $Predicate.
+my $filecount = 0; # Count of files matching $RegExp and $Predicate.
 my $skipcount = 0; # Count of files skipped because they're ini, db, jbf.
 my $ninecount = 0; # Count of files skipped because prefix length < 9.
 my $nomacount = 0; # Count of files skipped because NOt MAtching Spotlight or Firefox.
@@ -131,8 +132,9 @@ sub help    ; # Print help and exit.
       say STDERR "Spotlight = $Spotlight           ";
       say STDERR "Firefox   = $Firefox             ";
       say STDERR "NoReRan   = $NoReRan             ";
-      say STDERR "Prefix    = \'$Prefix\'          ";
-      say STDERR "Suffix    = \'$Suffix\'          ";
+      say STDERR "Prefix    = $Prefix              ";
+      say STDERR "Suffix    = $Suffix              ";
+      say STDERR "OriDir    = $OriDir              ";
    }
 
    unless ( $Yes ) {
@@ -227,21 +229,16 @@ sub argv {
 # Process current directory:
 sub curdire {
    ++$direcount;
-   my $cwd = cwd;
+   my $cwd = d(getcwd);
    say STDOUT "\nDir # $direcount: $cwd\n";
-   my $curdirfiles = GetFiles($cwd, $Target, $RegExp);
-   foreach my $file (@$curdirfiles) {
-      ++$filecount;
-      local $_ = $file->{Path};
-      if (eval($Predicate)) {
-         ++$findcount;
-         curfile($file);
-      }
-   }
+   my $curdirfiles = GetFiles($cwd, $Target, $RegExp, $Predicate);
+   foreach my $file (@$curdirfiles) {curfile($file)}
    return 1;
 } # end sub curdire
 
+# Process current file:
 sub curfile ($file) {
+   ++$filecount;
    my $path          = $file->{Path};
    my $dire          = get_dir_from_path($path);
    my $name          = $file->{Name};
@@ -332,9 +329,8 @@ sub stats {
    if ( $Verbose ) {
       say STDERR '';
       say STDERR "Statistics for program \"randomize-file-names.pl\":";
-      say STDERR "Navigated $direcount directories.";
-      say STDERR "Found $filecount files matching target \"$Target\" and regexp \"$RegExp\".";
-      say STDERR "Found $findcount files also matching predicate \"$Predicate\".";
+      say STDERR "Navigated $direcount directories. Found $filecount files matching";
+      say STDERR "target \"$Target\", regexp \"$RegExp\", and predicate \"$Predicate\".";
       say STDERR "Skipped $skipcount files because they're dsktp, thumbs, pspb, or ID.";
       $Nine and say STDERR "Skipped $ninecount files with prefix length < 9.";
       $Spotlight || $Firefox and say STDERR "Skipped $nomacount files not matching sl and/or ff pattern.";

@@ -200,6 +200,7 @@ sub move_files             :prototype($$;@) ; # Move files  from source director
 
 # Section 4, Minor Subroutines (code is (relatively) short and simple):
 sub debug                  :prototype(;$)   ; # Turn on debugging in this module.
+sub BLAT                   :prototype($)    ; # Print messages only if debugging.
 sub rename_file            :prototype($$)   ; # Rename a file, taking precautions.
 sub time_from_mtime        :prototype($)    ; # Get time from mtime.
 sub date_from_mtime        :prototype($)    ; # Get date from mtime.
@@ -488,12 +489,12 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
    # Iterate through @names, rejecting '.', '..',  and everything that doesn't match $target, $regexp, and
    # $predicate, and storing remainder in an array called @names:
    my @names = ();
-   NAME: foreach my $name (@raw) {
+   foreach my $name (@raw) {
       if ($Debug) {say STDERR "In readdir_regexp_utf8. Name from readdir: $name"}
 
       # Skip '.' and '..':
-      next NAME if '.'  eq $name;
-      next NAME if '..' eq $name;
+      next if '.'  eq $name;
+      next if '..' eq $name;
 
       # Do NOT run an existence check here, else we will get a constant stream of nuisance warnings,
       # because it is NORMAL for many links to point to things that will not exist until some program
@@ -512,31 +513,32 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
       if ( scalar(@stats) < 13 ) {
          warn "Warning in readdir_regexp_utf8(): Can't lstat \"$name\" in \"$dir\".\n"
              ."Moving on to next file.\n";
-         next NAME;
+         next;
       }
 
       $Debug and say "Successfully got 13 stats for name \"$name\".";
 
       # Skip this file if it doesn't match our target:
       switch($target) {
-         case 'F' { if ( !     -f _                 ) {$Debug and say STDERR "Failed F."; next NAME;} }
-         case 'D' { if ( !                 -d _     ) {$Debug and say STDERR "Failed D."; next NAME;} }
-         case 'B' { if ( ! ( ( -f _ ) || ( -d _ ) ) ) {$Debug and say STDERR "Failed B."; next NAME;} }
-         case 'A' {                     ;              $Debug and say STDERR "Accept A.";             }
-         else     {                     ;              $Debug and say STDERR "Accept E.";             }
+         case 'F' { if ( !     -f _                 ) {$Debug and say STDERR "Failed F."; next;} }
+         case 'D' { if ( !                 -d _     ) {$Debug and say STDERR "Failed D."; next;} }
+         case 'B' { if ( ! ( ( -f _ ) || ( -d _ ) ) ) {$Debug and say STDERR "Failed B."; next;} }
+         case 'A' {                     ;              $Debug and say STDERR "Accept A.";        }
+         else     {                     ;              $Debug and say STDERR "Accept E.";        }
       }
 
       # Skip this file if it doesn't match our regexp:
       if ($name !~ m/$regexp/) {
          $Debug and say STDERR "Skipping named \"$name\" because it doesn't match regexp.";
-         next NAME;
+         next;
       }
 
       # Skip this file if it doesn't match our predicate:
-      if ( '1' ne "$predicate" ) {
+      if ( '1' ne $predicate ) {
          local $_ = e($name);
          if ( ! eval $predicate ) {
-            $Debug and say STDERR "Skipping named \"$name\" because it doesn't match predicate.";
+            BLAT "Skipping named \"$name\" because it doesn't match predicate.";
+            next;
          }
       }
 
@@ -1885,6 +1887,9 @@ sub debug :prototype(;$) ($status = 'on') {
       case qr/(?i:1|on|yes)/ {$Debug = 1}
    }
 }
+
+# Print messages only if debugging:
+sub BLAT :prototype($) ($string) {if ($Debug) {say STDERR $string}}
 
 # Rename a file, with more error-checking than unwrapped rename() :
 sub rename_file :prototype($$) ($OldPath, $NewPath) {
