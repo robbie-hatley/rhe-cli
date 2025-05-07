@@ -44,72 +44,138 @@
 # Tue Mar 04, 2025: Now using global "t0" and "BEGIN" block to start timer.
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
+# Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility. Now using Switch.
+#                   Modernized, with much content imported from latest "core-template.pl".
 ##############################################################################################################
 
 use v5.36;
 use utf8;
 use Cwd;
 use Time::HiRes 'time';
+use Switch;
 use RH::Dir;
-
-# ======= GLOBAL VARIABLES: ==================================================================================
-
-our $t0;
-
-# ======= BEGIN AND END BLOCKS: ==============================================================================
-
-BEGIN {
-   $t0 = time;
-}
-
-# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
-
-sub argv    ;
-sub curdire ;
-sub stats   ;
-sub error   ;
-sub help    ;
 
 # ======= VARIABLES: =========================================================================================
 
-# Settings:                # Meaning of setting:       Range:   Meaning of default:
-my $Db      = 0          ; # Print diagnostics?        bool     Don't print diagnostics.
-my $Verbose = 2          ; # Be verbose?               bool     Be verbose: Print variables, time, and stats.
-my $Recurse = 0          ; # Recurse subdirectories?   bool     Be local.
-my $RegExp  = qr/^.+$/   ; # Which files?              regexp   Process all regular files.
+# ------- System Variables: ----------------------------------------------------------------------------------
+
+$" = ', ' ; # Quoted-array element separator = ", ".
+
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+our    $cmpl_beg;                              # Declare compilation begin time.
+BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
+our    $cmpl_end;                              # Declare compilation end   time.
+INIT  {$cmpl_end = time}                       # Set     compilation end   time.
+
+# ------- Local variables: -----------------------------------------------------------------------------------
+
+# Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
+my @Opts      = ()        ; # options                   array     Options.
+my @Args      = ()        ; # arguments                 array     Arguments.
+my $Debug     = 0         ; # Debug?                    bool      Don't debug.
+my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
+my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
+my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
+# NOTE: There's no variable "$Target" because this program processes data files only.
+my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
+my $OriDir    = d(getcwd) ; # Original directory.       cwd       Directory on program entry.
 
 # Counters:
-my $direcount = 0;
-my $filecount = 0;
-my $ngrpcount = 0;
-my $compcount = 0;
-my $duplcount = 0;
-my $delecount = 0;
-my $failcount = 0;
-my $simucount = 0;
+my $direcount = 0         ; # Count of directories processed by curdire().
+my $filecount = 0         ; # Count of files matching target, regexp, and predicate.
+my $ngrpcount = 0         ; # Count of name groups found.
+my $compcount = 0         ; # Count of pairs of files compared.
+my $duplcount = 0         ; # Count of pairs of duplicate files found.
+my $delecount = 0         ; # Count of successful file deletions.
+my $failcount = 0         ; # Count of failed attempts at deleting files.
+my $simucount = 0         ; # Count of simulated file deletions.
+
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
+
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub BLAT    ; # Print messages only if debugging.
+sub stats   ; # Print statistics.
+sub error   ; # Handle errors.
+sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
+   # Start execution timer:
+   my $t0 = time;
+   my @s0 = localtime($t0);
+
+   # Process @ARGV and set settings:
    argv;
-   my $pname = get_name_from_path($0);
+
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   BLAT "Debug msg: Values of variables after running argv():\n"
+       ."pname     = $pname     \n"
+       ."cmpl_beg  = $cmpl_beg  \n"
+       ."cmpl_end  = $cmpl_end  \n"
+       ."Options   = (@Opts)    \n"
+       ."Arguments = (@Args)    \n"
+       ."Debug     = $Debug     \n"
+       ."Help      = $Help      \n"
+       ."Verbose   = $Verbose   \n"
+       ."OriDir    = $OriDir    \n"
+       ."Recurse   = $Recurse   \n"
+       ."RegExp    = $RegExp    \n"
+       ."Predicate = $Predicate \n"
+       .'';
+
+   # Print program entry message if being terse or verbose:
    if ( $Verbose >= 1 ) {
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
+   }
+
+   # Print compilation time if being verbose:
+   if ( $Verbose >= 2 ) {
+      printf STDERR "Compilation time was %.3fms\n\n",
+                    1000 * ($cmpl_end - $cmpl_beg);
+   }
+
+   # Print basic settings if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      say STDERR 'Basic settings:';
+      say STDERR "OriDir    = $OriDir";
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
       say STDERR '';
-      say STDERR "Now entering program \"$pname\".";
-      say STDERR "Verbose = $Verbose";
-      say STDERR "Recurse = $Recurse";
-      say STDERR "RegExp  = $RegExp";
    }
 
-   $Recurse and RecurseDirs {curdire} or curdire;
+   # Process current directory (and all subdirectories if recursing) and print stats,
+   # unless user requested help, in which case just print help:
+   if ($Help) {help}
+   else {
+      if ($Recurse) {
+         my $mlor = RecurseDirs {curdire};
+         say "\nMaximum levels of recursion reached = $mlor";
+      }
+      else {curdire}
+      stats
+   }
 
-   stats;
-   my $et = time - $t0;
+   # Stop execution timer:
+   my $t1 = time;
+   my @s1 = localtime($t1);
+
+   # Print exit message if being terse or verbose:
    if ( $Verbose >= 1 ) {
-      say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\".";
-      printf STDERR "Execution time was %.3f seconds.", $et;
+      my $te = $t1 - $t0; my $ms = 1000 * $te;
+      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                    $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
+      printf STDERR "Execution time was %.3fms.\n", $ms;
    }
+
+   # Exit program, returning success code "0" to caller:
    exit 0;
 } # end main
 
@@ -117,46 +183,54 @@ my $simucount = 0;
 
 sub argv {
    # Get options and arguments:
-   my @opts = ()            ; # options
-   my @args = ()            ; # arguments
-   my $end = 0              ; # end-of-options flag
-   my $s = '[a-zA-Z0-9]'    ; # single-hyphen allowable chars (English letters, numbers)
-   my $d = '[a-zA-Z0-9=.-]' ; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {
-      /^--$/                  # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1            # so if we see that, then set the "end-of-options" flag
-      and next;               # and skip to next element of @ARGV.
-      !$end                   # If we haven't yet reached end-of-options,
-      && ( /^-(?!-)$s+$/      # and if we get a valid short option
-      ||   /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @opts, $_      # then push item to @opts
-      or  push @args, $_;     # else push item to @args.
+   my $end = 0;              # end-of-options flag
+   my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
+   my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
+   for ( @ARGV ) {           # For each element of @ARGV:
+      !$end                  # If we have not yet reached end-of-options,
+      && /^--$/              # and we see an "--" option,
+      and $end = 1           # set the "end-of-options" flag
+      and push @Opts, '--'   # and push "--" to @Opts
+      and next;              # and skip to next element of @ARGV.
+      !$end                  # If we have not yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we see a valid short option
+      ||  /^--(?!-)$d+$/ )   # or a valid long option,
+      and push @Opts, $_     # then push item to @Opts
+      and next;              # and skip to next element of @ARGV.
+      push @Args, $_;        # Otherwise, push item to @Args.
    }
 
    # Process options:
-   for ( @opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit 777 ;
-      /^-$s*e/ || /^--debug$/   and $Db      =  1     ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0     ;
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1     ;
-      /^-$s*v/ || /^--verbose$/ and $Verbose =  2     ;
-      /^-$s*l/ || /^--local$/   and $Recurse =  0     ;
-      /^-$s*r/ || /^--recurse$/ and $Recurse =  1     ;
-   }
-   if ( $Db ) {
-      say STDERR '';
-      say STDERR "\$opts = (", join(', ', map {"\"$_\""} @opts), ')';
-      say STDERR "\$args = (", join(', ', map {"\"$_\""} @args), ')';
+   for ( @Opts ) {
+      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
+      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default.
+      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
+      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
+      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
    }
 
-   # Process arguments:
-   my $NA = scalar(@args);     # Get number of arguments.
-   $NA >= 1                    # If num args >= 1,
-   and $RegExp = qr/$args[0]/; # then Set $RegExp.
-   $NA >= 2 && !$Db            # If num args >= 2 and we're not debugging,
-   and error($NA)              # then print error message
-   and help                    # and  print help  message
-   and exit 666;               # and exit, returning The Number Of The Beast.
+   # Get number of arguments:
+   my $NA = scalar(@Args);
+
+   # If user typed more than 2 arguments, and we're not debugging,
+   # then print error and help messages and exit:
+   if ( $NA >= 3 && !$Debug ) {  # If number of arguments >= 3 and we're not debugging,
+      error($NA);                # print error message,
+      help;                      # and print help message,
+      exit 666;                  # and exit, returning The Number Of The Beast.
+   }
+
+   # First argument, if present, is a file-selection regexp:
+   if ( $NA >= 1 ) {             # If number of arguments >= 1,
+      $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
+   }
+
+   # Second argument, if present, is a file-selection predicate:
+   if ( $NA >= 2 ) {             # If number of arguments >= 2,
+      $Predicate = $Args[1];     # set $Predicate to $Args[1].
+   }
 
    # Return success code 1 to caller:
    return 1;
@@ -166,18 +240,18 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $curdir = d getcwd;
+   my $cwd = d(getcwd);
 
-   # If being terse or verbose, announce directory:
-   if ( $Verbose >= 1 ) {
+   # If being verbose, announce directory:
+   if ( $Verbose >= 2 ) {
       say STDOUT '';
-      say STDOUT "Directory # $direcount: $curdir";
+      say STDOUT "Directory # $direcount: $cwd";
       say STDOUT '';
    }
 
    # Get reference to array of references to file records for all regular files
    # matching $RegExp in current directory:
-   my $files = GetFiles($curdir, 'F', $RegExp);
+   my $files = GetFiles($cwd, 'F', $RegExp, $Predicate);
 
    # Make a hash of references to arrays of references to file records,
    # with the outer hash keyed by name base:
@@ -220,6 +294,11 @@ sub curdire {
             next SECOND if $file2->{Name} eq "***DELETED***";
             next SECOND if $file2->{Name} eq "***ERROR***";
 
+            BLAT "\n"
+                ."Debug msg from dnf, curdire(), SECOND:\n"
+                ."FIRST  name: $file1->{Name}\n"
+                ."SECOND name: $file2->{Name}";
+
             # Skip to next second file unless jth file is same size as ith file:
             next SECOND unless $file2->{Size} == $file1->{Size};
 
@@ -243,7 +322,7 @@ sub curdire {
                # If file2 has the more-recent Mtime, erase file2:
                if ($file2->{Mtime} > $file1->{Mtime}) {
                   # If debugging, just simulate:
-                  if ( $Db ) {
+                  if ( $Debug ) {
                      say STDOUT "Simulated erasure: $file2->{Path}";
                      $file2->{Name} = "***SIMULATED***";
                      ++$simucount;
@@ -264,7 +343,7 @@ sub curdire {
                # Otherwise, erase file1:
                else {
                   # If debugging, just simulate:
-                  if ( $Db ) {
+                  if ( $Debug ) {
                      say STDOUT "Simulated erasure: $file1->{Path}";
                      $file1->{Name} = "***SIMULATED***";
                      ++$simucount;
@@ -288,11 +367,15 @@ sub curdire {
    return 1;
 }#end sub curdire
 
+# Print messages only if debugging:
+sub BLAT ($string) {if ($Debug) {say STDERR $string}}
+
+# Print statistics:
 sub stats {
-   # If being very verbose, print stats for this program run:
-   if ( $Verbose >= 2 ) {
+   # If being terse or verbose, print stats for this program run:
+   if ( $Verbose >= 1 ) {
       say    STDERR '';
-      say    STDERR "Statistics for program \"dedup-newsbin-files.pl\":";
+      say    STDERR "Stats for running program \"$pname\" on dir tree \"$OriDir\":";
       printf STDERR "Navigated   %6d directories.\n",               $direcount;
       printf STDERR "Found       %6d files matching RegExp.\n",     $filecount;
       printf STDERR "Examined    %6d file-name groups.\n",          $ngrpcount;
@@ -350,22 +433,21 @@ sub help {
 
    Option:             Meaning:
    -h or --help        Print help and exit.
-   -e or --debug       Print diagnostics and simulate renames.
-   -q or --quiet       Don't print variables, time, or stats.
-   -t or --terse       Print variables and time but not stats.
-   -v or --verbose     Print variables, time, and stats.       (DEFAULT)
+   -e or --debug       Print diagnostics and simulate file deletions.
+   -q or --quiet       Print     no    information.
+   -t or --terse       Print  limited  information.            (DEFAULT)
+   -v or --verbose     Print exuberant information.
    -l or --local       DON'T recurse subdirectories.           (DEFAULT)
    -r or --recurse     DO    recurse subdirectories.
          --            End of options (all further CL items are arguments).
 
-
-
    Multiple single-letter options may be piled-up after a single hyphen.
    For example, use -vr to verbosely and recursively process items.
 
-   If multiple conflicting separate options are given, later overrides earlier.
+   If multiple conflicting separate options are given, latter overrides former.
+
    If multiple conflicting single-letter options are piled after a single hyphen,
-   the result is determined by this descending order of precedence: hdnrlvtq.
+   the precedence is the inverse of the options in the above table.
 
    If you want to use an argument that looks like an option (say, you want to
    search for files which contain "--recurse" as part of their name), use a "--"
@@ -375,18 +457,45 @@ sub help {
    All options not listed above are ignored.
 
    -------------------------------------------------------------------------------
-   Description of arguments:
+   Description of Arguments:
 
-   In addition to the options above, this program can take one optional argument,
-   which, if present, must be a Perl-Compliant Regular Expression specifying which
-   regular-file groups to dedup. To specify multiple patterns, use the "|"
-   alternation operator. To apply pattern modifier letters, use an Extended
-   RegExp Sequence. For example, if you want to dedup file groups with names
-   containing "cat", "dog", or "horse", title-cased or not, recursively:
-   dedup-newsbin-files -vr '(?i:c)at|(?i:d)og|(?i:h)orse'
+   In addition to options, this program can take 1 or 2 optional arguments.
+
+   Arg1 (OPTIONAL), if present, must be a Perl-Compliant Regular Expression
+   specifying which file names to process. To specify multiple patterns, use the
+   | alternation operator. To apply pattern modifier letters, use an Extended
+   RegExp Sequence. For example, if you want to process items with names
+   containing "cat", "dog", or "horse", title-cased or not, you could use this
+   regexp: '(?i:c)at|(?i:d)og|(?i:h)orse'
    Be sure to enclose your regexp in 'single quotes', else BASH may replace it
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
+
+   Arg2 (OPTIONAL), if present, must be a boolean predicate using Perl
+   file-test operators. The expression must be enclosed in parentheses (else
+   this program will confuse your file-test operators for options), and then
+   enclosed in single quotes (else the shell won't pass your expression to this
+   program intact). Here are some examples of valid and invalid predicate arguments:
+   '(-d && -l)'  # VALID:   Finds symbolic links to directories
+   '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
+   '(-b)'        # VALID:   Finds block special files
+   '(-c)'        # VALID:   Finds character special files
+   '(-S || -p)'  # VALID:   Finds sockets and pipes.  (S must be CAPITAL S   )
+    '-d && -l'   # INVALID: missing parentheses       (confuses program      )
+    (-d && -l)   # INVALID: missing quotes            (confuses shell        )
+     -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
+
+   Arguments and options may be freely mixed, but the arguments must appear in
+   the order Arg1, Arg2 (RegExp first, then File-Type Predicate); if you get them
+   backwards, they won't do what you want, as most predicates aren't valid regexps
+   and vice-versa.
+
+   NOTE: You can't "skip" Arg1 and go straight to Arg2 because your intended Arg2
+   would be construed as Arg1! But you can "bypass" Arg1 by using '.+' meaning
+   "some characters" which will match every file name.
+
+   A number of arguments greater than 2 will cause this program to print an error
+   message and abort.
 
    Happy duplicate file removing!
    Cheers,

@@ -99,7 +99,7 @@
 # Tue Mar 04, 2025: Now using global "t0" and "BEGIN" block to start timer.
 # Sun Apr 27, 2025: Fixed stats bug (due to changes in GetRegularFilesBySize()). Now using "utf8::all" and
 #                   "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl". Nixed all "d", "e".
-# Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
+# Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility. Now using Switch.
 ##############################################################################################################
 
 use v5.36;
@@ -689,8 +689,8 @@ sub print_two ($file1, $file2) {
    my $date2 = date_from_mtime $file2->{Mtime};
 
    # Set file name field width to max file name length + 2:
-   my $nl1 = length($file1->{Name});             # nl1 = Name Length 1.
-   my $nl2 = length($file2->{Name});             # nl2 = Name Length 2.
+   my $nl1 = length($file1->{Name}); # nl1 = Name Length 1.
+   my $nl2 = length($file2->{Name}); # nl2 = Name Length 2.
    my $fnw = $nl2 > $nl1 ? $nl2 + 2 : $nl1 + 2 ; # fnw = File-Name Width.
 
    # Print first file:

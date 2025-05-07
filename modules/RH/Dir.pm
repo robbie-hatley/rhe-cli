@@ -146,8 +146,8 @@ $" = ', ' ; # Quoted-array element separator = ", ".
 
 # ------- Global Variables: ----------------------------------------------------------------------------------
 
-# Global counters in namespace "RH", used by subs GetFiles and
-# GetRegularFilesBySize. NOTE: These are all reset to 0 EVERY time one of those
+# Counters used by subs GetFiles and GetRegularFilesBySize.
+# NOTE: These are all reset to 0 EVERY time one of those
 # two subs runs, so if you want to accumulate counts of events over multiple
 # entries to those subs, you need to store those accumulations in separate
 # variables.
@@ -169,9 +169,9 @@ our $orphcount = 0; # Count of all regular files with == 0 hard links (orphans).
 our $zombcount = 0; # Count of all regular files with  < 0 hard links (zombies).
 our $unkncount = 0; # Count of all files of unknown nature.
 
-# ------- Local variables: -----------------------------------------------------------------------------------
+# ------- Local Variables: -----------------------------------------------------------------------------------
 
-my $Db = 0; # Set to 1 for debugging, 0 for no debugging.
+my $Debug = 0; # Set to 1 for debugging, 0 for no debugging.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -199,6 +199,7 @@ sub copy_files             :prototype($$;@) ; # Copy files  from source director
 sub move_files             :prototype($$;@) ; # Move files  from source directory to destination directory.
 
 # Section 4, Minor Subroutines (code is (relatively) short and simple):
+sub debug                  :prototype(;$)   ; # Turn on debugging in this module.
 sub rename_file            :prototype($$)   ; # Rename a file, taking precautions.
 sub time_from_mtime        :prototype($)    ; # Get time from mtime.
 sub date_from_mtime        :prototype($)    ; # Get date from mtime.
@@ -255,8 +256,17 @@ our @EXPORT_OK =
       $totfcount $noexcount $ottycount $cspccount $bspccount
       $sockcount $pipecount $brkncount $slkdcount $linkcount
       $weircount $sdircount $hlnkcount $regfcount $orphcount
-      $zombcount $unkncount
+      $zombcount $unkncount debug
    );
+
+# ======= IMPORTER??? ========================================================================================
+# No, this doesn't work (screws-up exports in process of doing imports):
+# sub import {
+#    shift @_ ;
+#    my %settings = ( @_ );
+#    if ( 'on' eq $settings{debug} ) {$Debug = 1;}
+#    RH::Dir->export_to_level(1, @EXPORT);
+# }
 
 # ======= SECTION 1, PRIVATE SUBROUTINES: ====================================================================
 
@@ -267,7 +277,7 @@ sub is_ascii :prototype($) ($text) {
    unless $cpac eq __PACKAGE__ && $cfil eq __FILE__;
    my $is_ascii = 1;
    foreach my $ord (map {ord} split //, $text) {
-      if ($Db) {say STDERR "In is_ascii(), at top of foreach. \$ord = $ord"}
+      if ($Debug) {say STDERR "In is_ascii(), at top of foreach. \$ord = $ord"}
       # Is this character a commonly-used ASCII white-space character?
       next if (  9 == $ord ); # HT
       next if ( 10 == $ord ); # LF
@@ -283,7 +293,7 @@ sub is_ascii :prototype($) ($text) {
       $is_ascii = 0;
       last;
    }
-   if ($Db) {say STDERR "In is_ascii(), about to return. \$is_ascii = $is_ascii"}
+   if ($Debug) {say STDERR "In is_ascii(), about to return. \$is_ascii = $is_ascii"}
    return $is_ascii;
 } # end sub is_ascii :prototype($) ($text)
 
@@ -294,7 +304,7 @@ sub is_iso_8859_1 :prototype($) ($text) {
    unless $cpac eq __PACKAGE__ && $cfil eq __FILE__;
    my $is_iso = 1;
    foreach my $ord (map {ord} split //, $text) {
-      if ($Db) {say STDERR "In is_iso_8859_1(), at top of foreach. \$ord = $ord"}
+      if ($Debug) {say STDERR "In is_iso_8859_1(), at top of foreach. \$ord = $ord"}
       next if (  9 == $ord ); # HT
       next if ( 10 == $ord ); # LF
       next if ( 11 == $ord ); # VT
@@ -310,7 +320,7 @@ sub is_iso_8859_1 :prototype($) ($text) {
       $is_iso = 0;
       last;
    }
-   if ($Db) {say STDERR "In is_iso_8859_1(), about to return. \$is_iso = $is_iso"}
+   if ($Debug) {say STDERR "In is_iso_8859_1(), about to return. \$is_iso = $is_iso"}
    return $is_iso;
 } # end sub is_iso_8859_1 :prototype($) ($text)
 
@@ -326,7 +336,7 @@ sub is_utf8 :prototype($) ($text) {
    else {
       $is_utf8 = 0;
    }
-   if ($Db) {say STDERR "In is_utf8(), about to return. \$is_utf8 = $is_utf8"}
+   if ($Debug) {say STDERR "In is_utf8(), about to return. \$is_utf8 = $is_utf8"}
    return $is_utf8;
 }
 
@@ -409,7 +419,7 @@ sub glob_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(
    my @paths = map {path($dir, $_)} @names;
 
    # If debugging, print paths:
-   if ($Db) {
+   if ($Debug) {
       say STDERR '';
       say STDERR 'In glob_regexp_utf8 at end.';
       say STDERR '@paths:';
@@ -442,7 +452,7 @@ file names in any language other than English. (Names such as "Говорю Ру
 sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate='1') {
 
    # If debugging, announce inputs:
-   if ($Db) {
+   if ($Debug) {
       say STDERR "                                          ";
       say STDERR "In sub \"readdir_regexp_utf8\", near top. ";
       say STDERR "\$dir    = $dir                           ";
@@ -479,7 +489,7 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
    # $predicate, and storing remainder in an array called @names:
    my @names = ();
    NAME: foreach my $name (@raw) {
-      if ($Db) {say STDERR "In readdir_regexp_utf8. Name from readdir: $name"}
+      if ($Debug) {say STDERR "In readdir_regexp_utf8. Name from readdir: $name"}
 
       # Skip '.' and '..':
       next NAME if '.'  eq $name;
@@ -505,20 +515,20 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
          next NAME;
       }
 
-      $Db and say "Successfully got 13 stats for name \"$name\".";
+      $Debug and say "Successfully got 13 stats for name \"$name\".";
 
       # Skip this file if it doesn't match our target:
       switch($target) {
-         case 'F' { if ( !     -f _                 ) {$Db and say STDERR "Failed F."; next NAME;} }
-         case 'D' { if ( !                 -d _     ) {$Db and say STDERR "Failed D."; next NAME;} }
-         case 'B' { if ( ! ( ( -f _ ) || ( -d _ ) ) ) {$Db and say STDERR "Failed B."; next NAME;} }
-         case 'A' {                     ;              $Db and say STDERR "Accept A.";             }
-         else     {                     ;              $Db and say STDERR "Accept E.";             }
+         case 'F' { if ( !     -f _                 ) {$Debug and say STDERR "Failed F."; next NAME;} }
+         case 'D' { if ( !                 -d _     ) {$Debug and say STDERR "Failed D."; next NAME;} }
+         case 'B' { if ( ! ( ( -f _ ) || ( -d _ ) ) ) {$Debug and say STDERR "Failed B."; next NAME;} }
+         case 'A' {                     ;              $Debug and say STDERR "Accept A.";             }
+         else     {                     ;              $Debug and say STDERR "Accept E.";             }
       }
 
       # Skip this file if it doesn't match our regexp:
       if ($name !~ m/$regexp/) {
-         $Db and say STDERR "Skipping named \"$name\" because it doesn't match regexp.";
+         $Debug and say STDERR "Skipping named \"$name\" because it doesn't match regexp.";
          next NAME;
       }
 
@@ -526,7 +536,7 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
       if ( '1' ne "$predicate" ) {
          local $_ = e($name);
          if ( ! eval $predicate ) {
-            $Db and say STDERR "Skipping named \"$name\" because it doesn't match predicate.";
+            $Debug and say STDERR "Skipping named \"$name\" because it doesn't match predicate.";
          }
       }
 
@@ -535,7 +545,7 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
    } # end foreach my $name (@raw)
 
    # If debugging, print names:
-   if ($Db) {
+   if ($Debug) {
       say STDERR '';
       say STDERR 'In readdir_regexp_utf8 at end.';
       say STDERR '@names:';
@@ -573,7 +583,7 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
    # "$regexp"  =  What regular expression should we use for selecting files?
 
    # If debugging, print diagnostics:
-   if ($Db) {
+   if ($Debug) {
       say "Debug msg in GetFiles: \$dir       = $dir"       ;
       say "Debug msg in GetFiles: \$target    = $target"    ;
       say "Debug msg in GetFiles: \$regexp    = $regexp"    ;
@@ -613,7 +623,7 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
    my @paths = glob_regexp_utf8($dir, $target, $regexp, $predicate);
 
    # If debugging, print diagnostics:
-   if ($Db) {
+   if ($Debug) {
       say 'IN GetFiles. Raw paths from glob_regexp_utf8:';
       say for @paths;
    }
@@ -756,7 +766,7 @@ files records in same-file-size arrays and does not collect or return any stats.
 =cut
 sub GetRegularFilesBySize :prototype(;$$$) ($dir = d(getcwd), $regexp = qr(^.+$)o, $predicate = 1) {
    # If debugging, print diagnostics:
-   if ($Db) {
+   if ($Debug) {
       say STDERR "\nDebug msg in GetRegularFilesBySize(), at top:\n"
                 ."\$dir       = $dir\n"
                 ."\$regexp    = $regexp\n"
@@ -904,7 +914,7 @@ sub RecurseDirs :prototype(&) ($f) {
 
    # ------- WHO'S CALLING? ----------------------------------------------------------------------------------
 
-   if ($Db) {
+   if ($Debug) {
       my ($pac,$fil,$lin)=caller;
       say STDERR "RecurseDirs called by package \"$pac\", file \"$fil\", line \"$lin\".";
    }
@@ -926,9 +936,9 @@ sub RecurseDirs :prototype(&) ($f) {
    # RecurseDirs() exited unexpectedly on a previous recursive run, it may be non-zero on first entry of next
    # recursive run. So to combat that, we COULD reset it to zero if calling package is not "RH:Dir":
 
-   # if ($Db) {say STDERR "(1) Recursion Level = $recursion";}
+   # if ($Debug) {say STDERR "(1) Recursion Level = $recursion";}
    # if ('RH::Dir' ne (caller())[0]) {$recursion = 0;}
-   # if ($Db) {say STDERR "(2) Recursion Level = $recursion";}
+   # if ($Debug) {say STDERR "(2) Recursion Level = $recursion";}
 
    # NOTE RH 2025-03-23_01-06: No, let's not do that. It just wastes time, because a set of recursive calls to
    # this subroutine will either:
@@ -1042,7 +1052,7 @@ sub RecurseDirs :prototype(&) ($f) {
       die "Fatal error in RecurseDirs: Couldn't close directory \"$curdir\".\n$!\n";
    }
 
-   if ($Db) {
+   if ($Debug) {
       say STDERR '';
       say STDERR "In RecurseDirs(); list of entries in directory \"$curdir\":";
       say STDERR for @subdirs;
@@ -1116,9 +1126,9 @@ sub RecurseDirs :prototype(&) ($f) {
       # Recurse:
       ++$recursion;
       if ( $recursion > $max_recursion ) { $max_recursion = $recursion }
-      if ($Db) {say STDERR "In RecurseDirs, in \"$new_cwd\", about to recurse.";}
+      if ($Debug) {say STDERR "In RecurseDirs, in \"$new_cwd\", about to recurse.";}
       RecurseDirs(\&{$f});
-      if ($Db) {say STDERR "In RecurseDirs, in \"$new_cwd\", just returned from recursion.";}
+      if ($Debug) {say STDERR "In RecurseDirs, in \"$new_cwd\", just returned from recursion.";}
       --$recursion;
 
       # Try to cd back to $curdir (and die if that fails):
@@ -1144,7 +1154,7 @@ sub RecurseDirs :prototype(&) ($f) {
          ."but that doesn't match our presumed current directory which is \"$curdir\".\n"
          ."Aborting program to avoid damaging file system.";
    }
-   if ($Db) {say STDERR "In RecurseDirs, in \"$new_cwd\", about to execute function.";}
+   if ($Debug) {say STDERR "In RecurseDirs, in \"$new_cwd\", about to execute function.";}
    if ( ! $f->() ) {
       warn "Warning from RecurseDirs: Couldn't apply function in directory $new_cwd!\n";
    }
@@ -1187,7 +1197,7 @@ sub copy_file :prototype($$;@)
    my $dname;                                 # File-name        for destination file.
 
    # If debugging, print diagnostics:
-   if ($Db) {
+   if ($Debug) {
       say STDERR "                      ";
       say STDERR "In copy_file, at top. ";
       say STDERR "\$spath = \"$spath\"  ";
@@ -1238,7 +1248,7 @@ sub copy_file :prototype($$;@)
    }
 
    # If debugging, print diagnostics:
-   if ($Db) {
+   if ($Debug) {
       say STDERR "                                          ";
       say STDERR "In copy_file, after processing arguments. ";
       say STDERR "\$mode  = \"$mode\"                       ";
@@ -1355,7 +1365,7 @@ sub move_file :prototype($$;@)
    my $sl       = 0;                          # Shorten names for Spotlight image processing?
 
    # If debugging, print diagnostics:
-   if ($Db) {
+   if ($Debug) {
       say STDERR "                      ";
       say STDERR "In move_file, at top. ";
       say STDERR "\$spath = \"$spath\"  ";
@@ -1400,7 +1410,7 @@ sub move_file :prototype($$;@)
    }
 
    # If debugging, print diagnostics:
-   if ($Db) {
+   if ($Debug) {
       say STDERR "                                          ";
       say STDERR "In move_file, after processing arguments. ";
       say STDERR "\$mode = \"$mode\"                        ";
@@ -1443,7 +1453,7 @@ sub move_file :prototype($$;@)
    } # end for ($mode)
 
    # Print diagnostics if debugging:
-   say STDERR "\nIn move_file, after for(\$mode).\n\$dname = \"$dname\".\n" if $Db;
+   say STDERR "\nIn move_file, after for(\$mode).\n\$dname = \"$dname\".\n" if $Debug;
 
    # Regardless of what Naming Mode we just used, if $dname already exists in $dst,
    # we'll have to come up with a new name! Let's try enumerating:
@@ -1535,7 +1545,7 @@ sub copy_files :prototype($$;@)
    my $byp_cnt  = 0                     ; # $byp_cnt  = count of files bypassed because of dup in dest
 
    # If debugging, print diagnostics:
-   if ($Db) {
+   if ($Debug) {
       warn "\nJust entered sub \"copy_files\".\n",
            "Src dir = \"$src\".   \n",
            "Dst dir = \"$dst\".   \n",
@@ -1554,7 +1564,7 @@ sub copy_files :prototype($$;@)
    }
 
    # If debugging, print diagnostics:
-   if ($Db) {
+   if ($Debug) {
       warn "\nIn middle of sub \"copy_files\".\n",
            "RegExp  = \"$regexp\".\n",
            "SL      = \"$sl\".    \n",
@@ -1586,7 +1596,7 @@ sub copy_files :prototype($$;@)
 
    # If being unique, don't copy files from source which have duplicates in destination:
    if ($unique) {
-      say "\nJust entered \"if (\$unique)\"; about to get src & dst file hashes." if $Db;
+      say "\nJust entered \"if (\$unique)\"; about to get src & dst file hashes." if $Debug;
 
       # Note starting directory:
       my $startdir = d(getcwd);
@@ -1610,7 +1620,7 @@ sub copy_files :prototype($$;@)
       # For each size of source file, copy each file of that size to destination if-and-only-if no identical
       # file exists in destination:
       SIZE: foreach my $ssize (keys %{$ssizes}) {
-         say "\nProcessing size group \"$ssize\"." if $Db;
+         say "\nProcessing size group \"$ssize\"." if $Debug;
 
          # Get array of file records for this size:
          @sfiles = @{$ssizes->{$ssize}};
@@ -1628,11 +1638,11 @@ sub copy_files :prototype($$;@)
 
          # Iterate through the source file records for this size:
          SFILE: foreach my $sfile (@sfiles) {
-            say "\nProcessing src file \"$sfile->{Name}\"." if $Db;
+            say "\nProcessing src file \"$sfile->{Name}\"." if $Debug;
 
             # If in "large" mode, skip this file if it's not a large image:
             if ( $large && ! is_large_image($sfile->{Path}) ) {
-               say "\nSkipping \"$sfile->{Name}\" because it's not a large image." if $Db;
+               say "\nSkipping \"$sfile->{Name}\" because it's not a large image." if $Debug;
                ++$skp_cnt;
                next SFILE;
             }
@@ -1641,7 +1651,7 @@ sub copy_files :prototype($$;@)
             if ($both) { # Do files of this size exist in both directories?
                DFILE: foreach my $dfile (@dfiles) {
                   if (FilesAreIdentical($sfile->{Path}, $dfile->{Path})) {
-                     say "\nBypassing \"$sfile->{Name}\" because it has a dup in dst." if $Db;
+                     say "\nBypassing \"$sfile->{Name}\" because it has a dup in dst." if $Debug;
                      ++$byp_cnt;
                      next SFILE;
                   }
@@ -1660,12 +1670,12 @@ sub copy_files :prototype($$;@)
       # Get list of paths of existing regular files in source folder:
       my @spaths = glob_regexp_utf8($src, $target, $regexp);
       SOURCE: foreach my $spath (@spaths) {
-         my $sname = get_name_from_path($spath) if $Db;
-         say "\nProcessing src file \"$sname\"." if $Db;
+         my $sname = get_name_from_path($spath) if $Debug;
+         say "\nProcessing src file \"$sname\"." if $Debug;
 
          # If in "large" mode, skip this file if it's not a large image:
          if ( $large && ! is_large_image($spath) ) {
-            say "\nSkipping \"$sname\" because it's not a large image." if $Db;
+            say "\nSkipping \"$sname\" because it's not a large image." if $Debug;
             ++$skp_cnt;
             next SOURCE;
          }
@@ -1717,7 +1727,7 @@ sub move_files :prototype($$;@)
    my $byp_cnt  = 0                     ; # $byp_cnt  = count of files bypassed because of dup in dest
 
    # If debugging, print diagnostics:
-   if ($Db) {
+   if ($Debug) {
       say STDERR "                                 ";
       say STDERR "Just entered sub \"move_files\". ";
       say STDERR "Src dir = \"$src\".              ";
@@ -1736,7 +1746,7 @@ sub move_files :prototype($$;@)
    }
 
    # If debugging, print diagnostics:
-   if ($Db) {
+   if ($Debug) {
       say STDERR "                                 ";
       say STDERR "In middle of sub \"move_files\". ";
       say STDERR "RegExp  = \"$regexp\".           ";
@@ -1770,7 +1780,7 @@ sub move_files :prototype($$;@)
 
    # If being unique, don't move files from source which have duplicates in destination:
    if ($unique) {
-      say "\nJust entered \"if (\$unique)\"; about to get src & dst file hashes." if $Db;
+      say "\nJust entered \"if (\$unique)\"; about to get src & dst file hashes." if $Debug;
 
       # Note starting directory:
       my $startdir = d(getcwd);
@@ -1794,7 +1804,7 @@ sub move_files :prototype($$;@)
       # For each size of source file, copy each file of that size to destination if-and-only-if no identical
       # file exists in destination:
       SIZE: foreach my $ssize (keys %{$ssizes}) {
-         say "\nProcessing size group \"$ssize\"." if $Db;
+         say "\nProcessing size group \"$ssize\"." if $Debug;
 
          # Get array of file records for this size:
          @sfiles = @{$ssizes->{$ssize}};
@@ -1812,11 +1822,11 @@ sub move_files :prototype($$;@)
 
          # Iterate through the source file records for this size:
          SFILE: foreach my $sfile (@sfiles) {
-            say "\nProcessing src file \"$sfile->{Name}\"." if $Db;
+            say "\nProcessing src file \"$sfile->{Name}\"." if $Debug;
 
             # If in "large" mode, skip this file if it's not a large image:
             if ( $large && ! is_large_image($sfile->{Path}) ) {
-               say "\nSkipping \"$sfile->{Name}\" because it's not a large image." if $Db;
+               say "\nSkipping \"$sfile->{Name}\" because it's not a large image." if $Debug;
                ++$skp_cnt;
                next SFILE;
             }
@@ -1825,7 +1835,7 @@ sub move_files :prototype($$;@)
             if ($both) { # Do files of this size exist in both directories?
                DFILE: foreach my $dfile (@dfiles) {
                   if (FilesAreIdentical($sfile->{Path}, $dfile->{Path})) {
-                     say "\nBypassing \"$sfile->{Name}\" because it has a dup in dst." if $Db;
+                     say "\nBypassing \"$sfile->{Name}\" because it has a dup in dst." if $Debug;
                      ++$byp_cnt;
                      next SFILE;
                   }
@@ -1843,12 +1853,12 @@ sub move_files :prototype($$;@)
       # Get list of paths of existing regular files in source folder:
       my @spaths = glob_regexp_utf8($src, $target, $regexp);
       SOURCE: foreach my $spath (@spaths) {
-         my $sname = get_name_from_path($spath) if $Db;
-         say "\nProcessing src file \"$sname\"." if $Db;
+         my $sname = get_name_from_path($spath) if $Debug;
+         say "\nProcessing src file \"$sname\"." if $Debug;
 
          # If in "large" mode, skip this file if it's not a large image:
          if ( $large && ! is_large_image($spath) ) {
-            say "\nSkipping \"$sname\" because it's not a large image." if $Db;
+            say "\nSkipping \"$sname\" because it's not a large image." if $Debug;
             ++$skp_cnt;
             next SOURCE;
          }
@@ -1867,6 +1877,14 @@ sub move_files :prototype($$;@)
 } # end sub move_files
 
 # ======= SECTION 4, MINOR SUBROUTINES: ======================================================================
+
+# Turn on debugging in this module (not exported by default, but OK to export):
+sub debug :prototype(;$) ($status = 'on') {
+   switch ($status) {
+      case qr/(?i:0|off|no)/ {$Debug = 0}
+      case qr/(?i:1|on|yes)/ {$Debug = 1}
+   }
+}
 
 # Rename a file, with more error-checking than unwrapped rename() :
 sub rename_file :prototype($$) ($OldPath, $NewPath) {
@@ -2111,7 +2129,7 @@ sub find_avail_enum_name :prototype($;$) ($name, $dir = d(getcwd)) {
       $numerator = sprintf("-(%04d)", rand_int(0,9999));
       $tryname   = $prefix . $numerator . $suffix;
       if ( ! -e e path($dir, $tryname) ) {
-         if ($Db) {say "Random enumeration succeeded on attempt # $_.";}
+         if ($Debug) {say "Random enumeration succeeded on attempt # $_.";}
          return $tryname;
       }
    } # Stop trying random numerators.
@@ -2122,7 +2140,7 @@ sub find_avail_enum_name :prototype($;$) ($name, $dir = d(getcwd)) {
       $numerator = sprintf("-(%04d)", $_);
       $tryname = $prefix . $numerator . $suffix;
       if ( ! -e e path($dir, $tryname) ) {
-         if ($Db) {say "Sequential enumeration succeeded on attempt # $_.";}
+         if ($Debug) {say "Sequential enumeration succeeded on attempt # $_.";}
          return $tryname;
       }
    } # Stop trying sequential numeration.
@@ -2172,7 +2190,7 @@ sub is_large_image :prototype($) ($path) {
 
    # Return 0 if this file is not an image file:
    $FileType = $FileTyper->checktype_filename($path);
-   if ($Db) {warn "In is_large_image. File type = \"$FileType\".\n";}
+   if ($Debug) {warn "In is_large_image. File type = \"$FileType\".\n";}
    return 0 if $FileType ne 'image/bmp'
             && $FileType ne 'image/gif'
             && $FileType ne 'image/jpeg'
@@ -2198,7 +2216,7 @@ sub is_large_image :prototype($) ($path) {
 sub get_correct_suffix :prototype($) ($path) {
    my $name  = get_name_from_path($path);
    my $suff  = get_suffix($name);
-   if ($Db) {
+   if ($Debug) {
       say STDERR '';
       say STDERR "In get_correct_suffix(), near top.";
       say STDERR "\$path = $path";
@@ -2229,7 +2247,7 @@ sub get_correct_suffix :prototype($) ($path) {
    $type =~ s%\+\pL+%%;   # Get rid of alternate type interpretations (eg, xml for svg).
 
    # Announce type if debugging:
-   if ( $Db ) {
+   if ( $Debug ) {
       say STDERR '';
       say STDERR "In get_correct_suffix(), just got type.";
       say STDERR "\$type = $type";
@@ -2300,7 +2318,7 @@ sub get_correct_suffix :prototype($) ($path) {
       my $bytes = length($buffer);
       $bytes >= 10                  or return '***ERROR***' ; # Should have been able to read 10+ bytes.
 
-      if ( $Db ) {
+      if ( $Debug ) {
          say STDERR '';
          say STDERR "In get_correct_suffix(), just loaded \$buffer.";
          say STDERR "\$size  = $size";
@@ -2592,7 +2610,7 @@ sub update_sha1 :prototype(;$) ($dir=d(getcwd)) {
       push @names, $name;
       ++$nf;
    }
-   if ($Db) {say STDERR "In update_sha1; got $nr raw files and $nf data files."}
+   if ($Debug) {say STDERR "In update_sha1; got $nr raw files and $nf data files."}
 
    # Get path to ".sha1" file, if any:
    my $sha1_path = path($dir, ".sha1");
@@ -2640,7 +2658,7 @@ sub update_sha1 :prototype(;$) ($dir=d(getcwd)) {
          # If $name isn't in table, or if size or mod-date have changed,
          # get new hash and update entry in table:
          if ( ! defined $ht{$name} || $size != $ht{$name}->{Size} || $modt != $ht{$name}->{Modt} ) {
-            if ($Db) {say STDERR "File \"$name\" in directory \"$dir\" is not in hash table.";}
+            if ($Debug) {say STDERR "File \"$name\" in directory \"$dir\" is not in hash table.";}
             my $sha1 = sha1($path);
             $ht{$name} = {Size => $size, Modt => $modt, Sha1 => $sha1};
             $upd_flag = 1;
@@ -2649,7 +2667,7 @@ sub update_sha1 :prototype(;$) ($dir=d(getcwd)) {
       # Delete any %ht entries that don't correspond to anything in @names:
       foreach my $key (keys %ht) {
          if ( none { $_ eq $key } @names ) {
-            if ($Db) {say STDERR "Hash-table key \"$key\" is not in directory \"$dir\".";}
+            if ($Debug) {say STDERR "Hash-table key \"$key\" is not in directory \"$dir\".";}
             delete $ht{$key};
             $upd_flag = 1;
          } # end if nothing in directory corresonds to $key

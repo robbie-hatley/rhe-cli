@@ -214,6 +214,23 @@ sub help    ; # Print help and exit.
    # Process @ARGV and set settings:
    argv;
 
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   BLAT "Debug msg: Values of variables after running argv():\n"
+       ."pname     = $pname     \n"
+       ."cmpl_beg  = $cmpl_beg  \n"
+       ."cmpl_end  = $cmpl_end  \n"
+       ."Options   = (@Opts)    \n"
+       ."Arguments = (@Args)    \n"
+       ."Debug     = $Debug     \n"
+       ."Help      = $Help      \n"
+       ."Verbose   = $Verbose   \n"
+       ."Recurse   = $Recurse   \n"
+       ."Target    = $Target    \n"
+       ."RegExp    = $RegExp    \n"
+       ."Predicate = $Predicate \n"
+       ."OriDir    = $OriDir    \n"
+       .'';
+
    # Print program entry message if being terse or verbose:
    if ( $Verbose >= 1 ) {
       printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
@@ -229,25 +246,6 @@ sub help    ; # Print help and exit.
    # Print basic settings if being terse or verbose:
    if ( $Verbose >= 1 ) {
       say STDERR 'Basic settings:';
-      say STDERR "OriDir    = $OriDir";
-      say STDERR "Recurse   = $Recurse";
-      say STDERR "Target    = $Target";
-      say STDERR "RegExp    = $RegExp";
-      say STDERR "Predicate = $Predicate";
-      say STDERR '';
-   }
-
-   # If debugging, print the values of all variables except counters, after processing @ARGV:
-   if ( $Debug >= 1 ) {
-      say STDERR 'Debug: Values of variables after processing @ARGV:';
-      say STDERR "pname     = $pname";
-      say STDERR "cmpl_beg  = $cmpl_beg";
-      say STDERR "cmpl_end  = $cmpl_end";
-      say STDERR "Options   = (@Opts)";
-      say STDERR "Arguments = (@Args)";
-      say STDERR "Debug     = $Debug";
-      say STDERR "Help      = $Help";
-      say STDERR "Verbose   = $Verbose";
       say STDERR "OriDir    = $OriDir";
       say STDERR "Recurse   = $Recurse";
       say STDERR "Target    = $Target";
@@ -436,7 +434,7 @@ sub help {
    Description of Options:
 
    Option:            Meaning:
-   -h or --help       Print help and exit.
+   -h or --help       Print this help and exit.
    -e or --debug      Print diagnostics.
    -q or --quiet      Be quiet.                         (DEFAULT)
    -t or --terse      Be terse.
