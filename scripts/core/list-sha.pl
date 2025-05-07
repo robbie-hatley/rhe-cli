@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -24,6 +24,7 @@
 #                   complete file records, just paths.
 # Wed Apr 09, 2025: Now using "utf8::all", and simplified shebang to "#!/usr/bin/env perl". Now using
 #                   "Cwd::utf" instead of "Cwd", and nixed all uses of "d" and "e"
+# Wed May 07, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
@@ -54,29 +55,30 @@ my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-my $Verbose   = 0         ; # Be verbose?               0,1,2     Shhh! Be quiet!
+my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
-my $Target    = 'F'       ; # Target                    F|D|B|A   Regular files.
+my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
+my $OriDir    = d(getcwd) ; # Original directory.       cwd       Directory on program entry.
 
-# Counts of events in this program:
-my $direcount = 0 ; # Count of directories processed by curdire().
-my $filecount = 0 ; # Count of files matching target, regexp, and predicate.
-my $sha1count = 0 ; # Count of sha1 file names found.
+# Counters:
+my $direcount = 0         ; # Count of directories processed by curdire().
+my $filecount = 0         ; # Count of files matching target, regexp, and predicate.
+my $shafcount = 0         ; # Count of sha1 file names found.
 
-# Regexps:
-my $Sha1Pat = qr(^[0-9a-f]{40}(?:-\(\d{4}\))?(?:\.\w+)?$);
+# SHA1 pattern:
+my $shapat = qr(^[0-9a-f]{40}(?:-\(\d{4}\))?(?:\.\w+)?$);
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv    ;
-sub curdire ;
-sub curfile ;
-sub stats   ;
-sub error   ;
-sub help    ;
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub curfile ; # Process current file.
+sub BLAT    ; # Print messages only if debugging.
+sub stats   ; # Print statistics.
+sub error   ; # Handle errors.
+sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
@@ -88,49 +90,68 @@ sub help    ;
    # Process @ARGV and set settings:
    argv;
 
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   BLAT "Debug msg: Values of variables after running argv():\n"
+       ."pname     = $pname     \n"
+       ."cmpl_beg  = $cmpl_beg  \n"
+       ."cmpl_end  = $cmpl_end  \n"
+       ."Options   = (@Opts)    \n"
+       ."Arguments = (@Args)    \n"
+       ."Debug     = $Debug     \n"
+       ."Help      = $Help      \n"
+       ."Verbose   = $Verbose   \n"
+       ."Recurse   = $Recurse   \n"
+       ."Target    = $Target    \n"
+       ."RegExp    = $RegExp    \n"
+       ."Predicate = $Predicate \n"
+       ."OriDir    = $OriDir    \n"
+       .'';
+
    # Print program entry message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
-      printf STDERR "Now entering program \"%s\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
-                    $pname, $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
+   if ( $Verbose >= 1 ) {
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
    }
 
-   # Also print compilation time if being verbose:
-   if ( 2 == $Verbose ) {
+   # Print compilation time if being verbose:
+   if ( $Verbose >= 2 ) {
       printf STDERR "Compilation time was %.3fms\n\n",
                     1000 * ($cmpl_end - $cmpl_beg);
    }
 
-   # Print the values of all variables if debugging or being verbose:
-   if ( 1 == $Debug || 2 == $Verbose ) {
-      print STDERR "pname     = $pname\n",
-                   "cmpl_beg  = $cmpl_beg\n",
-                   "cmpl_end  = $cmpl_end\n",
-                   "Options   = (@Opts)\n",
-                   "Arguments = (@Args)\n",
-                   "Debug     = $Debug\n",
-                   "Help      = $Help\n",
-                   "Verbose   = $Verbose\n",
-                   "Recurse   = $Recurse\n",
-                   "Target    = $Target\n",
-                   "RegExp    = $RegExp\n",
-                   "Predicate = $Predicate\n",
-                   "OriDir    = $OriDir\n\n";
+   # Print basic settings if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      say STDERR 'Basic settings:';
+      say STDERR "OriDir    = $OriDir";
+      say STDERR "Recurse   = $Recurse";
+      say STDERR "Target    = $Target";
+      say STDERR "RegExp    = $RegExp";
+      say STDERR "Predicate = $Predicate";
+      say STDERR '';
    }
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+   if ($Help) {help}
+   else {
+      if ($Recurse) {
+         my $mlor = RecurseDirs {curdire};
+         say "\nMaximum levels of recursion reached = $mlor";
+      }
+      else {curdire}
+      stats
+   }
 
    # Stop execution timer:
    my $t1 = time;
    my @s1 = localtime($t1);
 
    # Print exit message if being terse or verbose:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
+   if ( $Verbose >= 1 ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
-      say    STDERR "\nNow exiting program \"$pname\" in directory \"$OriDir\"";
-      printf STDERR "at %02d:%02d:%02d on %d/%d/%d. ", $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
-      printf STDERR "Execution time was %.3fms.", $ms;
+      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                    $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
+      printf STDERR "Execution time was %.3fms.\n", $ms;
    }
 
    # Exit program, returning success code "0" to caller:
@@ -139,6 +160,7 @@ sub help    ;
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
+# Process @ARGV:
 sub argv {
    # Get options and arguments:
    my $end = 0;              # end-of-options flag
@@ -162,36 +184,35 @@ sub argv {
    for ( @Opts ) {
       /^-$s*h/ || /^--help$/    and $Help    =  1  ;
       /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default.
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
-      /^-$s*f/ || /^--files$/   and $Target  = 'F' ; # Default.
+      /^-$s*f/ || /^--files$/   and $Target  = 'F' ;
       /^-$s*d/ || /^--dirs$/    and $Target  = 'D' ;
       /^-$s*b/ || /^--both$/    and $Target  = 'B' ;
-      /^-$s*a/ || /^--all$/     and $Target  = 'A' ;
+      /^-$s*a/ || /^--all$/     and $Target  = 'A' ; # Default.
    }
 
    # Get number of arguments:
    my $NA = scalar(@Args);
 
-   # If user typed more than 2 arguments, and we're not debugging or getting help,
+   # If user typed more than 2 arguments, and we're not debugging,
    # then print error and help messages and exit:
-   if ( $NA > 2                  # If number of arguments > 2
-        && !$Debug && !$Help ) { # and we're not debugging and not getting help,
+   if ( $NA >= 3 && !$Debug ) {  # If number of arguments >= 3 and we're not debugging,
       error($NA);                # print error message,
       help;                      # and print help message,
       exit 666;                  # and exit, returning The Number Of The Beast.
    }
 
    # First argument, if present, is a file-selection regexp:
-   if ( $NA > 0 ) {              # If number of arguments > 0,
+   if ( $NA >= 1 ) {             # If number of arguments >= 1,
       $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
    }
 
    # Second argument, if present, is a file-selection predicate:
-   if ( $NA > 1 ) {              # If number of arguments >= 2,
+   if ( $NA >= 2 ) {             # If number of arguments >= 2,
       $Predicate = $Args[1];     # set $Predicate to $Args[1].
    }
 
@@ -205,7 +226,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
+   my $cwd = d(getcwd);
 
    # Announce current working directory if being verbose:
    if ( $Verbose >= 2 ) {
@@ -225,45 +246,51 @@ sub curdire {
 # Process current file:
 sub curfile ($path) {
    ++$filecount;
-   if ( get_name_from_path($path) =~ m/^$Sha1Pat/ ) {
-      ++$sha1count;
+   if ( get_name_from_path($path) =~ m/^$shapat/ ) {
+      ++$shafcount;
       say $path;
    }
    return 1;
 } # end sub curfile
 
+# Print messages only if debugging:
+sub BLAT ($string) {if ($Debug) {say STDERR $string}}
+
+# Print statistics:
 sub stats {
-   if ( $Verbose > 0 ) {
+   if ( $Verbose >= 1 ) {
       say "\nNavigated $direcount directories.";
-      say "Found $filecount files, $sha1count of them with SHA1 names.";
+      say "Found $filecount files, $shafcount of them with SHA1 names.";
    }
    return 1;
 } # end sub stats
 
+# Give help:
 sub help {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print STDERR ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "list-sha1-file-names.pl". This program prints the paths of all sha1
-   file names in the current directory (and all subdirectories if a "-r" or
-   "--recurse" option is used).
+   Welcome to "list-sha.pl". This program prints the paths of all files in the
+   current directory (and all subdirectories if a -r or --recurse option is used)
+   which have "sha" names (names consisting of the SHA1 hash of the contents of
+   the file, used for indexing files).
 
    -------------------------------------------------------------------------------
    Command lines:
 
-   numsha.pl -h | --help            (to print this help and exit)
-   numsha.pl [options] [arguments]  (to print sha1 file names)
+   list-sha.pl -h | --help                       (to print this help and exit)
+   list-sha.pl [options] [Arg1] [Arg2] [Arg3]    (to list sha file names)
 
    -------------------------------------------------------------------------------
    Description of Options:
 
    Option:            Meaning:
-   -h or --help       Print help and exit.
+   -h or --help       Print this help and exit.
    -e or --debug      Print diagnostics.
-   -q or --quiet      Be quiet.                         (DEFAULT)
-   -t or --terse      Be terse.
+   -q or --quiet      Be quiet.
+   -t or --terse      Be terse.                         (DEFAULT)
    -v or --verbose    Be verbose.
    -l or --local      DON'T recurse subdirectories.     (DEFAULT)
    -r or --recurse    DO    recurse subdirectories.
@@ -276,9 +303,10 @@ sub help {
    Multiple single-letter options may be piled-up after a single hyphen.
    For example, use -vr to verbosely and recursively process items.
 
-   If multiple conflicting separate options are given, later overrides earlier.
+   If multiple conflicting separate options are given, latter overrides former.
+
    If multiple conflicting single-letter options are piled after a single hyphen,
-   the result is determined by this descending order of precedence: heabdfrlvtq.
+   the precedence is the inverse of the options in the above table.
 
    If you want to use an argument that looks like an option (say, you want to
    search for files which contain "--recurse" as part of their name), use a "--"
@@ -301,17 +329,12 @@ sub help {
    Be sure to enclose your regexp in 'single quotes', else BASH may replace it
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
-   WARNING: If you use a RegExp that precludes the SHA1 pattern, no SHA1 file
-   paths will be printed. For example, '\.jpg$' doesn't preclude SHA1, but
-   '^[a-z]{7}\.jpg$' does.
 
    Arg2 (OPTIONAL), if present, must be a boolean predicate using Perl
    file-test operators. The expression must be enclosed in parentheses (else
    this program will confuse your file-test operators for options), and then
    enclosed in single quotes (else the shell won't pass your expression to this
-   program intact). If this argument is used, it overrides "--files", "--dirs",
-   or "--both", and sets target to "--all" in order to avoid conflicts with
-   the predicate. Here are some examples of valid and invalid predicate arguments:
+   program intact). Here are some examples of valid and invalid predicate arguments:
    '(-d && -l)'  # VALID:   Finds symbolic links to directories
    '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
    '(-b)'        # VALID:   Finds block special files
@@ -326,14 +349,17 @@ sub help {
    backwards, they won't do what you want, as most predicates aren't valid regexps
    and vice-versa.
 
+   NOTE: You can't "skip" Arg1 and go straight to Arg2 because your intended Arg2
+   would be construed as Arg1! But you can "bypass" Arg1 by using '.+' meaning
+   "some characters" which will match every file name.
+
    A number of arguments greater than 2 will cause this program to print an error
    message and abort.
 
-   Happy SHA1 file listing!
-
+   Happy SHA1-name file listing!
    Cheers,
    Robbie Hatley,
    programmer.
    END_OF_HELP
    return 1;
-} # end sub help ()
+} # end sub help
