@@ -1,3 +1,4 @@
+%sudo cpanm Class::Debug
 --> Working on Class::Debug
 Fetching https://www.cpan.org/authors/id/N/NH/NHORNE/Class-Debug-0.02.tar.gz ... OK
 Configuring Class-Debug-0.02 ... OK
