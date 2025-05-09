@@ -42,12 +42,13 @@
 # Tue Apr 29, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl". Nixed all "d" and "e".
 #                   Increased min ver from "v5.32" to "v5.36". Reduced width from 120 to 110.
 #                   Shortened subroutine names.
-# Sun May 04, 2025: Reverted from "utf8::all" to "utf8" for Cygwin compatibility.
+# Wed May 07, 2025: Reverted from "utf8::all" to "utf8" for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
 use utf8;
 use Time::HiRes 'time';
+use RH::Dir;
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -95,8 +96,8 @@ my $bothcount = 0  ; # Count of files in combined batch.
       say "\$prefix = $prefix";
       say "\$digits = $digits";
       say "\$suffix = $suffix";
-      say "\$dir2   = $dir2  ";
       say "\$dir1   = $dir1  ";
+      say "\$dir2   = $dir2  ";
    }
 
    # If user wants help, print help; else merge batches and print stats:
@@ -145,7 +146,7 @@ sub argv {
    (5 != $NA) && !$Help && !$Debug and error($NA) and help and exit 666;
 
    # Set settings:
-   $NA >= 1 and $prefix = $Args[0];
+   ($prefix, $digits, $suffix, $dir1, $dir2) = @Args;
    $NA >= 2 and $digits = $Args[1];
    $NA >= 3 and $suffix = $Args[2];
    $NA >= 4 and $dir1   = $Args[3];
@@ -166,7 +167,8 @@ sub merge {
    my @srcenames  = (); # List of names of files in source directory.
    my $dh1 = undef; # Handle for directory 1.
    opendir($dh1, e($dir1)) or die "Can't open dir \"$dir1\"\n$!\n";
-   while (my $name1 = readdir $dh1) {
+   while (readdir($dh1)) {
+      my $name1 = d($_);
       next if '.'  eq $name1;
       next if '..' eq $name1;
       if ($Debug) {
@@ -188,7 +190,8 @@ sub merge {
    # Read destination directory:
    my $dh2 = undef; # Handle for directory 2.
    opendir($dh2, e($dir2)) or die "Can't open dir \"$dir2\"\n$!\n";
-   while (my $name2 = readdir $dh2) {
+   while (readdir($dh2)) {
+      my $name2 = d($_);
       next if '.'  eq $name2;
       next if '..' eq $name2;
       if ($Debug) {
@@ -222,7 +225,7 @@ sub merge {
       my $newpath = $dir2 . '/' . $name2;
       say "$oldpath => $newpath";
       $newpath eq $oldpath and die "\nError: new path same as old!\n$!\n";
-      rename($oldpath, $newpath) or die "\nError: rename failed!\n$!\n";
+      rename(e($oldpath), e($newpath)) or die "\nError: rename failed!\n$!\n";
    }
 
    # Return success code 1 to caller:

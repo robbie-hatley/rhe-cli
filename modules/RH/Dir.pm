@@ -260,14 +260,48 @@ our @EXPORT_OK =
       $zombcount $unkncount debug
    );
 
-# ======= IMPORTER??? ========================================================================================
-# No, this doesn't work (screws-up exports in process of doing imports):
-# sub import {
-#    shift @_ ;
-#    my %settings = ( @_ );
-#    if ( 'on' eq $settings{debug} ) {$Debug = 1;}
-#    RH::Dir->export_to_level(1, @EXPORT);
-# }
+# ======= IMPORTER: ==========================================================================================
+
+=pod
+
+# Import settings INTO this module,
+# and export variables and subroutines OUTOF this module:
+sub import {
+   # Get the "STUFF" from "use RH::Dir qw( STUFF );":
+   my @STUFF = @_ ;
+   # Make a reference to a scalar variable:
+   my $varref = undef;
+   # Take appropriate measures for each item in @STUFF:
+   while ( @STUFF ) {
+      # Get next item:
+      my $item = shift @STUFF ;
+      # 0th item is always package id; ignore:
+      if ( 'RH::Dir' eq $item ) {
+         ; # Do nothing.
+      }
+      # If we're waiting for a value for a var, store it:
+      elsif ( defined $varref ) {
+         if ( $varref == \$Debug ) {
+            switch ($item) {
+               case qr/(?i:0|off|no)/ {$$varref = 0}
+               case qr/(?i:1|on|yes)/ {$$varref = 1}
+            }
+         }
+         $varref = undef;
+      }
+      # If we received a debug command, point $varref to $Debug:
+      elsif ( 'debug' eq $item ) {
+         $varref = \$Debug;
+      }
+      # Otherwise, $item is something user wants us to export:
+      else {
+         push @EXPORT, $item;
+      }
+   }
+   RH::Dir->export_to_level(3, @EXPORT);
+}
+
+=cut
 
 # ======= SECTION 1, PRIVATE SUBROUTINES: ====================================================================
 
@@ -1880,7 +1914,8 @@ sub move_files :prototype($$;@)
 
 # ======= SECTION 4, MINOR SUBROUTINES: ======================================================================
 
-# Turn on debugging in this module (not exported by default, but OK to export):
+# Turn on debugging in this module
+# (not exported by default, but OK to export):
 sub debug :prototype(;$) ($status = 'on') {
    switch ($status) {
       case qr/(?i:0|off|no)/ {$Debug = 0}

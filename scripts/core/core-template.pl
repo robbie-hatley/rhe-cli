@@ -180,7 +180,7 @@ my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-my $Verbose   = 0         ; # Be verbose?               0,1,2     Shhh! Be quiet!
+my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
@@ -308,8 +308,8 @@ sub argv {
    for ( @Opts ) {
       /^-$s*h/ || /^--help$/    and $Help    =  1  ;
       /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default.
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
@@ -415,20 +415,20 @@ sub error ($NA) {
 
 # Print help:
 sub help {
-   print STDERR ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print STDERR ((<<"   END_OF_HELP") =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "[insert Program Name here]". This program does blah blah blah
+   Welcome to "$pname". This program does blah blah blah
    to all files in the current directory (and all subdirectories if a -r or
    --recurse option is used).
 
    -------------------------------------------------------------------------------
    Command lines:
 
-   program-name.pl -h | --help                       (to print this help and exit)
-   program-name.pl [options] [Arg1] [Arg2] [Arg3]    (to [perform funciton] )
+   $pname.pl -h | --help                       (to print this help and exit)
+   $pname.pl [options] [Arg1] [Arg2] [Arg3]    (to [perform funciton] )
 
    -------------------------------------------------------------------------------
    Description of Options:
@@ -436,8 +436,8 @@ sub help {
    Option:            Meaning:
    -h or --help       Print this help and exit.
    -e or --debug      Print diagnostics.
-   -q or --quiet      Be quiet.                         (DEFAULT)
-   -t or --terse      Be terse.
+   -q or --quiet      Be quiet.
+   -t or --terse      Be terse.                         (DEFAULT)
    -v or --verbose    Be verbose.
    -l or --local      DON'T recurse subdirectories.     (DEFAULT)
    -r or --recurse    DO    recurse subdirectories.
