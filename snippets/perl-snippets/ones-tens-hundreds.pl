@@ -21,6 +21,6 @@
       return 'no input in hundreds'     if @_ < 1;
       return 'excess input in hundreds' if @_ > 1;
       my $digit = shift;
-      return 'input error in hundreds'  if $digit !~ m/^\d$/;
+      return 'non-digit input in hundreds' if $digit !~ m/^\d$/;
       return $hundreds[$digit];
    }

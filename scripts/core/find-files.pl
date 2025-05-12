@@ -83,6 +83,7 @@
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
 # Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
+# Sun May 11, 2025: Set recursion message to "terse or verbose". Removed excessive comments.
 ##############################################################################################################
 
 use v5.36;
@@ -100,32 +101,12 @@ $" = ', ' ; # Quoted-array element separator = ", ".
 
 # ------- Global Variables: ----------------------------------------------------------------------------------
 
-# WARNING: Do NOT initialize global variables on their declaration line! That wipes-out changes made to them
-#          by BEGIN, UNITCHECK, CHECK, and INIT blocks! Instead, initialize them in those blocks.
 our    $pname;                                 # Declare program name.
 BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
 our    $cmpl_beg;                              # Declare compilation begin time.
 BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
 our    $cmpl_end;                              # Declare compilation end   time.
 INIT  {$cmpl_end = time}                       # Set     compilation end   time.
-
-# NOTE: Always remember, if using BEGIN blocks, only the declaration half of any "my|our $varname = value;"
-# statement is executed before the begin blocks; the "= value;" part is executed AFTER all BEGIN blocks!!!
-# So, THIS code:
-#    my $dog = 'Spot';
-#    BEGIN {defined $dog ? print("defined\n") : print("undefined\n");}
-#    print("My dog's name is $dog.\n");
-#    END   {print("$dog is a nice dog.\n");}
-# Is the same as THIS code:
-#    my $dog;
-#    defined $dog ? print("defined\n") : print("undefined\n");
-#    $dog = 'Spot';
-#    print("My dog's name is $dog.\n");
-#    print("$dog is a nice dog.\n");
-# And EITHER of those code blocks will print:
-#    undefined
-#    My dog's name is Spot.
-#    Spot is a nice dog.
 
 # ------- Local variables: -----------------------------------------------------------------------------------
 
@@ -147,9 +128,6 @@ my $filecount = 0         ; # Count of files matching target, regexp, and predic
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-# NOTE: These alert the compiler that these names, when encountered (whether in subroutine definitions,
-# BEGIN, CHECK, UNITCHECK, INIT, END, other subroutines, or in the main body of the program), are subroutines,
-# so it needs to find, compile, and link their definitions:
 sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
 sub curfile ; # Process current file.
@@ -214,7 +192,7 @@ sub help    ; # Print help and exit.
    else {
       if ($Recurse) {
          my $mlor = RecurseDirs {curdire};
-         say "\nMaximum levels of recursion reached = $mlor";
+         if ($Verbose >= 1){say "\nMaximum levels of recursion reached = $mlor"}
       }
       else {curdire}
       stats
