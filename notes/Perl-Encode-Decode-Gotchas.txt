@@ -1,22 +1,72 @@
-Perl built-in functions which require encoding and/or decoding:
+This file details Perl functions (both built-in and from core
+modules) which require encoding and/or decoding.
 
-chdir
-chmod
-chown
-chroot
-getlogin
-glob
-link
-lstat
-mkdir
-open
-opendir
-readlink
-rename
-rmdir
-symlink
-system
-unlink
+Perl functions which must be sent UTF-8-encoded versions of
+non-English (ord > 255) text, primarily due to being wrappers
+around system calls for file-access purposes:
+
+Function:                   Workaround using my "e" function:
+--------------------------------------------------------------
+chdir $path                 chdir e($path)
+chmod 0775, $path           chmod 0775, e($path)
+chown $uid, $gid, @paths    chown $uid, $gid, e(@paths)
+chroot $dir                 chroot e($dir)
+exec $path, @list           exec e($path), e(@list)                       
+glob $expr                  glob e($expr)
+link $oldf, $newf           link e($oldf), e($newf)
+lstat $path                 lstat e($path)
+mkdir $path                 mkdir e($path)
+open $fh, $mode, $path      open $fh, $mode, e($path)
+opendir $dh, $path          opendir $dh, e($path)
+readlink $path              d(readlink e($path))
+rename $oldf, $newf         rename e($oldf), e($newf)
+rmdir $dir                  rmdir e($dir)
+stat $path                  stat e($path)
+symlink $oldf, $newf        symlink e($oldf), e($newf)
+system $command             system(e($command))
+unlink @list                unlink e(@list)
+
+Perl functions which return values which must be decoded from UTF-8 to Unicode:
+
+Function:                   Workaround using my "d" function:
+--------------------------------------------------------------
+getlogin                    d(getlogin)     # not necessary on "usernames are ASCII" systems
+readdir  $fh                d(readdir $fh)
+readline $fh                d(readline $fh)
+readlink $path              d(readlink e($path))
 
 \bchdir\b|\bchmod\b|\bchown\b|\bchroot\b|\bgetlogin\b|\bglob\b|\blink\b|\blstat\b|\bmkdir\b|\bopen\b|\bopendir\b|\breadlink\b|\brename\b|\brmdir\b|\bsymlink\b|\bsystem\b|\bunlink\b
+
+(Note: the xxxx_utf8 functions mentioned above are my own:
+https://people.well.com/user/lonewolf/main/programming/modules/RH/Dir.pm
+The "e" is also a function I wrote, which is a wrapper
+around "encode" function from the "Encode" module.)
+
+Built-in functions which should NOT be sent UTF-8-encoded 
+versions of Unicode text (basically, anything not having
+to-do-with the file system, which is the primary thing
+Perl would need system calls for):
+
+ord      Must be sent the raw, unencoded Unicode codepoint,
+         else it gives 1-byte UTF-8 ordinals for pieces of
+         characters instead (begin, continue, or end bytes).
+         Unlike most Perl built-in functions, THIS function
+         absolutely RELISHES "wide characters" such as "麦藁有希".
+         This is probably because this function is "perl internal"
+         rather than being wrappers around system calls.
+
+Unicode::Normalize 'NFC', 'NFD';
+         Must be sent raw, unencoded Unicode codepoints.
+         Actually, this makes sense, because you can't do
+         Unicode operations on UTF-8 material; one needs
+         the raw Unicode codepoints for that. And again,
+         these functions must be internal to Perl,
+         rather than being wrappers around system calls.
+
+Built-in functions which can give "wide character" errors
+for reasons OTHER THAN needing UTF-8-encoded input:
+
+oct      Only feed this numbers! It can't handle characters
+         such as "看的星"; it gets all upset if you do that
+         and dies with "wide character in oct".
 
