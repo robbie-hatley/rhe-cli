@@ -614,3 +614,6 @@ hyphen, and both regular expressions and boolean predicates as first two argumen
 
 I think I'll start by looking in my other script directories for inspiration.
 
+--------------------------------------------------------------------------------------------------------------
+Mon Apr 12, 2025, 2:22PM:
+When I get home, remember to investigate those 25 changed files.
