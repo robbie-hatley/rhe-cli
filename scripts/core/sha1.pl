@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -13,6 +13,7 @@
 # Wed Mar 26, 2025: Wrote it.
 # Wed Apr 09, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d" and "e", and now using "cwd" instead of "d getcwd".
+# Wed May 07, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
@@ -47,7 +48,7 @@ my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               0,1,2     Be quiet.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
-my $OriDir    = cwd       ; # Original directory.       dir       The directory we started in.
+my $OriDir    = d(getcwd) ; # Original directory.       dir       The directory we started in.
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
@@ -178,7 +179,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
+   my $cwd = d(getcwd);
 
    # Announce current working directory if being verbose:
    if ( $Verbose >= 2 ) {

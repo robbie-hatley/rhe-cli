@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -C63
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -10,6 +10,7 @@
 # Written by Robbie Hatley.
 # Edit history:
 # Thu Apr 10, 2025: Wrote it.
+# Wed May 07, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 ##############################################################################################################
 
 use v5.36;
@@ -41,7 +42,7 @@ my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               0,1,2     Shhh! Be quiet!
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
+my $OriDir    = d(getcwd) ; # Original directory.       cwd       Directory on program entry.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
@@ -205,7 +206,7 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
+   my $cwd = d(getcwd);
 
    # Announce current working directory if being verbose:
    if ( $Verbose >= 2 ) {

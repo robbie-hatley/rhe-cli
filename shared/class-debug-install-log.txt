@@ -1,0 +1,173 @@
+%sudo cpanm Class::Debug
+--> Working on Class::Debug
+Fetching https://www.cpan.org/authors/id/N/NH/NHORNE/Class-Debug-0.02.tar.gz ... OK
+Configuring Class-Debug-0.02 ... OK
+==> Found dependencies: Config::Abstraction, JSON::MaybeXS, Log::Abstraction
+--> Working on Config::Abstraction
+Fetching https://www.cpan.org/authors/id/N/NH/NHORNE/Config-Abstraction-0.20.tar.gz ... OK
+Configuring Config-Abstraction-0.20 ... OK
+==> Found dependencies: Hash::Merge, JSON::MaybeXS, Data::Reuse, Test::Without::Module, JSON::Parse, Test::DescribeMe, Hash::Flatten, Params::Get, XML::PP, Config::Auto, Config::IniFiles
+--> Working on Hash::Merge
+Fetching https://www.cpan.org/authors/id/H/HE/HERMES/Hash-Merge-0.302.tar.gz ... OK
+Configuring Hash-Merge-0.302 ... OK
+==> Found dependencies: Clone::Choose
+--> Working on Clone::Choose
+Fetching https://www.cpan.org/authors/id/H/HE/HERMES/Clone-Choose-0.010.tar.gz ... OK
+Configuring Clone-Choose-0.010 ... OK
+==> Found dependencies: Test::Without::Module
+--> Working on Test::Without::Module
+Fetching https://www.cpan.org/authors/id/C/CO/CORION/Test-Without-Module-0.23.tar.gz ... OK
+Configuring Test-Without-Module-0.23 ... OK
+Building and testing Test-Without-Module-0.23 ... OK
+Successfully installed Test-Without-Module-0.23
+Building and testing Clone-Choose-0.010 ... OK
+Successfully installed Clone-Choose-0.010
+Building and testing Hash-Merge-0.302 ... OK
+Successfully installed Hash-Merge-0.302
+--> Working on JSON::MaybeXS
+Fetching https://www.cpan.org/authors/id/E/ET/ETHER/JSON-MaybeXS-1.004008.tar.gz ... OK
+Configuring JSON-MaybeXS-1.004008 ... OK
+==> Found dependencies: Cpanel::JSON::XS
+--> Working on Cpanel::JSON::XS
+Fetching https://www.cpan.org/authors/id/R/RU/RURBAN/Cpanel-JSON-XS-4.39.tar.gz ... OK
+Configuring Cpanel-JSON-XS-4.39 ... OK
+Building and testing Cpanel-JSON-XS-4.39 ... OK
+Successfully installed Cpanel-JSON-XS-4.39
+Building and testing JSON-MaybeXS-1.004008 ... OK
+Successfully installed JSON-MaybeXS-1.004008
+--> Working on Data::Reuse
+Fetching https://www.cpan.org/authors/id/L/LN/LNATION/Data-Reuse-0.13.tar.gz ... OK
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.quarantine'
+/usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+Configuring Data-Reuse-0.13 ... OK
+==> Found dependencies: Data::Alias
+--> Working on Data::Alias
+Fetching https://www.cpan.org/authors/id/X/XM/XMATH/Data-Alias-1.28.tar.gz ... OK
+Configuring Data-Alias-1.28 ... OK
+Building and testing Data-Alias-1.28 ... OK
+Successfully installed Data-Alias-1.28
+Building and testing Data-Reuse-0.13 ... OK
+Successfully installed Data-Reuse-0.13
+--> Working on JSON::Parse
+Fetching https://www.cpan.org/authors/id/B/BK/BKB/JSON-Parse-0.62.tar.gz ... OK
+Configuring JSON-Parse-0.62 ... OK
+Building and testing JSON-Parse-0.62 ... OK
+Successfully installed JSON-Parse-0.62
+--> Working on Test::DescribeMe
+Fetching https://www.cpan.org/authors/id/W/WO/WOLFSAGE/Test-DescribeMe-0.004.tar.gz ... OK
+Configuring Test-DescribeMe-0.004 ... OK
+==> Found dependencies: Test::Settings
+--> Working on Test::Settings
+Fetching https://www.cpan.org/authors/id/W/WO/WOLFSAGE/Test-Settings-0.003.tar.gz ... OK
+Configuring Test-Settings-0.003 ... OK
+Building and testing Test-Settings-0.003 ... OK
+Successfully installed Test-Settings-0.003
+Building and testing Test-DescribeMe-0.004 ... OK
+Successfully installed Test-DescribeMe-0.004
+--> Working on Hash::Flatten
+Fetching https://www.cpan.org/authors/id/B/BB/BBC/Hash-Flatten-1.19.tar.gz ... OK
+Configuring Hash-Flatten-1.19 ... OK
+==> Found dependencies: Log::Trace, Test::Assertions
+--> Working on Log::Trace
+Fetching https://www.cpan.org/authors/id/B/BB/BBC/Log-Trace-1.070.tar.gz ... OK
+Configuring Log-Trace-1.070 ... OK
+Building and testing Log-Trace-1.070 ... OK
+Successfully installed Log-Trace-1.070
+--> Working on Test::Assertions
+Fetching https://www.cpan.org/authors/id/B/BB/BBC/Test-Assertions-1.054.tar.gz ... OK
+Configuring Test-Assertions-1.054 ... OK
+Building and testing Test-Assertions-1.054 ... OK
+Successfully installed Test-Assertions-1.054
+Building and testing Hash-Flatten-1.19 ... OK
+Successfully installed Hash-Flatten-1.19
+--> Working on Params::Get
+Fetching https://www.cpan.org/authors/id/N/NH/NHORNE/Params-Get-0.04.tar.gz ... OK
+Configuring Params-Get-0.04 ... OK
+==> Found dependencies: Test::Compile
+--> Working on Test::Compile
+Fetching https://www.cpan.org/authors/id/E/EG/EGILES/Test-Compile-v3.3.3.tar.gz ... OK
+Configuring Test-Compile-v3.3.3 ... OK
+Building and testing Test-Compile-v3.3.3 ... OK
+Successfully installed Test-Compile-v3.3.3
+Building and testing Params-Get-0.04 ... OK
+Successfully installed Params-Get-0.04
+--> Working on XML::PP
+Fetching https://www.cpan.org/authors/id/N/NH/NHORNE/XML-PP-0.05.tar.gz ... OK
+Configuring XML-PP-0.05 ... OK
+Building and testing XML-PP-0.05 ... OK
+Successfully installed XML-PP-0.05
+--> Working on Config::Auto
+Fetching https://www.cpan.org/authors/id/B/BI/BINGOS/Config-Auto-0.44.tar.gz ... OK
+Configuring Config-Auto-0.44 ... OK
+==> Found dependencies: Config::IniFiles
+--> Working on Config::IniFiles
+Fetching https://www.cpan.org/authors/id/S/SH/SHLOMIF/Config-IniFiles-3.000003.tar.gz ... OK
+Configuring Config-IniFiles-3.000003 ... OK
+==> Found dependencies: IO::Scalar
+--> Working on IO::Scalar
+Fetching https://www.cpan.org/authors/id/C/CA/CAPOEIRAB/IO-Stringy-2.113.tar.gz ... OK
+Configuring IO-Stringy-2.113 ... OK
+Building and testing IO-Stringy-2.113 ... OK
+Successfully installed IO-Stringy-2.113
+Building and testing Config-IniFiles-3.000003 ... OK
+Successfully installed Config-IniFiles-3.000003
+Building and testing Config-Auto-0.44 ... OK
+Successfully installed Config-Auto-0.44
+Building and testing Config-Abstraction-0.20 ... OK
+Successfully installed Config-Abstraction-0.20
+--> Working on Log::Abstraction
+Fetching https://www.cpan.org/authors/id/N/NH/NHORNE/Log-Abstraction-0.11.tar.gz ... OK
+Configuring Log-Abstraction-0.11 ... OK
+Building and testing Log-Abstraction-0.11 ... OK
+Successfully installed Log-Abstraction-0.11
+Building and testing Class-Debug-0.02 ... OK
+Successfully installed Class-Debug-0.02
+22 distributions installed
