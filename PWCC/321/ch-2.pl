@@ -35,14 +35,15 @@ Output: false
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+I'll solve this by simply doing what each "#" backspace character means: "erase this character, and the one to
+its left (if this is not the first character)". Then compare the processed strings.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of arrays of two double-quoted strings, in proper Perl syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '(["rat#ck", "Greg####rack"],["Hadley####tley", "Hadley####thaway"])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -52,26 +53,40 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # PRAGMAS, MODULES, AND SUBS:
 
 use v5.36;
+use Sys::Binmode;
 use utf8::all;
 
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+# Treat each octothorpe in a string as a backspace command:
+sub backspace ($s) {
+   for ( my $i = 0 ; $i < length($s) ; ++$i ) {   # For each character in string:
+      if ('#' eq substr($s,$i,1)) {               # If it's a "#":
+         substr($s,$i,1,'');                      # Remove "#".
+         --$i;                                    # Decrement index.
+         if ($i >= 0) {                           # If index is still non-negative:
+            substr($s,$i,1,'');                   # Also remove the character that was to the left of the "#"
+            --$i;}}}                              # and decrement the index again.
+   return $s;}                                    # Return result.
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) :
+(
+   ["ab#c", "ad#c"], # Expected output: true
+   ["ab##", "a#b#"], # Expected output: true
+   ["a#b" , "c"   ], # Expected output: false
+);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   my ($s1,$s2) = @$aref[0,1];
+   my ($b1,$b2) = map {backspace($_)} ($s1,$s2);
+   say "String 1 (original) = $s1";
+   say "String 2 (original) = $s2";
+   say "String 1 (backspcd) = $b1";
+   say "String 2 (backspcd) = $b2";
+   my $bc = (backspace($s1) eq backspace($s2)) ? 'true' : 'false';
+   say "Backspace compare: $bc";
 }
