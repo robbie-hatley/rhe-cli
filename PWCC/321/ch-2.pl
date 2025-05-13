@@ -52,20 +52,20 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use Sys::Binmode;
-use utf8::all;
+   use v5.36;
+   use Sys::Binmode;
+   use utf8::all;
 
-# Treat each octothorpe in a string as a backspace command:
-sub backspace ($s) {
-   for ( my $i = 0 ; $i < length($s) ; ++$i ) {   # For each character in string:
-      if ('#' eq substr($s,$i,1)) {               # If it's a "#":
-         substr($s,$i,1,'');                      # Remove "#".
-         --$i;                                    # Decrement index.
-         if ($i >= 0) {                           # If index is still non-negative:
-            substr($s,$i,1,'');                   # Also remove the character that was to the left of the "#"
-            --$i;}}}                              # and decrement the index again.
-   return $s;}                                    # Return result.
+   # Treat each octothorpe in a string as a backspace command:
+   sub backspace ($s) {
+      for ( my $i = 0 ; $i < length($s) ; ++$i ) { # For each character in string:
+         if ('#' eq substr($s,$i,1)) {             # If it's a "#":
+            substr($s,$i,1,'');                    # Remove "#".
+            --$i;                                  # Decrement index.
+            if ($i >= 0) {                         # If index is still non-negative:
+               substr($s,$i,1,'');                 # Also remove the character that was to the left of the "#"
+               --$i;}}}                            # and decrement the index again.
+      return $s;}                                  # Return result.
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:

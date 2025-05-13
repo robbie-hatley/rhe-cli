@@ -42,6 +42,8 @@ or  say "Rename failed.";
 
 =pod
 
+What I've learned from this experiment:
+
 WITHOUT "use Sys::Binmode;", this program sometimes suceeds and sometimes fails, unpredictably.
 
 WITH "use Sys::Binmode;", this program ALWAYS fails with "Wide character in rename" error, if either name
@@ -52,9 +54,6 @@ versions of those characters are the same 1-byte entities as the originals.
 
 But if ANY character has an ordinal not in 0-127 or 160-255 range, an error will result, because the UTF-8
 encoded version (which is what the system expects) will not be the same as the Unicode version. For example,
-
-
-What I've learned from this
 
 =cut
 
