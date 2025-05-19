@@ -47,12 +47,23 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
+   use v5.36;
+   use utf8::all;
 
-sub asdf ($x) {
-   -2.73*$x + 6.83*$y;
-}
+   # Use hyphens to group the non-hyphen characters of a given string
+   # in groups of a given period, with any remainder at the beginning:
+   sub string_format ($aref) {
+      my $raw        = $$aref[0];                                           # Raw string.
+      my $period     = $$aref[1];                                           # Period.
+      my $stripped   = $raw =~ s/-//gr;                                     # Chomp hyphens.
+      my $remainder  = length($stripped) % $period;                         # How many leftover chars?
+      my @substrings = ();                                                  # Groups of period $period.
+      $remainder and push @substrings, substr $stripped, 0, $remainder, ''; # Remainder goes at beginning.
+      while (length($stripped) > 0) {                                       # While we still have characters,
+         push @substrings, substr $stripped, 0, $period, '';                # add groups of period $period.
+      }
+      join '-', @substrings;                                                # Paste substrings together w "-".
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:

@@ -51,22 +51,22 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    # Given an array of numbers,
    # print corresponding array of ranks:
    sub rank_array ($aref) {
-      my @sorted = sort {$a<=>$b} @$aref;
-      my $max = $sorted[0];
-      my $rank = 1;
-      my %hash;
-      my @ranked;
-      for my $item (@sorted) {
-         if ($item > $max) {
-            ++$rank;
-            $max = $item;
+      my @sorted = sort {$a<=>$b} @$aref; # Sort number ascending.
+      my $max = $sorted[0];               # Set "maximum" to first number at start.
+      my $rank = 1;                       # Set rank to 1 at start.
+      my %hash;                           # Make a hash of number ranks
+      my @ranked;                         # Make an array for output.
+      for my $item (@sorted) {            # For each number, least to greatest:
+         if ($item > $max) {              # If number > max:
+            $max = $item;                 # Update max
+            ++$rank;                      # an jump to next-highest rank.
          }
-         $hash{$item} = $rank;
+         $hash{$item} = $rank;            # Record this number's rank in hash.
       }
-      for my $item (@$aref) {
-         push @ranked, $hash{$item};
+      for my $item (@$aref) {             # For each number,
+         push @ranked, $hash{$item};      # append its rank to @ranked .
       }
-      return @ranked;
+      return @ranked;                     # Return ranks.
    }
 
 # ------------------------------------------------------------------------------------------------------------
