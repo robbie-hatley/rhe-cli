@@ -5,8 +5,8 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# words-by-length.pl
-# Prints the unique words of its input, in increasing order of length.
+# words-by-abundance.pl
+# Prints the unique words of its input, in decreasing order of abundance.
 #
 # Edit history:
 # Sat May 17, 2025: Wrote it.
@@ -31,26 +31,26 @@ sub help;
    argv;                                                 # Process command-line arguments.
    $Help and help and exit 777;                          # If user wants help, just print help and exit.
    my @words;                                            # Words array.
-
+   my %hash;                                             # Words hash.
    for my $line ( <> ) {                                 # Process input line-by-line.
       $line =~ s/\s+$//;                                 # Chomp trailing whitespace (including CR & LF).
       BLAT 'Db Msg in while(), near top:';               # If debugging,
       BLAT "Chomped incoming line = \"$line\".";         # print chomped line.
       my $wc = 0;                                        # Word counter.
-      for my $word (split /[\s-]+/, $line) {             # Split line-to-words on whitespace and hyphens.
+      for my $word (split /[\s-]+/, $line) {             # Split line to words on whitespace and hyphens.
          $word =~ s/[^\w]//g;                            # Nix non-word characters.
          next if $word eq '';                            # Skip word if empty.
          $word = fc $word;                               # Fold Case.
          push @words, $word;                             # Store word in words list.
-         ++$wc;                                          # Increment word counter.
-
+         ++$wc;                                          # Increment words counter.
+         ++$hash{$word};                                 # Increment per-word counter.
       }                                                  # End of word loop.
       BLAT 'Db Msg in while(), at bottom:';              # If debugging,
       BLAT "This line had $wc words.";                   # print number of words in this line.
    }                                                     # End of line loop.
-   my @sorted = sort {length($a) <=> length($b)} @words; # Make a sorted version of our list of words.
+   my @sorted = sort {$hash{$b} <=> $hash{$a}} @words;   # Make a sorted version of our list of words.
    my @unique = uniq @sorted;                            # Nix copies.
-   say for @unique;                                      # Say unique words, 1-per-line, smallest-to-largest.
+   say for @unique;                                      # Say unique words, 1-per-line, common-to-esoteric.
    exit 0;                                               # Exit program, returning success code 0 to caller.
 }                                                        # End of main body of program.
 
@@ -77,16 +77,16 @@ sub help {
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "words-by-length.pl". This program prints the unique words of its
-   input in increasing order of length.
+   Welcome to "words-by-abundance.pl". This program prints the unique words of its
+   input in decreasing order of abundance.
 
    -------------------------------------------------------------------------------
    Command lines:
 
-   words-by-length.pl [-h|--help]         (prints this help then exits)
-   words-by-length.pl < MyFile.txt        (prints words-by-length in a file)
-   words-by-length.pl file1.txt file2.txt (prints words-by-length in files)
-   some-program | words-by-length.pl.pl   (prints words-by-length in STDIN)
+   words-by-abundance.pl [-h|--help]         (prints this help then exits)
+   words-by-abundance.pl < MyFile.txt        (prints words-by-abundance in a file)
+   words-by-abundance.pl file1.txt file2.txt (prints words-by-abundance in files)
+   some-program | words-by-abundance.pl      (prints words-by-abundance in STDIN)
 
    -------------------------------------------------------------------------------
    Description of Options:
@@ -111,7 +111,7 @@ sub help {
    If there is no content in STDIN, this program will freeze; type some text then
    type Ctrl-D to indicate end-of-input.
 
-   Happy words-by-length printing!
+   Happy words-by-abundance printing!
    Cheers,
    Robbie Hatley,
    Programmer.

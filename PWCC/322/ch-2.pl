@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solutions in Perl for The Weekly Challenge 322-2,
-written by Robbie Hatley on Dow Mon Dm, 2025.
+written by Robbie Hatley on Tue May 20, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
@@ -30,14 +30,16 @@ Output: (4, 1, 1, 3, 2)
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+I solve this problem by first making a copy of the original array containing its numbers in numerically
+increasing order. Then I use a hash to record the "rank" of each number as I iterate through the numbers
+in increasing order. Then then I return a list of the "ranks" for the numbers in the original array.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of arrays of integers, in proper Perl syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '([87,22,64,31,55],[-17,10,-8,7,63,-42])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -47,44 +49,29 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # PRAGMAS, MODULES, AND SUBS:
 
    use v5.36;
+   use utf8::all;
 
    # Given an array of numbers,
    # print corresponding array of ranks:
    sub rank_array ($aref) {
-      my @sorted = sort {$a<=>$b} @$aref; # Sort number ascending.
-      my $max = $sorted[0];               # Set "maximum" to first number at start.
-      my $rank = 1;                       # Set rank to 1 at start.
+      my @sorted = sort {$a<=>$b} @$aref; # Sort numbers in ascending order.
+      my $max = $sorted[0];               # First number is maximum seen so far.
+      my $rank = 1;                       # First number is least so has rank 1.
       my %hash;                           # Make a hash of number ranks
-      my @ranked;                         # Make an array for output.
-      for my $item (@sorted) {            # For each number, least to greatest:
-         if ($item > $max) {              # If number > max:
-            $max = $item;                 # Update max
-            ++$rank;                      # an jump to next-highest rank.
-         }
-         $hash{$item} = $rank;            # Record this number's rank in hash.
-      }
-      for my $item (@$aref) {             # For each number,
-         push @ranked, $hash{$item};      # append its rank to @ranked .
-      }
-      return @ranked;                     # Return ranks.
-   }
+      for my $number (@sorted) {          # For each number, least to greatest:
+         if ($number > $max) {            # If number > max:
+            $max = $number;               # Update max
+            ++$rank}                      # and increment rank.
+         $hash{$number} = $rank}          # Record this number's rank in hash.
+      my @ranks;                          # Make an array "@ranks" for output.
+      for my $number (@$aref) {           # For each number in original array,
+         push @ranks, $hash{$number}}     # append number's rank to "@ranks".
+      return @ranks}                      # Return ranks.
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) :
-(
-   # Example #1 input:
-   [55, 22, 44, 33],
-   # Expected output: (4, 1, 3, 2)
-
-   # Example #2 input:
-   [10, 10, 10],
-   # Expected output: (1, 1, 1)
-
-   # Example #3 input:
-   [5, 1, 1, 4, 3],
-   # Expected output: (4, 1, 1, 3, 2)
-);
+my @arrays = @ARGV ? eval($ARGV[0]) : ([55, 22, 44, 33], [10, 10, 10], [5, 1, 1, 4, 3]);
+#                  Expected outputs :  (4, 1, 3, 2)      (1, 1, 1)     (4, 1, 1, 3, 2)
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
