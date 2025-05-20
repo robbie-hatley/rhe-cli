@@ -19,72 +19,116 @@
 #                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
 ##############################################################################################################
 
+# Pragmas and modules:
 use v5.36;
 use utf8::all;
-use Time::HiRes 'time';
 
-my $db        = 0;
-my @Fields    = ();
-my $NumFields = 0;
-my %Ab        = ();
+# Settings:
+my $Debug     = 0;
+my $Help      = 0;
 
-# Help function:
+# Subroutine predeclarations:
+sub BLAT;
+sub argv;
+sub help;
+
+# Main body of program:
+{                                                # Begin main body of program.
+   argv;                                         # Process command-line arguments.
+   $Help and help and exit 777;                  # If user wants help, just print help and exit.
+   my $tw = 0;                                   # Total-words counter.
+   my %wh;                                       # Words abundance hash.
+   for my $line ( <> ) {                         # Process input line-by-line.
+      $line =~ s/\s+$//;                         # Chomp trailing control whitespace (including CR & LF).
+      BLAT 'Db Msg in while(), near top:';       # If debugging,
+      BLAT "Chomped incoming line = \"$line\"."; # print chomped line.
+      my $lw = 0;                                # Line-words counter.
+      for my $word (split /\s+/, $line) {        # Split line-to-words on whitespace.
+         $word =~ s/\W//g;                       # Nix non-word characters.
+         next if $word eq '';                    # Skip word if empty.
+         $word = fc $word;                       # Fold Case.
+         ++$lw;                                  # Increment line-words counter.
+         ++$tw;                                  # Increment total-words counter.
+         ++$wh{$word};                           # Record word in abundance hash.
+      }
+      BLAT 'Db Msg in while(), at bottom:';      # If debugging,
+      BLAT "This line had $lw words.";           # print number of words in this line.
+   }
+
+   # Print word abundances:
+   say "Input contained $tw words, with the following abundances (descending):";
+   for my $key (sort {$wh{$b}<=>$wh{$a}} keys %wh) { # Index hash by reverse order of abundance.
+      say "$key => $wh{$key}";                       # Display how many strings were received for each key.
+   }
+
+   # Exit program, returning success code 0 to caller:
+   exit 0;
+}
+
+# Subroutine definitions:
+
+# Print diagnostics to STDERR if debugging:
+sub BLAT ($msg) {if ($Debug) {say STDERR "$msg"}}
+
+# Process @ARGV:
+sub argv {
+   for ( my $i = 0 ; $i < scalar @ARGV ; ++$i ) {
+      local $_ = $ARGV[$i];
+      if (/^-/) {
+         /^-e$/ || /^--debug$/ and $Debug = 1;
+         /^-h$/ || /^--help$/  and $Help  = 1;
+         splice @ARGV, $i, 1;
+         --$i}}
+   return 1}
+
+# Print help message:
 sub help {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print STDERR ((<<"   END_OF_HELP") =~ s/^   //gmr);
 
-   Welcome to "word-abundance.pl", Robbie Hatley's nifty program for
-   displaying the abundances of words in a file.
+   -------------------------------------------------------------------------------
+   Introduction:
 
-   Command line to print this help and exit:
-   word-abundance.pl [-h|--help]
+   Welcome to "word-abundance.pl". This program prints the abundances of words
+   in STDIN or in files mentioned as command-line arguments.
 
-   Command lines to display abundances of words in files:
-   word-abundance.pl   MyFile.txt
-   word-abundance.pl   MyFile.txt > MyOutput.txt
-   word-abundance.pl < MyFile.txt
-   word-abundance.pl < MyFile.txt > MyOutput.txt
-   MyProgram | word-abundance.pl  > MyOutput.txt
+   -------------------------------------------------------------------------------
+   Command lines:
 
-   All options other than -h or --help are ignored.
+   word-abundance.pl [-h|--help]           (prints this help then exits)
+   word-abundance.pl < MyFile.txt          (prints word abundance in a file)
+   word-abundance.pl file1.txt file2.txt   (prints word abundance in files)
+   some-program | word-abundance.pl        (prints word abundance in STDIN)
 
-   All arguments are ignored.
+   -------------------------------------------------------------------------------
+   Description of Options:
 
+   Option:            Meaning:
+   -h or --help       Print this help and exit.
+   -e or --debug      Print diagnostics.
+
+   Single-letter options may NOT be piled-together after a single hyphen.
+
+   All options not listed above are ignored.
+
+   -------------------------------------------------------------------------------
+   Description of Arguments:
+
+   All non-option arguments will be intepreted as paths to files. If one-or-more
+   of those files exist and can be read, they will constitute the input to this
+   program, and it will print the relative and absolute abundances of all words
+   in those files. Any files which do NOT exist will cause error messages to be
+   printed, but execution will continue for those files which DO exist.
+
+   If there are NO command-line arguments, STDIN will be used as input, instead.
+   If there is no content in STDIN, this program will freeze; type some text then
+   type Ctrl-D to indicate end-of-input and this program will print the word
+   abundances of the text you typed.
+
+   Happy word-abundance printing!
    Cheers,
    Robbie Hatley,
-   programmer.
+   Programmer.
    END_OF_HELP
    return 1;
 } # end sub help
 
-# If user requested help, run help function and exit 777:
-for (@ARGV) {
-   /^-\pL*h|^--help$/ and help and exit 777;
-}
-
-# Process input:
-while ( <> ) {
-   s/[\pC\pZ\s]+$//;                         # Snip trailing control, separator, and space characters.
-   if ($db) {
-      say "In word-abundance, in while(), near top;";
-      say "raw incoming text line = \"$_\".";
-   }
-   @Fields = ();                             # Clear the Fields array for receiving data.
-   for my $Field (split /[\pC\pZ\s]+/, $_) { # Split on clusters of control, separator, or space chars
-      $Field =~ s/\W//g;                     # Get rid of non-word characters
-      $Field = fc $Field;                    # Fold Case.
-      next if $Field eq '';                  # Skip field if empty.
-      next if $Field =~ m/^[\pC\pZ\s]+$/;    # Skip field if white-space-only.
-      push @Fields, $Field;                  # Push field onto array.
-   }
-   $NumFields = scalar(@Fields);
-   if ($db) {
-      say "In word-abundance, in while(), near bottom;";
-      say "number of fields = $NumFields.";
-   }
-   map {++$Ab{$_}} @Fields;                       # Increment hash elements (autovivify if necessary).
-}
-
-# Print word abundances:
-for my $key (sort {$Ab{$b}<=>$Ab{$a}} keys %Ab) { # Index hash by reverse order of abundance.
-   say "$key => $Ab{$key}";                       # Display how many strings were received for each key.
-}

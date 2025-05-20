@@ -410,7 +410,7 @@ sub d(@args)
 sub d :prototype(@) (@args) {
       if (0 == scalar @args) {return Encode::decode('UTF-8', $_,       EFLAGS);}
    elsif (1 == scalar @args) {return Encode::decode('UTF-8', $args[0], EFLAGS);}
-   else                 {return map {Encode::decode('UTF-8', $_,       EFLAGS)} @args };
+   else                 {return map {Encode::decode('UTF-8', $_,       EFLAGS)} @args }
 } # end sub d
 
 =head2 e
@@ -421,7 +421,7 @@ sub e(@args)
 sub e :prototype(@) (@args) {
       if (0 == scalar @args) {return Encode::encode('UTF-8', $_,       EFLAGS);}
    elsif (1 == scalar @args) {return Encode::encode('UTF-8', $args[0], EFLAGS);}
-   else                 {return map {Encode::encode('UTF-8', $_,       EFLAGS)} @args };
+   else                 {return map {Encode::encode('UTF-8', $_,       EFLAGS)} @args }
 } # end sub e
 
 =head2 glob_regexp_utf8
@@ -563,7 +563,7 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
 
       # Skip this file if it doesn't match our regexp:
       if ($name !~ m/$regexp/) {
-         $Debug and say STDERR "Skipping named \"$name\" because it doesn't match regexp.";
+         $Debug and say STDERR "Skipping file \"$name\" because its name doesn't match regexp.";
          next;
       }
 
@@ -571,7 +571,7 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
       if ( '1' ne $predicate ) {
          local $_ = e($name);
          if ( ! eval $predicate ) {
-            BLAT "Skipping named \"$name\" because it doesn't match predicate.";
+            BLAT "Skipping file \"$name\" because it doesn't match predicate.";
             next;
          }
       }

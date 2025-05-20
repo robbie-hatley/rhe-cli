@@ -1,39 +1,61 @@
 This file details Perl functions (both built-in and from core
-modules) which require encoding and/or decoding.
+modules) which require encoding and/or decoding. The primary
+recommended cure for these issues is to use my "d" and "e"
+functions:
+
+# WARNING: Subs d and e below force list context onto their arguments,
+# so you can't use these directly in cases such as scalar readdir
+# in a while loop; if you need scalar context, assign to a scalar
+# variable first then apply d or e to that scalar variable:
+# while (my $f = d readdir $dh) {say $f}   # FAILS    (prints # of files)
+# while (readdir $dh)           {say d $_} # SUCCEEDS (prints file names)
+
+use Encode qw( encode decode :fallbacks :fallback_all );
+use constant EFLAGS => LEAVE_SRC | WARN_ON_ERR;
+sub d :prototype(@) (@args) {
+      if (0 == scalar @args) {return Encode::decode('UTF-8', $_,       EFLAGS);}
+   elsif (1 == scalar @args) {return Encode::decode('UTF-8', $args[0], EFLAGS);}
+   else                 {return map {Encode::decode('UTF-8', $_,       EFLAGS)} @args };
+}
+sub e :prototype(@) (@args) {
+      if (0 == scalar @args) {return Encode::encode('UTF-8', $_,       EFLAGS);}
+   elsif (1 == scalar @args) {return Encode::encode('UTF-8', $args[0], EFLAGS);}
+   else                 {return map {Encode::encode('UTF-8', $_,       EFLAGS)} @args };
+} # end sub e
 
 Perl functions which must be sent UTF-8-encoded versions of
 non-English (ord > 255) text, primarily due to being wrappers
 around system calls for file-access purposes:
 
-Function:                   Workaround using my "e" function:
+Function:                  Workaround using my "e" function:
 --------------------------------------------------------------
-chdir $path                 chdir e($path)
-chmod 0775, $path           chmod 0775, e($path)
-chown $uid, $gid, @paths    chown $uid, $gid, e(@paths)
-chroot $dir                 chroot e($dir)
-exec $path, @list           exec e($path), e(@list)                       
-glob $expr                  glob e($expr)
-link $oldf, $newf           link e($oldf), e($newf)
-lstat $path                 lstat e($path)
-mkdir $path                 mkdir e($path)
-open $fh, $mode, $path      open $fh, $mode, e($path)
-opendir $dh, $path          opendir $dh, e($path)
-readlink $path              d(readlink e($path))
-rename $oldf, $newf         rename e($oldf), e($newf)
-rmdir $dir                  rmdir e($dir)
-stat $path                  stat e($path)
-symlink $oldf, $newf        symlink e($oldf), e($newf)
-system $command             system(e($command))
-unlink @list                unlink e(@list)
+chdir $path                chdir e($path)
+chmod 0775, $path          chmod 0775, e($path)
+chown $uid, $gid, @paths   chown $uid, $gid, e(@paths)
+chroot $dir                chroot e($dir)
+exec $path, @list          exec e($path), e(@list)
+glob $expr                 glob e($expr)
+link $oldf, $newf          link e($oldf), e($newf)
+lstat $path                lstat e($path)
+mkdir $path                mkdir e($path)
+open $fh, $mode, $path     open $fh, $mode, e($path)
+opendir $dh, $path         opendir $dh, e($path)
+readlink $path             d(readlink e($path)) # must use both d AND e
+rename $oldf, $newf        rename e($oldf), e($newf)
+rmdir $dir                 rmdir e($dir)
+stat $path                 stat e($path)
+symlink $oldf, $newf       symlink e($oldf), e($newf)
+system $command            system(e($command))
+unlink @list               unlink e(@list)
 
 Perl functions which return values which must be decoded from UTF-8 to Unicode:
 
-Function:                   Workaround using my "d" function:
+Function:                  Workaround using my "d" function:
 --------------------------------------------------------------
-getlogin                    d(getlogin)     # not necessary on "usernames are ASCII" systems
-readdir  $fh                d(readdir $fh)
-readline $fh                d(readline $fh)
-readlink $path              d(readlink e($path))
+getlogin                   d(getlogin) # Not necessary on systems using ASCII for usernames.
+readdir  $fh               d(readdir $fh)
+readline $fh               d(readline $fh)
+readlink $path             d(readlink e($path)) # must use both d AND e
 
 \bchdir\b|\bchmod\b|\bchown\b|\bchroot\b|\bgetlogin\b|\bglob\b|\blink\b|\blstat\b|\bmkdir\b|\bopen\b|\bopendir\b|\breadlink\b|\brename\b|\brmdir\b|\bsymlink\b|\bsystem\b|\bunlink\b
 
@@ -42,7 +64,7 @@ https://people.well.com/user/lonewolf/main/programming/modules/RH/Dir.pm
 The "e" is also a function I wrote, which is a wrapper
 around "encode" function from the "Encode" module.)
 
-Built-in functions which should NOT be sent UTF-8-encoded 
+Built-in functions which should NOT be sent UTF-8-encoded
 versions of Unicode text (basically, anything not having
 to-do-with the file system, which is the primary thing
 Perl would need system calls for):

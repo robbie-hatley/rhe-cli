@@ -5,37 +5,51 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# list-by-extension.pl
-# Prints list of regular files in current directory (and all subdirectories if a "-r" or "--recurse" option is
-# used) sorted by name extension.
-# Written by Robbie Hatley at unknown date, maybe in 2022.
+# list-by-size.pl
+# Lists files in current directory (and all subdirs if -r or --recurse is used) in decreasing order of size
+# (largest files on top, smallest at bottom). Each listing line will give the following pieces of information:
+#    1. Age of file in days.
+#    2. Type of file (single-letter code, one of NTYXOPSLMDHFU).
+#    3. Size of file in format #.##E+##
+#    4. Name of file.
+# NOTE: This program works only on Linux, not Cygwin.
+# Written by Robbie Hatley.
 # Edit history:
-# Sun Jun 05, 2022: Wrote this file on this date (give or take a few years).
-# Thu Sep 07, 2023: Now prints the "ls -l" list of all regular files in the current directory,
-#                   grouped by extension and case-insensitively sorted within each group.
-# Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
-# Sun Mar 16, 2025: Extreme refactor: Added "use RH::Dir"; added global vars & BEGIN for pname, cmpl_beg,
-#                   cmpl_end; added "use" statements for needed CPAN and RH modules; added system var $";
-#                   added local vars for settings and counters; added main and subs from "Template.pl";
-#                   now recurses directory trees; now has options and arguments and help; now uses RegExp and
-#                   predicate; now uses "utf8::all" and "Cwd::utf8"; simplified shebang.
-# Wed May 14, 2025: Entry/exit messages now give time and date instead of timestamp.
-# Thu May 15, 2025: Now uses "$Target" and "Switch".
+# Mon Jul 05, 2021: Wrote it as "age.pl".
+# Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and
+#                   "Sys::Binmode".
+# Fri Aug 04, 2023: Reduced width from 120 to 110. Upgraded from "v5.32" to "v5.36". Got rid of
+#                   "common::sense" (antiquated). Now using "strict", "warnings", "utf8". Got rid of all
+#                   prototypes (now using signatures instead). Shortened name of sub "tree_stats" to "stats".
+#                   Now using "d getcwd" instead of "cwd_utf8". Changed "--target=xxxx" to just "--xxxx".
+#                   Put headers in help.
+# Fri Aug 11, 2023: Added end-of-options marker. Added debug option.
+# Sat Sep 09, 2023: Got rid of '/o' on all qr(). Applied qr($_) to all incoming arguments. Improved help.
+# Wed Aug 14, 2024: Removed unnecessary "use" statements.
+# Fri Feb 14, 2025: Refactored: Now using only one RegExp (1st arg), and now using predicate (2nd arg).
+#                   Also got rid of Sys::Binmode, added more options, added "--", added debugging, etc.
+# Fri May 02, 2025: Modernized. Included much material from most-recent template.
+# Wed May 14, 2025: Renamed from "age.pl" (vague) to "list-by-age.pl". Moved from "core" to "util".
+#                   Now using "Sys::Binmode", "utf8::all", "Cwd::utf8". Nixed "d", "e". Simplified shebang.
+# Wed May 14, 2025: (later same day) Cloned from "list-by-age" to "list-by-size". Basically the same program
+#                   except that files are sorted from largest to smallest instead of newest to oldest.
 ##############################################################################################################
 
 use v5.36;
+use Sys::Binmode;
 use utf8::all;
 use Cwd::utf8;
 use Time::HiRes 'time';
-use Switch;
 use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================
 
-# System Variables:
+# ------- System Variables: ----------------------------------------------------------------------------------
+
 $" = ', ' ; # Quoted-array element separator = ", ".
 
-# Global Variables:
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
 our    $pname;                                 # Declare program name.
 BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
 our    $cmpl_beg;                              # Declare compilation begin time.
@@ -43,32 +57,49 @@ BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
 our    $cmpl_end;                              # Declare compilation end   time.
 INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
-# Local variables:
+# ------- Local variables: -----------------------------------------------------------------------------------
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
 my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
+my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
-my $Target    = 'F'       ; # Target                    F|D|B|A   Target regular files only.
+my $Target    = 'F'       ; # Target                    F|D|B|A   List regular files only.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
 # Counts of events in this program:
-my $direcount = 0 ; # Count of directories processed by curdire().
+my $direcount = 0 ; # Count of directories processed.
 my $filecount = 0 ; # Count of files matching target and regexp.
-my $predcount = 0 ; # Count of files also matching predicate.
+
+# Accumulations of counters from RH::Dir::GetFiles():
+my $totfcount = 0 ; # Count of all directory entries encountered.
+my $noexcount = 0 ; # Count of all nonexistent files encountered.
+my $ottycount = 0 ; # Count of all tty files.
+my $cspccount = 0 ; # Count of all character special files.
+my $bspccount = 0 ; # Count of all block special files.
+my $sockcount = 0 ; # Count of all sockets.
+my $pipecount = 0 ; # Count of all pipes.
+my $brkncount = 0 ; # Count of all symbolic links to nowhere
+my $slkdcount = 0 ; # Count of all symbolic links to directories.
+my $linkcount = 0 ; # Count of all symbolic links to regular files.
+my $weircount = 0 ; # Count of all symbolic links to weirdness (things other than files or dirs).
+my $sdircount = 0 ; # Count of all directories.
+my $hlnkcount = 0 ; # Count of all regular files with  > 1 hard links.
+my $regfcount = 0 ; # Count of all regular files with == 1 hard links.
+my $orphcount = 0 ; # Count of all regular files with == 0 hard links.
+my $zombcount = 0 ; # Count of all regular files with  < 0 hard links.
+my $unkncount = 0 ; # Count of all unknown files.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
 sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
 sub curfile ; # Process current file.
-sub gnfl    ; # Get Name-of-file From Ls-line.
-sub ext     ; # Extract extension of file from name.
+sub BLAT    ; # Print messages only if debugging.
 sub stats   ; # Print statistics.
 sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
@@ -108,7 +139,7 @@ sub help    ; # Print help and exit.
 
    # If debugging, print the values of all variables except counters, after processing @ARGV:
    if ( $Debug >= 1 ) {
-      say STDERR 'Debug: Values of variables after processing @ARGV:';
+      say STDERR 'Values of all variables after processing @ARGV:';
       say STDERR "pname     = $pname";
       say STDERR "cmpl_beg  = $cmpl_beg";
       say STDERR "cmpl_end  = $cmpl_end";
@@ -155,7 +186,7 @@ sub help    ; # Print help and exit.
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
-# Process @ARGV :
+# Process @ARGV:
 sub argv {
    # Get options and arguments:
    my $end = 0;              # end-of-options flag
@@ -179,8 +210,8 @@ sub argv {
    for ( @Opts ) {
       /^-$s*h/ || /^--help$/    and $Help    =  1  ;
       /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default.
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
@@ -220,84 +251,108 @@ sub curdire {
    # Increment directory counter:
    ++$direcount;
 
-   # Get current working directory:
+   # Get and announce current working directory:
    my $cwd = cwd;
+   say STDOUT "\nDirectory #$direcount: $cwd\n";
 
-   # Announce current working directory:
-   say "\nDirectory # $direcount: $cwd\n";
-
-   # Git "ls -l" listing of current directory:
-   my @dir_lines = `/usr/bin/ls -l`;
-
-   # Make hash of directory lines for regular files only, keyed by file-name extension:
-   my %exts;
-   LINE: for my $line ( @dir_lines ) {
-      $line =~ s/\s+$//g;                     # Trim whitespace from line ends.
-      next LINE if $line =~ m/^total/;        # Skip "total" line.
-      my $name = gnfl($line);                 # Get name.
-      switch ($Target) {                      # What is our target?
-         case 'A' {                           # If 'A':
-            ;                                 # Skip nothing.
-         }
-         case 'F' {                           # If 'F':
-            next LINE if $line !~ m/^-/;      # Skip lines not starting with "-".
-         }
-         case 'D' {                           # If 'D':
-            next LINE if $line !~ m/^d/;      # Skip lines not starting with "d".
-         }
-         case 'B' {
-            next LINE if $line !~ m/^-/
-                     and $line !~ m/^d/;      # Skip lines that aren't regular files and aren't directories.
-         }
-      }
-      next if $name !~ m/$RegExp/;            # Skip files not matching $RegExp.
-      ++$filecount;                           # If we get to here, file matches $RegExp.
-      local $_ = $name;                       # Temporarily set $_ to $name.
-      next if !eval($Predicate);              # Skip files not matching $Predicate.
-      ++$predcount;                           # If we get to here, file also matches $Predicate.
-      push @{$exts{ext(gnfl($line))}}, $line; # Store line in hash.
+   # Get list of file-info packets in for all files in $cwd matching $Target, $RegExp, and $Predicate:
+   my $curdirfiles = GetFiles($cwd, $Target, $RegExp, $Predicate);
+   my $NF = scalar @$curdirfiles;
+   if ($Debug) {
+      BLAT "Debug message from \"age.pl\", in curdire(); got $NF files:";
+      BLAT "$_->{Name}" for @$curdirfiles;
    }
 
-   # Print "ls -l" list of regular files in current directory grouped by extension and case-insensitively sorted:
-   for my $ext ( sort keys %exts ) {
-      say '';
-      say "Files with extension \"$ext\":";
-      say for sort {fc(gnfl($a)) cmp fc(gnfl($b))} @{$exts{$ext}};
+   # If being VERY verbose, also accumulate all counters from RH::Dir:: to main:
+   if ( $Verbose >= 2 ) {
+      $totfcount += $RH::Dir::totfcount; # all directory entries found
+      $noexcount += $RH::Dir::noexcount; # nonexistent files
+      $ottycount += $RH::Dir::ottycount; # tty files
+      $cspccount += $RH::Dir::cspccount; # character special files
+      $bspccount += $RH::Dir::bspccount; # block special files
+      $sockcount += $RH::Dir::sockcount; # sockets
+      $pipecount += $RH::Dir::pipecount; # pipes
+      $brkncount += $RH::Dir::slkdcount; # symbolic links to nowhere
+      $slkdcount += $RH::Dir::slkdcount; # symbolic links to directories
+      $linkcount += $RH::Dir::linkcount; # symbolic links to regular files
+      $weircount += $RH::Dir::weircount; # symbolic links to weirdness
+      $sdircount += $RH::Dir::sdircount; # directories
+      $hlnkcount += $RH::Dir::hlnkcount; # regular files with  > 1 hard links
+      $regfcount += $RH::Dir::regfcount; # regular files with == 1 hard links
+      $orphcount += $RH::Dir::orphcount; # regular files with == 0 hard links
+      $zombcount += $RH::Dir::zombcount; # regular files with  < 0 hard links
+      $unkncount += $RH::Dir::unkncount; # unknown files
    }
+
+   # Make array of refs to file-info hashes, sorted in order of increasing age:
+   my @FilesBySize = sort {$b->{Size} <=> $a->{Size}} @$curdirfiles;
+
+   # Print header:
+   say STDOUT ' Age    File   Size     # of   Name   ';
+   say STDOUT '(days)  Type  (bytes)   Links  of file';
+
+   # Send each file of @FilesBySize to curfile():
+   foreach my $file (@FilesBySize) {curfile($file)}
 
    # Return success code 1 to caller:
    return 1;
 } # end sub curdire
 
-# Get the name of a file from its "ls -l" directory listing:
-sub gnfl ( $line ) {
-   # Trim-off all but file name:
-   return ($line =~ s/^(.+)( [A-Z][a-z]{2} )([ 123][0-9] )( \d{4} |\d\d:\d\d )(.+)$/$5/r);
-}
+# Process current file:
+sub curfile ($file) {
+   # Increment file counter:
+   ++$filecount;
 
-# Get the "extension" part of a file name:
-sub ext ( $name ) {
-   my $di = rindex $name, '.';
-   return '' if -1 == $di;
-   return substr $name, $di+1;
-}
+   # Get time in days since current file was modified:
+   my $age = (time() - $file->{Mtime}) / 86400; # (There are 86400 seconds in each day.)
 
-# Print statistics for this program run:
+   # Print directory listing for this file:
+   printf STDOUT " %5u    %-1s   %-8.2E  %5u  %-s\n",
+                 $age, $file->{Type}, $file->{Size}, $file->{Nlink}, $file->{Name};
+
+   # Return success code 1 to caller:
+   return 1;
+} # end sub curfile
+
+# Print messages only if debugging:
+sub BLAT ($string) {if ($Debug) {say STDERR $string}}
+
+# Print statistics:
 sub stats {
-   # If being terse or verbose, print basic stats to STDERR:
-   if ( 1 == $Verbose || 2 == $Verbose ) {
+   if ( $Verbose >= 1 ) {
       say    STDERR '';
-      say    STDERR "Statistics for \"$pname\":";
-      say    STDERR "Navigated $direcount directories.";
-      say    STDERR "Found $filecount files matching target \"$Target\" and regexp \"$RegExp\".";
-      say    STDERR "Found $predcount files which also match predicate \"$Predicate\".";
+      say    STDERR "Statistics for running \"$pname\" on \"$OriDir\" directory tree:";
+      say    STDERR "Navigated $direcount directories. Found $filecount files matching";
+      say    STDERR "target \"$Target\", regexp \"$RegExp\", and predicate \"$Predicate\".";
+   }
+
+   if ( $Verbose >= 2) {
+      say    STDERR '';
+      say    STDERR 'Directory entries encountered in this tree included:';
+      printf STDERR "%7u total files\n",                            $totfcount;
+      printf STDERR "%7u nonexistent files\n",                      $noexcount;
+      printf STDERR "%7u tty files\n",                              $ottycount;
+      printf STDERR "%7u character special files\n",                $cspccount;
+      printf STDERR "%7u block special files\n",                    $bspccount;
+      printf STDERR "%7u sockets\n",                                $sockcount;
+      printf STDERR "%7u pipes\n",                                  $pipecount;
+      printf STDERR "%7u symbolic links to nowhere\n",              $brkncount;
+      printf STDERR "%7u symbolic links to directories\n",          $slkdcount;
+      printf STDERR "%7u symbolic links to non-directories\n",      $linkcount;
+      printf STDERR "%7u symbolic links to weirdness\n",            $weircount;
+      printf STDERR "%7u directories\n",                            $sdircount;
+      printf STDERR "%7u regular files with  > 1 hard links\n",     $hlnkcount;
+      printf STDERR "%7u regular files with == 1 hard links\n",     $regfcount;
+      printf STDERR "%7u regular files with == 0 hard links\n",     $orphcount;
+      printf STDERR "%7u regular files with  < 0 hard links\n",     $zombcount;
+      printf STDERR "%7u files of unknown type\n",                  $unkncount;
    }
    return 1;
 } # end sub stats
 
 # Handle errors:
 sub error ($NA) {
-   print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+   print STDERR ((<<"   END_OF_ERROR") =~ s/^   //gmr);
 
    Error: you typed $NA arguments, but this program takes at most
    2 arguments (an optional file-selection regexp and an optional
@@ -306,61 +361,70 @@ sub error ($NA) {
    return 1;
 } # end sub error
 
-# Print help:
 sub help {
    print STDERR ((<<"   END_OF_HELP") =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "$pname". This program lists all files in the current
-   directory (and all subdirectories if a -r or --recurse option is used) which
-   match the given RegExp (".+" by default) and predicate (1 by default) by their
-   file name extensions (eg, ".txt", ".pdf", ".jpg", etc). File listings are taken
-   directly from a call to Linux system utility "/usr/bin/ls -l" (which gives
-   "long" listings of files) but grouped by file name extension (which is NOT one
-   of the options of the raw "ls" utility). Each extention group is prefaced by
-   a line announcing that group. For example:
-
-   Files with extension "jpg":
-   (list of jpg files)
-
-   Files with extension "pdf":
-   (list of pdf files)
-
-   Files with extension "txt":
-   (list of txt files)
+   Welcome to "$pname", Robbie Hatley's Nifty list-files-by-age utility. This
+   program will list all files in the current directory (and all subdirectories if
+   a -r or --recurse option is used) in increasing order of age (newest files on
+   top, oldest at bottom). Each listing line will give the following pieces of
+   information about a file:
+   1. Age of file in days.
+   2. Type of file (single-letter code, one of NTYXOPSLMDHFU).
+   3. Size of file in format #.##E+##
+   4. Name of file.
+   NOTE: This program works on Cygwin as well as Linux.
 
    -------------------------------------------------------------------------------
-   Command lines:
+   Meanings of Type Letters:
 
-   $pname -h | --help               (to print this help and exit)
-   $pname [options] [Arg1] [Arg2]   (to list files by extension)
+   B - Broken symbolic link
+   D - Directory
+   F - regular File
+   H - regular file with multiple Hard links
+   L - symbolic Link to regular file
+   N - Nonexistent
+   O - sOcket
+   P - Pipe
+   S - Symbolic link to directory
+   T - opens to a Tty
+   U - Unknown
+   W - symbolic link to something Weird (not a regular file or directory)
+   X - block special file
+   Y - character special file
 
    -------------------------------------------------------------------------------
-   Description of Options:
+   Command Lines:
+
+   $pname [-h|--help]             (to print this help and exit)
+   $pname [options] [Argument]    (to list files by increasing age)
+
+   -------------------------------------------------------------------------------
+   Description of options:
 
    Option:            Meaning:
-   -h or --help       Print this help and exit.
+   -h or --help       Print help and exit.
    -e or --debug      Print diagnostics.
-   -q or --quiet      Be quiet.
-   -t or --terse      Be terse.                         (DEFAULT)
+   -q or --quiet      Be quiet.                         (DEFAULT)
+   -t or --terse      Be terse.
    -v or --verbose    Be verbose.
    -l or --local      DON'T recurse subdirectories.     (DEFAULT)
    -r or --recurse    DO    recurse subdirectories.
-   -f or --files      Target Files.                     (DEFAULT)
-   -d or --dirs       Target Directories.
-   -b or --both       Target Both.
-   -a or --all        Target All.
+   -f or --files      Target Files only.                (DEFAULT)
+   -d or --dirs       Target Directories only.
+   -b or --both       Target Both files and directories.
+   -a or --all        Target All directory entries.
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
-   For example, use -vr to verbosely and recursively process items.
+   For example, use -vr to verbosely and recursively list files by age.
 
-   If two piled-together single-letter options conflict, the option
-   appearing lowest on the options chart above will prevail.
-   If two separate (not piled-together) options conflict, the right
-   overrides the left.
+   If multiple conflicting separate options are given, later overrides earlier.
+   If multiple conflicting single-letter options are piled after a single hyphen,
+   the result is determined by this descending order of precedence: heabdfrlvtq.
 
    If you want to use an argument that looks like an option (say, you want to
    search for files which contain "--recurse" as part of their name), use a "--"
@@ -388,7 +452,9 @@ sub help {
    file-test operators. The expression must be enclosed in parentheses (else
    this program will confuse your file-test operators for options), and then
    enclosed in single quotes (else the shell won't pass your expression to this
-   program intact). Here are some examples of valid and invalid predicate arguments:
+   program intact). If this argument is used, it overrides "--files", "--dirs",
+   or "--both", and sets target to "--all" in order to avoid conflicts with
+   the predicate. Here are some examples of valid and invalid predicate arguments:
    '(-d && -l)'  # VALID:   Finds symbolic links to directories
    '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
    '(-b)'        # VALID:   Finds block special files
@@ -403,11 +469,9 @@ sub help {
    backwards, they won't do what you want, as most predicates aren't valid regexps
    and vice-versa.
 
-   A number of arguments greater than 2 will cause this program to print an error
-   message and abort.
+   Any arguments after the first two will be cheerfully ignored.
 
-   Happy files-by-extension listing!
-
+   Happy files-by-size listing!
    Cheers,
    Robbie Hatley,
    programmer.

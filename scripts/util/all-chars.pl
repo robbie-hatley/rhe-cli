@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# high-text.pl
+# all-chars.pl
 # Generates 40,960 characters of text with sequential Unicode ordinals in the 0-40959 range ("Null" through
 # "xìng"). This is nearly every single commonly-used character in Unicode! This script then converts those
 # characters into UTF-8 for printing and/or storing in a file and/or piping. Hence, I'm using "utf8::all".

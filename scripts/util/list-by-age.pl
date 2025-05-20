@@ -1,15 +1,19 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# age.pl
-# Lists files in current directory (and all subdirs if -r or --recurse is used) in decreasing order of age,
-# and prints age in days for each file.
-# NOTE: This program works on Cygwin as well as Linux.
-#
+# list-by-age.pl
+# Lists files in current directory (and all subdirs if -r or --recurse is used) in increasing order of age
+# (newest files on top, oldest at bottom). Each listing line will give the following pieces of information:
+#    1. Age of file in days.
+#    2. Type of file (single-letter code, one of NTYXOPSLMDHFU).
+#    3. Size of file in format #.##E+##
+#    4. Name of file.
+# NOTE: This program works only on Linux, not Cygwin.
+# Written by Robbie Hatley.
 # Edit history:
 # Mon Jul 05, 2021: Wrote it.
 # Sat Nov 20, 2021: Refreshed shebang, colophon, titlecard, and boilerplate; using "common::sense" and
@@ -25,11 +29,14 @@
 # Fri Feb 14, 2025: Refactored: Now using only one RegExp (1st arg), and now using predicate (2nd arg).
 #                   Also got rid of Sys::Binmode, added more options, added "--", added debugging, etc.
 # Fri May 02, 2025: Modernized. Included much material from most-recent template.
+# Wed May 14, 2025: Renamed from "age.pl" (vague) to "list-by-age.pl". Moved from "core" to "util".
+#                   Now using "Sys::Binmode", "utf8::all", "Cwd::utf8". Nixed "d", "e". Simplified shebang.
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-use Cwd;
+use Sys::Binmode;
+use utf8::all;
+use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
 
@@ -56,7 +63,7 @@ my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
-my $OriDir    = d cwd     ; # Original directory.       cwd       Directory on program entry.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   All directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
@@ -243,7 +250,7 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $cwd = d(getcwd);
+   my $cwd = cwd;
    say STDOUT "\nDirectory #$direcount: $cwd\n";
 
    # Get list of file-info packets in for all files in $cwd matching $Target, $RegExp, and $Predicate:
@@ -279,7 +286,7 @@ sub curdire {
    my @FilesByAge = sort {$b->{Mtime} <=> $a->{Mtime}} @$curdirfiles;
 
    # Print header:
-   say STDOUT '   Age  File  Size      # of   Name   ';
+   say STDOUT ' Age    File   Size     # of   Name   ';
    say STDOUT '(days)  Type  (bytes)   Links  of file';
 
    # Send each file of @FilesByAge to curfile():
@@ -353,12 +360,12 @@ sub error ($NA) {
 } # end sub error
 
 sub help {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print STDERR ((<<"   END_OF_HELP") =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "age.pl", Robbie Hatley's Nifty list-files-by-age utility. This
+   Welcome to "$pname", Robbie Hatley's Nifty list-files-by-age utility. This
    program will list all files in the current directory (and all subdirectories if
    a -r or --recurse option is used) in increasing order of age (newest files on
    top, oldest at bottom). Each listing line will give the following pieces of
@@ -390,8 +397,8 @@ sub help {
    -------------------------------------------------------------------------------
    Command Lines:
 
-   age.pl [-h|--help]             (to print this help and exit)
-   age.pl [options] [Argument]    (to list files by increasing age)
+   $pname [-h|--help]             (to print this help and exit)
+   $pname [options] [Argument]    (to list files by increasing age)
 
    -------------------------------------------------------------------------------
    Description of options:
@@ -427,7 +434,7 @@ sub help {
    -------------------------------------------------------------------------------
    Description of Arguments:
 
-   In addition to options, this program can take 1 or 2 optional arguments.
+   In addition to options, "$pname" can take 1 or 2 optional arguments.
 
    Arg1 (OPTIONAL), if present, must be a Perl-Compliant Regular Expression
    specifying which file names to process. To specify multiple patterns, use the

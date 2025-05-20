@@ -4,7 +4,7 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# text-hashes.pl
+# line-hashes.pl
 # Prints various hashes of the UTF-8 transformations of the Unicode codepoints of lines of incoming text.
 # NOTE: This script is for generating hashes of individual lines of text only. To hash entire files, use
 # my scripts "file-hashes.pl" instead.
@@ -23,6 +23,7 @@
 #                   it's all just "bytes in, bytes out, don't mess with the bytes". Also got rid of all
 #                   non-ASCII characters, "use utf8", "use strict", and "use warnings". Also reduced minimum
 #                   version required from "5.36" to "5.16" as we don't need any advanced features.
+# Sat May 17, 2025: Renamed from "text-hashes.pl" to "line-hashes.pl" to more-clearly indicate function.
 ##############################################################################################################
 
 use v5.16;
