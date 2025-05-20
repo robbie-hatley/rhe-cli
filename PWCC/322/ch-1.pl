@@ -60,7 +60,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    sub string_format ($aref) {
       my $raw        = $$aref[0];                                           # Raw string.
       my $period     = $$aref[1];                                           # Period.
-      my $stripped   = $raw =~ s/-//gr;                                     # Chomp hyphens.
+      my $stripped   = $raw =~ s/-//gr;                                     # Strip hyphens.
       my $remainder  = length($stripped) % $period;                         # How many leftover chars?
       my @substrings = ();                                                  # Groups of period $period.
       $remainder and push @substrings, substr $stripped, 0, $remainder, ''; # Leftovers go at beginning.
