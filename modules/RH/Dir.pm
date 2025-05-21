@@ -457,13 +457,9 @@ sub glob_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(
    my @paths = map {path($dir, $_)} @names;
 
    # If debugging, print paths:
-   if ($Debug) {
-      say STDERR '';
-      say STDERR 'In glob_regexp_utf8 at end.';
-      say STDERR '@paths:';
-      say STDERR for @paths;
-      say STDERR '';
-   }
+   BLAT "In glob_regexp_utf8 at end.\n"
+       ."Paths:\n"
+       .join "\n", @paths;
 
    # Return results:
    return @paths;
@@ -490,14 +486,10 @@ file names in any language other than English. (Names such as "Говорю Ру
 sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate='1') {
 
    # If debugging, announce inputs:
-   if ($Debug) {
-      say STDERR "                                          ";
-      say STDERR "In sub \"readdir_regexp_utf8\", near top. ";
-      say STDERR "\$dir    = $dir                           ";
-      say STDERR "\$target = $target                        ";
-      say STDERR "\$regex  = $regexp                        ";
-      say STDERR "                                          ";
-   }
+      BLAT "In \"readdir_regexp_utf8\", near top.\n"
+          ."\$dir    = $dir\n"
+          ."\$target = $target\n"
+          ."\$regex  = $regexp";
 
    # But do those inputs even make any sense?? Let's check now!
    if ( !(-e e($dir)) || !(-d e($dir)) ) {
@@ -531,7 +523,7 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
 
       # Skip '.' and '..':
       if ('.'  eq $name) {BLAT "In readdir_regexp_utf8; skipped \".\". "; next NAME;}
-      if ('..' eq $name) {BLAT "In readdir_regexp_utf8; skipped \"..\". "; next NAME;}
+      if ('..' eq $name) {BLAT "In readdir_regexp_utf8; skipped \"..\"."; next NAME;}
 
       # Do NOT run an existence check here, else we will get a constant stream of nuisance warnings,
       # because it is NORMAL for many links to point to things that will not exist until some program
@@ -585,13 +577,9 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
    } # end foreach my $name (@raw)
 
    # If debugging, print names:
-   if ($Debug) {
-      say STDERR '';
-      say STDERR 'In readdir_regexp_utf8 at end.';
-      say STDERR '@names:';
-      say STDERR for @names;
-      say STDERR '';
-   }
+   BLAT "In readdir_regexp_utf8 at end.\n"
+       ."Names:\n"
+       .join "\n", @names;
 
    # Return results:
    return @names;
