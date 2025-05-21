@@ -83,6 +83,9 @@
 #                   file's NAME instead of the file's PATH. Added "corr" option to hash() and copy_file(),
 #                   telling them to correct the file-name suffix of the target file if necessary.
 # Sun May 04, 2025: Fixed encoding error in is_data_file() (existence check wasn't encoded).
+# Tue May 20, 2025: Fixed bug in readdir_regexp_utf8, in name loop, due to "switch" misinterpretting "next"
+#                   to mean "fall through to next case" rather than "jump to next iteration of foreach loop".
+#                   The solution was to lable the loop "NAME" and use "next NAME" instead of just "next".
 ##############################################################################################################
 
 # ======= POD: ===============================================================================================
