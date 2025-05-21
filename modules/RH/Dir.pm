@@ -623,12 +623,11 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
    # "$regexp"  =  What regular expression should we use for selecting files?
 
    # If debugging, print diagnostics:
-   if ($Debug) {
-      say "Debug msg in GetFiles: \$dir       = $dir"       ;
-      say "Debug msg in GetFiles: \$target    = $target"    ;
-      say "Debug msg in GetFiles: \$regexp    = $regexp"    ;
-      say "Debug msg in GetFiles: \$predicate = $predicate" ;
-   }
+   BLAT "Debug msg in GetFiles:\n"
+       ."\$dir       = $dir\n"
+       ."\$target    = $target\n"
+       ."\$regexp    = $regexp\n"
+       ."\$predicate = $predicate";
 
    if ($dir !~ m/^\//) {
       say STDERR "Error in GetFiles: Directory \"$dir\" is invalid.\n"
