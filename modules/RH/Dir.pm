@@ -146,8 +146,8 @@ $" = ', ' ; # Quoted-array element separator = ", ".
 
 # ------- Global Variables: ----------------------------------------------------------------------------------
 
-# Counters used by subs GetFiles and GetRegularFilesBySize.
-# NOTE: These are all reset to 0 EVERY time one of those
+# Global counters in namespace "RH", used by subs GetFiles and
+# GetRegularFilesBySize. NOTE: These are all reset to 0 EVERY time one of those
 # two subs runs, so if you want to accumulate counts of events over multiple
 # entries to those subs, you need to store those accumulations in separate
 # variables.
@@ -523,12 +523,12 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
    # Iterate through @names, rejecting '.', '..',  and everything that doesn't match $target, $regexp, and
    # $predicate, and storing remainder in an array called @names:
    my @names = ();
-   foreach my $name (@raw) {
+   NAME: foreach my $name (@raw) {
       if ($Debug) {say STDERR "In readdir_regexp_utf8. Name from readdir: $name"}
 
       # Skip '.' and '..':
-      next if '.'  eq $name;
-      next if '..' eq $name;
+      next NAME if '.'  eq $name;
+      next NAME if '..' eq $name;
 
       # Do NOT run an existence check here, else we will get a constant stream of nuisance warnings,
       # because it is NORMAL for many links to point to things that will not exist until some program
@@ -547,28 +547,28 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
       if ( scalar(@stats) < 13 ) {
          warn "Warning in readdir_regexp_utf8(): Can't lstat \"$name\" in \"$dir\".\n"
              ."Moving on to next file.\n";
-         next;
+         next NAME;
       }
 
       $Debug and say "Successfully got 13 stats for name \"$name\".";
 
       # Skip this file if it doesn't match our target:
       switch($target) {
-         case 'F' { if ( !     -f _                 ) {$Debug and say STDERR "Failed F."; next;} }
-         case 'D' { if ( !                 -d _     ) {$Debug and say STDERR "Failed D."; next;} }
-         case 'B' { if ( ! ( ( -f _ ) || ( -d _ ) ) ) {$Debug and say STDERR "Failed B."; next;} }
-         case 'A' {                     ;              $Debug and say STDERR "Accept A.";        }
-         else     {                     ;              $Debug and say STDERR "Accept E.";        }
+         case 'F' { if ( !     -f _                 ) {$Debug and say STDERR "Failed F."; next NAME;} }
+         case 'D' { if ( !                 -d _     ) {$Debug and say STDERR "Failed D."; next NAME;} }
+         case 'B' { if ( ! ( ( -f _ ) || ( -d _ ) ) ) {$Debug and say STDERR "Failed B."; next NAME;} }
+         case 'A' {                     ;              $Debug and say STDERR "Accept A.";             }
+         else     {                     ;              $Debug and say STDERR "Accept E.";             }
       }
 
       # Skip this file if it doesn't match our regexp:
       if ($name !~ m/$regexp/) {
-         $Debug and say STDERR "Skipping file \"$name\" because its name doesn't match regexp.";
-         next;
+         $Debug and say STDERR "Skipping file named \"$name\" because its name doesn't match regexp.";
+         next NAME;
       }
 
       # Skip this file if it doesn't match our predicate:
-      if ( '1' ne $predicate ) {
+      if ( '1' ne "$predicate" ) {
          local $_ = e($name);
          if ( ! eval $predicate ) {
             BLAT "Skipping file \"$name\" because it doesn't match predicate.";
@@ -812,7 +812,7 @@ sub GetRegularFilesBySize :prototype(;$$$) ($dir = d(getcwd), $regexp = qr(^.+$)
    my %filerecords;
    foreach my $file (@$files) {push @{$filerecords{$file->{Size}}}, $file}
    return \%filerecords;
-} # end sub GetRegularFilesBySize ()
+} # end sub GetRegularFilesBySize
 
 =head2 FilesAreIdentical
 
