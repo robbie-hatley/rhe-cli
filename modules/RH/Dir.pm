@@ -527,11 +527,11 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
    # $predicate, and storing remainder in an array called @names:
    my @names = ();
    NAME: foreach my $name (@raw) {
-      if ($Debug) {say STDERR "In readdir_regexp_utf8. Name from readdir: $name"}
+      BLAT "In readdir_regexp_utf8. Name from readdir: \"$name\"";
 
       # Skip '.' and '..':
-      next NAME if '.'  eq $name;
-      next NAME if '..' eq $name;
+      if ('.'  eq $name) {BLAT "In readdir_regexp_utf8; skipped \".\". "; next NAME;}
+      if ('..' eq $name) {BLAT "In readdir_regexp_utf8; skipped \"..\". "; next NAME;}
 
       # Do NOT run an existence check here, else we will get a constant stream of nuisance warnings,
       # because it is NORMAL for many links to point to things that will not exist until some program
@@ -545,39 +545,40 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
       # broken link. (WARNING: MUST use full path here, not the name, because there is NO guaranty that
       # $dir is the same as our current working directory!!!):
       my @stats = lstat e(path($dir,$name));
-
       # If lstat failed, print warning and move on to next file:
       if ( scalar(@stats) < 13 ) {
          warn "Warning in readdir_regexp_utf8(): Can't lstat \"$name\" in \"$dir\".\n"
              ."Moving on to next file.\n";
          next NAME;
       }
-
-      $Debug and say "Successfully got 13 stats for name \"$name\".";
+      BLAT "In readdir_regexp_utf8. Successfully got 13 stats for \"$name\".";
 
       # Skip this file if it doesn't match our target:
       switch($target) {
-         case 'F' { if ( !     -f _                 ) {$Debug and say STDERR "Failed F."; next NAME;} }
-         case 'D' { if ( !                 -d _     ) {$Debug and say STDERR "Failed D."; next NAME;} }
-         case 'B' { if ( ! ( ( -f _ ) || ( -d _ ) ) ) {$Debug and say STDERR "Failed B."; next NAME;} }
-         case 'A' {                     ;              $Debug and say STDERR "Accept A.";             }
-         else     {                     ;              $Debug and say STDERR "Accept E.";             }
+         case 'F' { if ( !     -f _                 ) {BLAT "\"$name\" Failed target \"F\"."; next NAME;} }
+         case 'D' { if ( !                 -d _     ) {BLAT "\"$name\" Failed target \"D\"."; next NAME;} }
+         case 'B' { if ( ! ( ( -f _ ) || ( -d _ ) ) ) {BLAT "\"$name\" Failed target \"B\"."; next NAME;} }
+         case 'A' {;} # Do nothing.
+         else     {;} # Do nothing.
       }
+      BLAT "In readdir_regexp_utf8. \"$name\" accepted by target switch.";
 
       # Skip this file if it doesn't match our regexp:
       if ($name !~ m/$regexp/) {
-         $Debug and say STDERR "Skipping file named \"$name\" because its name doesn't match regexp.";
+         BLAT "In readdir_regexp_utf8. Skipping \"$name\" because name doesn't match regexp.";
          next NAME;
       }
+      BLAT "In readdir_regexp_utf8. \"$name\" passed regexp test.";
 
       # Skip this file if it doesn't match our predicate:
       if ( '1' ne "$predicate" ) {
          local $_ = e($name);
          if ( ! eval $predicate ) {
-            BLAT "Skipping file \"$name\" because it doesn't match predicate.";
+            BLAT "In readdir_regexp_utf8. Skipping \"$name\" because it doesn't match predicate.";
             next;
          }
       }
+      BLAT "In readdir_regexp_utf8. \"$name\" also passed predicate test; pushing to \"\@names\".";
 
       # If we get to here, include this file among those to be returned:
       push @names, $name;
