@@ -136,7 +136,7 @@ int main (int Beren, char * Luthien[])
    {
       fprintf
       (
-         stderr, 
+         stderr,
          "Error: \"part\" requires exactly 1 argument, which must be\n"
          "a non-negative integer not exceeding %d.\n",
          MAX_N
@@ -148,9 +148,9 @@ int main (int Beren, char * Luthien[])
    {
       fprintf
       (
-         stderr, 
+         stderr,
          "Error: argument must be a non-negative integer\n"
-         "not exceeding %d\n", 
+         "not exceeding %d\n",
          MAX_N
       );
       exit(666);
@@ -158,7 +158,7 @@ int main (int Beren, char * Luthien[])
 
    // n is the number to be partitioned, and is also the number of possible numbers of stacks, as any positive integer n
    // will have partitions including all numbers of stacks from 1 through n:
-   n = (int)n_raw;  
+   n = (int)n_raw;
 
    // Initialize the first n elements of PTable, and set the value of the first 10 elements manually to
    // P(i) for i values from 1 through 10:
@@ -170,5 +170,5 @@ int main (int Beren, char * Luthien[])
    {
       gmp_printf("P(%d) = %Zd\n", i, PTable[i]); // Print P(n).
    }
-   return 0; 
+   return 0;
 }
