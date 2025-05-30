@@ -37,7 +37,9 @@ Output: 0
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+To solve this, I first calculate "lwr" and "upr" bounds for the amount of the income which is in each bracket,
+then calculate the tax amount for each bracket by multiplying percentage by (upr-lwr), then sum for all
+brackets.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
