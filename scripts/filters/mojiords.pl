@@ -7,7 +7,6 @@
 # Wed May 28, 2025: Wrote it.
 ##############################################################################################################
 use v5.36;
-use Sys::Binmode;        # Force Perl to store text as raw Unicode, not UTF-8.
 binmode STDIN,  ":raw";  # Purposely misinterpret UTF-8 as being raw unicode, inbound.
 binmode STDOUT, ":utf8"; # Print normally, outbound.
 
