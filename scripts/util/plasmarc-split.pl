@@ -2,9 +2,22 @@
 # plasmarc-split.pl
 use v5.36;
 use utf8::all;
-open FH, '<', '/home/aragorn/.config/plasmarc';
-my @lines = <FH>;
+my $user  = getlogin;
+my @lines = ();
+my @pics  = ();
+open FH, '<', "/home/$user/.config/plasmarc" or die "Couldn't open \"plasmarc\"!\n";
+while(<FH>) {
+   next if /^\[Theme\]$/;
+   next if /^name=default$/;
+   next if /^$/;
+   push @lines, $_;
+}
 close FH;
-my @pics = split ",", $lines[4];
-$pics[0] =~ s#^usersWallpapers=##;
+for ( my $idx = 0 ; $idx <= $#lines ; ++$idx ) {
+   if ( $lines[$idx] =~ m#^usersWallpapers=# ) {
+      @pics = split ",", $lines[1];
+      $pics[0] =~ s#^usersWallpapers=##;
+      last;
+   }
+}
 for my $pic (@pics) {say $pic}
