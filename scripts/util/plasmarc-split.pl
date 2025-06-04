@@ -6,12 +6,7 @@ my $user  = getlogin;
 my @lines = ();
 my @pics  = ();
 open FH, '<', "/home/$user/.config/plasmarc" or die "Couldn't open \"plasmarc\"!\n";
-while(<FH>) {
-   next if /^\[Theme\]$/;
-   next if /^name=default$/;
-   next if /^$/;
-   push @lines, $_;
-}
+while(<FH>) {push @lines, $_}
 close FH;
 for ( my $idx = 0 ; $idx <= $#lines ; ++$idx ) {
    if ( $lines[$idx] =~ m#^usersWallpapers=# ) {
