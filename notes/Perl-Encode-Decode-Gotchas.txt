@@ -57,12 +57,8 @@ readdir  $fh               d(readdir $fh)
 readline $fh               d(readline $fh)
 readlink $path             d(readlink e($path)) # must use both d AND e
 
-\bchdir\b|\bchmod\b|\bchown\b|\bchroot\b|\bgetlogin\b|\bglob\b|\blink\b|\blstat\b|\bmkdir\b|\bopen\b|\bopendir\b|\breadlink\b|\brename\b|\brmdir\b|\bsymlink\b|\bsystem\b|\bunlink\b
-
-(Note: the xxxx_utf8 functions mentioned above are my own:
-https://people.well.com/user/lonewolf/main/programming/modules/RH/Dir.pm
-The "e" is also a function I wrote, which is a wrapper
-around "encode" function from the "Encode" module.)
+Regular expression for finding the above problematic fuction calls in your Perl source files:
+\bchdir\b|\bchmod\b|\bchown\b|\bchroot\b|\bexec\b|\bglob\b|\blink\b|\blstat\b|\bmkdir\b|\bopen\b|\bopendir\b|\breadlink\b|\brename\b|\brmdir\b|\bstat\b|\bsymlink\b|\bsystem\b|\bunlink\b|\breaddir\b|\breadline\b|\breadlink\b
 
 Built-in functions which should NOT be sent UTF-8-encoded
 versions of Unicode text (basically, anything not having
@@ -91,4 +87,3 @@ for reasons OTHER THAN needing UTF-8-encoded input:
 oct      Only feed this numbers! It can't handle characters
          such as "看的星"; it gets all upset if you do that
          and dies with "wide character in oct".
-

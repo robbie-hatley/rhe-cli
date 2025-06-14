@@ -88,7 +88,7 @@
 #                   The solution was to lable the loop "NAME" and use "next NAME" instead of just "next".
 ##############################################################################################################
 
-# ======= POD: ===============================================================================================
+# ======= INTRO: =============================================================================================
 
 =encoding utf8
 
@@ -235,22 +235,21 @@ sub sha1                   :prototype($)    ; # Return hex SHA-1 hash of a data 
 our @EXPORT =
    qw
    (
-      d                       e                       glob_regexp_utf8
-      readdir_regexp_utf8
+      d                       e
 
-      GetFiles                GetRegularFilesBySize   FilesAreIdentical
-      RecurseDirs             copy_file               move_file
-      copy_files              move_files
+      glob_regexp_utf8        readdir_regexp_utf8     GetFiles
+      GetRegularFilesBySize   FilesAreIdentical       RecurseDirs
+      copy_file               copy_files              move_file
+      move_files              get_correct_suffix
 
       rename_file             time_from_mtime         date_from_mtime
       get_prefix              get_suffix              get_dir_from_path
       get_dirname_from_path   get_name_from_path      path
       denumerate_file_name    enumerate_file_name     annotate_file_name
       find_avail_enum_name    find_avail_rand_name    is_large_image
-      get_correct_suffix      cyg2win                 win2cyg
-      hash                    shorten_sl_names        is_data_file
-      is_meta_file            is_valid_qual_dir       update_sha1
-      sha1
+      cyg2win                 win2cyg                 hash
+      shorten_sl_names        is_data_file            is_meta_file
+      is_valid_qual_dir       update_sha1             sha1
    );
 
 # Symbols which it is OK to export by request:
@@ -395,9 +394,9 @@ sub eight_rand_lc_letters :prototype() {
 }
 
 # ======= SECTION 2, UTF-8 SUBROUTINES: ======================================================================
+# (Subroutines for decoding from UTF-8 or encoding to UTF-8.)
 
-# Prepare constant "EFLAGS" which contains bitwise-OR'd flags for Encode::encode and Encode::decode :
-
+# Prepare constant "EFLAGS" which contains bitwise-OR'd flags for "Encode::encode" and "Encode::decode".
 # Should we warn and return? No, let's NOT do that, because it will cause loss of remaining data:
 # use constant EFLAGS => LEAVE_SRC | WARN_ON_ERR | RETURN_ON_ERR;
 # That would be useful for use with buffers, but we're usually not doing that in my programs. So for my
@@ -408,7 +407,15 @@ use constant EFLAGS => LEAVE_SRC | WARN_ON_ERR;
 =head2 d
 
 Decodes items from UTF-8 to raw Unicode codepoints:
-sub d(@args)
+
+Invocations:
+
+  my $decoded = d [uses "$_" as argument]
+  my $decoded = d(argument)
+  my @decoded = d(arguments)
+
+Note that this function leaves its input unchanged, and prints a warning (but doesn't
+return or halt the calling program) if a decoding error occurs:
 =cut
 sub d :prototype(@) (@args) {
       if (0 == scalar @args) {return Encode::decode('UTF-8', $_,       EFLAGS);}
@@ -418,8 +425,16 @@ sub d :prototype(@) (@args) {
 
 =head2 e
 
-Encodes items from raw Unicode codepoints to UTF-8:
-sub e(@args)
+Encodes items from raw Unicode codepoints to UTF-8.
+
+Invocations:
+
+  my $encoded = e [uses "$_" as argument]
+  my $encoded = e(argument)
+  my @encoded = e(arguments)
+
+Note that this function leaves its input unchanged, and prints a warning (but doesn't
+return or halt the calling program) if an encoding error occurs:
 =cut
 sub e :prototype(@) (@args) {
       if (0 == scalar @args) {return Encode::encode('UTF-8', $_,       EFLAGS);}
@@ -427,61 +442,45 @@ sub e :prototype(@) (@args) {
    else                 {return map {Encode::encode('UTF-8', $_,       EFLAGS)} @args }
 } # end sub e
 
-=head2 glob_regexp_utf8
-
-Returns a sorted list of paths, not including "." or "..", in a given directory which match a given
-target, regexp, and predicate:
-
-glob_regexp_utf8($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate='1')
-
-This sub is like glob(), but using UTF-8, a given directory, a target type, a regular expression
-(instead of a csh-style wildcard), and a boolean file-type predicate as inputs, and returning matching
-fully-qualified paths as output, with '.' and '..' stripped-out.
-
-Vitally important: the "directory" argument must already be decoded from utf-8 to raw unicode,
-otherwise this function will generate "wide character" errors and crash the calling program.
-This should automatically be done for you if you use cpan modules "utf8::all" and "cwd::utf8",
-or if you use "d(getcwd)", to provide the directory. Using raw "glob()" or "<* .*>" or "readdir",
-however, will cause many errors on either linux or cygwin if the calling program attempts to process
-file names in any language other than english. (Names such as "Говорю Русский", "ॐ नमो भगवते वासुदेवाय",
-"看的星星，知道你是爱。" would crash horribly.)
-=cut
-sub glob_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate='1') {
-
-   # NOTE, RH 2025-04-10: I noticed that this entire subroutine is a duplicate of "readdir_regexp_utf8" except
-   # giving fully-qualified paths instead of raw directory entries. But that can be done with "path" and
-   # "map", so I just removed most of the content of this subroutine; it's now just a wrapper around
-   # "readdir_regexp_utf8".
-
-   my @names = readdir_regexp_utf8($dir, $target, $regexp, $predicate);
-   my @paths = map {path($dir, $_)} @names;
-
-   # If debugging, print paths:
-   BLAT "In glob_regexp_utf8 at end.\n"
-       ."Paths:\n"
-       .join "\n", @paths;
-
-   # Return results:
-   return @paths;
-} # end sub glob_regexp_utf8 (;$$$)
+# ======= SECTION 3, MAJOR SUBROUTINES: ======================================================================
+# (Subroutines with relatively long-and-complex implementations.)
 
 =head2 readdir_regexp_utf8
 
-Returns the contents of a directory, filtered by target, regexp, and predicate:
-
-sub readdir_regexp_utf8($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate='1')
-
+Returns the contents of a directory, filtered by target, regexp, and predicate.
 This sub is like readdir(), but using UTF-8, a given directory, a target type, a regular expression
 (instead of a csh-style wildcard), and a boolean file-type predicate as inputs, and returning matching
 entries from the given directory as output, with '.' and '..' stripped-out.
 
-Vitally important: the "directory" argument must already be decoded from utf-8 to raw unicode,
+Invocation:
+
+  my @names = readdir_regexp_utf8(directory, target, regexp, predicate);
+
+All arguments are optional. By default, directory is current working directory, target is "all files",
+regexp is "all names", and predicate is "all files".
+
+First argument, if present, must be a fully-qualified directory, starting with a '/' character.
+Vitally important: the "directory" argument, if used, must already be decoded from utf-8 to raw unicode,
 otherwise this function will generate "wide character" errors and crash the calling program.
 This should automatically be done for you if you use cpan modules "utf8::all" and "cwd::utf8",
 or if you use "d(getcwd)", to provide the directory. Using raw "glob()" or "<* .*>" or "readdir",
 however, will cause many errors on either linux or cygwin if the calling program attempts to process
-file names in any language other than English. (Names such as "Говорю Русский", "ॐ नमो भगवते वासुदेवाय",
-"看的星星，知道你是爱。" would crash horribly.)
+file names in any language other than english (names such as "Говорю Русский", "ॐ नमो भगवते वासुदेवाय",
+"看的星星，知道你是爱。" would crash horribly).
+
+Second argument, if present, must be one of the following letters:
+
+  F = regular Files only
+  D = Directories only (but not SYMLINKDs).
+  B = Both regular files and directories (but not SYMLINKDs).
+  A = All files (regular, directories, links, SYMLINKDs, pipes, etc, etc, etc)
+
+Third argument, if present, must be a Perl-Compliant Regular Expression to match directory entries against.
+For example, use '\.jpe?g$' to process only jpeg image files.
+
+Fourth argument, if present, must be a boolean predicate, wrapped in (parentheses),
+using Perl file-test and boolean operators, with "$_" set locally to "name of current file".
+For example, use '((-s)>=50000)' to process only files at least 50kB in size.
 =cut
 sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate='1') {
 
@@ -585,25 +584,100 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
    return @names;
 } # end sub readdir_regexp_utf8
 
-# ======= SECTION 3, MAJOR SUBROUTINES: ======================================================================
+=head2 glob_regexp_utf8
+
+Returns a sorted list of paths, not including "." or "..", in a given directory which match a given
+target, regexp, and predicate. This sub is like glob(), but using UTF-8, a given directory, a target
+type, a regular expression (instead of a csh-style wildcard), and a boolean file-type predicate as
+inputs, and returning matching fully-qualified paths as output, with '.' and '..' stripped-out.
+
+Invocation:
+
+  my @paths = glob_regexp_utf8(directory, target, regexp, predicate);
+
+All arguments are optional. By default, directory is current working directory, target is "all files",
+regexp is "all names", and predicate is "all files".
+
+First argument, if present, must be a fully-qualified directory, starting with a '/' character.
+Vitally important: the "directory" argument, if used, must already be decoded from utf-8 to raw unicode,
+otherwise this function will generate "wide character" errors and crash the calling program.
+This should automatically be done for you if you use cpan modules "utf8::all" and "cwd::utf8",
+or if you use "d(getcwd)", to provide the directory. Using raw "glob()" or "<* .*>" or "readdir",
+however, will cause many errors on either linux or cygwin if the calling program attempts to process
+file names in any language other than english (names such as "Говорю Русский", "ॐ नमो भगवते वासुदेवाय",
+"看的星星，知道你是爱。" would crash horribly).
+
+Second argument, if present, must be one of the following letters:
+
+  F = regular Files only
+  D = Directories only (but not SYMLINKDs).
+  B = Both regular files and directories (but not SYMLINKDs).
+  A = All files (regular, directories, links, SYMLINKDs, pipes, etc, etc, etc)
+
+Third argument, if present, must be a Perl-Compliant Regular Expression to match directory entries against.
+For example, use '\.jpe?g$' to process only jpeg image files.
+
+Fourth argument, if present, must be a boolean predicate, wrapped in (parentheses),
+using Perl file-test and boolean operators, with "$_" set locally to "name of current file".
+For example, use '((-s)>=50000)' to process only files at least 50kB in size.
+=cut
+sub glob_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate='1') {
+
+   # NOTE, RH 2025-04-10: I noticed that this entire subroutine is a duplicate of "readdir_regexp_utf8"
+   # except that it returns fully-qualified paths instead of raw directory entries. But that can be done
+   # with "path" and "map", so I just removed most of the content of this subroutine, and it's now just
+   # a wrapper around "readdir_regexp_utf8".
+
+   my @names = readdir_regexp_utf8($dir, $target, $regexp, $predicate);
+   my @paths = map {path($dir, $_)} @names;
+
+   # If debugging, print paths:
+   BLAT "In glob_regexp_utf8 at end.\n"
+       ."Paths:\n"
+       .join "\n", @paths;
+
+   # Return results:
+   return @paths;
+} # end sub glob_regexp_utf8 (;$$$)
 
 =head2 GetFiles
 
-GetFiles returns a reference to an array of filerecords for all files in a user-specified directory.
-Optionally, user can also specify a regular expression to match names against and a single-letter "target"
-specifying which types of directory entries to process (files, dirs, both, or all):
+GetFiles returns a reference to an array of file-record hashes (containing 19 pieces of information)
+for all files in a given directory (defaulting to "current working directory"). Optional arguments
+include directory, a single-letter "target" specifying which types of directory entries to process
+(files, dirs, both, or all), a regular expression to match names against, and a predicate
+using Perl file-test and boolean operators with "$_" being set locally to "name of current file".
 
-GetFiles($dir = d(getcwd), $target = 'A', $regexp = qr(^.+$)o, $predicate = '1')
+Invocation:
+
+  my $files = GetFiles(directory, target, regexp, predicate);
+  for my $file (@$files) {printf("%-20s%7d\n",$file->{Name},$file->{Size}}
+
+All arguments are optional. By default, directory is current working directory, target is "all files",
+regexp is "all names", and predicate is "all files".
 
 First argument, if present, must be a fully-qualified directory, starting with a '/' character.
+Vitally important: the "directory" argument, if used, must already be decoded from utf-8 to raw unicode,
+otherwise this function will generate "wide character" errors and crash the calling program.
+This should automatically be done for you if you use cpan modules "utf8::all" and "cwd::utf8",
+or if you use "d(getcwd)", to provide the directory. Using raw "glob()" or "<* .*>" or "readdir",
+however, will cause many errors on either linux or cygwin if the calling program attempts to process
+file names in any language other than english (names such as "Говорю Русский", "ॐ नमो भगवते वासुदेवाय",
+"看的星星，知道你是爱。" would crash horribly).
 
-Second argument, if present, must be a Perl-Compliant Regular Expression to match directory entries against.
+Second argument, if present, must be one of the following letters:
 
-Third argument, if present, must be one of the following letters:
-F = regular Files only
-D = Directories only (but not SYMLINKDs).
-B = Both regular files and directories (but not SYMLINKDs).
-A = All files (regular, directories, links, SYMLINKDs, pipes, etc, etc, etc)
+  F = regular Files only
+  D = Directories only (but not SYMLINKDs).
+  B = Both regular files and directories (but not SYMLINKDs).
+  A = All files (regular, directories, links, SYMLINKDs, pipes, etc, etc, etc)
+
+Third argument, if present, must be a Perl-Compliant Regular Expression to match directory entries against.
+For example, use '\.jpe?g$' to process only jpeg image files.
+
+Fourth argument, if present, must be a boolean predicate, wrapped in (parentheses),
+using Perl file-test and boolean operators, with "$_" set locally to "name of current file".
+For example, use '((-s)>=50000)' to process only files at least 50kB in size.
 =cut
 sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.+$)o, $predicate = '1') {
    # "$dir"     =  What directory does user want a list of file-info packets for?
@@ -781,15 +855,43 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
 =head2 GetRegularFilesBySize
 
 Given a file-name regular expression to search for, this subroutine returns a reference to a hash of
-arrays of same-size file records for all matching regular files in a given directory, with the
-outer hash keyed by file size. This sub can take up to three optional arguments: a directory,
-a file-selection regexp, and a file-selection predicate:
+arrays of same-size file records (containing 19 different pieces of information on each file)
+for all matching regular files in a given directory, with the outer hash keyed by file size.
+This sub can take up to three optional arguments: a directory, a file-name regexp, and
+a file-type predicate.
 
-   GetRegularFilesBySize ($dir = d(getcwd), $regexp = qr(^.+$)o, $predicate = 1)
-
-This sub is especially useful for programs which compare regular files for identicalness, preperatory to
+This sub is especially useful for programs which compare regular files for identicalness, preparatory to
 making decisions regarding copying or deleting of files. To make such comparisons FAST, this sub stores
 files records in same-file-size arrays and does not collect or return any stats.
+
+Invocation:
+
+  my $size_groups = GetRegularFilesBySize(directory, regexp, predicate);
+  for my $size (sort {$a<=>$b} keys %$size_groups) {
+     my @files = @{$size_groups->{$size}};
+     my $n = scalar(@files);
+     say "found $n files os size $size"
+  }
+
+All arguments are optional
+
+First argument, if present, must be a fully-qualified directory, starting with a '/' character.
+Vitally important: the "directory" argument, if used, must already be decoded from utf-8 to raw unicode,
+otherwise this function will generate "wide character" errors and crash the calling program.
+This should automatically be done for you if you use cpan modules "utf8::all" and "cwd::utf8",
+or if you use "d(getcwd)", to provide the directory. Using raw "glob()" or "<* .*>" or "readdir",
+however, will cause many errors on either linux or cygwin if the calling program attempts to process
+file names in any language other than english (names such as "Говорю Русский", "ॐ नमो भगवते वासुदेवाय",
+"看的星星，知道你是爱。" would crash horribly).
+
+Second argument, if present, must be a Perl-Compliant Regular Expression to match directory entries against.
+For example, use '\.jpe?g$' to process only jpeg image files.
+
+Third argument, if present, must be a boolean predicate, wrapped in (parentheses),
+using Perl file-test and boolean operators, with "$_" set locally to "name of current file".
+For example, use '((-s)>=50000)' to process only files at least 50kB in size.
+
+(Note that there is no "target" argument because this subroutine handles regular files only.)
 =cut
 sub GetRegularFilesBySize :prototype(;$$$) ($dir = d(getcwd), $regexp = qr(^.+$)o, $predicate = 1) {
    # If debugging, print diagnostics:
@@ -807,9 +909,11 @@ sub GetRegularFilesBySize :prototype(;$$$) ($dir = d(getcwd), $regexp = qr(^.+$)
 
 =head2 FilesAreIdentical
 
-FilesAreIdentical($filepath1, $filepath2)
-
 Compares the contents of two files. Returns 1 if files are identical, or 0 if the files are different.
+
+Invocation:
+
+  FilesAreIdentical(path-to-first-file, path-to-second-file)
 =cut
 sub FilesAreIdentical :prototype($$) ($filepath1, $filepath2) {
    # Get path of first file, make sure it exists, get its stats, make sure it's a regular file,
@@ -934,8 +1038,9 @@ sub FilesAreIdentical :prototype($$) ($filepath1, $filepath2) {
 Given a subroutine name as input, THIS subroutine will apply THAT subroutine in every directory in the
 directory tree decending from the current working directory:
 
-RecurseDirs {MySubName}
+Invocation:
 
+  RecurseDirs {MySubName}
 =cut
 sub RecurseDirs :prototype(&) ($f) {
 
@@ -1191,18 +1296,34 @@ sub RecurseDirs :prototype(&) ($f) {
    BOTTOM: return $max_recursion;
 } # end sub RecurseDirs (&)
 
-# Copy a file from a given path to a given directory.
-# Mandatory arguments:
-#    path of original file
-#    path of destination directory
-# Optional arguments:
-#    'rename=newname'  =>  Set copied file's name to newname in destination directory.
-#    'sha1'            =>  Set copy's name root to SHA1 hash of file.
-#    'sl'              =>  Make short display names for Spotlight image processing.
-#    'corr'            =>  Set suffix of destination file name to correct suffix for file.
-# All other arguments are ignored.
-# Note: if contradictory arguments are given (eg, 'sha1', 'rename=Fred'), later arguments override previous.
-# Returns 0 for error, 1 for success, 2 for "skipped file because duplicate exists in destination".
+=head2 copy_file
+
+Copies a file from a source file path to a destination directory path.
+
+Invocation:
+
+  copy_file(source-file-path, destination-directory-path, optional-arguments)
+
+Mandatory arguments:
+
+  path of original file
+  path of destination directory
+
+Optional arguments:
+
+  'sha1'            =>  Set copy's name root to SHA1 hash of file.
+  'rename=newname'  =>  Set copied file's name to newname in destination directory.
+  'corr'            =>  Set suffix of destination file name to correct suffix for file.
+  'sl'              =>  Make short display names for Spotlight image processing.
+
+All other arguments are ignored. Note: if contradictory arguments are given (eg, 'sha1', 'rename=Fred'),
+later arguments override previous.
+
+Return codes:
+
+  0 => an error occurred
+  1 => operation succeeded
+=cut
 sub copy_file :prototype($$;@)
 (
    $spath, # Path of source file.
@@ -1368,184 +1489,38 @@ sub copy_file :prototype($$;@)
    }
 } # end sub copy_file
 
-# Move a file from a given path to a given directory.
-# Mandatory arguments: path of original file, followed by path of destination directory.
-# Optional arguments:
-#    'rename=newname'  =>  Set file's name to newname in destination directory.
-#    'sha1'            =>  Set file's name root to SHA1 hash of file. (Doesn't change file name extension.)
-#    'sl'              =>  Shorten names for Spotlight image processing.
-# All other arguments are ignored.
-# Note: if contradictory arguments are given (eg, 'sha1', 'rename=Fred'), later arguments override previous.
-# Returns 0 for error, 1 for success, 2 for "skipped file because duplicate exists in destination".
-sub move_file :prototype($$;@)
-(
-   $spath, # Path of source file.
-   $dst,   # Destination directory.
-   @args   # Additional arguments, if any, go in here.
-)
-{
-   my $dpath    = '';                         # Path of destination file, full  version.
-   my $src      = get_dir_from_path ($spath); # Directory of   source    file.
-   my $sname    = get_name_from_path($spath); #   Name    of   source    file.
-   my $dname    = '';                         #   Name    of destination file. (Defaults to $sname.)
-   my $mode     = 'reg';                      # Naming Mode: nrm = normal, sha = sha1, ren = rename.
-   my $sl       = 0;                          # Shorten names for Spotlight image processing?
+=head2 copy_files
 
-   # If debugging, print diagnostics:
-   if ($Debug) {
-      say STDERR "                      ";
-      say STDERR "In move_file, at top. ";
-      say STDERR "\$spath = \"$spath\"  ";
-      say STDERR "\$dst   = \"$dst\"    ";
-      say STDERR "\@args  = (@args)     ";
-      say STDERR "                      ";
-   }
+Copys files from one directory to another.
 
-   # Bail if $spath is not a path to an existing regular file:
-   if ( ! -e e $spath || ! -f e $spath ) {
-      warn
-         "\n",
-         "Error in move_file: Given path is not a path to an existing regular file:\n",
-         "$spath\n",
-         "File was not moved.\n",
-         "\n";
-      return 0;
-   }
+Invocation:
 
-   # Bail if destination directory doesn't exist or isn't a directory:
-   if ( ! -e e $dst || ! -d e $dst ) {
-      warn
-         "\n",
-         "Error in move_file: Given destination directory does not exist:\n",
-         "$dst\n",
-         "File was not moved.\n",
-         "\n";
-      return 0;
-   }
+  copy_files(source-directory-path, destination-directory-path, optional-arguments)
 
-   # Process remaining arguments:
-   foreach (@args) {
-      if ( $_ eq 'sha1' ) {        # if SHA1-ing file
-         $mode = 'sha';            # set $mode to 'sha' (SHA-1 Mode)
-      }
-      elsif ( m/^rename=(.+)$/ ) { # elsif renaming file,
-         $mode = 'ren';            # set $mode to 'ren' (Rename Mode)
-      }
-      elsif ( $_ eq 'sl' ) {       # elsif Spotlight,
-         $sl   =  1;               # set $sl     to 1
-      }
-   }
+Mandatory arguments:
 
-   # If debugging, print diagnostics:
-   if ($Debug) {
-      say STDERR "                                          ";
-      say STDERR "In move_file, after processing arguments. ";
-      say STDERR "\$mode = \"$mode\"                        ";
-      say STDERR "\$sl   = \"$sl\"                          ";
-      say STDERR "                                          ";
-   }
+  Source            (Directory to copy files from.)
+  Destination       (Directory to copy files to.)
 
-   # Take different actions depending on naming mode:
-   for ($mode) {
-      # Rename Naming Mode:
-      if ( /^ren$/ ) {
-         # Set destination name to name user provided:
-         $dname = $1;
-      }
+Optional arguments:
 
-      # SHA-1 Naming Mode:
-      elsif ( /^sha$/ ) {
-         # Set $dname to SHA1-hash-based file name:
-         $dname = hash($spath, 'sha1', 'name');
+  regexp=regexp     (Copy only files matching regexp)
+  sl                (Shorten names for when processing Windows Spotlight images.)
+  unique            (Don't copy files for which duplicates exist in destition.)
+  large             (Copy only image files which are at least 1200px wide and 600px tall.)
 
-         # If $dname is now '***ERROR***', set $dname to $sname and warn user:
-         if ($dname eq '***ERROR***') {
-            $dname = $sname;
-            warn
-            (
-               "\n",
-               "Warning from move_file: bad hash for this file:\n",
-               "$sname\n",
-               "Retaining original file name.\n",
-               "\n"
-            );
-         }
-      }
+All arguments will also be passed-on to copy_file(), which recognizes these optional arguments:
 
-      # Normal Naming Mode:
-      else {
-         # Set destination name equal to source name:
-         $dname = $sname;
-      }
-   } # end for ($mode)
+  'sha1'            =>  Set copy's name root to SHA1 hash of file.
+  'rename=newname'  =>  Set copied file's name to newname in destination directory.
+  'corr'            =>  Set suffix of destination file name to correct suffix for file.
+  'sl'              =>  Make short display names for Spotlight image processing.
 
-   # Print diagnostics if debugging:
-   say STDERR "\nIn move_file, after for(\$mode).\n\$dname = \"$dname\".\n" if $Debug;
+Return codes:
 
-   # Regardless of what Naming Mode we just used, if $dname already exists in $dst,
-   # we'll have to come up with a new name! Let's try enumerating:
-   if ( -e e "$dst/$dname" ) {
-      $dname = find_avail_enum_name($dname,$dst);
-   }
-
-   # If, for whateve reason, $dname is now '***ERROR***', warn user and return "0" to indicate failure:
-   if ( $dname eq '***ERROR***' ) {
-      warn
-         "\n",
-         "Error in move_file: Couldn't find available name for this name and directory:\n",
-         "Name:      $dname    \n",
-         "Directory: $dst      \n",
-         "File was not moved.  \n",
-         "\n";
-      return 0;
-   }
-
-   # Otherwise, set $dpath from $dst and $dname:
-   else {
-      $dpath = path($dst, $dname);
-   }
-
-   # Make "display" versions of directory and file names:
-   my $srcdsh = $src;   #   Source    directory, short version. (Defaults to $src.)
-   my $srcfsh = $sname; #   Source      file,    short version. (Defaults to $sname.)
-   my $dstdsh = $dst;   # Destination directory, short version. (Defaults to $dst.)
-   my $dstfsh = $dname; # Destination   file,    short version. (Defaults to $dname.)
-
-   # If user specified 'sl', shorten directory and file names for Spotlight use:
-   if ($sl) {
-      ($srcdsh, $srcfsh, $dstdsh, $dstfsh) = shorten_sl_names($srcdsh, $srcfsh, $dstdsh, $dstfsh);
-   }
-
-   # Make "display" versions of the file paths:
-   my $srcpsh = path($srcdsh, $srcfsh); #   Source    path (short version)
-   my $dstpsh = path($dstdsh, $dstfsh); # Destination path (short version)
-
-   # Attempt to move the file:
-   if ( ! system(e("mv -n '$spath' '$dpath'")) ) {
-      say "Moved \"$srcpsh\" to \"$dstpsh\"";
-      return 1;
-   }
-   else {
-      warn
-         "\n",
-         "Error in move_file: Couldn't perform this file move:\n",
-         "Src: \"$srcpsh\"  \n",
-         "Dst: \"$dstpsh\"  \n",
-         "\n";
-      return 0;
-   }
-} # end sub move_file
-
-# Copy files from one directory to another.
-# Mandatory arguments:
-#    Source            (Directory to copy files from.)
-#    Destination       (Directory to copy files to.)
-# Optional arguments:
-#    sl                (Shorten names for when processing Windows Spotlight images.)
-#    unique            (Don't copy files for which duplicates exist in destition.)
-#    large             (Copy only image files which are at least 1200px wide and 600px tall.)
-#    sha1              (Use the SHA-1 hash of each source file as its destination name root.)
-# All arguments will also be passed-on to copy_file(), which may take further actions based on them.
+  0 => an error occurred
+  1 => operation succeeded
+=cut
 sub copy_files :prototype($$;@)
 (
    $src, # Source directory.
@@ -1718,16 +1693,223 @@ sub copy_files :prototype($$;@)
    return 1;
 } # end sub copy_files
 
-# Move files from one directory to another.
-# Mandatory arguments:
-#    Source            (Directory to move files from.)
-#    Destination       (Directory to move files to.)
-# Optional arguments:
-#    sl                (Shorten names for when processing Windows Spotlight images.)
-#    unique            (Don't move files for which duplicates exist in destition.)
-#    large             (Move only image files which are at least 1200px wide and 600px tall.)
-#    sha1              (Use the SHA-1 hash of each source file as its destination name root.)
-# All arguments will also be passed-on to move_file(), which may take further actions based on them.
+=head2 move_file
+
+Moves a file from a given path to a given directory.
+
+Invocation:
+
+  move_file(path-of-source-file, path-of-destination-directory, optional-arguments)
+
+Mandatory arguments:
+
+  path of original file
+  path of destination directory.
+
+Optional arguments:
+
+  'sha1'           => Set file's name root to SHA1 hash of file.
+  'rename=newname' => Set file's name to newname in destination directory.
+  'sl'             => Shorten names for Spotlight image processing.
+
+All other arguments are ignored. Note: if contradictory arguments are given (eg, 'sha1', 'rename=Fred'),
+later arguments override previous.
+
+Return codes:
+
+  0 => an error occurred
+  1 => operation succeeded
+=cut
+sub move_file :prototype($$;@)
+(
+   $spath, # Path of source file.
+   $dst,   # Destination directory.
+   @args   # Additional arguments, if any, go in here.
+)
+{
+   my $dpath    = '';                         # Path of destination file, full  version.
+   my $src      = get_dir_from_path ($spath); # Directory of   source    file.
+   my $sname    = get_name_from_path($spath); #   Name    of   source    file.
+   my $dname    = '';                         #   Name    of destination file. (Defaults to $sname.)
+   my $mode     = 'reg';                      # Naming Mode: nrm = normal, sha = sha1, ren = rename.
+   my $sl       = 0;                          # Shorten names for Spotlight image processing?
+
+   # If debugging, print diagnostics:
+   if ($Debug) {
+      say STDERR "                      ";
+      say STDERR "In move_file, at top. ";
+      say STDERR "\$spath = \"$spath\"  ";
+      say STDERR "\$dst   = \"$dst\"    ";
+      say STDERR "\@args  = (@args)     ";
+      say STDERR "                      ";
+   }
+
+   # Bail if $spath is not a path to an existing regular file:
+   if ( ! -e e $spath || ! -f e $spath ) {
+      warn
+         "\n",
+         "Error in move_file: Given path is not a path to an existing regular file:\n",
+         "$spath\n",
+         "File was not moved.\n",
+         "\n";
+      return 0;
+   }
+
+   # Bail if destination directory doesn't exist or isn't a directory:
+   if ( ! -e e $dst || ! -d e $dst ) {
+      warn
+         "\n",
+         "Error in move_file: Given destination directory does not exist:\n",
+         "$dst\n",
+         "File was not moved.\n",
+         "\n";
+      return 0;
+   }
+
+   # Process remaining arguments:
+   foreach (@args) {
+      if ( $_ eq 'sha1' ) {        # if SHA1-ing file
+         $mode = 'sha';            # set $mode to 'sha' (SHA-1 Mode)
+      }
+      elsif ( m/^rename=(.+)$/ ) { # elsif renaming file,
+         $mode = 'ren';            # set $mode to 'ren' (Rename Mode)
+      }
+      elsif ( $_ eq 'sl' ) {       # elsif Spotlight,
+         $sl   =  1;               # set $sl     to 1
+      }
+   }
+
+   # If debugging, print diagnostics:
+   if ($Debug) {
+      say STDERR "                                          ";
+      say STDERR "In move_file, after processing arguments. ";
+      say STDERR "\$mode = \"$mode\"                        ";
+      say STDERR "\$sl   = \"$sl\"                          ";
+      say STDERR "                                          ";
+   }
+
+   # Take different actions depending on naming mode:
+   for ($mode) {
+      # Rename Naming Mode:
+      if ( /^ren$/ ) {
+         # Set destination name to name user provided:
+         $dname = $1;
+      }
+
+      # SHA-1 Naming Mode:
+      elsif ( /^sha$/ ) {
+         # Set $dname to SHA1-hash-based file name:
+         $dname = hash($spath, 'sha1', 'name');
+
+         # If $dname is now '***ERROR***', set $dname to $sname and warn user:
+         if ($dname eq '***ERROR***') {
+            $dname = $sname;
+            warn
+            (
+               "\n",
+               "Warning from move_file: bad hash for this file:\n",
+               "$sname\n",
+               "Retaining original file name.\n",
+               "\n"
+            );
+         }
+      }
+
+      # Normal Naming Mode:
+      else {
+         # Set destination name equal to source name:
+         $dname = $sname;
+      }
+   } # end for ($mode)
+
+   # Print diagnostics if debugging:
+   say STDERR "\nIn move_file, after for(\$mode).\n\$dname = \"$dname\".\n" if $Debug;
+
+   # Regardless of what Naming Mode we just used, if $dname already exists in $dst,
+   # we'll have to come up with a new name! Let's try enumerating:
+   if ( -e e "$dst/$dname" ) {
+      $dname = find_avail_enum_name($dname,$dst);
+   }
+
+   # If, for whateve reason, $dname is now '***ERROR***', warn user and return "0" to indicate failure:
+   if ( $dname eq '***ERROR***' ) {
+      warn
+         "\n",
+         "Error in move_file: Couldn't find available name for this name and directory:\n",
+         "Name:      $dname    \n",
+         "Directory: $dst      \n",
+         "File was not moved.  \n",
+         "\n";
+      return 0;
+   }
+
+   # Otherwise, set $dpath from $dst and $dname:
+   else {
+      $dpath = path($dst, $dname);
+   }
+
+   # Make "display" versions of directory and file names:
+   my $srcdsh = $src;   #   Source    directory, short version. (Defaults to $src.)
+   my $srcfsh = $sname; #   Source      file,    short version. (Defaults to $sname.)
+   my $dstdsh = $dst;   # Destination directory, short version. (Defaults to $dst.)
+   my $dstfsh = $dname; # Destination   file,    short version. (Defaults to $dname.)
+
+   # If user specified 'sl', shorten directory and file names for Spotlight use:
+   if ($sl) {
+      ($srcdsh, $srcfsh, $dstdsh, $dstfsh) = shorten_sl_names($srcdsh, $srcfsh, $dstdsh, $dstfsh);
+   }
+
+   # Make "display" versions of the file paths:
+   my $srcpsh = path($srcdsh, $srcfsh); #   Source    path (short version)
+   my $dstpsh = path($dstdsh, $dstfsh); # Destination path (short version)
+
+   # Attempt to move the file:
+   if ( ! system(e("mv -n '$spath' '$dpath'")) ) {
+      say "Moved \"$srcpsh\" to \"$dstpsh\"";
+      return 1;
+   }
+   else {
+      warn
+         "\n",
+         "Error in move_file: Couldn't perform this file move:\n",
+         "Src: \"$srcpsh\"  \n",
+         "Dst: \"$dstpsh\"  \n",
+         "\n";
+      return 0;
+   }
+} # end sub move_file
+
+=head2 move_files
+
+Moves files from one directory to another.
+
+Invocation:
+
+  move_files(path-to-source-directory, path-to-desitination-directory, optional-arguments)
+
+Mandatory arguments:
+
+  Source            (Directory to move files from.)
+  Destination       (Directory to move files to.)
+
+Optional arguments:
+
+  regexp=regexp     (Move only files matching regexp.)
+  sl                (Shorten names for when processing Windows Spotlight images.)
+  unique            (Don't move files for which duplicates exist in destition.)
+  large             (Move only image files which are at least 1200px wide and 600px tall.)
+
+All arguments will also be passed-on to move_file(), which recognizes these optional arguments:
+
+  'sha1'           => Set file's name root to SHA1 hash of file.
+  'rename=newname' => Set file's name to newname in destination directory.
+  'sl'             => Shorten names for Spotlight image processing.
+
+Return codes:
+
+  0 => an error occurred
+  1 => operation succeeded
+=cut
 sub move_files :prototype($$;@)
 (
    $src, # Source directory.
@@ -1903,347 +2085,23 @@ sub move_files :prototype($$;@)
    return 1;
 } # end sub move_files
 
-# ======= SECTION 4, MINOR SUBROUTINES: ======================================================================
+=head2 get_correct_suffix
 
-# Turn on debugging in this module
-# (not exported by default, but OK to export):
-sub debug :prototype(;$) ($status = 'on') {
-   switch ($status) {
-      case qr/(?i:0|off|no)/ {$Debug = 0}
-      case qr/(?i:1|on|yes)/ {$Debug = 1}
-   }
-}
+Determines the correct file-name suffix for a file at a given path.
 
-# Print messages only if debugging:
-sub BLAT :prototype($) ($string) {if ($Debug) {say STDERR $string}}
+Invocation:
 
-# Rename a file, with more error-checking than unwrapped rename() :
-sub rename_file :prototype($$) ($OldPath, $NewPath) {
-   my $OldName = get_name_from_path($OldPath);
-   my $NewName = get_name_from_path($NewPath);
-   my $OldDir  = get_dir_from_path($OldPath);
-   my $NewDir  = get_dir_from_path($NewPath);
+  get_correct_suffix(path-to-existing-file)
 
-   # Make sure old path exists:
-   if ( ! -e e($OldPath) ) {
-      warn
-      (
-         "Error in rename_file: file \"$OldPath\" does not exist.\n"
-      );
-      return 0;
-   }
+Return codes:
 
-   # Disallow renaming to exact same path:
-   if ($NewPath eq $OldPath) {
-      warn
-      (
-         "Error in rename_file: new file path is same as old:\n".
-         "old path: $OldPath\n".
-         "new path: $NewPath\n"
-      );
-      return 0;
-   }
-
-   # I want to disallow renaming a file to a name that already "exists" (according to -e), but I also want to
-   # allow case changes. This is tricky, because file names in various file systems can be:
-   # 1. case-nonpreserving (everything is stored as upper-case, as in FAT16)
-   # 2. case-preserving and case-sensitive (file names are stored as-is; eg, Ext4)
-   # 3. case-preserving and case-insensitive (file names must differ in more than case; eg, FAT32, NTFS)
-   # And to make matters more confusing, NTFS file systems intended primarily for use with Microsoft Windows
-   # can also be accessed from Linux by network share, so $PLATFORM does not give any clue to as file system.
-   # So I'll allow a rename to an existing path only if the old and new names are different but their
-   # casefolds are the same. But even then, in NTFS, Perl's "rename()" doesn't correctly perform case changes,
-   # so I'll have to take a more-imaginative approach.
-   if ( -e e($NewPath) ) {
-      if
-      (
-               $OldDir   eq    $NewDir
-         &&    $OldName  ne    $NewName
-         && fc($OldName) eq fc($NewName)
-      )
-      {
-         my $Intermediate = path($NewDir, 'aъ玔ò山ë懳z');
-        !system(e("ln '$OldPath' '$Intermediate'"))      or return 0;
-        !system(e("unlink '$OldPath'"))                  or return 0;
-        !system(e("unlink '$NewPath'"))                  or return 0;
-        !system(e("ln '$Intermediate' '$NewPath'"))      or return 0;
-        !system(e("unlink '$Intermediate'"))             or return 0;
-         return(1);
-      }
-      else {
-         say STDERR "Error in \"rename_file\" in \"RH::Dir.pm\":";
-         say STDERR "file at path \"$NewPath\" already exists.";
-         return(0);
-      }
-   }
-
-   # Else if the new path does NOT exist, attempt to rename the file, and return the result code, which will
-   # be 1 for success, 0 for failure. Note that if $OldPath or $NewPath are relative, rather than absolute,
-   # paths, then they will be construed relative to the "current directory" of the environment of the calling
-   # program, NOT relative to the directory of $OldPath. So, something like "rename('asdf/qwer', 'yuio')",
-   # executed from current directory "/hjkl", will rename file "/hjkl/asdf/qwer" to "/hjkl/yuio", NOT to
-   # "/hhjkl/asdf/yuio".
-   else {
-      return(rename(e($OldPath), e($NewPath)));
-   }
-} # end sub rename_file
-
-sub time_from_mtime :prototype($) ($mtime) {
-   my $TimeDate = scalar localtime $mtime;
-   my $Time = substr ($TimeDate, 11, 8);
-   return $Time;
-} # end sub time_from_mtime
-
-sub date_from_mtime :prototype($) ($mtime) {
-   my $TimeDate = scalar localtime $mtime;
-   my $Date = substr ($TimeDate, 0, 10) . ', ' . substr ($TimeDate, 20, 4);
-   return $Date;
-} # end sub date_from_mtime
-
-# Given any string, return all characters before last dot:
-sub get_prefix :prototype($) ($string) {
-   my $dotindex = rindex($string, '.');
-   return $string if -1 == $dotindex;
-   return ''      if  0 == $dotindex;
-   return substr($string, 0, $dotindex);
-} # end sub get_prefix
-
-# Given any string, return last dot and following characters:
-sub get_suffix :prototype($) ($string) {
-   my $dotindex = rindex($string, '.');
-   return ''      if -1 == $dotindex;
-   return $string if  0 == $dotindex;
-   return substr($string, $dotindex);
-} # end sub get_suffix
-
-# Return the directory part of a file path:
-sub get_dir_from_path :prototype($) ($path) {
-   # If $path contains no "/", we have no idea of what directory we're in, so return an empty string:
-   if (-1 == rindex($path,'/')) {
-      return '';
-   }
-
-   # Else if right-most "/" in $path is at index 0, assume $path is the path of a file in the root directory,
-   # so return '/':
-   elsif (0 == rindex($path,'/')) {
-      return '/';
-   }
-
-   # Otherwise return the part of $path to the left of the right-most "/", whether it starts with '/' or not:
-   else {
-      return substr($path, 0, rindex($path,'/'));
-   }
-} # end sub get_dir_from_path
-
-# Return the name of the immediate parent directory of the file at a given path:
-sub get_dirname_from_path :prototype($) ($path) {
-   # If $path contains no "/", we have no idea of what directory we're in, so return "ERROR":
-   if (-1 == rindex($path,'/')) {
-      return 'ERROR';
-   }
-
-   # Else if right-most "/" in $path is at index 0, assume $path is the path of a file in the root directory,
-   # so return 'fsroot' (file system root):
-   elsif (0 == rindex($path,'/')) {
-      return 'fsroot';
-   }
-
-   # Otherwise return the immediate parent directory of the file at $path:
-   else {
-      # Put a copy of $path in $dirname:
-      my $dirname = $path;
-      # Get rid of the file part of the path:
-      $dirname =~ s/\/[^\/]+$//;
-      # Get rid of any ancestors of the immediate parent directory:
-      while ($dirname =~ m/\//) {
-         $dirname =~ s/^[^\/]*\///;
-      }
-      # Return immediate parent directory name:
-      return $dirname;
-   }
-} # end sub get_dir_from_path
-
-# Return the name part of a file path:
-sub get_name_from_path :prototype($) ($path) {
-   # If $path does not contain "/", then consider $path to be an unqualified
-   # file name, so return $path:
-   if (-1 == rindex($path,'/')) {
-      return $path;
-   }
-
-   # Else if the right-most "/" of $path is to the left of the final character,
-   # return the substring of $path to the right of the right-most "/":
-   elsif (rindex($path,'/') < length($path)-1) {
-      return substr($path, rindex($path,'/') + 1);
-   }
-
-   # Else "/" is the final character of $path, so this $path contains no
-   # file name, so return an empty string:
-   else {
-      return '';
-   }
-} # end sub get_name_from_path
-
-# Paste-together dir & name to get path, while watching out for root and current:
-sub path :prototype($$) ($dir, $nam) {
-   my $path;
-
-   # If $dir is '', assume that '' means "current working directory", so set $path to $nam:
-   if ( '' eq $dir ) {
-      $path = $nam;
-   }
-
-   # Else if $dir ends with "/" (eg: "/", or "/absolute/dir/", or "relative/dir/"), set $path to $dir.$nam:
-   elsif ( '/' eq substr $dir, -1 ) {
-      $path = $dir.$nam;
-   }
-
-   # Else if $dir DOESN'T end with "/" (eg: "/absolute/dir", or "relative/dir"), set path to $dir.'/'.$nam:
-   else {
-      $path = $dir.'/'.$nam;
-   }
-
-   # Return $path:
-   return $path;
-}
-
-sub denumerate_file_name :prototype($) ($name) {
-   my $prefix = get_prefix($name);
-   my $suffix = get_suffix($name);
-   $prefix =~ s/-\(\d\d\d\d\)//g;
-   return $prefix . $suffix;
-} # end sub denumerate_file_name
-
-sub enumerate_file_name :prototype($) ($name) {
-   my $prefix = get_prefix($name);
-   my $suffix = get_suffix($name);
-   $prefix =~ s/-\(\d\d\d\d\)$//g;
-   my $numerator = sprintf("-(%04d)", rand_int(0,9999));
-   $prefix = $prefix . $numerator;
-   return $prefix . $suffix;
-} # end sub enumerate_file_name
-
-# Annotate a file's name with a note:
-sub annotate_file_name :prototype($$) ($oldname, $note) {
-   # $oldname  =  Original file name.
-   # $note     =  Note to append.
-   my $oldpref = get_prefix($oldname);
-   my $oldsuff = get_suffix($oldname);
-   return $oldpref . '_' . $note . $oldsuff;
-} # end sub annotate_file_name
-
-# Find an enumerated version of a file name which is NOT the name of any file in a given directory:
-sub find_avail_enum_name :prototype($;$) ($name, $dir = d(getcwd)) {
-   # $name  =  A valid file name.
-   # $dir   =  An existing directory, defaulting to current working directory.
-   my $prefix    =  get_prefix($name)  ; # Prefix of name.
-      $prefix    =~ s/-\(\d\d\d\d\)//g ; # Denumerate prefix in-situ.
-   my $suffix    =  get_suffix($name)  ; # Suffix of name.
-   my $numerator =  ''                 ; # 4-digit numerator.
-   my $tryname   =  ''                 ; # Trial file name.
-
-   # Make sure the given directory actually does exist, and actually is a directory:
-   if ( ! -e e $dir || ! -d e $dir ) {
-      warn "\nError in find_avail_enum_name:\n",
-           "No such directory as \"$dir\".\n",
-           "$!\n";
-      return '***ERROR***';
-   }
-
-   # If an un-enumerated version doesn't exist, then just use that:
-   if ( ! -e e(path($dir, $name)) ) {
-      return $name;
-   }
-
-   # Next, try up to 20 different random numerators:
-   RAN: for ( 1 .. 20 ) {
-      $numerator = sprintf("-(%04d)", rand_int(0,9999));
-      $tryname   = $prefix . $numerator . $suffix;
-      if ( ! -e e path($dir, $tryname) ) {
-         if ($Debug) {say "Random enumeration succeeded on attempt # $_.";}
-         return $tryname;
-      }
-   } # Stop trying random numerators.
-
-   # If we get to here, random enumeration failed all 20 times,
-   # so try sequential enumeration instead:
-   SEQ: for ( 0 .. 9999 ) {
-      $numerator = sprintf("-(%04d)", $_);
-      $tryname = $prefix . $numerator . $suffix;
-      if ( ! -e e path($dir, $tryname) ) {
-         if ($Debug) {say "Sequential enumeration succeeded on attempt # $_.";}
-         return $tryname;
-      }
-   } # Stop trying sequential numeration.
-
-   # If we get to here, NOTHING worked, so return error code:
-   return '***ERROR***';
-} # end sub find_avail_enum_name
-
-# Make up to 100 attempts to find an available random name in given directory with given prefix and suffix:
-sub find_avail_rand_name :prototype($$$) ($dir, $prefix, $suffix) {
-   my $random        = '';
-   my $new_name      = '';
-   my $attempts      = 0;
-   my $name_success  = 0;
-
-   # Make up to 100 attempts to find a random file name with given prefix
-   # and suffix that doesn't already exist in given directory:
-   for ( $attempts = 0, $name_success = 0 ; $attempts < 100 ; ++$attempts ) {
-      $random = eight_rand_lc_letters;
-      $new_name   = $prefix . $random . $suffix;
-      if ( ! -e e path($dir, $new_name) ) {
-         $name_success = 1;
-         last;
-      }
-   }
-   if ($name_success) {
-      return $new_name;
-   }
-   else {
-      return '***ERROR***';
-   }
-} # sub find_avail_rand_name ($$$)
-
-# Is a given path a path to a file containing a large image?
-sub is_large_image :prototype($) ($path) {
-   # File-typing variables:
-   my $FileTyper = File::Type->new(); # File-typing functor.
-   my $FileType  = '';                # File type.
-
-   # Return 0 if no object exists at path $path:
-   if ( ! -e e $path ) {return 0 ;}
-
-   # Return 0 if object at path $path is not a regular file:
-   if ( ! -f e $path ) {return 0 ;}
-
-   my $suffix = get_suffix($path);
-
-   # Return 0 if this file is not an image file:
-   $FileType = $FileTyper->checktype_filename($path);
-   if ($Debug) {warn "In is_large_image. File type = \"$FileType\".\n";}
-   return 0 if $FileType ne 'image/bmp'
-            && $FileType ne 'image/gif'
-            && $FileType ne 'image/jpeg'
-            && $FileType ne 'image/png'
-            && $FileType ne 'image/tiff'
-           #&& $FileType ne 'image/webp' # Nope, this type returns "Application/Octet-Stream".
-            && $suffix   ne '.webp';
-
-   # Return 0 if this file doesn't contain an image which is at least 1200px wide and 600px tall:
-   my ($x, $y) = imgsize($path);
-   return 0 if $x < 1200 || $y < 600;
-
-   # If we get to here, this file contains a large image, so return 1:
-   return 1;
-} # end sub is_large_image
-
-# Get the correct suffix for the name of a file at a given path, ignoring the existing suffix (if any) and
-# basing our type determination on the "checktype_filename" method of modules "File::Type" and/or on direct
-# examination of the contents of the file. If we are unable to determine the correct suffix through these
-# methods, then return the existing suffix (if any) with "_assumed" appended, or return '.unk' if there is no
-# existing suffix, or return '***ERROR***' if an error occurs (file doesn't exist, file isn't a data file,
-# file can't be opened/read/closed, permissions error, etc).
+  ***ERROR***     =>  Correct suffix cannot be determined because file is corrupt or inaccessible.
+  ***NON-DATA***  =>  Correct suffix cannot be determined because file is not a data file.
+  ***META***      =>  Existing suffix should be considered correct, because file is a meta file.
+  ***ASSUMED***   =>  Existing suffix should be assumed correct, because there's no evidence it isn't.
+  .unk            =>  File type could not be determined.
+  .suffix         =>  File was determined to be of this type.
+=cut
 sub get_correct_suffix :prototype($) ($path) {
    my $name  = get_name_from_path($path);
    my $suff  = get_suffix($name);
@@ -2425,29 +2283,555 @@ sub get_correct_suffix :prototype($) ($path) {
    else {return '***ASSUMED***'} # Tentatively assume that the existing suffix is correct.
 } # end sub get_correct_suffix :prototype($) ($path)
 
-# Convert a fully-qualified Cygwin path to Windows:
+# ======= SECTION 4, MINOR SUBROUTINES: ======================================================================
+# (Subroutines with relatively short-and-simple implementations.)
+
+=head2 debug
+
+Turns on debugging in this module.
+
+Invocation:
+
+  debug(optional-argument)
+
+This subroutine is not exported by default, but can be exported upon request.
+
+Description of arguments:
+
+  If no argument is given, this subroutine turns debugging on.
+  An argument of "0", "off", or "no"  turns debugging off.
+  An argument of "1", "on",  or "yes" turns debugging on.
+=cut
+sub debug :prototype(;$) ($status = 'on') {
+   switch ($status) {
+      case qr/(?i:0|off|no)/ {$Debug = 0}
+      case qr/(?i:1|on|yes)/ {$Debug = 1}
+   }
+}
+
+=head2 BLAT
+
+Prints a message only if debugging is turned on.
+
+Invocation:
+
+  BLAT(string-to-be-printed-if-debugging)
+=cut
+sub BLAT :prototype($) ($string) {if ($Debug) {say STDERR $string}}
+
+=head2 rename_file
+
+Renames a file, with more error-checking than unwrapped rename().
+
+Invocation:
+
+  rename_file(path-to-existing-file, path-to-rename-to)
+
+Return codes:
+
+  0 => operation failed
+  1 => operation succeeded
+=cut
+sub rename_file :prototype($$) ($OldPath, $NewPath) {
+   my $OldName = get_name_from_path($OldPath);
+   my $NewName = get_name_from_path($NewPath);
+   my $OldDir  = get_dir_from_path($OldPath);
+   my $NewDir  = get_dir_from_path($NewPath);
+
+   # Make sure old path exists:
+   if ( ! -e e($OldPath) ) {
+      warn
+      (
+         "Error in rename_file: file \"$OldPath\" does not exist.\n"
+      );
+      return 0;
+   }
+
+   # Disallow renaming to exact same path:
+   if ($NewPath eq $OldPath) {
+      warn
+      (
+         "Error in rename_file: new file path is same as old:\n".
+         "old path: $OldPath\n".
+         "new path: $NewPath\n"
+      );
+      return 0;
+   }
+
+   # I want to disallow renaming a file to a name that already "exists" (according to -e), but I also want to
+   # allow case changes. This is tricky, because file names in various file systems can be:
+   # 1. case-nonpreserving (everything is stored as upper-case, as in FAT16)
+   # 2. case-preserving and case-sensitive (file names are stored as-is; eg, Ext4)
+   # 3. case-preserving and case-insensitive (file names must differ in more than case; eg, FAT32, NTFS)
+   # And to make matters more confusing, NTFS file systems intended primarily for use with Microsoft Windows
+   # can also be accessed from Linux by network share, so $PLATFORM does not give any clue to as file system.
+   # So I'll allow a rename to an existing path only if the old and new names are different but their
+   # casefolds are the same. But even then, in NTFS, Perl's "rename()" doesn't correctly perform case changes,
+   # so I'll have to take a more-imaginative approach.
+   if ( -e e($NewPath) ) {
+      if
+      (
+               $OldDir   eq    $NewDir
+         &&    $OldName  ne    $NewName
+         && fc($OldName) eq fc($NewName)
+      )
+      {
+         my $Intermediate = path($NewDir, 'aъ玔ò山ë懳z');
+        !system(e("ln '$OldPath' '$Intermediate'"))      or return 0;
+        !system(e("unlink '$OldPath'"))                  or return 0;
+        !system(e("unlink '$NewPath'"))                  or return 0;
+        !system(e("ln '$Intermediate' '$NewPath'"))      or return 0;
+        !system(e("unlink '$Intermediate'"))             or return 0;
+         return(1);
+      }
+      else {
+         say STDERR "Error in \"rename_file\" in \"RH::Dir.pm\":";
+         say STDERR "file at path \"$NewPath\" already exists.";
+         return(0);
+      }
+   }
+
+   # Else if the new path does NOT exist, attempt to rename the file, and return the result code, which will
+   # be 1 for success, 0 for failure. Note that if $OldPath or $NewPath are relative, rather than absolute,
+   # paths, then they will be construed relative to the "current directory" of the environment of the calling
+   # program, NOT relative to the directory of $OldPath. So, something like "rename('asdf/qwer', 'yuio')",
+   # executed from current directory "/hjkl", will rename file "/hjkl/asdf/qwer" to "/hjkl/yuio", NOT to
+   # "/hhjkl/asdf/yuio".
+   else {
+      return(rename(e($OldPath), e($NewPath)));
+   }
+} # end sub rename_file
+
+=head2 time_from_mtime
+
+Given the "modified" timestamp of a file (in seconds since 00:00:00UTC on the morning of Jan 1, 1970),
+returns the time (in local time) the file was last modified.
+
+Invocation:
+
+  time_from_mtime(mtime)
+=cut
+sub time_from_mtime :prototype($) ($mtime) {
+   my $TimeDate = scalar localtime $mtime;
+   my $Time = substr ($TimeDate, 11, 8);
+   return $Time;
+} # end sub time_from_mtime
+
+=head2 date_from_mtime
+
+Given the "modified" timestamp of a file (in seconds since 00:00:00UTC on the morning of Jan 1, 1970),
+returns the date (in local time) the file was last modified.
+
+Invocation:
+
+  date_from_mtime(mtime)
+=cut
+sub date_from_mtime :prototype($) ($mtime) {
+   my $TimeDate = scalar localtime $mtime;
+   my $Date = substr ($TimeDate, 0, 10) . ', ' . substr ($TimeDate, 20, 4);
+   return $Date;
+} # end sub date_from_mtime
+
+=head2
+
+=cut
+# Given any string, return all characters before last dot:
+sub get_prefix :prototype($) ($string) {
+   my $dotindex = rindex($string, '.');
+   return $string if -1 == $dotindex;
+   return ''      if  0 == $dotindex;
+   return substr($string, 0, $dotindex);
+} # end sub get_prefix
+
+=head2 get_suffix
+
+Given any string, returns the last dot and following characters.
+
+Invocation:
+
+  get_suffix(string)
+
+For example, get_suffix("/abc/xyz/flower.jpg") returns ".jpg".
+=cut
+sub get_suffix :prototype($) ($string) {
+   my $dotindex = rindex($string, '.');
+   return ''      if -1 == $dotindex;
+   return $string if  0 == $dotindex;
+   return substr($string, $dotindex);
+} # end sub get_suffix
+
+=head2
+
+Returns the directory part of a file path.
+
+Invocation:
+
+  get_dir_from_path(path)
+=cut
+sub get_dir_from_path :prototype($) ($path) {
+   # If $path contains no "/", we have no idea of what directory we're in, so return an empty string:
+   if (-1 == rindex($path,'/')) {
+      return '';
+   }
+
+   # Else if right-most "/" in $path is at index 0, assume $path is the path of a file in the root directory,
+   # so return '/':
+   elsif (0 == rindex($path,'/')) {
+      return '/';
+   }
+
+   # Otherwise return the part of $path to the left of the right-most "/", whether it starts with '/' or not:
+   else {
+      return substr($path, 0, rindex($path,'/'));
+   }
+} # end sub get_dir_from_path
+
+=head2 get_dirname_from_path
+
+Returns the name of the immediate parent directory of the file at a given path.
+
+Invocation:
+
+  get_dirname_from_path(path)
+=cut
+sub get_dirname_from_path :prototype($) ($path) {
+   # If $path contains no "/", we have no idea of what directory we're in, so return "ERROR":
+   if (-1 == rindex($path,'/')) {
+      return 'ERROR';
+   }
+
+   # Else if right-most "/" in $path is at index 0, assume $path is the path of a file in the root directory,
+   # so return 'fsroot' (file system root):
+   elsif (0 == rindex($path,'/')) {
+      return 'fsroot';
+   }
+
+   # Otherwise return the immediate parent directory of the file at $path:
+   else {
+      # Put a copy of $path in $dirname:
+      my $dirname = $path;
+      # Get rid of the file part of the path:
+      $dirname =~ s/\/[^\/]+$//;
+      # Get rid of any ancestors of the immediate parent directory:
+      while ($dirname =~ m/\//) {
+         $dirname =~ s/^[^\/]*\///;
+      }
+      # Return immediate parent directory name:
+      return $dirname;
+   }
+} # end sub get_dirname_from_path
+
+=head2 get_name_from_path
+
+Returns the file-name part of a path.
+
+Invocation:
+
+  get_name_from_path(path)
+=cut
+sub get_name_from_path :prototype($) ($path) {
+   # If $path does not contain "/", then consider $path to be an unqualified
+   # file name, so return $path:
+   if (-1 == rindex($path,'/')) {
+      return $path;
+   }
+
+   # Else if the right-most "/" of $path is to the left of the final character,
+   # return the substring of $path to the right of the right-most "/":
+   elsif (rindex($path,'/') < length($path)-1) {
+      return substr($path, rindex($path,'/') + 1);
+   }
+
+   # Else "/" is the final character of $path, so this $path contains no
+   # file name, so return an empty string:
+   else {
+      return '';
+   }
+} # end sub get_name_from_path
+
+=head2 path
+
+Pastes-together a directory name and a file name to get a fully-qualified path, while watching out for
+root-directory or current-directory gotchas.
+
+Invocation:
+
+  path(directory-name, file-name)
+
+For example, assume that current working directory is "/opt". Then:
+
+  path("/root", "abcd.txt")  would return "/root/abcd.txt"  (in directory "/root")
+  path("", "abcd.txt")       would return "abcd.txt"        (in directory "/opt")
+  path("root/", "abcd.txt")  would return "root/abcd.txt"   (in directory "/opt/root")
+=cut
+sub path :prototype($$) ($dir, $nam) {
+   my $path;
+
+   # If $dir is '', assume that '' means "current working directory", so set $path to $nam:
+   if ( '' eq $dir ) {
+      $path = $nam;
+   }
+
+   # Else if $dir ends with "/" (eg: "/", or "/absolute/dir/", or "relative/dir/"), set $path to $dir.$nam:
+   elsif ( '/' eq substr $dir, -1 ) {
+      $path = $dir.$nam;
+   }
+
+   # Else if $dir DOESN'T end with "/" (eg: "/absolute/dir", or "relative/dir"), set path to $dir.'/'.$nam:
+   else {
+      $path = $dir.'/'.$nam;
+   }
+
+   # Return $path:
+   return $path;
+} # end sub path
+
+=head2 denumerate_file_name
+
+Returns a version of a given file name with any "numerator" of the form "-(####)"
+(where "####" is 4 random digits) removed.
+
+Invocation:
+
+  denumerate_file_name(name)
+=cut
+sub denumerate_file_name :prototype($) ($name) {
+   my $prefix = get_prefix($name);
+   my $suffix = get_suffix($name);
+   $prefix =~ s/-\(\d\d\d\d\)//g;
+   return $prefix . $suffix;
+} # end sub denumerate_file_name
+
+=head2 enumerate_file_name
+
+Returns a version of a given file name with a "numerator" of the form "-(####)"
+(where "####" is 4 random digits) to the end of the prefix of a given file name.
+
+Invocation:
+
+  enumerate_file_name(name)
+
+For example enumerate_file_name("Green-3872.jpg") might return "Green-3872-(3027).jpg".
+This is very useful for collecting multiple files with the same name (and contents which may be either
+identical or different) in the same directory, preparatory to finding-and-deleting duplicate files.
+=cut
+sub enumerate_file_name :prototype($) ($name) {
+   my $prefix = get_prefix($name);
+   my $suffix = get_suffix($name);
+   $prefix =~ s/-\(\d\d\d\d\)$//g;
+   my $numerator = sprintf("-(%04d)", rand_int(0,9999));
+   $prefix = $prefix . $numerator;
+   return $prefix . $suffix;
+} # end sub enumerate_file_name
+
+=head2 annotate_file_name
+
+Appends a given annotation to the end of the prefix of a given file name.
+
+Invocation:
+
+  annotate_file_name(oldname, note)
+
+For example, annotate_file_name("Income-Tax.txt", "2014") would return "Income-Tax_2014.txt".
+=cut
+# Annotate a file's name with a note:
+sub annotate_file_name :prototype($$) ($oldname, $note) {
+   # $oldname  =  Original file name.
+   # $note     =  Note to append.
+   my $oldpref = get_prefix($oldname);
+   my $oldsuff = get_suffix($oldname);
+   return $oldpref . '_' . $note . $oldsuff;
+} # end sub annotate_file_name
+
+=head2 find_avail_enum_name
+
+Makes up to 100 attempts to find an available enumerated version of a given file name which is NOT the name
+of any file in a given directory. If successful, returns the available name it found; otherwise returns
+"***ERROR***".
+
+Invocation:
+
+  find_avail_enum_name(name, directory)
+
+The first argument (file name) is mandatory and must be a valid file name.
+
+The second argument (directory) is optional, defaulting to "current working directory".
+
+=cut
+sub find_avail_enum_name :prototype($;$) ($name, $dir = d(getcwd)) {
+   # $name  =  A valid file name.
+   # $dir   =  An existing directory, defaulting to current working directory.
+   my $prefix    =  get_prefix($name)  ; # Prefix of name.
+      $prefix    =~ s/-\(\d\d\d\d\)//g ; # Denumerate prefix in-situ.
+   my $suffix    =  get_suffix($name)  ; # Suffix of name.
+   my $numerator =  ''                 ; # 4-digit numerator.
+   my $tryname   =  ''                 ; # Trial file name.
+
+   # Make sure the given directory actually does exist, and actually is a directory:
+   if ( ! -e e $dir || ! -d e $dir ) {
+      warn "\nError in find_avail_enum_name:\n",
+           "No such directory as \"$dir\".\n",
+           "$!\n";
+      return '***ERROR***';
+   }
+
+   # If an un-enumerated version doesn't exist, then just use that:
+   if ( ! -e e(path($dir, $name)) ) {
+      return $name;
+   }
+
+   # Next, try up to 100 different random numerators:
+   RAN: for ( 1 .. 100 ) {
+      $numerator = sprintf("-(%04d)", rand_int(0,9999));
+      $tryname   = $prefix . $numerator . $suffix;
+      if ( ! -e e path($dir, $tryname) ) {
+         if ($Debug) {say "Random enumeration succeeded on attempt # $_.";}
+         return $tryname;
+      }
+   } # Stop trying random numerators.
+
+   # If we get to here, random enumeration failed all 20 times,
+   # so try sequential enumeration instead:
+   SEQ: for ( 0 .. 9999 ) {
+      $numerator = sprintf("-(%04d)", $_);
+      $tryname = $prefix . $numerator . $suffix;
+      if ( ! -e e path($dir, $tryname) ) {
+         if ($Debug) {say "Sequential enumeration succeeded on attempt # $_.";}
+         return $tryname;
+      }
+   } # Stop trying sequential numeration.
+
+   # If we get to here, NOTHING worked, so return error code:
+   return '***ERROR***';
+} # end sub find_avail_enum_name
+
+=head2 find_avail_rand_name
+
+This subroutine makes up to 100 attempts to find an available random name (consisting of a string of 8
+random lower-case English letters) in a given directory with a given prefix and suffix. If successful,
+it returns the available random name if found; otherwise, it returns "***ERROR***".
+
+(Note: the only reason this subroutine might NOT be successful is if you have over 200 billion files in
+the same directory with names consisting of 8 random lower-case English letters with the same prefix and
+suffix, such as "Mike-skghduvt-3958.txt", "Mike-mcjguste-3958.txt", "Mike-amzuebgl-3958.txt", etc.
+But if you have over 200 billion files in the same directory, you have much bigger problems!!!
+So don't do that.)
+
+Invocation:
+
+  find_avail_rand_name(directory, prefix, suffix)
+=cut
+sub find_avail_rand_name :prototype($$$) ($dir, $prefix, $suffix) {
+   my $random        = '';
+   my $new_name      = '';
+   my $attempts      = 0;
+   my $name_success  = 0;
+
+   # Make up to 100 attempts to find a random file name with given prefix
+   # and suffix that doesn't already exist in given directory:
+   for ( $attempts = 0, $name_success = 0 ; $attempts < 100 ; ++$attempts ) {
+      $random = eight_rand_lc_letters;
+      $new_name   = $prefix . $random . $suffix;
+      if ( ! -e e path($dir, $new_name) ) {
+         $name_success = 1;
+         last;
+      }
+   }
+   if ($name_success) {
+      return $new_name;
+   }
+   else {
+      return '***ERROR***';
+   }
+} # sub find_avail_rand_name ($$$)
+
+=head2 is_large_image
+
+Returns 1 if a given string is a path to a file containing a large image; else returns 0.
+
+Invocation:
+  is_large_image(path-to-file)
+=cut
+sub is_large_image :prototype($) ($path) {
+   # File-typing variables:
+   my $FileTyper = File::Type->new(); # File-typing functor.
+   my $FileType  = '';                # File type.
+
+   # Return 0 if no object exists at path $path:
+   if ( ! -e e $path ) {return 0 ;}
+
+   # Return 0 if object at path $path is not a regular file:
+   if ( ! -f e $path ) {return 0 ;}
+
+   my $suffix = get_suffix($path);
+
+   # Return 0 if this file is not an image file:
+   $FileType = $FileTyper->checktype_filename($path);
+   if ($Debug) {warn "In is_large_image. File type = \"$FileType\".\n";}
+   return 0 if $FileType ne 'image/bmp'
+            && $FileType ne 'image/gif'
+            && $FileType ne 'image/jpeg'
+            && $FileType ne 'image/png'
+            && $FileType ne 'image/tiff'
+           #&& $FileType ne 'image/webp' # Nope, this type returns "Application/Octet-Stream".
+            && $suffix   ne '.webp';
+
+   # Return 0 if this file doesn't contain an image which is at least 1200px wide and 600px tall:
+   my ($x, $y) = imgsize($path);
+   return 0 if $x < 1200 || $y < 600;
+
+   # If we get to here, this file contains a large image, so return 1:
+   return 1;
+} # end sub is_large_image
+
+=head2 cyg2win
+
+Given a fully-qualified Cygwin path, returns equivalent Windows path.
+
+Invocation:
+
+  cyg2win(cygwin-path)
+=cut
 sub cyg2win :prototype($) ($path) {
    $path =~ s#^/cygdrive/(\p{Ll})#\U$1\E:#;
    $path =~ s#/#\\#g;
    return $path;
 } # end sub cyg2win ($)
 
-# Convert a fully-qualified Windows path to Cygwin:
+=head2 win2cyg
+
+Given a fully-qualified Windows path, returns equivalent Cygwin path.
+
+Invocation:
+
+  win2cyg(windows-path)
+=cut
 sub win2cyg :prototype($) ($path) {
    $path =~ s#^(\p{Lu}):#/cygdrive/\L$1\E#;
    $path =~ s#\\#/#g;
    return $path;
 } # end sub win2cyg ($)
 
-# Get a hash or hash-based file name for a file.
-# Mandatory arguments:
-#    $path   (Path of file to make hash for. Eg: /home/Bob/myfile.txt)
-#    $type   (Type of hash to generate. Options are: md5 sha1 sha224 sha256 sha384 sha512)
-# Optional arguments:
-#    $mode   (Options are: "name" (hash-based file name, eg "9e5a...b071.txt")
-#                       or "hash" (default: just the hash).)
-#    $suff   (Options are: "orig" (use original file-name suffix)
-#                          "corr" (use correct  file-name suffix)
+=head2 hash
+
+Returns a hash or hash-based file name for a given file.
+
+Invocation:
+
+  hash(path-to-file, hash-type, optional-mode, optional-suffix)
+
+Mandatory arguments:
+
+  $path   (Path of file to make hash for. Eg: /home/Bob/myfile.txt)
+  $type   (Type of hash to generate. Options are: md5 sha1 sha224 sha256 sha384 sha512)
+
+Optional arguments:
+
+  $mode   (Options are: "name" (hash-based file name, eg "9e5a...b071.txt")
+                     or "hash" (default: just the hash).)
+  $suff   (Options are: "orig" (use original file-name suffix)
+                        "corr" (use correct  file-name suffix)
+=cut
 sub hash :prototype($$;$$)
 (
    $path,                                                      # Path to source file.
@@ -2520,21 +2904,33 @@ sub hash :prototype($$;$$)
          return '***ERROR***';                                 # Return "***ERROR***".
       }
    } # end for ($mode)
-   print STDERR                                                # Here, we can't possibly arrive.
-   "Over the cobbles he clattered and clashed\n".              # But if we somehow do,
-   "in the dark inn-yard.\n".                                  # then we should studiously strive
-   "He tapped with his whip on the shutters,\n".               # some cryptic words to spew.
-   "but all was locked and barred.\n".                         # Love is not a victory march!
-   "He whistled a tune to the window,\n".                      # It is a cold and broken hallelujah!
-   "and who should be waiting there\n".                        # This is a dangerous meeting;
-   "But the landlord’s black-eyed daughter,\n".                # danger of death it brings.
-   "    Bess, the landlord’s daughter,\n".                     # But love is intoxicating (though fleeting);
-   "Plaiting a dark red love-knot\n".                          # so joyfully his heart sings.
-   "into her long black hair.\n";                              # A dimension not of sight and sound,
-   return 'We\'re in the Twilight Zone now, baby.';            # but of pure imagination.
 } # end sub hash($$;$)
 
-# Shorten directory and file names for Spotlight:
+=head2 shorten_sl_names
+
+Returns shortened versions of directory and file names for Microsoft Windows 10 "Spotlight" scenic pictures.
+
+CAVEAT: This subroutine, as-written, will only work for Robbie Hatley, and only for his "Square-Rigger" and
+"Ketch" computers running Microsoft Windows 10 and Cygwin. This will fail or all other users, computers,
+operating systems, and platforms.
+
+However, if you do have a Microsoft Windows 10 computer, and it does have Cygwin installed, and you do want to
+collect Microsoft Windows 10 "Spotlight" scenic pictures, you can still use this subroutine to get short
+versions of directory and file names, but you will need to edit it first. Change the $u1, $u2, $u3, $u4
+variable values to the names of your users. If your number of users is not 4, you will also need to delete or
+add variables and s%%% operators as-necessary.
+
+Invocation:
+
+  shorten_sl_names(source_dir, source_file, dest_dir, dest_file)
+
+Returns a list consisting of shortened versions of its 4 inputs:
+
+  shortened source directory
+  shortened source file
+  shortened destination directory
+  shortened destination file
+=cut
 sub shorten_sl_names :prototype($$$$) ($src_dir, $src_fil, $dst_dir, $dst_fil) {
    my $s1 = '/cygdrive/c/Users';
    my $s2 = '/AppData/Local/Packages';
@@ -2560,8 +2956,15 @@ sub shorten_sl_names :prototype($$$$) ($src_dir, $src_fil, $dst_dir, $dst_fil) {
    return ($src_dir, $src_fil, $dst_dir, $dst_fil);
 } # end sub shorten_sl_names ($$$$)
 
-# Return 1 if-and-only-if a path points to a data file (an existing, non-dir, non-link, non-empty plain file).
-# (Note: All "meta" files are "data" files, but most "data" files are not "meta" files; see next subroutine.)
+=head2 is_data_file
+
+Returns 1 if-and-only-if a path points to a data file (an existing, non-dir, non-link, non-empty plain file).
+(Note: All "meta" files are "data" files, but most "data" files are not "meta" files; see next subroutine.)
+
+Invocation:
+
+  is_data_file(path-to-file)
+=cut
 sub is_data_file :prototype($) ($path) {
    return 0 if ! -e e($path);       # Nonexistent files contain no data.
    my @stats = lstat e($path);      # Try to get statistics for file.
@@ -2573,15 +2976,22 @@ sub is_data_file :prototype($) ($path) {
    return 1;                        # This file contains data. :-)
 } # end sub is_data_file :prototype($) ($path)
 
-# Return 1 if-and-only-if a given string is a path to a "meta" file (a file which is hidden, desktop-settings,
-# windows-picture-thumbnails, paint-shop-pro-browse-thumbnails, or ID-Token). Keep in mind that "hidden"
-# includes ALL files with names starting with ".", which include application settings, Free-File-Sync
-# synchronization files, Dolphin ".directory" files, Kate project files, hidden directories, etc; these are
-# all "meta" files, not intended for direct use by humans.
-#
-# Also note that this subroutine examines only the NAME of a file, and does not test if it exists, or what
-# kind of file it is. This is by design. If you want to see if a file EXISTS and/or contains DATA, then use
-# "is_data_file" instead. THIS subroutine tells you only whether a file has a "meta" name.`
+=head2 is_meta_file
+
+Returns 1 if-and-only-if a given string is a path to a "meta" file (a file which is hidden, desktop-settings,
+windows-picture-thumbnails, paint-shop-pro-browse-thumbnails, or ID-Token). Keep in mind that "hidden"
+includes ALL files with names starting with ".", which include application settings, Free-File-Sync
+synchronization files, Dolphin ".directory" files, Kate project files, hidden directories, etc; these are
+all "meta" files, not intended for direct use by humans.
+
+Also note that this subroutine examines only the NAME of a file, and does not test if it exists, or what
+kind of file it is. This is by design. If you want to see if a file EXISTS and/or contains DATA, then use
+"is_data_file" instead. THIS subroutine tells you only whether a file has a "meta" name.
+
+Invocation:
+
+  is_meta_file(path-to-file)
+=cut
 sub is_meta_file :prototype($) ($path) {
    my $name = get_name_from_path($path);
    return 1 if $name =~ m/^\./;
@@ -2592,7 +3002,14 @@ sub is_meta_file :prototype($) ($path) {
    return 0;
 }
 
-# Return 1 if-and-only-if a given string is a fully-qualified path to a valid directory.
+=head2 is_valid_qual_dir
+
+Returns "1" if a given string is a fully-qualified path to a valid directory, else returns 0.
+
+Invocation:
+
+  is_valid_qual_dir(string)
+=cut
 sub is_valid_qual_dir :prototype($) ($path) {
    my $valid = 1;
    if ( !defined($path) ) {
@@ -2620,11 +3037,13 @@ sub is_valid_qual_dir :prototype($) ($path) {
 
 =head2  update_sha1
 
-Updates the ".sha1" SHA-1 file-hash hash-table file in a given directory (or creates it if it doesn't exist)
-and returns a reference to a hash table of all non-meta, non-empty data files in the given directory, giving
-their names, sizes, timestamps, and SHA-1 hashes of their contents:
+Updates or creates a ".sha1" SHA-1 file-hash hash-table file in a given directory (defaulting to
+current working directory), and returns a reference to a hash table of all non-meta, non-empty data
+files in the given directory, giving their names, sizes, timestamps, and SHA-1 hashes of their contents.
 
-update_sha1($dir=d(getcwd))
+Invocation:
+
+  my $hash_ref = update_sha1(optional-path-to-existing-directory)
 =cut
 sub update_sha1 :prototype(;$) ($dir=d(getcwd)) {
    # Make a hash table to hold info on files:
@@ -2731,9 +3150,11 @@ sub update_sha1 :prototype(;$) ($dir=d(getcwd)) {
 
 =head2 sha1
 
-Given a path to a file, this subroutine returns the SHA-1 hash of the given file:
+Given a path to a file, returns the SHA-1 hash of the given file.
 
-sha1($path)
+Invocation:
+
+  sha1(path-to-existing-file)
 =cut
 sub sha1 :prototype($) ($path) {
    my   $fh = undef;                           # File handle (initially undefined).

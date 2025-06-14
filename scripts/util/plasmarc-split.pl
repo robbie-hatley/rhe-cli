@@ -10,7 +10,7 @@ while(<FH>) {push @lines, $_}
 close FH;
 for ( my $idx = 0 ; $idx <= $#lines ; ++$idx ) {
    if ( $lines[$idx] =~ m#^usersWallpapers=# ) {
-      @pics = split ",", $lines[1];
+      @pics = split ",", $lines[$idx];
       $pics[0] =~ s#^usersWallpapers=##;
       last;
    }
