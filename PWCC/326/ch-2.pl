@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solutions in Perl for The Weekly Challenge 326-2,
-written by Robbie Hatley on Tue Jun 17, 2025.
+written by Robbie Hatley on Dow Mon Dm, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
@@ -51,27 +51,41 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
+   use v5.36;
+   use utf8::all;
 
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   # Is a given scalar a reference to a non-empty even-sized array of positive integers?
+   sub is_array_of_even_pos_ints ($aref) {
+      return 0 unless 'ARRAY' eq ref $aref;    # Return 0 if $aref isn't a ref to an array.
+      return 0 unless scalar(@$aref) > 0;      # Return 0 if the array is empty.
+      return 0 unless 0 == scalar(@$aref) % 2; # Return 0 if the array has odd size.
+      for my $item (@$aref) {                  # For each item in array,
+         return 0 if $item !~ m/^[1-9]\d*$/}   # return 0 if item is not a positive integer.
+      return 1}                                # is ref to non-empty even-size array of positive integers
+
+   # Decompress an array:
+   sub decompress ($aref) {
+      my @c = @$aref;                          # Compressed array.
+      my @d = ();                              # Decompressed array.
+      for my $idx (0..scalar(@c)/2-1){         # For each pair of items in comp. array,
+         push @d, ($c[$idx*2+1])x$c[$idx*2]}   # tack second-item copies of first item to decomp. array.
+      return @d}                               # Return decompressed array.
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) : ([1, 3, 2, 4], [1, 1, 2, 2], [3, 1, 3, 2]);
+#                  Expected outputs :  (3, 4, 4)     (1, 2, 2)     (1, 1, 1, 2, 2, 2)
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   say "Compressed   array = (@$aref)";
+   if (!is_array_of_even_pos_ints($aref)) {
+      say "Error: not a non-empty even-size array of positive integers.";
+      next;
+   }
+   my @d = decompress($aref);
+   say "Decompressed array = (@d)";
 }
