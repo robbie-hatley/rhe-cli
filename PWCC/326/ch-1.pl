@@ -29,13 +29,15 @@ Output: 250
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+To solve this problem, I make subs to extract (year, month, day) from strings, check strings for validity,
+determine whether a given year is a leap year, determine the number of days in a given month in a given year,
+and return day-of-year. This solution is thus more "structured" than most of my PWCC solutions. Using five
+subroutines instead of cramming everything into one makes the code easier to read, understand, and maintain.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of double-quoted strings, in proper Perl syntax, like so:
-
+single-quoted array of double-quoted date strings, "YYYY-MM-DD", in proper Perl syntax, like so:
 ./ch-1.pl '("rat", "2025-11-13", "2025-11-88")'
 
 Output is to STDOUT and will be each input followed by the corresponding output.

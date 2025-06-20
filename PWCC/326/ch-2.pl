@@ -11,9 +11,10 @@ written by Robbie Hatley on Dow Mon Dm, 2025.
 PROBLEM DESCRIPTION:
 Task 326-2: Decompressed List
 Submitted by: Mohammad Sajid Anwar
-You are given an array of positive integers having even elements.
-Write a script to to return the decompress list. To decompress,
-pick adjacent pair (i, j) and replace it with j, i times.
+You are given an array of positive integers having an even number
+of elements. Write a script to to return the decompress list. To
+decompress, pick adjacent pair (i, j) and replace it with j,
+i times.
 
 Example #1:
 Input: @ints = (1, 3, 2, 4)
@@ -35,14 +36,15 @@ Pair 2: (3, 2) => 2 three times => (2, 2, 2)
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+To solve this problem, I wrote two subs: one to check input for validity, and one to "decompress" an array
+as described in the problem description. For a change, this "task 2" is easier than the corresponding Task 1;
+I needed 5 subroutines for that one.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
-
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+single-quoted array of non-empty even-size arrays positive integers, in proper Perl syntax, like so:
+./ch-2.pl '([5,1,3,4],[2,3,4,29,15,40])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
