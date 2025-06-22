@@ -5,15 +5,15 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solutions in Perl for The Weekly Challenge 326-2,
-written by Robbie Hatley on Dow Mon Dm, 2025.
+written by Robbie Hatley on Sat Jun 21, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
 Task 326-2: Decompressed List
 Submitted by: Mohammad Sajid Anwar
 You are given an array of positive integers having an even number
-of elements. Write a script to to return the decompress list. To
-decompress, pick adjacent pair (i, j) and replace it with j,
+of elements. Write a script to to return the decompressed list.
+To decompress, pick adjacent pair (i, j) and replace it with j,
 i times.
 
 Example #1:
