@@ -46,11 +46,9 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-   use v5.40;
-   use builtin 'inf';
-   no warnings 'experimental::builtin';
+   use v5.38;
    use utf8::all;
-
+   use List::Util 'min';
 
    # Is a given scalar a reference to an array of unique integers?
    sub is_array_of_unique_ints ($aref) {
@@ -63,23 +61,16 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    # Return all pairs of integers from given array for which
    # the absolute value of their difference is minimum:
-   sub MAD ($aref) {
+   sub min_abs_diff_pairs ($aref) {
       my @srt = sort {$a<=>$b} @$aref;
-      my $min = inf;
-      my @MAD = ();
-      # First pass: determine $min:
+      my %pairs;
+      # Hash all pairs by absolute difference:
       for    ( my $i =    0   ; $i <= $#srt-1 ; ++$i ) {
          for ( my $j = $i + 1 ; $j <= $#srt-0 ; ++$j ) {
             my $adiff = abs($srt[$i]-$srt[$j]);
-            if ( $adiff < $min ) {
-               $min = $adiff}}}
-      # Second pass: determine @MAD:
-      for    ( my $i =    0   ; $i <= $#srt-1 ; ++$i ) {
-         for ( my $j = $i + 1 ; $j <= $#srt-0 ; ++$j ) {
-            my $adiff = abs($srt[$i]-$srt[$j]);
-            if ( $adiff == $min ) {
-               push @MAD, [$srt[$i], $srt[$j]]}}}
-      return @MAD}
+            push @{$pairs{$adiff}}, [$srt[$i], $srt[$j]]}}
+      # Return pairs with minimum absolute difference:
+      return @{$pairs{min keys %pairs}}}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
@@ -96,7 +87,7 @@ for my $aref (@arrays) {
       say "Error: Not an array of unique integers.";
       next;
    }
-   my @MAD = MAD($aref);
-   my @MAD_strs = map { '[' . $_->[0] . ', ' . $_->[1] . ']' } @MAD;
-   say "Pairs with minimum absolute difference = (@MAD_strs)";
+   my @MADP = min_abs_diff_pairs($aref);
+   my @MADP_strs = map { '[' . $_->[0] . ', ' . $_->[1] . ']' } @MADP;
+   say "Pairs with minimum absolute difference = (@MADP_strs)";
 }

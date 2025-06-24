@@ -44,9 +44,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-   use v5.40;
-   use builtin 'inf';
-   no warnings 'experimental::builtin';
+   use v5.38;
    use utf8::all;
    use List::Util 'none';
 
@@ -56,11 +54,11 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       for (@$aref) {return 0 if $_ !~ m/^-[1-9]\d*$|^0$|^[1-9]\d*$/}
       return 1}
 
-   # Find all "missing" integers in an array in the range (1..n)
-   # where n is the size of the array:
+   # Find all "missing" integers in an array in the
+   # range (1..n) where n is the size of the array:
    sub missing ($aref) {
       my $n = scalar(@$aref);
-      my @missing  = ();
+      my @missing = ();
       foreach my $x (1..$n) {
          if (none {$_ == $x} @$aref) {
             push @missing, $x}}
