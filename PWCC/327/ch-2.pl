@@ -9,7 +9,7 @@ written by Robbie Hatley on Mon Jun 23, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task 327-2: MAD
+Task 327-2: Minimum Absolute Difference
 Submitted by: Mohammad Sajid Anwar
 You are given an array of distinct integers. Write a script to
 find all pairs of elements with minimum absolute difference
@@ -29,8 +29,9 @@ Output: [1,3], [3,5]
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-I solve this by riffleing through the arrays twice: the first time to find the MAD, and the second time to
-find all pairs separated by the MAD.
+I solve this by first sorting the array, then hashing all pairs by absolute value of difference. I determine
+minimum absolute value of difference by applying function "min" from CPAN module "List::Util" to the keys of
+the hash. Then I return those pairs corresponding to that hash key.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:

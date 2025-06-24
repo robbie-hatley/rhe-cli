@@ -28,7 +28,8 @@ Output: (3)
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-Function "none" in CPAN module "List::Util" will make short work of this.
+To solve this, I use function "none" in CPAN module "List::Util" to determine which numbers of 1..n are equal
+to none of the elements of the array, then I return those numbers.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
