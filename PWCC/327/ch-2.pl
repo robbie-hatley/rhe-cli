@@ -13,7 +13,7 @@ Task 327-2: Minimum Absolute Difference
 Submitted by: Mohammad Sajid Anwar
 You are given an array of distinct integers. Write a script to
 find all pairs of elements with minimum absolute difference
-(MAD) of any two elements.
+of any two elements.
 
 Example 1
 Input: @ints = (4, 1, 2, 3)
