@@ -29,14 +29,15 @@ Output: [1,3], [3,5]
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+I solve this by riffleing through the arrays twice: the first time to find the MAD, and the second time to
+find all pairs separated by the MAD.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of arrays of unique integers, in proper Perl syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '([5,8,13,-42,-6],[-137,4,18,44,66])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
