@@ -37,14 +37,17 @@ Output: "abc"
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+To solve this problem, I'll use a 3-part index loop to find-and-remove all "bad pairs" of characters, with
+double index back-tracking after every deletion to prevent skipping any character pairs. (Single backtracking
+won't work, because changing the "current" character may also change its relationship to the character to its
+left.)
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of double-quoted strings, in proper Perl syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '("bat", "beEeet", "cattT")'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -56,24 +59,31 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 use v5.36;
 use utf8::all;
 
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+# Remove bad pairs to make good string:
+sub good ($s) {
+   for ( my $i = 0 ; $i <= length($s)-2 ; ++$i ) {
+      my $x = substr($s, $i + 0, 1);
+      my $y = substr($s, $i + 1, 1);
+      if (  $x eq lc($y) && $y eq uc($x)
+         || $x eq uc($y) && $y eq lc($x) ) {
+         substr($s, $i, 2, '');
+         # Backtrack index by 2 to avoid skipping.
+         # But if resulting index is less than -1,
+         # then set it to -1:
+         $i -= 2; $i = -1 if $i < -1}}
+   return $s}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @strings = @ARGV ? eval($ARGV[0]) : ("WeEeekly", "abBAdD", "abc");
+#                   Expected outputs :  "Weekly"    ""        "abc"
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
-for my $aref (@arrays) {
+for my $string (@strings) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   say "Original string = $string";
+   my $good = good($string);
+   say "Good     string = $good";
 }
