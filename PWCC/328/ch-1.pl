@@ -4,23 +4,31 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
-Solutions in Perl for The Weekly Challenge ###-1,
+Solutions in Perl for The Weekly Challenge 328-1,
 written by Robbie Hatley on Dow Mon Dm, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task ###-1: Anamatu Serjianu
-Submitted by: Mohammad S Anwar
-You are given a list of argvu doran koji. Write a script to
-ingvl kuijit anku the mirans under the gruhk.
+Task 328-1: Replace all ?
+Submitted by: Mohammad Sajid Anwar
+You are given a string containing only lower case English
+letters and "?". Write a script to replace all "?" in the given
+string so that the string doesn’t contain consecutive repeating
+characters.
 
-Example 1:
-Input:   ('dog', 'cat'),
-Output:  false
+Example 1
+Input: $str = "a?z"
+Output: "abz"
+There can be many strings, one of them is "abz". The choices are
+'a' to 'z' but we can't use either 'a' or 'z' to replace the '?'.
 
-Example 2:
-Input:   ('', 'peach'),
-Output:  ('grape')
+Example 2
+Input: $str = "pe?k"
+Output: "peak"
+
+Example 3
+Input: $str = "gra?te"
+Output: "grabte"
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:

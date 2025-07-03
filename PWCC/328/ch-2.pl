@@ -4,23 +4,36 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
-Solutions in Perl for The Weekly Challenge ###-2,
+Solutions in Perl for The Weekly Challenge 328-2,
 written by Robbie Hatley on Dow Mon Dm, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task ###-2: Anamatu Serjianu
-Submitted by: Mohammad S Anwar
-You are given a list of argvu doran koji. Write a script to
-ingvl kuijit anku the mirans under the gruhk.
+Task 328-2: Good String
+Submitted by: Mohammad Sajid Anwar
+You are given a string made up of lower and upper case English
+letters only. Write a script to return the good string of the
+given string. A string is called good string if it doesn’t have
+two adjacent same characters, one in upper case and other is
+lower case. To be explicit, you can only remove a pair if they
+are same characters, one in lower case and other in upper case;
+order is not important.
 
-Example 1:
-Input:   ('dog', 'cat'),
-Output:  false
+Example 1
+Input: $str = "WeEeekly"
+Output: "Weekly"
+We can remove either, "eE" or "Ee" to make it good.
 
-Example 2:
-Input:   ('', 'peach'),
-Output:  ('grape')
+Example 2
+Input: $str = "abBAdD"
+Output: ""
+We remove "bB" first: "aAdD"
+Then we remove "aA": "dD"
+Finally remove "dD".
+
+Example 3
+Input: $str = "abc"
+Output: "abc"
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
