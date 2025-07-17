@@ -50,22 +50,22 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
+   use v5.36;
+   use utf8::all;
 
-# Replace question marks in such a way that new pairs
-# of consecutive identical characters are not created:
-sub repque ($s) {
-   my $n = length($s);
-   my @ab=split //, 'abcdefghijklmnopqrstuvwxyz';
-   foreach my $sidx (0..$n-1) {
-      if ('?' eq substr $s, $sidx, 1) {
-         foreach my $lidx (0..25) {
-            next if $ab[$lidx] eq substr $s, $sidx-1, 1;
-            next if $ab[$lidx] eq substr $s, $sidx+1, 1;
-            substr $s, $sidx, 1, $ab[$lidx];
-            last}}}
-   return $s}
+   # Replace question marks in such a way that new pairs
+   # of consecutive identical characters are not created:
+   sub repque ($s) {
+      my $n = length($s);
+      my @ab=split //, 'abcdefghijklmnopqrstuvwxyz';
+      foreach my $sidx (0..$n-1) {
+         if ('?' eq substr $s, $sidx, 1) {
+            foreach my $lidx (0..25) {
+               next if $ab[$lidx] eq substr $s, $sidx-1, 1;
+               next if $ab[$lidx] eq substr $s, $sidx+1, 1;
+               substr $s, $sidx, 1, $ab[$lidx];
+               last}}}
+      return $s}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:

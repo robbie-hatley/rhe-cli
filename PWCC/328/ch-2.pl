@@ -39,8 +39,8 @@ Output: "abc"
 PROBLEM NOTES:
 To solve this problem, I'll use a 3-part index loop to find-and-remove all "bad pairs" of characters, with
 double index back-tracking after every deletion to prevent skipping any character pairs. (Single backtracking
-won't work, because changing the "current" character may also change its relationship to the character to its
-left.)
+won't work, because removing a pair of characters may change the relationship between previous and next
+characters.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
@@ -56,22 +56,22 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
+   use v5.36;
+   use utf8::all;
 
-# Remove bad pairs to make good string:
-sub good ($s) {
-   for ( my $i = 0 ; $i <= length($s)-2 ; ++$i ) {
-      my $x = substr($s, $i + 0, 1);
-      my $y = substr($s, $i + 1, 1);
-      if (  $x eq lc($y) && $y eq uc($x)
-         || $x eq uc($y) && $y eq lc($x) ) {
-         substr($s, $i, 2, '');
-         # Backtrack index by 2 to avoid skipping.
-         # But if resulting index is less than -1,
-         # then set it to -1:
-         $i -= 2; $i = -1 if $i < -1}}
-   return $s}
+   # Remove bad pairs to make good string:
+   sub good ($s) {
+      for ( my $i = 0 ; $i <= length($s)-2 ; ++$i ) {
+         my $x = substr($s, $i + 0, 1);
+         my $y = substr($s, $i + 1, 1);
+         if (  $x eq lc($y) && $y eq uc($x)
+            || $x eq uc($y) && $y eq lc($x) ) {
+            substr($s, $i, 2, '');
+            # Backtrack index by 2 to avoid skipping.
+            # But if resulting index is less than -1,
+            # then set it to -1:
+            $i -= 2; $i = -1 if $i < -1}}
+      return $s}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
