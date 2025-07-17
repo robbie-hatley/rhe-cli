@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solutions in Perl for The Weekly Challenge 329-1,
-written by Robbie Hatley on Dow Mon Dm, 2025.
+written by Robbie Hatley on Thu Jul 17, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
@@ -39,9 +39,9 @@ collection of unique integers.
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of double-quoted strings, in proper Perl syntax, like so:
 
-./ch-1.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-1.pl '("1r82aA17t", "bA32atT", "cCat", "1p1i2g3", "42c1oW17w42", "14ho3r17s8e0")'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -61,13 +61,14 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       my @ints = split / /, $s;           # Split string on spaces to list.
       my @unique;                         # Make an array to hold UNIQUE integers.
       foreach my $int (@ints) {           # For each integer,
-         if (none {$_ == $int} @unique) { # if integer is unique,
-            push @unique, $int}}          # collect it.
+         if (none {$_ == $int} @unique) { #   if integer is unique,
+            push @unique, $int}}          #     collect it.
       return @unique}                     # Return result.
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
 my @strings = @ARGV ? eval($ARGV[0]) : ("the1weekly2challenge2", "go21od1lu5c7k", "4p3e2r1l");
+#                   Expected outputs :         (1, 2)            (21, 1, 5, 7)    (4, 3, 2, 1)
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
