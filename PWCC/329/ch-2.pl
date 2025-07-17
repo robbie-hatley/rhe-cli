@@ -32,14 +32,18 @@ No nice string found.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+I used a structured approach. The first thing I needed was to toggle the case of a character, so I made a "tc"
+subroutine to do that. Next, I needed a way to determine whether a string is "nice" (as per the problem
+description), so I made a "is_nice" subroutine to do that (by using "none" from CPAN module "List::Util to
+determine which characters in a string have no opposite-case analogs in the string). And finally, I wrote a
+subroutine called "max_nice" which determines the first max-length "nice" substring of the original string.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of double-quoted strings of English letters, in proper Perl syntax, like so:
+single-quoted array of double-quoted strings, in proper Perl syntax, like so:
 
-./ch-2.pl '("raAt", "bAatT", "cCat", "pig", "coWw", "horse")'
+./ch-2.pl '("raAt", "bAatT", "aAxtT", "cCat", "pig", "coWw", "horse")'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
