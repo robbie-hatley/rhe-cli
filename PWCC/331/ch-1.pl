@@ -28,14 +28,19 @@ Output: 3
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
+There are a number of ways of approaching this, including using "split" to obtain a list of words which are in
+the string. But I'll use a simpler approach: I'll use an s///r operator to isolate the final word, then feed
+that word into the length() operator:
 
+use v5.36;
+sub length_of_last_word ($string) {length s/\s*(\pL+)\s*$/$1/r;}
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of double-quoted strings, in proper Perl syntax, like so:
 
-./ch-1.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-1.pl '("I ate a rat", "she ate a leprechaun")'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -44,27 +49,21 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
-
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   use v5.36;
+   use utf8::all;
+   sub length_of_last_word ($string) {$string =~ s/^.*(\S++)\s*$/$1/;length $string}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @strings = @ARGV ? eval($ARGV[0]) : ("The Weekly Challenge", "   Hello   World    ", "Let's begin the fun");
+#                  Expected outputs :             9                       5                        3
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
-for my $aref (@arrays) {
+for my $string (@strings) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   say "String = \"$string\"";
+   my $lolw = length_of_last_word($string);
+   say "Length of last word = $lolw";
 }
