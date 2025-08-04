@@ -58,27 +58,35 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
+   use v5.36;
+   use utf8::all;
 
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   # Given an array of size n, double all
+   # zeros, then return first n elements:
+   sub d0 ($aref) {
+      my @new;
+      for (@$aref) {
+         if ('0' eq $_) {push @new, '0', '0'}
+         else           {push @new, $_      }}
+      @new[0..$#$aref]}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) :
+(
+   [1, 0, 2, 3, 0, 4, 5, 0], # Expected output: (1, 0, 0, 2, 3, 0, 0, 4)
+   [1, 2, 3],                # Expected output: (1, 2, 3)
+   [1, 2, 3, 0],             # Expected output: (1, 2, 3, 0)
+   [0, 0, 1, 2],             # Expected output: (0, 0, 0, 0)
+   [1, 2, 0, 3, 4],          # Expected output: (1, 2, 0, 0, 3)
+);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   say "Array = (@$aref)";
+   my @d0 = d0($aref);
+   say "Dbl-0 = (@d0)";
 }

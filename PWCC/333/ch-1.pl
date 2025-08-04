@@ -62,54 +62,44 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use POSIX 'Inf';
 
    # What is the distance between two points?
-   sub dista ($A, $B) {
+   sub dist ($A, $B) {
       my $Δx = $B->[0]-$A->[0];
       my $Δy = $B->[1]-$A->[1];
-      sqrt($Δx**2+$Δy**2);
-   }
+      sqrt($Δx**2+$Δy**2)}
 
    # What is the slope between two points?
    sub slope ($A, $B) {
-      my $Δx = $B->[0] - $A->[0];
-      my $Δy = $B->[1] - $A->[1];
+      my $Δx = $B->[0]-$A->[0];
+      my $Δy = $B->[1]-$A->[1];
       # If abs(Δx) is less than one billionth, slope is "Inf";
       # otherwise, slope is Δy/Δx:
-      (abs($Δx) < 0.000000001) ? Inf : $Δy/$Δx;
-   }
+      (abs($Δx) < 0.000000001) ? Inf : $Δy/$Δx}
 
    # Are three points collinear to within one part per billion?
    sub colli ($A, $B, $C) {
       # If any two points are less than one billionth from each other,
       # then consider them to be the "same" point,
       # and hence consider all three points to be collinear:
-      if (dista($A,$B)<0.000000001
-       || dista($B,$C)<0.000000001
-       || dista($C,$A)<0.000000001) {
-         return "These three points ARE collinear.";
-      }
+      if (dist($A,$B)<1E-9 || dist($B,$C)<1E-9 || dist($C,$A)<1E-9) {
+         return "These three points ARE collinear."}
 
       # Get the slopes of the three sides of △ABC:
-      my $slopeAB = slope($A, $B);
-      my $slopeBC = slope($B, $C);
-      my $slopeCA = slope($C, $A);
+      my $sAB = slope($A, $B);
+      my $sBC = slope($B, $C);
+      my $sCA = slope($C, $A);
 
       # If these three slopes are all "Inf", then these three points
       # are on the same vertical line and hence collinear:
-      if (Inf == $slopeAB && Inf == $slopeBC && Inf == $slopeCA) {
-          return "These three points ARE collinear."
-      }
+      if (Inf == $sAB && Inf == $sBC && Inf == $sCA) {
+          return "These three points ARE collinear."}
 
       # If all three slopes are the same to within one billionth,
       # consider these three points to be collinear:
-      if (abs($slopeAB - $slopeBC) < 0.000000001
-       && abs($slopeBC - $slopeCA) < 0.000000001
-       && abs($slopeCA - $slopeAB) < 0.000000001) {
-          return "These three points ARE collinear."
-      }
+      if (abs($sAB-$sBC)<1E-9 && abs($sBC-$sCA)<1E-9 && abs($sCA-$sAB)<1E-9) {
+          return "These three points ARE collinear."}
 
       # Otherwise, points A, B, and C are NOT collinear:
-      return "These three points are NOT collinear.";
-   }
+      return "These three points are NOT collinear."}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
