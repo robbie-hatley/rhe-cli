@@ -1,0 +1,84 @@
+#!/usr/bin/env perl
+
+=pod
+
+--------------------------------------------------------------------------------------------------------------
+TITLE AND ATTRIBUTION:
+Solutions in Perl for The Weekly Challenge 333-2,
+written by Robbie Hatley on Mon Aug 04, 2025.
+
+--------------------------------------------------------------------------------------------------------------
+PROBLEM DESCRIPTION:
+Task 333-2: Duplicate Zeros
+Submitted by: Mohammad Sajid Anwar
+You are given an array of integers. Write a script to duplicate
+each occurrence of zero, shifting the remaining elements to the
+right. The elements beyond the length of the original array are
+not written.
+
+Example 1
+Input: @ints = (1, 0, 2, 3, 0, 4, 5, 0)
+Output: (1, 0, 0, 2, 3, 0, 0, 4)
+Each zero is duplicated.
+Elements beyond the original length (like 5 and last 0) are
+discarded.
+
+Example 2
+Input: @ints = (1, 2, 3)
+Output: (1, 2, 3)
+No zeros exist, so the array remains unchanged.
+
+Example 3
+Input: @ints = (1, 2, 3, 0)
+Output: (1, 2, 3, 0)
+
+Example 4
+Input: @ints = (0, 0, 1, 2)
+Output: (0, 0, 0, 0)
+
+Example 5
+Input: @ints = (1, 2, 0, 3, 4)
+Output: (1, 2, 0, 0, 3)
+
+--------------------------------------------------------------------------------------------------------------
+PROBLEM NOTES:
+To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+
+--------------------------------------------------------------------------------------------------------------
+IO NOTES:
+Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
+single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+
+./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+
+Output is to STDOUT and will be each input followed by the corresponding output.
+
+=cut
+
+# ------------------------------------------------------------------------------------------------------------
+# PRAGMAS, MODULES, AND SUBS:
+
+use v5.36;
+use utf8::all;
+
+#
+sub asdf ($x, $y) {
+   -2.73*$x + 6.83*$y;
+}
+
+# ------------------------------------------------------------------------------------------------------------
+# INPUTS:
+my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+
+# ------------------------------------------------------------------------------------------------------------
+# MAIN BODY OF PROGRAM:
+$"=', ';
+for my $aref (@arrays) {
+   say '';
+   my $x = $aref->[0];
+   my $y = $aref->[1];
+   my $z = asdf($x, $y);
+   say "x = $x";
+   say "y = $y";
+   say "z = $z";
+}
