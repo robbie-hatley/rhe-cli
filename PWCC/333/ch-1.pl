@@ -73,7 +73,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       my $Δy = $B->[1]-$A->[1];
       # If abs(Δx) is less than one billionth, slope is "Inf";
       # otherwise, slope is Δy/Δx:
-      (abs($Δx) < 0.000000001) ? Inf : $Δy/$Δx}
+      (abs($Δx) < 1E-9) ? Inf : $Δy/$Δx}
 
    # Are three points collinear to within one part per billion?
    sub colli ($A, $B, $C) {

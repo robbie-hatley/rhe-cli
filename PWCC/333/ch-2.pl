@@ -42,14 +42,16 @@ Output: (1, 2, 0, 0, 3)
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+To solve this problem, I'll first make an empty new array, then for every element of the original array, if
+it's 0 push two 0s to new array, else push original element to new array, then return a slice of the new array
+from index 0 to the highest valid index of the original array.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of arrays of integers, in proper Perl syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '([5,0,6,0,7,0],[-3,8,17,142,-64])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
