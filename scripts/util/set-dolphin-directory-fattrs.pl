@@ -5,12 +5,9 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# "replace-dolphin-directory-files.pl"
-# For the current directory (and all subdirectories if a -r or --recurse option is used), replace all
-# Dolphin ".directory" files with versions which are appropriate for the contents of the directory.
-# Makes sure that directories which contain 1-or-more picture files (jpg, jpeg, bmp, png, apng, gif, tif,
-# tiff) have a "thumbnails" or ctrl-1 ".directory" file, and all other directories should have a "details"
-# or ctrl-3 ".directory" file.
+# "set-dolphin-directory-fattrs.pl"
+# For the current directory (and all subdirectories if a -r or --recurse option is used), set fattr "view"
+# to "icons" if pictures are present, else "details".
 #
 # Written by Robbie Hatley, beginning on Monday March 13, 2023.
 #
@@ -34,6 +31,8 @@
 #                   STDERR = "stats and serious errors". STDOUT = "files erased/copied, and dirs if verbose".
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
 # Sun Mar 16, 2025: Minor tweaks to formatting, comments, and help.
+# Sun Aug 24, 2025: Split this program off from "replace-dolphin-directory-files.pl" due to changes in how
+#                   Dolphin does things.
 ##############################################################################################################
 
 use v5.36;
@@ -56,24 +55,14 @@ sub help    ; # Print help and exit.
 # ======= VARIABLES: =========================================================================================
 
 # Settings:     Default:   # Meaning of setting:          Range:    Meaning of default:
-my $Db        = 0        ; # Debug (print diagnostics)?   bool      Don't print diagnostics.
 my $RegExp    = qr/^.+$/ ; # Regular Expression.          regexp    Process all directory names.
 my $Recurse   = 0        ; # Recurse subdirectories?      bool      Don't recurse.
 my $Verbose   = 0        ; # Be wordy?                    bool      Be quiet.
 
-# Paths to known ctrl-1 and ctrl-3 ".directory" files:
-my $hostname = hostname();
-my $ctrl_1_path;
-my $ctrl_3_path;
-
 # Counters:
 my $direcount = 0 ; # Count of directories processed by curdire().
-my $erascount = 0 ; # Count of ".directory" files erased.
-my $erfacount = 0 ; # Count of failed erasure attempts.
-my $copycount = 0 ; # Count of ".directory" files copied.
-my $cofacount = 0 ; # Count of failed copy attempts.
-my $simecount = 0 ; # Count of simulated file erasures.
-my $simccount = 0 ; # Count of simulated file copies.
+my $viewcount = 0 ; # Count of views changed.
+my $vwfacount = 0 ; # Count of failed copy attempts.
 
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
@@ -85,36 +74,20 @@ my $simccount = 0 ; # Count of simulated file copies.
    my $pname = get_name_from_path($0);
    say STDERR '';
    say STDERR "Now entering program \"$pname\".";
-   say STDERR "\$Db      = $Db";
    say STDERR "\$RegExp  = $RegExp";
    say STDERR "\$Recurse = $Recurse";
    say STDERR "\$Verbose = $Verbose";
-
-   # Select appropriate "exemplars" of the "pictures" and "general" versions of the file ".directory".
-   # Path "$ctrl_1_path" will be for   pictures  and will be equivalent to manually pressing Ctrl-1.
-   # Path "$ctrl_3_path" will be for general use and will be equivalent to manually pressing Ctrl-3.
-   if ( 'Excalibur' eq $hostname ) {
-      $ctrl_1_path = '/home/aragorn/Data/Ulthar/OS-Resources/Background-Pictures/Scenic/.directory';
-      $ctrl_3_path = '/home/aragorn/Data/Celephais/Captain’s-Den/FFS-Profiles/.directory';
-   }
-   elsif ( 'optiplex-major' eq $hostname ) {
-      $ctrl_1_path = '/home/arthur/Aranath/OS-Resources/Background-Pictures/.directory';
-      $ctrl_3_path = '/home/arthur/Belequenta/rhe/scripts/util/.directory';
-   }
-   else {
-      die "Not set-up for this host.\n$!\n";
-   }
 
    # Run sub curdire() for desired directories:
    $Recurse and RecurseDirs {curdire} or curdire;
 
    # Print closing newline if we've just been printing $direcount repeatedly on top of itself:
-   print STDOUT "\n" if !$Verbose && !$Db;
+   print STDOUT "\n" if !$Verbose;
 
    # Finally, print stats and exit message, including run time:
    stats;
-   my $te = time - $t0;
-   say STDERR "\nNow exiting program \"$pname\".\nExecution time was $te seconds.";
+   my $ms = 1000*(time-$t0);
+   printf STDERR "\nNow exiting program \"%s\".\nExecution time was %.3fms.", $pname, $ms;
    exit 0;
 } # end main
 
@@ -141,26 +114,20 @@ sub argv {
 
    for ( @opts ) {
       /^-$s*h/ || /^--help$/    and help and exit 777 ;
-      /^-$s*e/ || /^--debug$/   and $Db      =  1     ;
       /^-$s*q/ || /^--quiet$/   and $Verbose =  0     ;
       /^-$s*v/ || /^--verbose$/ and $Verbose =  1     ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0     ;
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1     ;
    }
-   if ( $Db ) {
-      say STDERR '';
-      say STDERR "\$opts = (", join(', ', map {"\"$_\""} @opts), ')';
-      say STDERR "\$args = (", join(', ', map {"\"$_\""} @args), ')';
-   }
 
    # Process arguments:
    my $NA = scalar(@args);     # Get number of arguments.
-   $NA >= 1                    # If number of arguments >= 1,
-   and $RegExp = qr/$args[0]/; # set $RegExp.
-   $NA >= 2 && !$Db            # If number of arguments >= 2 and we're not debugging,
+   $NA >= 2                    # If number of arguments >= 2,
    and error($NA)              # print error message,
    and help                    # and print help message,
    and exit 666;               # and exit, returning The Number Of The Beast.
+   $NA >= 1                    # If number of arguments >= 1,
+   and $RegExp = qr/$args[0]/; # set $RegExp.
 
    # Return success code 1 to caller:
    return 1;
@@ -174,36 +141,12 @@ sub curdire {
    # Return 1 if this directory doesn't match our regexp:
    return 1 if $cwd !~ m/$RegExp/;
 
-   # Return 1 if we're in one of our "exemplar" directories:
-   if ( 'Excalibur' eq $hostname ) {
-      if ( '/home/aragorn/Data/Ulthar/OS-Resources/Background-Pictures/Scenic' eq $cwd ) {
-         return 1;
-      }
-      if ( '/home/aragorn/Data/Celephais/Captain’s-Den/FFS-Profiles' eq $cwd ) {
-         return 1;
-      }
-   }
-
-   elsif ( 'optiplex-major' eq $hostname ) {
-      if ( '/home/arthur/Aranath/OS-Resources/Background-Pictures' eq $cwd ) {
-         return 1;
-      }
-      if ( '/home/arthur/Belequenta/rhe/scripts/util' eq $cwd ) {
-         return 1;
-      }
-   }
-
-   # Die if host is unknown:
-   else {
-      die "Error in rdd, in curdire(): invalid host.\n$!\n";
-   }
-
    # If we get to here, increment directory counter:
    ++$direcount;
 
    # Announce directory:
-   if ( $Verbose || $Db ) {
-      say STDOUT "\nDirectory # $direcount: $cwd\n";
+   if ( $Verbose ) {
+      say STDOUT "\nDirectory # $direcount: $cwd";
    }
    else {
       if ( 1 == $direcount ) {
@@ -217,58 +160,28 @@ sub curdire {
    # Get ref to array of file-info packets for all regular files in in $cwd matching $RegExp:
    my $curdirfiles = GetFiles($cwd, 'F', $RegExp);
 
-   # Riffle through the files, count how many pictures are here, and get rid of
-   # any old (possibly enumerated or corrupted) ".directory" files":
+   # Riffle through the files and count how many pictures are here:
    my $pics = 0;
    foreach my $file ( @{$curdirfiles} ) {
-      my $p = $file->{Path};
-      my $n = $file->{Name};
-      my $r = get_prefix($n);
-      my $s = get_suffix($n);
-      say STDERR "In rdd, in curdire(), in file loop; path = $p" if $Db;
-      say STDERR "In rdd, in curdire(), in file loop; name = $n" if $Db;
-      say STDERR "In rdd, in curdire(), in file loop; pref = $r" if $Db;
-      say STDERR "In rdd, in curdire(), in file loop; suff = $s" if $Db;
-      if ( $file->{Name} =~ m/^(?:-\(\d{4}\))*\.directory$/ ) {
-         if ( $Db ) {
-            ++$simecount;
-            say STDOUT "Simulation: would have erased \"$file->{Path}\"." if $Verbose;
-         }
-         else {
-            if ( unlink(e($file->{Path})) ) {
-               ++$erascount;
-               say STDOUT "erased \"$file->{Path}\"" if $Verbose;
-            }
-            else {
-               ++$erfacount;
-               say STDOUT "Failed to erase \"$file->{Path}\"" if $Verbose;
-            }
-         }
-      }
+      my $s = get_suffix($file->{Name});
+      # Count pictures:
       if (     $s eq '.jpg'  || $s eq '.jpeg' || $s eq '.bmp'  || $s eq '.png'
             || $s eq '.apng' || $s eq '.gif'  || $s eq '.tif'  || $s eq '.tiff' ) {
          ++$pics;
       }
    }
 
-   # If 1-or-more pictures exist in this directory, paste a ctrl-1 ".directory" file here:
-   my $spath = $pics > 0 ? $ctrl_1_path : $ctrl_3_path;
-   my $dpath = path($cwd, ".directory");
-   if ( $Db ) {
-      ++$simccount;
-      say STDOUT "Simulation: would have copied \"$spath\" to \"$dpath\".";
+   # Set view to 0 ("Icons") if one-or-more pics are present, else set it to 1 ("Details):
+   my $view = (($pics>0)?0:1);
+   my $command =
+      "setfattr -h -n user.kde.fm.viewproperties#1 -v \"[Dolphin]\012Version=4\012ViewMode=$view\012\" .";
+   if ( 0 == system(e($command)) ) {
+      ++$viewcount;
+      say STDOUT "Successfully set view to $view." if $Verbose;
    }
-
-   # Otherwise, paste a ctrl-3 ".directory" file here:
    else {
-      if ( 0 == system(e("cp '$spath' '$dpath'")) ) {
-         ++$copycount;
-         say STDOUT "Copied .directory file from \"$spath\" to \"$dpath\"." if $Verbose;
-      }
-      else {
-         ++$cofacount;
-         say STDOUT "Failed to copy .directory file from \"$spath\" to \"$dpath\"." if $Verbose;
-      }
+      ++$vwfacount;
+      say STDOUT "Failed to set view to $view." if $Verbose;
    }
 
    # We're done, so return 1:
@@ -281,12 +194,8 @@ sub stats
    say STDERR '';
    say STDERR 'Statistics for this directory tree:';
    say STDERR "Found $direcount directories matching RegExp.";
-   say STDERR "Erased $erascount old, enumerated, or corrupted \".directory\" files.";
-   say STDERR "Failed $erfacount erasure attempts.";
-   say STDERR "Copied $copycount new \".directory\" files.";
-   say STDERR "Failed $cofacount copy attempts.";
-   say STDERR "Simulated $simecount file erasures.";
-   say STDERR "Simulated $simccount file copies.";
+   say STDERR "Set $viewcount view settings.";
+   say STDERR "Failed $vwfacount attempts to set view settings.";
    return 1;
 } # end sub stats
 
@@ -297,7 +206,7 @@ sub error ($err_msg)
 
    Error: you typed $err_msg arguments, but this program takes at most 1 argument,
    which, if present, must be a Perl-Compliant Regular Expression specifying
-   which directory entries to process. Help follows:
+   which directories to process. Help follows.
    END_OF_ERROR
 } # end sub error
 
@@ -309,43 +218,27 @@ sub help
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "repair-dolphin-directory-files.pl". This program pastes replaces
-   all existing Dolphin ".directory" files in the current directory (and all
-   subdirectories if a -r or --recurse option is used) with an appropriate
-   ".directory" file depending on whether or not pictures are present.
+   Welcome to "set-dolphin-directory-fattrs.pl". This program alters metadata of
+   directories so that Dolphin (KDE's main file-manager program) will use "Icons"
+   view if one-or-more image files exist in a directory, else will use "Details"
+   view.
 
-   If 1-or-more picture files are present, a "Ctrl-1" .directory file is copied;
-   this will cause picture files in Dolphin to be displayed as thumbnails.
-
-   If    no     picture files are present, a "Ctrl-3" .directory file is copied;
-   this will put Dolphin in "Details" mode for the current directory.
-
-   WARNING: To get this program to work for you, you'll have to alter its source
-   code to specify your own allowed host names (the computers you want to run this
-   on) and exemplar directories (one directory with a ".directory" file set for
-   "non-picture" contents,  and  one directory with a ".directory" file set for
-   "picture" contents). But run my program
-   "refresh-dolphin-directory-file-dates.pl" on your exemplar directories first,
-   else this program may not work, because Dolphin ignores ".directory" files that
-   haven't been updated in a long time.
-
-   WARNING: If you're not using "Dolphin" as your primary file manager, then this
+   Warning: If you're not using "Dolphin" as your primary file manager, then this
    program will be useless to you, so don't waste your time with it.
 
    -------------------------------------------------------------------------------
    Command lines:
 
-   program-name.pl -h | --help            (to print help and exit)
-   program-name.pl [options] [arguments]  (to copy ".directory" )
+   set-dolphin-directory-fattrs.pl -h | --help            (to print help and exit)
+   set-dolphin-directory-fattrs.pl [options] [arguments]  (to set view)
 
    -------------------------------------------------------------------------------
    Description of options:
 
    Option:              Meaning:
    -h or --help         Print this help and exit.
-   -e or --debug        Print diagnostics and simulate file copies.
-   -q or --quiet        Don't print per-file info.                  (DEFAULT)
-   -v or --verbose      Do    print per-file info.
+   -q or --quiet        Don't print per-directory info.             (DEFAULT)
+   -v or --verbose      Do    print per-directory info.
    -l or --local        Don't recurse subdirectories.               (DEFAULT)
    -r or --recurse      Do    recurse subdirectories.
 
@@ -354,7 +247,7 @@ sub help
 
    If multiple conflicting separate options are given, later overrides earlier.
    If multiple conflicting single-letter options are piled after a single hyphen,
-   the result is determined by this descending order of precedence: herlvq.
+   the result is determined by this descending order of precedence: hrlvq.
 
    If you want to use an argument that looks like an option (say, you want to
    search for dirs which contain "--recurse" as part of their name), use a "--"
@@ -384,4 +277,3 @@ sub help
    END_OF_HELP
    return 1;
 } # end sub help
-__END__
