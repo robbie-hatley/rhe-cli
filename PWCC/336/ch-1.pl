@@ -45,7 +45,7 @@ PROBLEM NOTES:
 Mathematically, this problem is equivalent to splitting the input array into equivalence groups based on
 integer equality. That can easily be done by using a hash %hash with key=integer and value=multiplicity.
 Then store keys sorted by increasing abundance in an array @sk. If any $hash{$sk[$idx]} is less than 2,
-or if any $hash{$sk[idx]} is not divisible by $hash{$sk[0]}, return "false"; otherwise return "true".
+or if any $hash{$sk[$idx]} is not divisible by $hash{$sk[0]}, return "false"; otherwise return "true".
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
