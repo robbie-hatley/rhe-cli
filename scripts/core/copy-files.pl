@@ -33,6 +33,7 @@
 #                   Nixed all "d" and "e". Added [-c|--correct] option, telling program to correct the
 #                   file-name suffix of each copied file if necessary.
 # Tue May 06, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
+# Mon Aug 25, 2025: Fixed typo in help ("Move only large" → "Copy only large").
 ##############################################################################################################
 
 # ======= PRAGMAS AND MODULES: ===============================================================================
@@ -211,7 +212,7 @@ sub help {
    "-S" or "--sl"      Shorten names for when processing Windows Spotlight images.
    "-s" or "--sha1"    Change name root of each file to its own hash.
    "-u" or "--unique"  Don't copy files for which duplicates exist in destination.
-   "-l" or "--large"   Move only large image files (W=1200+, H=600+).
+   "-l" or "--large"   Copy only large image files (W=1200+, H=600+).
    "-c" or "--correct" Correct missing or wrong file name suffixes.
    "--"                All items to right are arguments, not options.
    All other options will be ignored.

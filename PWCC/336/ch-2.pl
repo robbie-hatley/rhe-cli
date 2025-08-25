@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solutions in Perl for The Weekly Challenge 336-2,
-written by Robbie Hatley on Sun Aug 24, 2025.
+written by Robbie Hatley on Mon Aug 25, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
@@ -80,14 +80,17 @@ Total Scores: 128
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-This calls for a simple finite state machine.
+I'll iterate through the partial scores from left to right, replacing each with an integer, depending on what
+each partial score is saying to do. I'll use "switch" and "case" from CPAN module "Switch" to select actions
+based on each partial score. Then when all partial scores have been converted to integers, I'll use "sum0"
+from CPAN module "List::Util" to sum the integers, giving the final score.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
 single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '(["3","-5","D","bat","C","73"],["3","92","-47","D","D","D","1117846","C"])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -96,27 +99,58 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
-
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   use v5.36;
+   use utf8::all;
+   use Switch;
+   use List::Util 'sum0';
+   # Calculate the final score:
+   sub final_score ($aref) {
+      # Make a working copy of our partial scores:
+      my @ps = @$aref;
+      # For each partial score, replace it with an integer:
+      for ( my $idx = 0 ; $idx <= $#ps ; ++$idx ) {
+         switch ($ps[$idx]) {
+            # If item is quoted integer, just add 0:
+            case /^-[1-9]\d*$|^0$|^[1-9]\d*$/ {
+               $ps[$idx]=0+$ps[$idx]}
+            # Add previous two:
+            case "+" {
+               switch ($idx) {
+                  case 0 {$ps[$idx]=0}
+                  case 1 {$ps[$idx]=$ps[0]}
+                  else   {$ps[$idx]=$ps[$idx-2]+$ps[$idx-1]}}}
+            # Cancel previous:
+            case "C" {
+               switch ($idx) {
+                  case 0 {splice @ps,0,1;--$idx}
+                  else   {splice @ps,$idx-1,2;$idx-=2}}}
+            # Double previous:
+            case "D" {
+               switch ($idx) {
+                  case 0 {$ps[$idx]=0}
+                  else   {$ps[$idx]=2*$ps[$idx-1]}}}
+            # Elide invalid partial scores:
+            else {splice @ps,$idx,1;--$idx}}}
+      # Tally and return the final score:
+      sum0 @ps}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) :
+(
+   ["5","2","C","D","+"],                          # Expected final score: 30
+   ["5","-2","4","C","D","9","+","+"],             # Expected final score: 27
+   ["7","D","D","C","+","3"],                      # Expected final score: 45
+   ["-5","-10","+","D","C","+"],                   # Expected final score: -55
+   ["3","6","+","D","C","8","+","D","-2","C","+"], # Expected final score: 128
+);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   say "Partial scores = (@$aref)";
+   my $fs = final_score($aref);
+   say "Final score = $fs";
 }
