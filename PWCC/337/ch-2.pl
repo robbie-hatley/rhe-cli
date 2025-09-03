@@ -9,7 +9,7 @@ written by Robbie Hatley on Wed Sep 03, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task 337-2: Odd Matrix
+Task 337-2: Count Odds
 Submitted by: Mohammad Sajid Anwar
 You are given the height h and width w of a matrix of zeros
 and a list of 0-indexed positions (r,c) within the matrix.

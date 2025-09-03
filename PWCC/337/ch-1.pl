@@ -9,7 +9,7 @@ written by Robbie Hatley on Wed Sep 03, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task 337-1: List of Counts of LE Others
+Task 337-1: Counts LE Others
 Submitted by: Mohammad Sajid Anwar
 You are given an array of numbers, @num1. Write a script to
 return an array, @num2, where $num2[$i] is the count of all
@@ -61,7 +61,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    # For each element of a referred-to array of numbers, return
    # the count of elements, other than the current element itself,
    # which are less-than-or-equal-to the current element:
-   sub list_of_counts_of_le_others ($aref) {
+   sub count_le_others ($aref) {
       my @num2;
       for my $current (@$aref) {
          push @num2, scalar(grep {$_<=$current} @$aref)-1}
