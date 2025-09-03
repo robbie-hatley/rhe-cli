@@ -79,6 +79,6 @@ $"=', ';
 for my $aref (@arrays) {
    say '';
    say "Array = (@$aref)";
-   my @counts = list_of_counts_of_le_others($aref);
+   my @counts = count_le_others($aref);
    say "Counts of LE others = (@counts)";
 }
