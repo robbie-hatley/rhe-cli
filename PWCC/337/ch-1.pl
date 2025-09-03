@@ -9,7 +9,7 @@ written by Robbie Hatley on Wed Sep 03, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task 337-1: Counts LE Others
+Task 337-1: Count LE Others
 Submitted by: Mohammad Sajid Anwar
 You are given an array of numbers, @num1. Write a script to
 return an array, @num2, where $num2[$i] is the count of all
