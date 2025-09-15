@@ -9,29 +9,43 @@ written by Robbie Hatley on Mon Sep 15, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task 339-2: Anamatu Serjianu
-Submitted by: Mohammad S Anwar
-You are given a list of argvu doran koji. Write a script to
-ingvl kuijit anku the mirans under the gruhk.
+Task 339-2: Peak Point
+Submitted by: Mohammad Sajid Anwar
+You are given an array of altitude changes. Write a script to
+find the maximum altitude attained, assuming that one starts
+at altitude 0.
 
-Example 1:
-Input:   ('dog', 'cat'),
-Output:  false
+Example 1
+Input:  [-5, 1, 5, -9, 2]
+Output: 1
 
-Example 2:
-Input:   ('', 'peach'),
-Output:  ('grape')
+
+Example 2
+Input:  [10, 10, 10, -25]
+Output: 30
+
+Example 3
+Input:  [3, -4, 2, 5, -6, 1]
+Output: 6
+
+Example 4
+Input:  [-1, -2, -3, -4]
+Output: 0
+
+Example 5
+Input:  [-10, 15, 5]
+Output: 10
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+I'll keep track of "current" and and "max" altitudes reached after each change, then return max.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of arrays of numbers, in proper Perl syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '([-35.2, 38.7, -14.9, 13.9],[1,2,3,4,-1,-2,-3,-4])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -40,27 +54,36 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
+   use v5.36;
+   use utf8::all;
 
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   # What is the total altitude change?
+   sub total_altitude_change ($aref) {
+      my $cur_alt = 0;
+      my $max_alt = 0;
+      for my $change (@$aref) {
+         $cur_alt += $change;
+         if ($cur_alt > $max_alt) {$max_alt = $cur_alt}
+      }
+      $max_alt}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) :
+(
+   [-5, 1, 5, -9, 2]    , # Expected output: 1
+   [10, 10, 10, -25]    , # Expected output: 30
+   [3, -4, 2, 5, -6, 1] , # Expected output: 6
+   [-1, -2, -3, -4]     , # Expected output: 0
+   [-10, 15, 5]         , # Expected output: 10
+);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   say "Altitude changes = (@$aref)";
+   my $tac = total_altitude_change($aref);
+   say "Maximum altitude = $tac";
 }

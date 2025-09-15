@@ -20,26 +20,26 @@ With Two pairs (a, b) and (c, d), the product difference is
 (a * b) - (c * d).
 
 Example 1
-Input: @ints = (5, 9, 3, 4, 6)
+Input:  (5, 9, 3, 4, 6)
 Output: 42
 Pair 1: (9, 6)
 Pair 2: (3, 4)
 Product Diff: (9 * 6) - (3 * 4) => 54 - 12 => 42
 
 Example 2
-Input: @ints = (1, -2, 3, -4)
+Input:  (1, -2, 3, -4)
 Output: 10
 Pair 1: (1, -2)
 Pair 2: (3, -4)
 
 Example 3
-Input: @ints = (-3, -1, -2, -4)
+Input:  (-3, -1, -2, -4)
 Output: 10
 Pair 1: (-1, -2)
 Pair 2: (-3, -4)
 
 Example 4
-Input: @ints = (10, 2, 0, 5, 1)
+Input:  (10, 2, 0, 5, 1)
 Output: 50
 Pair 1: (10, 5)
 Pair 2: (0, 1)
@@ -52,14 +52,16 @@ Pair 2: (7, 8)
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+To solve this problem, I generate all possible "pairs of pairs" of numbers from the array such that all four
+numbers have unique indexes. I compute the difference of the products of the pairs, and keep track of the
+maximum difference seen, then return the maximum.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of 4-or-more integers, in proper Perl syntax, like so:
+single-quoted array of arrays of 4-or-more numbers, in proper Perl syntax, like so:
 
-./ch-1.pl '([3,82,-47,56,8],[3,7,3,7])'
+./ch-1.pl '([3,82,-47,56,8],[3.13,7.41,3.62,7.85])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -82,14 +84,11 @@ Output is to STDOUT and will be each input followed by the corresponding output.
             for    my $k (0..$n-1) {
                for my $l (0..$n-1) {
                   next if $i==$j || $i==$k || $i==$l
-                                 || $j==$k || $j==$l
-                                           || $k==$l;
-                  my $a = $$aref[$i];
-                  my $b = $$aref[$j];
-                  my $c = $$aref[$k];
-                  my $d = $$aref[$l];
-                  my $dist = abs($a*$b-$c*$d);
-                  if ($dist > $max) {$max = $dist}
+                       || $j==$k || $j==$l || $k==$l;
+                  my $a = $$aref[$i]; my $b = $$aref[$j];
+                  my $c = $$aref[$k]; my $d = $$aref[$l];
+                  my $diff = $a*$b - $c*$d;
+                  if ($diff > $max) {$max = $diff}
                }
             }
          }
@@ -100,11 +99,11 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # INPUTS:
 my @arrays = @ARGV ? eval($ARGV[0]) :
 (
-   [5, 9, 3, 4, 6],   # Expected output: 42
-   [1, -2, 3, -4],    # Expected output: 10
-   [-3, -1, -2, -4],  # Expected output: 10
-   [10, 2, 0, 5, 1],  # Expected output: 50
-   [7, 8, 9, 10, 10], # Expected output: 44
+   [5, 9, 3, 4, 6]   , # Expected output: 42
+   [1, -2, 3, -4]    , # Expected output: 10
+   [-3, -1, -2, -4]  , # Expected output: 10
+   [10, 2, 0, 5, 1]  , # Expected output: 50
+   [7, 8, 9, 10, 10] , # Expected output: 44
 );
 
 # ------------------------------------------------------------------------------------------------------------
