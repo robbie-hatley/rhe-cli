@@ -38,7 +38,8 @@ Output: 10
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-I'll keep track of "current" and and "max" altitudes reached after each change, then return max.
+To solve this problem, I keep track of "current" and and "max" altitudes reached after each altitude change,
+then return max.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
