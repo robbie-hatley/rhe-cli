@@ -88,11 +88,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
                   my $a = $$aref[$i]; my $b = $$aref[$j];
                   my $c = $$aref[$k]; my $d = $$aref[$l];
                   my $diff = $a*$b - $c*$d;
-                  if ($diff > $max) {$max = $diff}
-               }
-            }
-         }
-      }
+                  if ($diff > $max) {$max = $diff}}}}}
       $max}
 
 # ------------------------------------------------------------------------------------------------------------

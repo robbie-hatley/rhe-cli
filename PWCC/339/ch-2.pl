@@ -57,15 +57,16 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use v5.36;
    use utf8::all;
 
-   # What is the total altitude change?
-   sub total_altitude_change ($aref) {
-      my $cur_alt = 0;
-      my $max_alt = 0;
+   # What is the maximum
+   # altitude attained?
+   sub max_alt ($aref) {
+      my $cur = 0;
+      my $max = 0;
       for my $change (@$aref) {
-         $cur_alt += $change;
-         if ($cur_alt > $max_alt) {$max_alt = $cur_alt}
-      }
-      $max_alt}
+         $cur += $change;
+         if ($cur > $max) {
+            $max = $cur}}
+      $max}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
@@ -84,6 +85,6 @@ $"=', ';
 for my $aref (@arrays) {
    say '';
    say "Altitude changes = (@$aref)";
-   my $tac = total_altitude_change($aref);
+   my $tac = max_alt($aref);
    say "Maximum altitude = $tac";
 }
