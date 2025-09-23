@@ -81,8 +81,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
          if ( substr($s, $idx, 1) eq substr($s, $idx+1, 1) ) {
             substr $s, $idx, 2, '';
             $idx -= 2;
-            if ( $idx < -1 ) {
-               $idx = -1}}}
+            $idx = -1 if $idx < -1}}
       $s}
 
 # ------------------------------------------------------------------------------------------------------------

@@ -19,25 +19,25 @@ lowercase English letters. Write a script to check if all the
 numbers in the given string are strictly increasing from left
 to right.
 
-Example 1
-Input: $str = "The cat has 3 kittens 7 toys 10 beds"
+Example #1:
+Input:  "The cat has 3 kittens 7 toys 10 beds"
 Output: true
 Numbers 3, 7, 10 - strictly increasing.
 
-Example 2
-Input: $str = 'Alice bought 5 apples 2 oranges 9 bananas'
+Example #2:
+Input:  'Alice bought 5 apples 2 oranges 9 bananas'
 Output: false
 
-Example 3
-Input: $str = 'I ran 1 mile 2 days 3 weeks 4 months'
+Example #3:
+Input:  'I ran 1 mile 2 days 3 weeks 4 months'
 Output: true
 
-Example 4
-Input: $str = 'Bob has 10 cars 10 bikes'
+Example #4:
+Input:  'Bob has 10 cars 10 bikes'
 Output: false
 
-Example 5
-Input: $str = 'Zero is 0 one is 1 two is 2'
+Example #5:
+Input:  'Zero is 0 one is 1 two is 2'
 Output: true
 
 --------------------------------------------------------------------------------------------------------------
@@ -67,12 +67,10 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       my @t = split /\s+/, $s;
       my @n;
       for (@t) {
-         if ($_ =~ m/^\d+$/) {
-            push @n, 0+$_}}
-      for my $idx (0..$#n-1) {
-         return 'false' if $n[$idx] >= $n[$idx+1]}
-      return 'true';
-   }
+         push @n, 0+$_ if /^\d+$/}
+      for (0..$#n-1) {
+         return 'false' if $n[$_] >= $n[$_+1]}
+      return 'true'}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
@@ -105,5 +103,5 @@ $"=', ';
 for my $s (@strings) {
    say '';
    my $i = strictly_increasing($s);
-   say "Original string = \"$s\"";
-   say "Strictly increasing? $i"}
+   say "String = \"$s\"";
+   say "Numbers are strictly-increasing? $i"}
