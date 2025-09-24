@@ -5,11 +5,11 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solutions in Perl for The Weekly Challenge 340-1,
-written by Robbie Hatley on Mon Sep 22, 2025.
+written by Robbie Hatley on Tue Sep 23, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task 340-2: Duplicate Removals
+Task 340-1: Duplicate Removals
 Submitted by: Mohammad Sajid Anwar
 You are given a string consisting of lowercase English letters.
 Write a script to return the final string after all duplicate

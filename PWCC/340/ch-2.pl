@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solutions in Perl for The Weekly Challenge 340-2,
-written by Robbie Hatley on Mon Sep 22, 2025.
+written by Robbie Hatley on Tue Sep 23, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
