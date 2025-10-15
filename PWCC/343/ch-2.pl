@@ -19,7 +19,7 @@ Find the champion team - the one with most wins, or if there is
 no single such team, the strongest of the teams with most wins.
 (You may assume that there is a definite answer.)
 
-Example 1
+Example #1
 Input: @grid = (
                  [0, 1, 1],
                  [0, 0, 1],
@@ -30,7 +30,7 @@ Output: Team 0
 [0, 0, 1] => Team 1 beats Team 2
 [0, 0, 0] => Team 2 loses to all
 
-Example 2
+Example #2
 Input: @grid = (
                  [0, 1, 0, 0],
                  [0, 0, 0, 0],
@@ -43,7 +43,7 @@ Output: Team 3
 [1, 1, 0, 0] => Team 2 beats Team 0 and Team 1
 [1, 1, 1, 0] => Team 3 beats everyone
 
-Example 3
+Example #3
 Input: @grid = (
                  [0, 1, 0, 1],
                  [0, 0, 1, 1],
@@ -57,7 +57,7 @@ Output: Team 0
 [0, 0, 1, 0] => Team 3 beats team 2
 Of the teams with 2 wins, Team 0 beats team 1.
 
-Example 4
+Example #4
 Input: @grid = (
                  [0, 1, 1],
                  [0, 0, 0],
@@ -68,7 +68,7 @@ Output: Team 0
 [0, 0, 0] => Team 1 loses to Team 2
 [0, 1, 0] => Team 2 beats Team 1 but loses to Team 0
 
-Example 5
+Example #5
 Input: @grid = (
                  [0, 0, 0, 0, 0],
                  [1, 0, 0, 0, 0],
@@ -85,12 +85,14 @@ Output: Team 2
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+I'll start my making an array @w of wins. Then I'll make an array of scores @s with each team's score being
+its number of wins plus one billionth times r**r (where r is the rank of a team beaten) for each team beaten.
+Finally, I'll return the team with max score.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of arrays of arrays of ones and zeros, in proper Perl syntax, like so:
 
 ./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
 
