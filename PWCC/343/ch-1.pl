@@ -26,15 +26,15 @@ Example #5:  Input: (-2, 2, -4, 4, -1, 1)  Output: 1
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, I'll make an array which is an ascending numeric sort of the absolute values of the
-given numbers, then return the 0th element of that array.
+I store an ascending numeric sort of the absolute values of the given numbers in an array,
+then return the 0th element of that array.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of real numbers, in proper Perl syntax, like so:
+single-quoted array of arrays of real numbers, in proper Perl syntax, like so:
 
-./ch-1.pl '([38.1, 42.5, -17.4, 86.9],[7,6,5,-3])'
+./ch-1.pl '([38.1, 42.5, -17.4, 86.9], [7, 6, 5, 3, -4])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -49,8 +49,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    # Distance of closest-number-to-zero from zero:
    sub zero_friend ($aref) {
       my @a = sort {$a <=> $b} map {abs $_} @$aref;
-      $a[0];
-   }
+      $a[0]}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
@@ -70,5 +69,5 @@ for my $aref (@arrays) {
    say '';
    say "Numbers: (@$aref)";
    my $zf = zero_friend($aref);
-   say "Distance-to-zero of closest number to zero = $zf";
+   say "Distance-to-zero of closest-to-zero number = $zf";
 }
