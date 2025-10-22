@@ -45,7 +45,7 @@ Input:           [0, 1, 1],
                  [0, 1, 0],
 Expected output: Team 0
 
-Example #5
+Example #5:
 Input:           [0, 0, 0, 0, 0],
                  [1, 0, 0, 0, 0],
                  [1, 1, 0, 1, 1],
