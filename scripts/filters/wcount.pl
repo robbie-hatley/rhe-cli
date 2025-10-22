@@ -15,5 +15,10 @@
 use v5.36;
 use utf8::all;
 my $wcount = 0;
-while (<>) {chomp;next if 50 > length $_;$wcount += scalar split /\s+/, $_;}
+while (<>) {
+   chomp;
+   next if $_ =~ m/^$~+/;
+   next if 50 > length $_;
+   $wcount += scalar split /\s+/, $_;
+}
 say $wcount;

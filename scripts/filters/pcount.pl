@@ -15,5 +15,10 @@
 use v5.36;
 use utf8::all;
 my $pcount = 0;
-while (<>) {chomp;++$pcount if 50 <= length $_;}
+while (<>) {
+   chomp;
+   next if $_ =~ m/^$~+/;
+   next if 50 > length $_;
+   $pcount += 1;
+}
 say $pcount;
