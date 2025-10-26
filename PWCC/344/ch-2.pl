@@ -9,7 +9,7 @@ written by Robbie Hatley on Sat Oct 25, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task 344-2:Array Formation
+Task 344-2: Array Formation
 Submitted by: Mohammad Sajid Anwar
 You are given two lists: @source and @target. Write a script to
 see if you can build the exact @target by putting these smaller
