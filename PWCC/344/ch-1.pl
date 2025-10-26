@@ -95,8 +95,8 @@ for my $aref (@arrays) {
    say '';
    my @i = @{$aref->[0]};
    my $x = $aref->[1];
-   say "array form integer = (@i)";
-   say "std.  form integer = $x";
+   say "array   = (@i)";
+   say "integer = $x";
    my @s = sum($x, @i);
-   say "array form sum     = (@s)";
+   say "sum     = (@s)";
 }

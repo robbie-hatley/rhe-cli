@@ -6,7 +6,9 @@
 
 ##############################################################################################################
 # File name: "accent"
-# Program description: adds diacritical marks to all bare vowels.
+# Program description: Obfuscates words by adding diacritical marks to all bare vowels. This is especially
+# useful for re-naming icons for Plasma UI elements if one wants to use theme-invariant custom icons instead
+# of allowing Plasma's often-exasperating theme-based icon switching.
 # Written by Robbie Hatley.
 # Edit history:
 # Sat Feb 15, 2025: Wrote it.

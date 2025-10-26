@@ -5,19 +5,16 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solutions in Perl for The Weekly Challenge 344-2,
-written by Robbie Hatley on Wed Oct 22, 2025.
+written by Robbie Hatley on Sat Oct 25, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
 Task 344-2:Array Formation
 Submitted by: Mohammad Sajid Anwar
-
-You are given two list: @source and @target.
-
-Write a script to see if you can build the exact @target by
-putting these smaller lists from @source together in some order.
-You cannot break apart or change the order inside any of the
-smaller lists in @source.
+You are given two lists: @source and @target. Write a script to
+see if you can build the exact @target by putting these smaller
+lists from @source together in some order. You cannot break apart
+or change the order inside any of the smaller lists in @source.
 
 Example 1
 Input: @source = ([2,3], [1], [4])
@@ -85,28 +82,32 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    # Can a target be built from a source?
    sub can_build ($aref1, $aref2) {
-      my @src = @$aref1;      # Source.
-      my $ssz = scalar(@src); # Source size.
-      my @tar = @$aref2;      # Target.
-      my $tsz = scalar(@tar); # Target size.
+      my @src = @$aref1;         # Array  of source arrays.
+      my $ssz = scalar(@src);    # Number of source arrays.
+      my @tar = @$aref2;         # Target array.
+      my $tsz = scalar(@tar);    # Target size.
       for my $idx (0..$ssz-1) {
-         my @sa = @{$src[$idx]};
-         my $sas = scalar(@sa);
+         my @sa = @{$src[$idx]}; # Source array.
+         my $sas = scalar(@sa);  # Size of source array.
+         # Skip @sa if it's bigger than @tar:
          next if ($sas > $tsz);
+         # Get the first $sas elements of @tar:
          my @prefix = @tar[0..$sas-1];
+         # Skip to next source array if @sa doesn't match @prefix:
          next if (!is_equal(\@sa,\@prefix));
          # If we get to here, sub-array matches beginning of target.
          # If this is a total match, return 'true':
          return 'true' if $sas == $tsz;
-         # If we get to here, it's a partial match.
-         # Call this function again, recursively:
+         # If we get to here, it's a partial match. Call this function again,
+         # recursively, and send it the unused portions of @src and @trg:
          my @psrc = (@src[0..$idx-1], @src[$idx+1..$ssz-1]);
          my @ptrg = (@tar[$sas..$tsz-1]);
          my $result = can_build(\@psrc,\@ptrg);
-         return 'true' if 'true' eq $result;
-      }
-      return 'false';
-   }
+         # If that recursive function call returned 'true', return 'true':
+         return 'true' if 'true' eq $result}
+      # If we get to here, no way exists to build @src from @tar,
+      # so return 'false':
+      return 'false'}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
