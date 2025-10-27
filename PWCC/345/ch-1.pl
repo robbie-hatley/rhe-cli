@@ -19,7 +19,7 @@ positions.
 Example #1:  Input: (1, 3, 2)              Output: (1)
 Example #2:  Input: (2, 4, 6, 5, 3)        Output: (2)
 Example #3:  Input: (1, 2, 3, 2, 4, 1)     Output: (2, 4)
-Example #4:  Input: (5, 3, 1)              Output: (0)
+Example #4:  Input: (5, 3, 1)              Output: ()
 Example #5:  Input: (1, 5, 1, 5, 1, 5, 1)  Output: (1, 3, 5)
 
 --------------------------------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ my @arrays = @ARGV ? eval($ARGV[0]) :
    [1, 3, 2]             , # Expected output: (1)
    [2, 4, 6, 5, 3]       , # Expected output: (2)
    [1, 2, 3, 2, 4, 1]    , # Expected output: (2, 4)
-   [5, 3, 1]             , # Expected output: (0)
+   [5, 3, 1]             , # Expected output: ()
    [1, 5, 1, 5, 1, 5, 1] , # Expected output: (1, 3, 5)
 );
 
