@@ -44,11 +44,13 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use v5.36;
    use utf8::all;
 
-   # What are the peak positions of an array of numbers?
+   # What are the peak positions
+   # of an array of numbers?
    sub peak_positions ($aref) {
       my @pp;
       for (1..$#$aref-1) {
-         if ($$aref[$_]>$$aref[$_-1]&&$$aref[$_]>$$aref[$_+1]) {
+         if ($$aref[$_]>$$aref[$_-1]
+           &&$$aref[$_]>$$aref[$_+1]) {
             push @pp, $_}}
       @pp}
 
