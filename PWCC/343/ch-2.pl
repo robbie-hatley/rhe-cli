@@ -108,49 +108,41 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # INPUTS:
 my @arrays = @ARGV ? eval($ARGV[0]) :
 (
-   # Example #1 input:
+   # Inputs:             Expected outputs:
    [
-      [0, 1, 1],
+      [0, 1, 1],       # Team 0
       [0, 0, 1],
       [0, 0, 0],
    ],
-   # Expected output: Team 0
 
-   # Example #2 input:
    [
       [0, 1, 0, 0],
       [0, 0, 0, 0],
       [1, 1, 0, 0],
-      [1, 1, 1, 0],
+      [1, 1, 1, 0],    # Team 3
    ],
-   # Expected output: Team 3
 
-   # Example #3 input:
    [
-      [0, 1, 0, 1],
+      [0, 1, 0, 1],    # Team 0
       [0, 0, 1, 1],
       [1, 0, 0, 0],
       [0, 0, 1, 0],
    ],
-   # Expected output: Team 0
 
-   # Example #4 input:
    [
-      [0, 1, 1],
+      [0, 1, 1],       # Team 0
       [0, 0, 0],
       [0, 1, 0],
    ],
-   # Expected output: Team 0
 
-   # Example #5 input:
    [
       [0, 0, 0, 0, 0],
       [1, 0, 0, 0, 0],
-      [1, 1, 0, 1, 1],
+      [1, 1, 0, 1, 1], # Team 2
       [1, 1, 0, 0, 0],
       [1, 1, 0, 1, 0],
    ],
-   # Expected output: Team 2
+
 );
 
 # ------------------------------------------------------------------------------------------------------------

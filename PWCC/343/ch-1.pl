@@ -13,15 +13,10 @@ Task 343-1: Zero Friend
 Submitted by: Mohammad Sajid Anwar
 You are given a list of numbers. Find the number that is closest
 to zero and return its distance to zero.
-
 Example #1:  Input: (4, 2, -1, 3, -2)      Output: 1
-
 Example #2:  Input: (-5, 5, -3, 3, -1, 1)  Output: 1
-
 Example #3:  Input: (7, -3, 0, 2, -8)      Output: 0
-
 Example #4:  Input: (-2, -5, -1, -8)       Output: 1
-
 Example #5:  Input: (-2, 2, -4, 4, -1, 1)  Output: 1
 
 --------------------------------------------------------------------------------------------------------------
@@ -48,13 +43,14 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    # Distance of closest-number-to-zero from zero:
    sub zero_friend ($aref) {
-      my @a = sort {$a <=> $b} map {abs $_} @$aref;
+      my @a = sort {$a <=> $b} map {abs($_-0)} @$aref;
       $a[0]}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
 my @arrays = @ARGV ? eval($ARGV[0]) :
 (
+   # Input:                 Expected output:
    [4, 2, -1, 3, -2],     # 1
    [-5, 5, -3, 3, -1, 1], # 1
    [7, -3, 0, 2, -8],     # 0
