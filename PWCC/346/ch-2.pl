@@ -38,7 +38,10 @@ Output: ("1+0*0+1", "1+0+0+1", "1+0-0+1", "1-0*0+1", "1-0+0+1", "1-0-0+1")
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+I'll approach this problem as follows:
+1. First make a list of all partitions of the string.
+2. For each partition which contains only valid non-negative integers, insert all possible combinations of
+   operators, and accumulate those combinations which yield the target value.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
@@ -54,27 +57,56 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
+   use v5.36;
+   use utf8::all;
 
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   # Return a list of all partitions of a string:
+   sub parts ($str) {
+      my $len = length($str);
+      my @parts;
+      for my $cutmask (0 .. 2**($len - 1) - 1) {
+         my @partition;
+         my $chunk = substr($str, 0, 1);
+         for my $i (1 .. $len - 1) {
+            if ( $cutmask & (1 << ($len - 1 - $i)) ) {
+               push @partition, $chunk;
+               $chunk = ''}
+            $chunk .= substr($str, $i, 1)}
+         push @partition, $chunk;
+         push @parts, \@partition}
+      @parts}
+
+   # Return those combinations of partitions and operations
+   # which yield desired target
+   sub accumulate_targets ( $s, $t ) {
+      my @e = ();
+      my @parts = parts($s);
+      @e;
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) :
+(
+   ["123",   6],
+   ["105",   5],
+   ["232",   8],
+   ["1234", 10],
+   ["1001",  2],
+);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
-for my $aref (@arrays) {
+foreach my $aref (@arrays) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   my $s = $aref->[0];
+   my $t = $aref->[1];
+   say "String = \"$s\"; target = \"$t\".";
+   my @partitions = parts $s;
+   foreach my $partition (@partitions) {
+      my @chunks = @$partition;
+      say "Chunks: (@chunks)";
+   }
+   say "This program is not fully implemented yet.";
 }

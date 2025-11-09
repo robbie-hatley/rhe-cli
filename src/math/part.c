@@ -15,15 +15,16 @@ Hence P(5)=7.
 Note: The algorithm for this program is taken from the "Recurrence Relations" section of this web site:
 https://en.wikipedia.org/wiki/Partition_function_(number_theory)
 
-Note: "partitions" is nearly identical to my program "part", except that it prints P(i) for ALL values of i from 1
-through the given argument n. "partitions" is a trivial extention of "part", because "part" already calculates all of
-those numbers anyone, but only prints P(n).
+Note: "partitions" is nearly identical to my program "part", except that it prints P(i) for ALL values of i
+from 1 through the given argument n. "partitions" is a trivial extension of "part", because "part" already
+calculates all of those numbers anyway, but only prints P(n).
 
 Written by Robbie Hatley on Wednesday April 4, 2018.
 
 Edit History:
 2018-04-04: Wrote it.
 2022-07-16: Dramatically-improved comments.
+2025-11-06: Minor tweaks to comments.
 */
 
 #include <stdio.h>
