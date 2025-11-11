@@ -40,14 +40,14 @@ Output: "2025-12-31"
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+To solve this problem, I use a "month map" to map month names back to numbers.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of double-quoted strings, in proper Perl syntax, like so:
 
-./ch-1.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-1.pl '("37th Jan 2027", "18th Aug 2456")'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -60,21 +60,17 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use utf8::all;
 
    # Convert date format:
-   sub convert ( $d1 ) {
-      my ($d1, $m1, $y1) = split /\s+/, $d1;
+   sub format_date ( $s ) {
+      my ($d1, $m1, $y) = split /\s+/, $s;
       my $d2 = $d1 =~ s/\D+//gr;
       if (length($d2) < 2) {$d2 .= '0'}
       my %mth_map =
-      (
-         'Jan' => '01', 'Feb' => '02', 'Mar' => '03',
-         'Apr' => '04', 'May' => '05', 'Jun' => '06',
-         'Jul' => '07', 'Aug' => '08', 'Sep' => '09',
-         'Oct' => '10', 'Nov' =>,'11', 'Dec' => '12'
-      );
+      ('Jan' => '01', 'Feb' => '02', 'Mar' => '03',
+       'Apr' => '04', 'May' => '05', 'Jun' => '06',
+       'Jul' => '07', 'Aug' => '08', 'Sep' => '09',
+       'Oct' => '10', 'Nov' =>,'11', 'Dec' => '12');
       my $m2 = $mth_map{$m1};
-      my $y2 = $y1;
-      $y2.'-'.$m2.'-'.$d2
-   }
+      $y.'-'.$m2.'-'.$d2}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
@@ -87,7 +83,7 @@ my @dates =  @ARGV ? eval($ARGV[0])
 $"=', ';
 for my $d1 (@dates) {
    say '';
-   say "Date v1 = $d1";
-   my $d2 = convert $d1;
-   say "Date v2 = $d2";
+   say "Long  date = $d1";
+   my $d2 = format_date $d1;
+   say "Short date = $d2";
 }
