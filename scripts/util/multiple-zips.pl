@@ -5,8 +5,8 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# unopened-zip.pl
-# Finds directories with exactly 1 non-hidden regular file which is a zip file.
+# multiple-zips.pl
+# Finds directories with multiple zip files.
 # Written by Robbie Hatley.
 # Edit history:
 # Fri Sep 19, 2025: Wrote it.
@@ -151,17 +151,13 @@ sub curdire {
    # Get current working directory:
    my $cwd = cwd;
 
-   # Get list of file records for non-hidden regular files in this directory:
-   my @files = @{GetFiles($cwd, 'F', '^[^.]')};
+   # Get list of file records for regular files with names ending in ".zip" in this directory:
+   my @files = @{GetFiles($cwd, 'F', '\.zip$')};
    my $n = scalar(@files);
 
-   # If size of list is 1:
-   if ( 1 == scalar @files ) {
-      # If that one file has extension ".zip":
-      if ( $files[0]->{Name} =~ m/\.zip$/ ) {
-         # Print the path of the current directory:
-         say $cwd;
-      }
+   # If size of list is > 1, print full path of current directory:
+   if ( scalar(@files) > 1 ) {
+      say $cwd;
    }
 
    # Return success code 1 to caller:
@@ -179,8 +175,8 @@ sub help {
    Introduction:
 
    Welcome to "$pname". This program prints the paths of all
-   subdirectories of the current directory which contain exactly 1 non-hidden
-   regular file which is a zip file.
+   subdirectories of the current directory which contain exactly multiple zip
+   files.
 
    -------------------------------------------------------------------------------
    Command lines:
