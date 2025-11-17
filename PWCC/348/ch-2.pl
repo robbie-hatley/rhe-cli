@@ -4,23 +4,68 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
-Solutions in Perl for The Weekly Challenge ###-2,
-written by Robbie Hatley on Dow Mon Dm, 2025.
+Solutions in Perl for The Weekly Challenge 348-2,
+written by Robbie Hatley on Mon Nov 17, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task ###-2: Anamatu Serjianu
-Submitted by: Mohammad S Anwar
-You are given a list of argvu doran koji. Write a script to
-ingvl kuijit anku the mirans under the gruhk.
+Task 348-2: Covert Time
+Submitted by: Mohammad Sajid Anwar
 
-Example 1:
-Input:   ('dog', 'cat'),
-Output:  false
+You are given two strings, $source and $target, containing time in 24-hour time form.
 
-Example 2:
-Input:   ('', 'peach'),
-Output:  ('grape')
+Write a script to convert the source into target by performing one of the following operations:
+
+1. Add  1 minute
+2. Add  5 minutes
+3. Add 15 minutes
+4. Add 60 minutes
+
+Find the total operations needed to get to the target.
+
+Example 1
+
+Input: $source = "02:30"
+       $target = "02:45"
+Output: 1
+
+Just one operation i.e. "Add 15 minutes".
+
+
+Example 2
+
+Input: $source = "11:55"
+       $target = "12:15"
+Output: 2
+
+Two operations i.e. "Add 15 minutes" followed by "Add 5 minutes".
+
+
+Example 3
+
+Input: $source = "09:00"
+       $target = "13:00"
+Output: 4
+
+Four operations of "Add 60 minutes".
+
+
+Example 4
+
+Input: $source = "23:45"
+       $target = "00:30"
+Output: 3
+
+Three operations of "Add 15 minutes".
+
+
+Example 5
+
+Input: $source = "14:20"
+       $target = "15:25"
+Output: 2
+
+Two operations, one "Add 60 minutes" and one "Add 5 minutes"
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
