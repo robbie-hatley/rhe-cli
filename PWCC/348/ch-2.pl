@@ -56,11 +56,11 @@ To solve this problem, I'll use this procedure:
 1. Convert both times to minutes ($source -> $s, $target -> $t).
 2. while ( $t < $s ) {$t += 1440}
 3. my $ops = 0;
-5. while ( $t - $s >= 60 ) {$s += 60; ++$ops}
-6. while ( $t - $s >= 15 ) {$s += 15; ++$ops}
-7. while ( $t - $s >=  5 ) {$s +=  5; ++$ops}
-8. while ( $t - $s >=  1 ) {$s +=  1; ++$ops}
-9. return $ops
+4. while ( $t - $s >= 60 ) {$s += 60; ++$ops}
+5. while ( $t - $s >= 15 ) {$s += 15; ++$ops}
+6. while ( $t - $s >=  5 ) {$s +=  5; ++$ops}
+7. while ( $t - $s >=  1 ) {$s +=  1; ++$ops}
+8. return $ops
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
