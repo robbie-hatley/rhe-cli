@@ -5,12 +5,12 @@ use utf8::all;
 my $user  = getlogin;
 my @lines = ();
 my @pics  = ();
-open FH, '<', "/home/$user/.config/plasmarc" or die "Couldn't open \"plasmarc\"!\n";
-while(<FH>) {push @lines, $_}
-close FH;
+open FH, '<', "/home/$user/.config/plasmarc" or die "Couldn't open plasmarc for reading!\n";
+while(<FH>) {push @lines, $_                 or die "Couldn't read from plasmarc!\n"}
+close FH                                     or die "Couldn't close plasmarc!\n";
 for ( my $idx = 0 ; $idx <= $#lines ; ++$idx ) {
    if ( $lines[$idx] =~ m#^usersWallpapers=# ) {
-      @pics = split ",", $lines[$idx];
+      @pics = split /(?<!\\\\),/, $lines[$idx];
       $pics[0] =~ s#^usersWallpapers=##;
       last;
    }
