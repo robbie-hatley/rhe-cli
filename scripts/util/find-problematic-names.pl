@@ -214,7 +214,7 @@ sub curdire {
 
 # Process current file:
 sub curfile ($path) {
-   if ( get_name_from_path($path) =~ m/[\[\](){}<>`'"^\$!#&*:;=?^~\\|\/\pC]/ ) {
+   if ( get_name_from_path($path) =~ m/[\[\](){}<>`'"^\$!#&*:;=?^~\\|\/\s\pC]/ ) {
       ++$probcount;
       say $path;
    }
