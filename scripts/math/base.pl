@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 # TITLE AND ATTRIBUTION:
-# base
+# base.pl
 # Converts positive integers from one base to another.
 # "From" and "To" bases must be in the 2-62 range.
 # Written by Robbie Hatley on Sat Aug 24, 2024.
@@ -10,6 +10,9 @@
 # Input is via @ARGV. First arg is "from" base (in decimal), second arg is
 # "to" base (in decimal), and all subsequent args are integers to be converted.
 # Output is to STDIO and will give "from" base, "to" base, input, and output.
+
+use v5.16;
+use bigint;
 
 sub help {
    warn ((<<'   END_OF_HELP') =~ s/^   //gmr);
@@ -35,46 +38,48 @@ for (@ARGV) {
    and warn "\nError: invalid characters in one-or-more arguments.\n" and help and exit 666;
 }
 
-my $base1 = shift @ARGV;
-$base1 !~ m/^[1-9][0-9]*$/ || $base1 < 2 || $base1 > 62
+my $arg1 = shift @ARGV;
+$arg1 !~ m/^[1-9][0-9]*$/ || $arg1 < 2 || $arg1 > 62
 and warn "\nError: First  base must be decimal integer 2-62.\n" and help and exit 666;
+my $base1 = 0 + $arg1;
 
-my $base2 = shift @ARGV;
-$base2 !~ m/^[1-9][0-9]*$/ || $base2 < 2 || $base2 > 62
+my $arg2 = shift @ARGV;
+$arg2 !~ m/^[1-9][0-9]*$/ || $arg2 < 2 || $arg2 > 62
 and warn "Error: second base must be decimal integer 2-62.\n" and help and exit 666;
+my $base2 = 0 + $arg2;
 
 my %value =
 (
    '0' =>  0, '1' =>  1, '2' =>  2, '3' =>  3, '4' =>  4, '5' =>  5,
-   '6' =>  6, '7' =>  7, '8' =>  8, '9' =>  9, 'A' => 10, 'B' => 11,
-   'C' => 12, 'D' => 13, 'E' => 14, 'F' => 15, 'G' => 16, 'H' => 17,
-   'I' => 18, 'J' => 19, 'K' => 20, 'L' => 21, 'M' => 22, 'N' => 23,
-   'O' => 24, 'P' => 25, 'Q' => 26, 'R' => 27, 'S' => 28, 'T' => 29,
-   'U' => 30, 'V' => 31, 'W' => 32, 'X' => 33, 'Y' => 34, 'Z' => 35,
-   'a' => 36, 'b' => 37, 'c' => 38, 'd' => 39, 'e' => 40, 'f' => 41,
-   'g' => 42, 'h' => 43, 'i' => 44, 'j' => 45, 'k' => 46, 'l' => 47,
-   'm' => 48, 'n' => 49, 'o' => 50, 'p' => 51, 'q' => 52, 'r' => 53,
-   's' => 54, 't' => 55, 'u' => 56, 'v' => 57, 'w' => 58, 'x' => 59,
-   'y' => 60, 'z' => 61,
+   '6' =>  6, '7' =>  7, '8' =>  8, '9' =>  9, 'a' => 10, 'b' => 11,
+   'c' => 12, 'd' => 13, 'e' => 14, 'f' => 15, 'g' => 16, 'h' => 17,
+   'i' => 18, 'j' => 19, 'k' => 20, 'l' => 21, 'm' => 22, 'n' => 23,
+   'o' => 24, 'p' => 25, 'q' => 26, 'r' => 27, 's' => 28, 't' => 29,
+   'u' => 30, 'v' => 31, 'w' => 32, 'x' => 33, 'y' => 34, 'z' => 35,
+   'A' => 36, 'B' => 37, 'C' => 38, 'D' => 39, 'E' => 40, 'F' => 41,
+   'G' => 42, 'H' => 43, 'I' => 44, 'J' => 45, 'K' => 46, 'L' => 47,
+   'M' => 48, 'N' => 49, 'O' => 50, 'P' => 51, 'Q' => 52, 'R' => 53,
+   'S' => 54, 'T' => 55, 'U' => 56, 'V' => 57, 'W' => 58, 'X' => 59,
+   'Y' => 60, 'Z' => 61,
 );
 
 my %repre =
 (
     0 => '0',  1 => '1',  2 => '2',  3 => '3',  4 => '4',  5 => '5',
-    6 => '6',  7 => '7',  8 => '8',  9 => '9', 10 => 'A', 11 => 'B',
-   12 => 'C', 13 => 'D', 14 => 'E', 15 => 'F', 16 => 'G', 17 => 'H',
-   18 => 'I', 19 => 'J', 20 => 'K', 21 => 'L', 22 => 'M', 23 => 'N',
-   24 => 'O', 25 => 'P', 26 => 'Q', 27 => 'R', 28 => 'S', 29 => 'T',
-   30 => 'U', 31 => 'V', 32 => 'W', 33 => 'X', 34 => 'Y', 35 => 'Z',
-   36 => 'a', 37 => 'b', 38 => 'c', 39 => 'd', 40 => 'e', 41 => 'f',
-   42 => 'g', 43 => 'h', 44 => 'i', 45 => 'j', 46 => 'k', 47 => 'l',
-   48 => 'm', 49 => 'n', 50 => 'o', 51 => 'p', 52 => 'q', 53 => 'r',
-   54 => 's', 55 => 't', 56 => 'u', 57 => 'v', 58 => 'w', 59 => 'x',
-   60 => 'y', 61 => 'z',
+    6 => '6',  7 => '7',  8 => '8',  9 => '9', 10 => 'a', 11 => 'b',
+   12 => 'c', 13 => 'd', 14 => 'e', 15 => 'f', 16 => 'g', 17 => 'h',
+   18 => 'i', 19 => 'j', 20 => 'k', 21 => 'l', 22 => 'm', 23 => 'n',
+   24 => 'o', 25 => 'p', 26 => 'q', 27 => 'r', 28 => 's', 29 => 't',
+   30 => 'u', 31 => 'v', 32 => 'w', 33 => 'x', 34 => 'y', 35 => 'z',
+   36 => 'A', 37 => 'B', 38 => 'C', 39 => 'D', 40 => 'E', 41 => 'F',
+   42 => 'G', 43 => 'H', 44 => 'I', 45 => 'J', 46 => 'K', 47 => 'L',
+   48 => 'M', 49 => 'N', 50 => 'O', 51 => 'P', 52 => 'Q', 53 => 'R',
+   54 => 'S', 55 => 'T', 56 => 'U', 57 => 'V', 58 => 'W', 59 => 'X',
+   60 => 'Y', 61 => 'Z',
 );
 
 INPUT: for my $input (@ARGV) {
-   my $value = 0;
+   my $val = 0;
    my @digits = reverse split '', $input;
    for my $digit (@digits) {
       !defined($value{$digit}) || $value{$digit} > $base1 - 1
@@ -82,12 +87,14 @@ INPUT: for my $input (@ARGV) {
       and next INPUT;
    }
    for my $idx (0..$#digits) {
-      $value += $value{$digits[$idx]} * $base1 ** $idx;
+      $val += $value{$digits[$idx]} * $base1 ** $idx;
    }
    my $output = '';
-   my $width = int(log($value)/log($base2));
-   for my $idx (0..$width) {
-      $output .= $repre{int($value/$base2**($width-$idx))%$base2};
+   my $width = int(log($val)/log($base2));
+   my $idx = 0;
+   for $idx (0..$width) {
+      $output .= $repre{int($val/$base2**($width-$idx))%$base2};
    }
-   print "Base $base1 number $input converted to base $base2 = $output\n";
+   $output =~ s/^0+//;
+   print $output;
 }

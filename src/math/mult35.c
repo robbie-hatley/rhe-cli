@@ -1,5 +1,5 @@
-/* This is a 79-character-wide ASCII C source-code text file.                */
-/*=======|=========|=========|=========|=========|=========|=========|=======*/
+/* This is a 110-character-wide ASCII C source-code text file.                                              */
+/*=======|=========|=========|=========|=========|=========|=========|=========|=========|=========|======= */
 
 /************************************************************************************************************\
  * Program name:  mult35
@@ -8,7 +8,7 @@
  * Source for:    mult35.exe
  * Author:        Robbie Hatley
  * Date written:  2013-05-06
- * Edited:        
+ * Edited:        2025-11-27
  * Inputs:        None.
  * Outputs:       Prints sum of all natural numbers under 1000 which are multiples of 3 or 5.
  * To make:       Compile with GCC
@@ -33,4 +33,3 @@ int main(void)
    printf("Sum of all multiples of 3 and 5 under 1000 = %8ld\n", Accum);
    return 0;
 }
-

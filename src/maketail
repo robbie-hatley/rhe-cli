@@ -170,20 +170,20 @@ WX := -Wall -Wextra -Wfloat-equal -Wshadow -Wcast-qual \
 # standard selection, becuase it's already defaulting to gnu11 & gnu++14
 # as of Feb 7, 2020:
 ifdef DEBUG
-  CCE := -finput-charset=UTF-8 -fextended-identifiers -g -Og -std=gnu17   -fsanitize=address
-  CXE := -finput-charset=UTF-8 -fextended-identifiers -g -Og -std=gnu++17 -fsanitize=address
+  CCE := -finput-charset=UTF-8 -fextended-identifiers -g -Og -std=gnu23   -fsanitize=address
+  CXE := -finput-charset=UTF-8 -fextended-identifiers -g -Og -std=gnu++23 -fsanitize=address
 else
-  CCE := -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu17
-  CXE := -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++17
+  CCE := -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu23
+  CXE := -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++23
 endif
 
 # C & C++ Library compilation flags (DON'T strip symbol table, compile to object, DON'T link):
 ifdef DEBUG
-  CCL := -finput-charset=UTF-8 -std=gnu17   -c -g -Og
-  CXL := -finput-charset=UTF-8 -std=gnu++17 -c -g -Og
+  CCL := -finput-charset=UTF-8 -std=gnu23   -c -g -Og
+  CXL := -finput-charset=UTF-8 -std=gnu++23 -c -g -Og
 else
-  CCL := -finput-charset=UTF-8 -std=gnu17   -c -Ofast
-  CXL := -finput-charset=UTF-8 -std=gnu++17 -c -O2
+  CCL := -finput-charset=UTF-8 -std=gnu23   -c -Ofast
+  CXL := -finput-charset=UTF-8 -std=gnu++23 -c -O2
 endif
 
 # C & C++ Assembly compilation flags (compile to assembly language, don't run assembler,
