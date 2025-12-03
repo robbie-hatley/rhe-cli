@@ -66,17 +66,18 @@ one shuffle pair:
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, I'll make three subs: "str_perms ( $s )" (returning all permutations of a string),
-"witness ( $x , $y )" (returning integer $k such that $x*$k == $y, or 0 if no such integer exists),
-and "partners ( $i , $j, $c )" (returning all integers in the range $i..$j which are part of $c-or-more
-"shuffle pairs".
+I tried the approach of calculating all permutations of all numbers, but the run times were in the weeks, so I
+had to abandon that approach.
+
+Instead, I now use the method of "digit signatures" (the digits in ascenting order). The decimal expansions
+of two positive integers will be permutations of each other if-and-only-if they have the same signature.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
 single-quoted array of arrays of 3 positive integers, with the second integer greater than the first within
 each inner array, in proper Perl syntax, like so:
-./ch-2.pl '([3752, 8754, 3], [187956, 497856, 4])'
+./ch-2.pl '([125, 125_000, 3], [125_000, 1_250_000, 2])'
 Within each inner array, first number is "from", second number is "to", and third number is "count", according
 to the definitions of those terms given in this problem's description (see "PROBLEM DESCRIPTION:" above).
 
@@ -89,35 +90,10 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    use v5.36;
    use utf8::all;
-   #use Math::Combinatorics;
 
-   # Return all permutations of a string which do not start with the character '0':
-   sub str_perms_niz ( $s ) {
-      state $lor = 0;                            # Level Of Recursion
-      my $n = length $s;                         # Length of string.
-      my @p = ();                                # Partial permutations.
-      if (1==$n) {push @p, $s;return @p}         # Single-character string has exactly 1 permutation.
-      for my $idx (0..$n-1) {                    # For each possible initial character.
-         if (0 == $lor) {                        # If we're at top level of recursion,
-            next if '0' eq substr $s, $idx, 1}   # skip this inital digit if its '0'.
-         my $rem = $s;                           # Copy of $s from which current character will be removed.
-         my $ini = substr $rem, $idx, 1, '';     # Store initial character in $ini, remnant in $rem.
-         ++$lor;                                 # About to recurse.
-         my @ppp = str_perms_niz($rem);          # Permutations of $rem.
-         --$lor;                                 # Returned from recursion.
-         my @pp = map {"$ini$_"} @ppp;           # All partials starting with $ini.
-         push @p, @pp}                           # Add partial partials to partitals.
-      return @p}                                 # Return partial permutations (complete if at top level).
-
-=pod
-
-   # Return all permutations of a string:
-   sub str_perms ( $s ) {
-      my @a = split //, $s;                      # Array form of integer.
-      my @p = permute(@a);                       # Permutations of array.
-      return map {join '', @$_} @p}              # Permutations of string.
-
-=cut
+   # What is the digit signature of the decimal expansion of a positive integer?
+   sub sig ( $x ) {
+      join '', sort split //, $x}
 
    # What integers $x exist from $i through $j such that $x is a member of at least $c shuffle pairs?
    sub partners ( $i , $j , $c ) {
@@ -126,15 +102,10 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       $c = 0 + $c;                           # Strip "_" marks and leading zeros from integers.
       my @p = ();                            # Integers range $i..$j with $c-or-more shuffle-pair partners.
       for my $x ( $i .. $j ) {               # For each integer in the range $i..$j:
-         say "x = $x" if 0==$x%1000;
+         my $s = sig($x);                    # Digit signature of $x.
          my $cnt = 0;                        # How many partners does $x have?
-         my @sp = str_perms_niz($x);         # Get all string permutations of $x not starting with '0'.
-         for my $p (@sp) {                   # For each such permutation:
-            next if '0' eq substr $p, 0, 1;  # Skip this initial character if it's '0'.
-            next if $p == $x;                # Skip $p if it's the same as $x.
-            next if $p>0.5*$x && $p<2.0*$x;  # Witness integer must be 2,3,4,5...
-            if ($p<$x) {++$cnt if 0==$x%$p}  # Is $x divisible by $p? (in case where $p<$x).
-            else       {++$cnt if 0==$p%$x}} # Is $p divisible by $x? (in case where $x<$p).
+         for my $f (2..9) {                  # For each possible factor,
+            ++$cnt if sig($x) eq sig($f*$x)} # increment counter if the signatures match.
          push @p, $x if $cnt >= $c}          # Accumulate $x in @p if $cnt is $c or more.
       return @p}                             # Return list of integers in $i..$j with $c-or-more partners.
 
@@ -158,5 +129,5 @@ for my $aref (@arrays) {
     my $j = $aref->[1];
     my $c = $aref->[2];
     my $p = partners($i, $j, $c);
-    say "i = $i  j = $j  c = $c  partners = $p";
+    say "Number of numbers from $i through $j which have $c or more shuffle-pair partners = $p";
 }

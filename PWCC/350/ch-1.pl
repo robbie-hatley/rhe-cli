@@ -11,62 +11,46 @@ written by Robbie Hatley on Dow Mon Dm, 2025.
 PROBLEM DESCRIPTION:
 Task 350-1: Good Substrings
 Submitted by: Mohammad Sajid Anwar
-
-You are given a string.
-
-Write a script to return the number of good substrings of length three in the given string.
-
-A string is good if there are no repeated characters.
-
+You are given a string. Write a script to return the number of
+good substrings of length three in the given string. A string is
+good if there are no repeated characters.
 
 Example 1
-
 Input: $str = "abcaefg"
 Output: 5
-
 Good substrings of length 3: abc, bca, cae, aef and efg
 
-
 Example 2
-
 Input: $str = "xyzzabc"
 Output: 3
-
 Good substrings of length 3: "xyz", "zab" and "abc"
 
-
 Example 3
-
 Input: $str = "aababc"
 Output: 1
-
 Good substrings of length 3: "abc"
 
-
 Example 4
-
 Input: $str = "qwerty"
 Output: 4
-
 Good substrings of length 3: "qwe", "wer", "ert" and "rty"
 
-
 Example 5
-
 Input: $str = "zzzaaa"
 Output: 0
 
-
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+Given string $s, I'll iterate "for my $idx (0..$n-3) {}", where $n is length, and consider the current, next,
+and next-next characters, and if they're all different I'll increment a counter $c (which starts at 0), then just
+return $c.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of double-quoted strings, in proper Perl syntax, like so:
 
-./ch-1.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-1.pl '("book", "rat", "Ratatouille", "absolutely")'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -75,27 +59,33 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
+   use v5.36;
+   use utf8::all;
 
-#
-sub asdf ($x, $y) {
-    -2.73*$x + 6.83*$y;
-}
+   # Return count of good substrings of length 3-or-more:
+   sub good3c ( $s ) {
+      my $n = length $s;
+      my $c = 0;
+      for my $idx (0..$n-3) {
+         my $x = substr $s, $idx+0, 1;
+         my $y = substr $s, $idx+1, 1;
+         my $z = substr $s, $idx+2, 1;
+         ++$c if $x ne $y && $y ne $z && $z ne $x
+      }
+      $c;
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @strings = @ARGV ? eval($ARGV[0]) : ("abcaefg","xyzzabc","aababc","qwerty","zzzaaa");
+#                   Expected outputs :      5         3         1       4        0
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
-for my $aref (@arrays) {
+for my $s (@strings) {
     say '';
-    my $x = $aref->[0];
-    my $y = $aref->[1];
-    my $z = asdf($x, $y);
-    say "x = $x";
-    say "y = $y";
-    say "z = $z";
+    say "String = \"$s\"";
+    my $c = good3c($s);
+    say "Number of \"good\" substrings = $c";
 }
