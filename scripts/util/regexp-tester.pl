@@ -23,6 +23,8 @@
 # Thu Aug 15, 2024: -C63; got rid of unnecessary "use" statements.
 # Sat Mar 15, 2025: Modernized. Added debug. Removed "use RH::Util".
 # Sun Apr 13, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl".
+# Tue Dec 02, 2025: Fleshed-out help so that it now covers all available options (was missing a bunch).
+#                   Also added options to "chomp" or "don't chomp" and made "chomp" the default.
 ##############################################################################################################
 
 use v5.36;
@@ -54,6 +56,7 @@ my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
 my $Scalar    = 0         ; # Use scalar input?         bool      No, use list input.
+my $Chomp     = 1         ; # Chomp input lines?        bool      Chomp.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -140,6 +143,8 @@ sub argv {
       /^-$s*v/ || /^--verbose$/ and $Verbose = 2 ;
       /^-$s*l/ || /^--list$/    and $Scalar  = 0 ; # DEFAULT
       /^-$s*s/ || /^--scalar$/  and $Scalar  = 1 ;
+      /^-$s*c/ || /^--chomp$/   and $Chomp   = 1 ; # DEFAULT
+      /^-$s*n/ || /^--nochomp$/ and $Chomp   = 0 ;
    }
 
    # No processing needs to be done to @Args; it will be construed as a list of RegExps to be tested.
@@ -152,7 +157,9 @@ sub test {
    if ($Debug) {
       say STDERR "Just entered test.";
    }
-   my @input_lines = <STDIN>;
+   my @input_lines;
+   $Chomp and @input_lines = map {chomp;$_} <STDIN>
+          or  @input_lines = <STDIN>;
    if ($Debug) {
       say STDERR "In test; input lines are:";
       say STDERR for @input_lines;
@@ -193,6 +200,13 @@ sub help {
    Option:                    Meaning:
    "-h" or "--help"           Print help and exit.
    "-e" or "--debug"          Print diagnostic information.
+   "-q" or "--quiet"          Be quiet. (DEFAULT)
+   "-t" or "--terse"          Be terse.
+   "-v" or "--verbose"        Be verbose.
+   "-l" or "--list"           Treat each list item separately. (DEFAULT)
+   "-s" or "--scalar"         Combine all list items to a scalar.
+   "-c" or "--chomp"          Chomp newlines from input lines. (DEFAULT)
+   "-n" or "--nochomp"        Don't chomp newlines from input lines.
    "--"                       End of options; all further items are arguments.
 
    If you want to use an argument that looks like an option (say, you want to
