@@ -131,9 +131,9 @@ my @arrays = @ARGV ? eval($ARGV[0]) :
 $"=', ';
 for my $aref (@arrays) {
     say '';
-    my $i = $aref->[0];
-    my $j = $aref->[1];
-    my $q = $aref->[2];
-    my $p = partners($i, $j, $q);
+    my $i = $aref->[0];           # Begin range.
+    my $j = $aref->[1];           # End   range.
+    my $q = $aref->[2];           # Partner quota.
+    my $p = partners($i, $j, $q); # Number of integers in given range which meet partner quota.
     say "Number of numbers from $i through $j which have $q or more shuffle-pair partners = $p";
 }

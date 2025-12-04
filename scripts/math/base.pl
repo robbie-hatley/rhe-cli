@@ -6,9 +6,9 @@
 ##############################################################################################################
 # base.pl
 # Converts positive integers from one base to another. "From" and "To" bases must be in the 2-62 range.
-# Input is via @ARGV. First arg is "from" base (in decimal), second arg is # "to" base (in decimal),
-# and all subsequent args are integers to be converted. Output is to STDIO and will be the requested
-# conversion, with no newlines, whitespace, or other extraneous text.
+# Bases are via @ARGV. First arg is "from" base (in decimal), second arg is "to" base (in decimal).
+# Numbers to be converted are via STDIN, one per line. Output is to STDIO and will be the requested
+# conversions, one per line. This script is thus a "filter".
 #
 # Attribution:
 # Written by Robbie Hatley.
@@ -19,6 +19,7 @@
 #                   "From" base and "To" base are given by command-line arguments, but numbers to be
 #                   converted are now input from STDIN. Chomps each input line, construes it as being
 #                   one number to be converted, and outputs conversion as an output line ending in "\n".
+# Wed Dec 03, 2025: Improved comments and help.
 ##############################################################################################################
 
 use v5.16; # Provides "say".
@@ -31,9 +32,9 @@ sub help {
    This program must have exactly 2 command-line arguments:
    The first  argument is "base to be converted from", 2-62, in decimal.
    The second argument is "base to be converted to"  , 2-62, in decimal.
-   Positive integers to be converted from first base to second base are
-   input from STDIN. Each line is chomped then construed as being one
-   number to be converted, and the converted number is output to STDOUT
+   Integers (negative, zero, or positive) to be converted from first base to
+   second base are input from STDIN. Each line is chomped then construed as being
+   one number to be converted, and the converted number is output to STDOUT
    as a single line ending in "\n". This script is thus a "filter".
    Input and output use digits 0-9,A-Z,a-z in increasing order of value.
    END_OF_HELP
