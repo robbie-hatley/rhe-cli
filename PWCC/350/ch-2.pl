@@ -96,8 +96,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       join '', sort split //, $x}
 
    # What integers $x exist from $i through $j such that $x is a member of at least $q shuffle pairs?
-   sub partners ( $i , $j , $q ) {
-      my $p = 0;                            # Integers range $i..$j with $c-or-more shuffle-pair partners.
+   sub partners ( $i , $j , $q ) {          # $i = start; $j = end; $q = quota.
+      my $p = 0;                            # $p = integers in $i..$j with $q-or-more shuffle-pair partners.
       X: for my $x ( $i .. $j ) {           # For each integer in the range $i..$j:
          my $s = sig($x);                   # Digit signature of $x.
          my $cnt = 0;                       # How many partners does $x have?
@@ -113,7 +113,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
                if ($cnt >= $q) {            # If our quota has been met,
                   ++$p;                     # increment partner counter.
                   next X}}}}                # and skip to next candidate.
-      return $p}                            # Return list of integers in $i..$j with $c-or-more partners.
+      return $p}                            # Return list of integers in $i..$j with $q-or-more partners.
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:

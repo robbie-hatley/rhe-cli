@@ -62,7 +62,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use v5.36;
    use utf8::all;
 
-   # Return count of good substrings of length 3-or-more:
+   # Return count of good substrings of length 3:
    sub good3c ( $s ) {
       my $n = length $s;                         # Length of string.
       my $c = 0;                                 # Count good substrings.
