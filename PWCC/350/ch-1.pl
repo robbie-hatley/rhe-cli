@@ -64,16 +64,15 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    # Return count of good substrings of length 3-or-more:
    sub good3c ( $s ) {
-      my $n = length $s;
-      my $c = 0;
-      for my $idx (0..$n-3) {
-         my $x = substr $s, $idx+0, 1;
-         my $y = substr $s, $idx+1, 1;
-         my $z = substr $s, $idx+2, 1;
-         ++$c if $x ne $y && $y ne $z && $z ne $x
-      }
-      $c;
-   }
+      my $n = length $s;                         # Length of string.
+      my $c = 0;                                 # Count good substrings.
+      for my $idx (0..$n-3) {                    # For each size-3 substring:
+         my $x = substr $s, $idx+0, 1;           # First  character of substring.
+         my $y = substr $s, $idx+1, 1;           # Second character of substring.
+         my $z = substr $s, $idx+2, 1;           # Third  character of substring.
+         if ($x ne $y && $y ne $z && $z ne $x) { # If substring is good,
+            ++$c}}                               # increment counter.
+      $c}                                        # Return count.
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:

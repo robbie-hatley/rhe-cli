@@ -69,7 +69,7 @@ PROBLEM NOTES:
 I tried the approach of calculating all permutations of all numbers, but the run times were in the weeks, so I
 had to abandon that approach.
 
-Instead, I now use the method of "digit signatures" (the digits in ascenting order). The decimal expansions
+Instead, I now use the method of "digit signatures" (the digits in ascending order). The decimal expansions
 of two positive integers will be permutations of each other if-and-only-if they have the same signature.
 
 --------------------------------------------------------------------------------------------------------------
@@ -95,19 +95,25 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    sub sig ( $x ) {
       join '', sort split //, $x}
 
-   # What integers $x exist from $i through $j such that $x is a member of at least $c shuffle pairs?
-   sub partners ( $i , $j , $c ) {
-      $i = 0 + $i;                           # Strip "_" marks and leading zeros from integers.
-      $j = 0 + $j;                           # Strip "_" marks and leading zeros from integers.
-      $c = 0 + $c;                           # Strip "_" marks and leading zeros from integers.
-      my @p = ();                            # Integers range $i..$j with $c-or-more shuffle-pair partners.
-      for my $x ( $i .. $j ) {               # For each integer in the range $i..$j:
-         my $s = sig($x);                    # Digit signature of $x.
-         my $cnt = 0;                        # How many partners does $x have?
-         for my $f (2..9) {                  # For each possible factor,
-            ++$cnt if sig($x) eq sig($f*$x)} # increment counter if the signatures match.
-         push @p, $x if $cnt >= $c}          # Accumulate $x in @p if $cnt is $c or more.
-      return @p}                             # Return list of integers in $i..$j with $c-or-more partners.
+   # What integers $x exist from $i through $j such that $x is a member of at least $q shuffle pairs?
+   sub partners ( $i , $j , $q ) {
+      my $p = 0;                            # Integers range $i..$j with $c-or-more shuffle-pair partners.
+      X: for my $x ( $i .. $j ) {           # For each integer in the range $i..$j:
+         my $s = sig($x);                   # Digit signature of $x.
+         my $cnt = 0;                       # How many partners does $x have?
+         for my $f (2..9) {                 # For each possible factor,
+            if (sig($x) eq sig($f*$x)) {    # If signatures match for $x and $x*$f,
+               ++$cnt;                      # increment counter.
+               if ($cnt >= $q) {            # If our quota has been met,
+                  ++$p;                     # increment partner counter,
+                  next X}}                  # and skip to next candidate.
+            if (0 == $x%$f                  # If $f divides $x,
+                && sig($x/$f) eq sig($x)) { # and if signatures match for $x/$f and $x,
+               ++$cnt;                      # increment counter.
+               if ($cnt >= $q) {            # If our quota has been met,
+                  ++$p;                     # increment partner counter.
+                  next X}}}}                # and skip to next candidate.
+      return $p}                            # Return list of integers in $i..$j with $c-or-more partners.
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
@@ -127,7 +133,7 @@ for my $aref (@arrays) {
     say '';
     my $i = $aref->[0];
     my $j = $aref->[1];
-    my $c = $aref->[2];
-    my $p = partners($i, $j, $c);
-    say "Number of numbers from $i through $j which have $c or more shuffle-pair partners = $p";
+    my $q = $aref->[2];
+    my $p = partners($i, $j, $q);
+    say "Number of numbers from $i through $j which have $q or more shuffle-pair partners = $p";
 }
