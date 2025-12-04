@@ -15,35 +15,35 @@ You are given a string. Write a script to return the number of
 good substrings of length three in the given string. A string is
 good if there are no repeated characters.
 
-Example 1
+Example #1:
 Input: $str = "abcaefg"
 Output: 5
 Good substrings of length 3: abc, bca, cae, aef and efg
 
-Example 2
+Example #2:
 Input: $str = "xyzzabc"
 Output: 3
 Good substrings of length 3: "xyz", "zab" and "abc"
 
-Example 3
+Example #3:
 Input: $str = "aababc"
 Output: 1
 Good substrings of length 3: "abc"
 
-Example 4
+Example #4:
 Input: $str = "qwerty"
 Output: 4
 Good substrings of length 3: "qwe", "wer", "ert" and "rty"
 
-Example 5
+Example #5:
 Input: $str = "zzzaaa"
 Output: 0
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
 Given string $s, I'll iterate "for my $idx (0..$n-3) {}", where $n is length, and consider the current, next,
-and next-next characters, and if they're all different I'll increment a counter $c (which starts at 0), then just
-return $c.
+and next-next characters, and if they're all different I'll increment a counter $c (which starts at 0). Then
+just return $c.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
