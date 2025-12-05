@@ -66,11 +66,11 @@ one shuffle pair:
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-I tried the approach of calculating all permutations of all numbers, but the run times were in the weeks, so I
-had to abandon that approach.
+Alternate method a: make a hash of all partners of all integers from $from/10 through $to*10,
+then just riffle through that hash and counter integers from $from through $to which have $count-or-more
+partners.
 
-Instead, I now use the method of "digit signatures" (the digits in ascending order). The decimal expansions
-of two positive integers will be permutations of each other if-and-only-if they have the same signature.
+Addendum: This idea is a big-O disaster. I calculate that Example 3 would take over 27 hours to complete.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
@@ -96,24 +96,22 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       join '', sort split //, $x}
 
    # What integers $x exist from $i through $j such that $x is a member of at least $q shuffle pairs?
-   sub partners ( $i , $j , $q ) {          # $i = start; $j = end; $q = quota.
-      my $p = 0;                            # $p = integers in $i..$j with $q-or-more shuffle-pair partners.
-      X: for my $x ( $i .. $j ) {           # For each integer in the range $i..$j:
-         my $s = sig($x);                   # Digit signature of $x.
-         my $cnt = 0;                       # How many partners does $x have?
-         for my $f (2..9) {                 # For each possible factor,
-            if (sig($x) eq sig($f*$x)) {    # If signatures match for $x and $x*$f,
-               ++$cnt;                      # increment counter.
-               if ($cnt >= $q) {            # If our quota has been met,
-                  ++$p;                     # increment partner counter,
-                  next X}}                  # and skip to next candidate.
-            if (0 == $x%$f                  # If $f divides $x,
-                && sig($x/$f) eq sig($x)) { # and if signatures match for $x/$f and $x,
-               ++$cnt;                      # increment counter.
-               if ($cnt >= $q) {            # If our quota has been met,
-                  ++$p;                     # increment partner counter.
-                  next X}}}}                # and skip to next candidate.
-      return $p}                            # Return list of integers in $i..$j with $q-or-more partners.
+   sub partners ( $i , $j , $q ) {         # $i = start; $j = end; $q = quota.
+      my $bot = (int $i/10)+1;             # Bottom of range in which to look for partners.
+      my $top = (int $j*10)-1;             # Top    of range in which to look for partners.
+      my %pt;                              # Partners Table.
+      for my $l ($bot..$top) {             # For each key from $bot to $top,
+         $pt{$l} = []}                     # assign an empty anonymous array as value.
+      for    my $m ($bot..int($top/2)) {   # Partners must differ by at least a factor of 2.
+         for my $n (2*$m..$top)   {        # Partners must differ by at least a factor of 2.
+            if (0==$n%$m) {                # If $m and $n have a common factor,
+               if (sig($m) eq sig($n)) {   # and if they also have a common signature,
+                  push @{$pt{$m}}, $n;     # $m has $n as a partner
+                  push @{$pt{$n}}, $m}}}}  # $n has $m as a partner
+      my $p = 0;                           # $p = integers in $i..$j with $q-or-more shuffle-pair partners.
+      for my $x ( $i .. $j ) {             # For each integer in the range $i..$j,
+         ++$p if scalar(@{$pt{$x}}) >= $q} # increment partners counter if this integer meets our quota.
+      $p}                                  # Return number of integers in $i..$j with $q-or-more partners.
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:

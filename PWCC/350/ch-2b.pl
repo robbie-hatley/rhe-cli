@@ -4,7 +4,7 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
-Solution in Perl for The Weekly Challenge 350-2,
+ALTERNATE solution, in Perl, for The Weekly Challenge 350-2;
 written by Robbie Hatley on Thu Dec 04, 2025.
 
 --------------------------------------------------------------------------------------------------------------
@@ -66,11 +66,10 @@ one shuffle pair:
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-I tried the approach of calculating all permutations of all numbers, but the run times were in the weeks, so I
-had to abandon that approach.
-
-Instead, I now use the method of "digit signatures" (the digits in ascending order). The decimal expansions
-of two positive integers will be permutations of each other if-and-only-if they have the same signature.
+Alternate method b: make a hash (keyed by signature) all integers from $from/10 through $to*10, then riffle
+through the integers $from..$to, get the signature of each, check how many of its signature-mate are
+"shuffle pair partners", and if the current number has at-least $count shuffle-pair partners, increment
+a counter. Then just return that count.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
@@ -96,24 +95,21 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       join '', sort split //, $x}
 
    # What integers $x exist from $i through $j such that $x is a member of at least $q shuffle pairs?
-   sub partners ( $i , $j , $q ) {          # $i = start; $j = end; $q = quota.
-      my $p = 0;                            # $p = integers in $i..$j with $q-or-more shuffle-pair partners.
-      X: for my $x ( $i .. $j ) {           # For each integer in the range $i..$j:
-         my $s = sig($x);                   # Digit signature of $x.
-         my $cnt = 0;                       # How many partners does $x have?
-         for my $f (2..9) {                 # For each possible factor,
-            if (sig($x) eq sig($f*$x)) {    # If signatures match for $x and $x*$f,
-               ++$cnt;                      # increment counter.
-               if ($cnt >= $q) {            # If our quota has been met,
-                  ++$p;                     # increment partner counter,
-                  next X}}                  # and skip to next candidate.
-            if (0 == $x%$f                  # If $f divides $x,
-                && sig($x/$f) eq sig($x)) { # and if signatures match for $x/$f and $x,
-               ++$cnt;                      # increment counter.
-               if ($cnt >= $q) {            # If our quota has been met,
-                  ++$p;                     # increment partner counter.
-                  next X}}}}                # and skip to next candidate.
-      $p}                                   # Return list of integers in $i..$j with $q-or-more partners.
+   sub partners ( $i , $j , $q ) {         # $i = start; $j = end; $q = quota.
+      my $bot = (int $i/10)+1;             # Bottom of range in which to look for partners.
+      my $top = (int $j*10)-1;             # Top    of range in which to look for partners.
+      my %pt;                              # Partners Table.
+      foreach my $n ($bot..$top) {         # For each integer which might be a partner,
+         push @{$pt{sig($n)}}, $n}         # associate it with its signature's hash key.
+      my $p = 0;                           # $p = integers in $i..$j with $q-or-more shuffle-pair partners.
+      foreach my $x ($i..$j) {             # For each integer in the range $i..$j,
+         my $cnt = 0;                      # Start a counter.
+         foreach my $y (@{$pt{sig($x)}}) { # For each number with the same signature,
+            next if $y == $x;              # skip it if it's the same as current number,
+            ++$cnt if 0==$x%$y;            # increment counter if candidate divides current,
+            ++$cnt if 0==$y%$x}            # increment counter if current   divides candidate.
+         ++$p if $cnt >= $q}               # increment partners counter if this integer meets our quota.
+      $p}                                  # Return number of integers in $i..$j with $q-or-more partners.
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
