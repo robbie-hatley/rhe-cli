@@ -4,7 +4,7 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
-Solution in Perl for The Weekly Challenge 350-2,
+ALTERNATE solution, in Perl, for The Weekly Challenge 350-2;
 written by Robbie Hatley on Thu Dec 04, 2025.
 
 --------------------------------------------------------------------------------------------------------------
