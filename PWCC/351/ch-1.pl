@@ -82,13 +82,10 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       my $min = $sorted[ 0] // 0;
       my $max = $sorted[-1] // 0;
       while (@sorted && $sorted[ 0] == $min) {
-         shift @sorted;
-      }
+         shift @sorted}
       while (@sorted && $sorted[-1] == $max) {
-         pop @sorted;
-      }
-      sum0(@sorted)/max(scalar(@sorted),1);
-   }
+         pop @sorted}
+      sum0(@sorted)/max(scalar(@sorted),1)}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:

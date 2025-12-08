@@ -55,7 +55,7 @@ IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
 single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '([1,0,3,8,7,9],[1,0,"rat",3,5,2,4])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -74,12 +74,9 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       my @num = grep {looks_like_number($_)} @$aref;
       my @srt = sort {$a <=> $b} @num;
       for my $idx (2..$#srt) {
-         if ($srt[$idx] != 2*$srt[$idx-1]-$srt[$idx-2]) {
-            return 'False.';
-         }
-      }
-      return 'True.';
-   }
+         if ($srt[$idx-0] - $srt[$idx-1] != $srt[$idx-1] - $srt[$idx-2]) {
+            return 'False.'}}
+      return 'True.'}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
