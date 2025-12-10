@@ -80,10 +80,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       my @srt = sort {$a <=> $b} @num;
       my $min = $srt[ 0] // 0;
       my $max = $srt[-1] // 0;
-      while (@srt && $srt[ 0] == $min) {
-         shift @srt}
-      while (@srt && $srt[-1] == $max) {
-         pop @srt}
+      while (@srt && $srt[ 0] == $min) {shift @srt}
+      while (@srt && $srt[-1] == $max) { pop  @srt}
       sum0(@srt)/max(scalar(@srt),1)}
 
 # ------------------------------------------------------------------------------------------------------------
