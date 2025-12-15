@@ -74,18 +74,15 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use Scalar::Util 'looks_like_number';
    use List::Util 'max', 'sum0';
 
-   # Average an array of numbers,
-   # but with all minimums and maximums removed:
+   # Average an array of numbers sans mins & maxes:
    sub special_average ( $aref ) {
-      my @numbers = grep {looks_like_number($_)} @$aref;
-      my @sorted = sort {$a <=> $b} @numbers;
-      my $min = $sorted[ 0] // 0;
-      my $max = $sorted[-1] // 0;
-      while (@sorted && $sorted[ 0] == $min) {
-         shift @sorted}
-      while (@sorted && $sorted[-1] == $max) {
-         pop @sorted}
-      sum0(@sorted)/max(scalar(@sorted),1)}
+      my @num = grep {looks_like_number($_)} @$aref;
+      my @srt = sort {$a <=> $b} @num;
+      my $min = $srt[ 0] // 0;
+      my $max = $srt[-1] // 0;
+      while (@srt && $srt[ 0] == $min) {shift @srt}
+      while (@srt && $srt[-1] == $max) { pop  @srt}
+      sum0(@srt)/max(scalar(@srt),1)}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:

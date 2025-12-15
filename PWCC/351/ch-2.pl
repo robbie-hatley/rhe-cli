@@ -47,8 +47,8 @@ with common difference 1.5.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-Sort, then if any $num[$idx] other than the first two is != 2*$num[$idx-1]-$num[$idx-2] return false,
-else return true.
+Let @srt = sort {$a<=>$b} @num. Then if $num[$idx-0]-$num[$idx-1] != $num[$idx-1]-$num[$idx-2] for any
+$idx > 1, return false; otherwise, return true.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
