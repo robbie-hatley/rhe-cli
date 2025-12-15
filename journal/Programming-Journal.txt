@@ -8,6 +8,7 @@ This is an 110-character-wide utf8 text file with hard Unix line breaks.
 
 --------------------------------------------------------------------------------------------------------------
 Fri. June 22, 2001:
+
 I've discovered some unsettling things about certain C built-in
 string functions:
 
@@ -40,20 +41,23 @@ of input into array, so that:
 
 --------------------------------------------------------------------------------------------------------------
 Wednesday July 4, 2001:
-   I've been thinking-about and experimenting-with arrays today.  I've
+
+I've been thinking-about and experimenting-with arrays today.  I've
 learned that the nomenclature:
-       int array[5][7][11];
+   int array[5][7][11];
 means: "an array of 5 elements, each of which is an array of 7 elements,
 each of which is an array of 11 elements, each of which is an integer".
 
 That is pretty much backwards from how I had thought that arrays work!
 
-   In memory, a [3][4] array is stored in a contiguous block, in this
+In memory, a [3][4] array is stored in a contiguous block, in this
 order:
-[0][0]  [0][1]  [0][2]  [0][3]
-[1][0]  [1][1]  [1][2]  [1][3]
-[2][0]  [2][1]  [2][2]  [2][3]
-   Another way to look at multi-dimensional arrays is that they are
+
+   [0][0]  [0][1]  [0][2]  [0][3]
+   [1][0]  [1][1]  [1][2]  [1][3]
+   [2][0]  [2][1]  [2][2]  [2][3]
+
+Another way to look at multi-dimensional arrays is that they are
 multi-level n-ary trees.  A [l][m][n] array is a tree with one trunk,
 l limbs, m branches per limb, and n twigs per branch.  So, element
 array[3][5][7] is (from left to right): limb 3, branch 5, twig 7;
@@ -66,7 +70,7 @@ Behind the scenes, I believe element address for an array such as:
 is implimented by pointers, like so:
 
    Array[x][y][z] =
-      *(&(Array[0][0][0]) + x*Size2*Size3 + y*Size3 + z);
+   *(&(Array[0][0][0]) + x*Size2*Size3 + y*Size3 + z);
 
 All sizes except for the first are needed to calculate the RAM address of each element.
 
@@ -112,24 +116,28 @@ calculate the RAM addresses in bytes.)
 
 --------------------------------------------------------------------------------------------------------------
 Thursday July 5, 2001:
-   I had a lot of problems when I was making my sortfile2.cpp program
+
+I had a lot of problems when I was making my sortfile2.cpp program
 a few days ago with GPFs due to inappropriate uses of delete, free, and
 destructors.
-   free() is for freeing memory previously allocated with malloc(),
+
+free() is for freeing memory previously allocated with malloc(),
 calloc(), or realloc().  These are dynamic memory allocation functions
 for use in grabbing new memory allocations on the fly during run time.
 They should not be used if dynamic memory allocation is not really
 necessary. And NEVER, NEVER, NEVER use free() on anything not previously
 allocated by malloc(), calloc(), or realloc()!!!!!!!  To do so will crash
 the system.
-   new and delete are C++'s version of malloc() and free().  new not only
+
+new and delete are C++'s version of malloc() and free().  new not only
 allocates memory and return a pointer to it, but actually creates an
 object and invokes the appropriate constructor.  Similarly, delete
 destroys an object previously created using new, and invokes it's
 destructor.
 Here as with free(), NEVER, NEVER, NEVER delete anything not previously
 created with new!!!!!!!  To do so will crash the system.
-   While these dynamic memory allocation statements are useful in cases
+
+While these dynamic memory allocation statements are useful in cases
 where one doesn't know in advance how much memory or how many objects
 are going to be needed, they should be avoided unless necessary for
 several reasons:
@@ -142,23 +150,24 @@ several reasons:
 
 In general, it's better to declare:
 
-  myobjecttype thing;
+   myobjecttype thing;
 
 than:
 
-  myobjecttype *thngptr=new myobjecttype;
+   myobjecttype *thngptr=new myobjecttype;
 
 unless one really does need dynamic memory allocation.
 
 --------------------------------------------------------------------------------------------------------------
 Sun. Jan. 6, 2002:
-   I'm getting back into C/C++ practice after a four-month sabatical.
-Time to get cracking!
-   My current project is a bitmap making program.
+
+I'm getting back into C/C++ practice after a four-month sabatical. Time to get cracking! My current project
+is a bitmap making program.
 
 --------------------------------------------------------------------------------------------------------------
 Fri. Jan 3, 2003:
-   I took too much time off from programming in 2002.  I did manage to
+
+I took too much time off from programming in 2002.  I did manage to
 complete my bitmap class library bitmap.cpp, and a math/utility
 library, mathutil.cpp.  I also made a very nice mandelbrot-set mapper,
 which I've enjoyed using to make maps of many parts of the Mandelbrot
@@ -167,6 +176,7 @@ shorter sabbaticals.
 
 --------------------------------------------------------------------------------------------------------------
 Thu. Jan. 6, 2005:
+
 I haven't made an entry in this programming journal for over 2 years!
 My programming career has been going reasonably well.  Starting in mid-2003,
 I started working part-time as a professional computer programmer for the
@@ -222,6 +232,7 @@ Ok, that works, as far as it goes.  Now lets do several operations in sequence:
 
 --------------------------------------------------------------------------------------------------------------
 Mon. Jun. 06, 2005:
+
 I've come up with the following rules regarding "using" declarations, to avoid
 polluting the global namespace (or other namespaces), and to avoid critic names
 whose namespace is not obvious, and yet to decrease the necessity of typing
@@ -270,7 +281,6 @@ regular-expression capability to RenameFiles.  In fact, regex is now RenameFiles
 renaming method.  This mostly subsumes my "substrings" method, though my "pattern" method
 still has its appeal.  A giant leap forward in file renaming!
 
-
 --------------------------------------------------------------------------------------------------------------
 Sat Sep 24, 2005:
 
@@ -278,8 +288,7 @@ It's about time to learn more about exceptions and how to use them.  One thing t
 is std::exception .  What is that?  A class?  A template?
 
 Another thing to investigate is "Resource Acquisition Is Initialization".  This seems to
-be implimented mostly by the "auto_ptr" template class, in header <memory>.
-
+be implemented mostly by the "auto_ptr" template class, in header <memory>.
 
 --------------------------------------------------------------------------------------------------------------
 Sun Feb 19, 2006:
@@ -294,6 +303,7 @@ Make program that, given file urls##-raw.txt, generates these extractions:
 Thu Mar 19, 2009:
 
 C++ Programs that need work:
+
    erase-thumbs               (stubb)                           [use Perl instead (files).]
    merge                      (stubb)                           [use Perl instead (files).]
    boxify                     (Needs to be totally re-written.) [use Perl instead (REs  ).]
@@ -368,9 +378,9 @@ Furthermore, the C and C++ languages and the DJGPP programming platform have zer
 to dealing with non-English languages and Unicode, whereas Perl, Linux, and Cygwin are fully Unicode capable.
 
 Hence, as of 2015-01-01 and beyond, I'm now doing all of my file and directory maintenance programming in
-Perl instead of C++ as I was using previously. (My old C++ executables won't even run on Cygwin, and most
+Perl instead of C++ as I was using previously. My old C++ executables won't even run on Cygwin, and most
 can't be compiled for Cygwin either, due to using non-std DJGPP libraries with no analog in Cygwin. So I'm
-reimplimenting many programs from scratch in Perl. But that's just fine, because Perl is a much better
+re-implementing many programs from scratch in Perl. But that's just fine, because Perl is a much better
 language for doing this kind of thing anyway.
 
 --------------------------------------------------------------------------------------------------------------
@@ -508,7 +518,7 @@ Perl 6 History:
 2019-10: Perl6 renamed "Raku" and is no longer considered to be a version of "Perl".
 (Does this free-up the name "Perl 6" to be a continuation of Perl 5? I hope so.)
 2020: Raku still won't install on my computer. :-/
-
+2022: Installed and works on Excalibur (running Manjaro Linux).
 
 --------------------------------------------------------------------------------------------------------------
 Mon Nov 16, 2020:
@@ -593,17 +603,22 @@ years. I've been putting more things into repositories on Github, so many direct
 --------------------------------------------------------------------------------------------------------------
 Sun Feb 09, 2025:
 
-I now have 7 "rhe-.*" directories:
-rhe-bin       (executables)
-rhe-cli       (shared CLI source)
-rhe-extra     (lumber room)
-rhe-private   (private stuff)
-rhe-qt        (QT)
+I now have 6 "rhe-.*" directories:
+
+   In /d/:
+      rhe-bin       (executables)
+      rhe-cli       (shared CLI source)
+      rhe-gui       (graphical-user-interface programs, mainly QT)
+      rhe-pri       (private stuff)
+      rhe-win       (Microsoft-Windows-related stuff)
+
+   in /f/:
+      rhe-extra     (lumber room)
 
 Two of those are also Git repositories:
-Repo:        Privacy:   Description:
-rhe-cli      public     command-line programming
-rhe-private  private    anything I don't want to share with the public
+Repo:     Privacy:   Description:
+rhe-cli   public     command-line programming
+rhe-pri   private    anything I don't want to share with the public
 
 --------------------------------------------------------------------------------------------------------------
 Thu Mar 20, 2025:
@@ -613,4 +628,13 @@ current standards", which include lots of options, multiple single-letter option
 hyphen, and both regular expressions and boolean predicates as first two arguments. What next?
 
 I think I'll start by looking in my other script directories for inspiration.
+
+--------------------------------------------------------------------------------------------------------------
+Sat Dec 13, 2025:
+
+To write: Program for editing "ini" style files. Should use command-line arg to specify which file to open.
+Bail if can't open file for reading or can't open file for writing. Present user with letter-based menu:
+a = print all contents of file
+g = print a section
+e = edit a section
 
