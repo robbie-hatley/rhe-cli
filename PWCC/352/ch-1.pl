@@ -59,10 +59,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use v5.36;
    use utf8::all;
 
-   # List all words of an array which occur
-   # as substrings in other words in the array,
-   # in the order found, skipping duplicates:
-   sub matching_strings ($aref) {
+   # Which words are substrings?
+   sub ms ($aref) {
       my @out;
       my %used;
       I: for my $i (0..$#$aref) {
@@ -107,7 +105,7 @@ my @arrays = @ARGV ? eval($ARGV[0]) :
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   say "Array = (@$aref)";
-   my @ms = matching_strings($aref);
-   say "Matching = (@ms)";
+   say " Input = (@$aref)";
+   my @ms = ms($aref);
+   say "Output = (@ms)";
 }
