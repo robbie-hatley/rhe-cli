@@ -12,7 +12,7 @@ PROBLEM DESCRIPTION:
 Task 352-2: Binary Prefix
 Submitted by: Mohammad Sajid Anwar
 You are given an array, @nums, where each element is 0 or 1.
-Define xi as the number formed by taking the first i+1 bits of
+Define x[i] as the number formed by taking the first i+1 bits of
 @nums (from $nums[0] through $nums[i]) and interpreting them as
 a binary number, with $nums[0] being the most significant bit.
 For example, if @nums = (1, 0, 1), then:
@@ -89,9 +89,9 @@ if (0==oct('0b'.join '', @num[0..$i])%5) {push @out, 'true'} else {push @out, 'f
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of arrays of 0s and 1s, in proper Perl syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '([1,0,1,1,0,0,1,0], [1,1,1,1,1,1,1,1], [1,0,1,0,1,0,1,0])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -104,7 +104,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use utf8::all;
 
    # Which binary prefixes are divisible by 5?
-   sub bp ($aref) {
+   sub bp ( $aref ) {
       my @out;
       for my $i (0..$#$aref) {
          if (0==oct('0b'.join '', @$aref[0..$i])%5) {

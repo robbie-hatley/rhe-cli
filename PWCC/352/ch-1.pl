@@ -39,7 +39,7 @@ Output: ("car", "pet", "enter", "pen", "pent")
 PROBLEM NOTES:
 I'll start by making hash array @out (for output) and hash "%used" (to avoid duplicates in @out). Then for
 each input word $word1, I'll skip it if it's used, or set $used{$word} = 1 if it isn't. I'll then compare
-each input word $word2 other than itself to $word1 a pattern ($word2 =~m/$word1/); if a match occurs, I'll
+each input word $word2 other than itself to pattern $word1 ($word2 =~m/$word1/); if a match occurs, I'll
 push $word1 to @out and skip to next $word1. Then just output @out.
 
 --------------------------------------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
 single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
 
-./ch-1.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-1.pl '(["rat", "bat", "cat"], ["rat", "rattan", "orange", "tan"])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -60,7 +60,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use utf8::all;
 
    # Which words are substrings?
-   sub ms ($aref) {
+   sub ms ( $aref ) {
       my @out;
       my %used;
       I: for my $i (0..$#$aref) {
