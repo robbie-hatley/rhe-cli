@@ -61,9 +61,9 @@ Expected output: (true, true, true, true, false)
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-I'll first verify that the arrays are of the same length. Then for each index, I'll consider the code valid
-if-and-only-if it's the code is well-formed, the status is valid, and then name is valid. I'll then return
-my array of "true" and "false" markers indicating whether each code/name/status trio is valid.
+I'll first verify that the arrays are of equal length. Then for each index, I'll consider a code/name/status
+trio "valid" if-and-only-if its code is well-formed, its status is valid, and its name is valid. I'll then
+return my array of "true" and "false" markers indicating whether each code/name/status trio is valid.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
