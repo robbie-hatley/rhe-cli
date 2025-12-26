@@ -82,7 +82,7 @@ my $failcount = 0         ; # Count of failed directory rename attempts.
 
 
    # NOTE: Do NOT attempt to rename current working directory!!!
-   # NO!!! curfile(d getcwd); NO!!!
+   # NO!!! curfile(cwd); NO!!!
    # That will cause errors in BASH. Just rename it manually if needed.
 
    # Stop timer:

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -16,13 +16,14 @@
 # Wed Mar 12, 2025: Now using BEGIN and INIT blocks and global vars for pname, cmpl_beg, cmpl_end.
 #                   No-longer announces directories on entry, but now does announce successful and failed
 #                   directory rename attempts. stats() now prints totals of successful and failed renames.
+# Fri Dec 26, 2025: Re-reverted to "#!/usr/bin/env perl", "use utf8::all", "use Cwd::utf8".
+#                   Moved from "core" to "util". Deleted "core".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-
-use Cwd          qw( cwd getcwd );
-use Time::HiRes  qw( time       );
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes 'time';
 
 use RH::Dir;
 use RH::Util;
@@ -151,14 +152,15 @@ sub curdire {
    ++$direcount;
 
    # Get current working directory:
-   my $cwd = d getcwd;
+   my $cwd = cwd;
 
    # Try to open, read, and close $cwd; if any of those operations fail, die:
    my $dh = undef;
-   opendir $dh, e $cwd
+   opendir $dh, $cwd
    or die "Fatal error: Couldn't open  directory \"$cwd\".\n$!\n";
 
-   my @names = sort {$a cmp $b} d(readdir($dh));
+   my @unsorted_names = readdir $dh;
+   my @names = sort {$a cmp $b} @unsorted_names;
    scalar(@names) >= 2 # $dir should contain at least '.' and '..'!
    or die "Fatal error: Couldn't read  directory \"$cwd\".\n$!\n";
 
@@ -175,14 +177,14 @@ sub curdire {
       # Don't base cwd's date on hidden files:
       if ( '.' eq substr($name, 0, 1) ) {++$hidncount;next;}
       ++$opencount;
-      my @stats = lstat e $name;
+      my @stats = lstat $name;
       if ( scalar(@stats) < 13 ) {
          warn "Warning: Can't lstat \"$name\" in \"$cwd\".\n";
          next;
       }
       if ( $stats[9] > $max_Mtime ) { $max_Mtime = $stats[9] }
    }
-   utime $max_Mtime, $max_Mtime, e($cwd)
+   utime $max_Mtime, $max_Mtime, $cwd
    and say STDOUT "Set date on directory \"$cwd\"."
    and ++$datecount
    or  say STDOUT "Error: couldn't set date on directory \"$cwd\"."

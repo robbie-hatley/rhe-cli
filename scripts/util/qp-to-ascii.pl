@@ -1,8 +1,8 @@
-#!/usr/bin/env -S perl -CSDA
+#!/usr/bin/env perl
 
-# This is a 120-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ########################################################################################################################
 # qp-to-ascii.pl
@@ -17,9 +17,12 @@
 # Tue Nov 30, 2021: Fixed list-context bug in FILE loop (added "scalar" to force scalar context).
 # Mon Mar 03, 2025: Got rid of "common::sense" and "Sys::Binmode".
 # Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
+# Fri Dec 26, 2025: Re-reverted to "#!/usr/bin/env perl", "use utf8::all", "use Cwd::utf8".
+#                   Moved from "core" to "util". Deleted "core".
 ########################################################################################################################
 
-use v5.32;
+use v5.36;
+use utf8::all;
 use Cwd::utf8;
 use MIME::QuotedPrint;
 
@@ -34,24 +37,19 @@ my $section   = 'head' ; # section indicator ('head' or 'body')
 my $blflag    = 0      ; # previous-line-was-blank  flag
 my $dh        = undef  ; # directory handle
 
-$dirname = cwd;
-
-opendir($dh, e $dirname) or die "Can\'t open directory \"$dirname\". $!.";
-
 # Iterate through current directory, collecting info on all "*.eml" files:
-FILE: while (readdir $dh)
-{
-   $filename = d $_;
-
-   if ($db)
-   {
+$dirname = cwd;
+opendir($dh, $dirname) or die "Can\'t open directory \"$dirname\". $!.";
+my @names = readdir $dh;
+FILE: foreach $filename (@names) {
+   if ($db) {
       say "In qp-to-ascii, at top of FILE loop.";
       say "Current filename = $filename";
    }
 
    # We're only interested in "regular" files (not directories, symbolic links,
    # etc), so if current file isn't a regular file, move on to next file:
-   next FILE if not -f e $filename;
+   next FILE if not -f $filename;
 
    # We're only interested in "*.eml" files, so if $filename is less than
    # 5 characters in length, move on to next file:
@@ -72,10 +70,10 @@ EMAIL: foreach my $emlname (@filenames)
    say "Processing file $emlname.";
    my $txtname = $emlname;
    substr($txtname,-4,4,'.txt');
-   open(EHANDLE, '< :encoding(windows-1252)', e $emlname)
+   open(EHANDLE, '<', $emlname)
       or warn "Cannot open email file $emlname for  input."
       and next EMAIL;
-   open(THANDLE, '> :encoding(windows-1252)', e $txtname)
+   open(THANDLE, '>', $txtname)
       or warn "Cannot open text  file $txtname for output."
       and close(EHANDLE)
       and next EMAIL;

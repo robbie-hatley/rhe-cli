@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -18,11 +18,13 @@
 # Thu Aug 15, 2024: Wrote it, based heavily on existing program "delete-old-files.pl".
 # Wed Feb 26, 2025: Trimmed horizontal dividers. Got rid of all prototypes and empty signatures.
 # Tue Mar 04, 2025: Tweaked help ("max" to "min" age).
+# Fri Dec 26, 2025: Re-reverted to "#!/usr/bin/env perl", "use utf8::all", "use Cwd::utf8".
+#                   Moved from "core" to "util". Deleted "core".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-use Cwd 'getcwd';
+use utf8::all;
+use Cwd::utf8;
 use POSIX 'floor', 'ceil';
 use Time::HiRes 'time';
 use RH::Util;
@@ -142,7 +144,7 @@ sub curdire {
    ++$direcount;
 
    # Get and announce current working directory:
-   my $cwd = d(getcwd());
+   my $cwd = cwd;
    say "\nDirectory # $direcount: $cwd\n";
 
    # Get list of file-info packets in $cwd matching target ('F', regular files only) and $RegExp:
@@ -197,7 +199,7 @@ sub curfile ($file) {
 
    # Attempt to unlink $name:
    ++$attecount;
-   unlink(e($name))
+   unlink $name
    and ++$delecount
    and print STDOUT "Deleted \"$name\".\n"
    and return 1

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -22,10 +22,12 @@
 #                   and now writes re-indented versions of input files to new output files instead of
 #                   overwriting its input files as it WAS doing.
 # Sat Apr 05, 2025: Now using "Cwd::utf8"; nixed "cwd_utf8".
+# Fri Dec 26, 2025: Re-reverted to "#!/usr/bin/env perl", "use utf8::all", "use Cwd::utf8".
+#                   Moved from "core" to "util". Deleted "core".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
+use utf8::all;
 use Cwd::utf8;
 use Time::HiRes  qw( time       );
 use POSIX        qw( floor ceil );
@@ -138,7 +140,7 @@ sub curfile ($oldpath) {
 
    # Grab file contents:
    $oldhand = undef;
-   if (not open($oldhand, '<', e($oldpath))) {
+   if (!open($oldhand, '<', $oldpath)) {
       say("Failed to open $oldpath for reading.");
       ++$failcount;
       return 0;
@@ -156,7 +158,7 @@ sub curfile ($oldpath) {
    my $newname = $oldpref . "_reindented" .$oldsuff;
    my $newpath = path($dir, $newname);
    my $newhand = undef;
-   if (open($newhand, '>', e($newpath))) {
+   if (open($newhand, '>', $newpath)) {
       for (@lines) {
          say($newhand $_);
       }

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -50,11 +50,13 @@
 # Wed Feb 26, 2025: Got rid of "use Encode;". Fixed "missing sub 'help'" bug. Got rid of all prototypes and
 #                   empty signatures. Trimmed over-length horizontal dividers.
 # Thu Apr 03, 2025: Moved subroutine pre-declarations to just above main.
+# Fri Dec 26, 2025: Re-reverted to "#!/usr/bin/env perl", "use utf8::all", "use Cwd::utf8".
+#                   Moved from "core" to "util". Deleted "core".
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use RH::Dir;
 
 # ======= PAGE-GLOBAL LEXICAL VARIABLES: =====================================================================
@@ -109,15 +111,15 @@ sub argv {
    if (2 != $NA) {error($NA); help; exit(666);}
    $dir1 = $CLArgs[0];
    $dir2 = $CLArgs[1];
-   if ( ! -e e $dir1 ) {die "Error: $dir1 doesn't exist.    \n";}
-   if ( ! -d e $dir1 ) {die "Error: $dir1 isn't a directory.\n";}
-   if ( ! -e e $dir2 ) {die "Error: $dir2 doesn't exist.    \n";}
-   if ( ! -d e $dir2 ) {die "Error: $dir2 isn't a directory.\n";}
+   if ( ! -e $dir1 ) {die "Error: $dir1 doesn't exist.    \n";}
+   if ( ! -d $dir1 ) {die "Error: $dir1 isn't a directory.\n";}
+   if ( ! -e $dir2 ) {die "Error: $dir2 doesn't exist.    \n";}
+   if ( ! -d $dir2 ) {die "Error: $dir2 isn't a directory.\n";}
    return ($dir1, $dir2);
 } # end sub argv
 
 sub merge ($dir1, $dir2) {
-   my @spaths = map {d($_)} glob(e("${dir1}/* ${dir1}/.*"));
+   my @spaths = glob "${dir1}/* ${dir1}/.*";
    if ($Db) {
       say STDERR "\nDebug msg in \"merge-files.pl\", in merge():\n"
                 ."Dir1 = $dir1\n"
@@ -131,15 +133,15 @@ sub merge ($dir1, $dir2) {
    foreach my $spath (@spaths) {
       my $sname = get_name_from_path($spath);
       if    ( $sname eq '.' || $sname eq '..' ) {next;}
-      elsif ( -d e($spath)                    ) {next;}
-      elsif ( $sname =~ m/^Thumbs.*\.db$/     ) {unlink e($spath) and say "unlinked $spath" and ++$delecount;}
-      elsif ( $sname =~ m/^pspbrwse.*\.jbf$/  ) {unlink e($spath) and say "unlinked $spath" and ++$delecount;}
-      elsif ( $sname =~ m/^desktop.*\.ini$/   ) {unlink e($spath) and say "unlinked $spath" and ++$delecount;}
+      elsif ( -d $spath                       ) {next;}
+      elsif ( $sname =~ m/^Thumbs.*\.db$/     ) {unlink $spath and say "unlinked $spath" and ++$delecount;}
+      elsif ( $sname =~ m/^pspbrwse.*\.jbf$/  ) {unlink $spath and say "unlinked $spath" and ++$delecount;}
+      elsif ( $sname =~ m/^desktop.*\.ini$/   ) {unlink $spath and say "unlinked $spath" and ++$delecount;}
       else                                      {move_file($spath,$dir2) and ++$mergcount or  ++$failcount;}
    }
 
    # What contents (if any) is still in dir1?
-   @spaths = map {d($_)} glob e("${dir1}/* ${dir1}/.*");
+   @spaths = glob "${dir1}/* ${dir1}/.*";
    my $remainder = scalar @spaths;
    if ($Db) {
       say for @spaths;
@@ -151,11 +153,11 @@ sub merge ($dir1, $dir2) {
       # Because we're about to attempt to delete directory $dir1, we first need to get it's absolute address,
       # then chdir to root, so that we will never be attempting to delete a directory at or above our current
       # location on the directory tree, which never works:
-      chdir e($dir1);
-      $dir1 = d getcwd;
-      chdir e('/');
+      chdir $dir1;
+      $dir1 = cwd;
+      chdir '/';
       say "\nRemoving directory \"${dir1}\"...";
-      rmdir e($dir1)
+      rmdir $dir1
       and say "Directory \"${dir1}\" has been removed."
       or say "Failed to remove directory \"${dir1}\".";
    }

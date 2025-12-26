@@ -1,2 +1,0 @@
-#!/usr/bin/env -S perl -C63
-print $ENV{PATH} =~ s/:/\n/gr;

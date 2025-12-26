@@ -1,7 +1,7 @@
 #!/usr/bin/python
-# lb2kg
+# lb2gr
 import sys
 if 2 != len(sys.argv) : sys.exit()
 lb = float(sys.argv[1])
-kg = lb * (0.45359237 / 1)
-print(kg)
+gr = lb * (0.45359237 / 1) * (1000 / 1)
+print(gr)

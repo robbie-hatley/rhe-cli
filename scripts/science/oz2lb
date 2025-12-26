@@ -1,7 +1,7 @@
 #!/usr/bin/python
-# kg2lb
+# oz2lb
 import sys
 if 2 != len(sys.argv) : sys.exit()
-kg = float(sys.argv[1])
-lb = kg * (1 / 0.45359237)
+oz = float(sys.argv[1])
+lb = oz * (1 / 16)
 print(lb)
