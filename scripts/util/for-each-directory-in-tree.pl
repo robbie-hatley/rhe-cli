@@ -109,13 +109,13 @@ sub error ($NA) {
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
-   Welcome to "for-each-dir.pl", Robbie Hatley's nifty program for
-   executing a given command once for each directory of the current
+   Welcome to "for-each-directory-in-tree.pl", Robbie Hatley's nifty program 
+   for executing a given command once for each directory of the current
    directory tree descending from the current node.
 
    Command lines:
-   for-each-dir.pl [-h|--help]  (to print this help and exit)
-   for-each-dir.pl command      (to apply command to each directory)
+   for-each-directory-in-tree.pl [-h|--help]  (to print this help and exit)
+   for-each-directory-in-tree.pl command      (to apply command to each directory)
 
    Description of options:
    Option:                      Meaning:

@@ -1,11 +1,16 @@
-The scripts in "/d/rhe-cli/scripts/util" are auxiliary utility scripts which
-are NOT essential core utilities, and are primarily intended to massage
-already-existing data (or do other things altogether) rather than process
-incoming files. These programs are mostly NOT able to run in Cygwin or other
-non-Linux environments due to having "#!/usr/bin/env perl" shebangs and reliance
-on CPAN modules "utf8::all" and "Cwd::utf8".
+This directory ("/d/rhe-cli/scripts/util") is for utility programs
+(primarily for working with files, directories, text, times, and dates)
+written in interpreted languages such as Perl, Python, Bash, Sed, Awk,
+and are intended to be run via the Bash shell.
 
-(For core utilities for processing incoming files, see my "core" collection;
-those scripts will work on both Cygwin and Linux, due to having
-"#!/usr/bin/env -S perl -C63" shebangs and NOT being reliant on CPAN modules
-"utf8::all" or "Cwd::utf8".)
+Most of these programs will run in Linux only and will NOT run in Cygwin,
+due to their reliance on CPAN modules "utf8::all" and "Cwd::utf8". I use
+those two modules because they allow dramatic simplification of the
+handling of Unicode and UTF-8. The trade-off is that those two modules
+don't work in Cygwin, so neither do these scripts. But that's fine,
+because as of the time I'm writing this (Friday December 26 2025),
+Microsoft Windows is a dying operating system. Windows 10 is no-longer
+supported and Windows 11 won't run on most computers, and both OSs have
+all of the bad baggage that goes along with Microsoft Windows (frequent
+crashes, forced updates, forced log-in to Microsoft accounts, etc).
+So I now do nearly all of my computing using Linux, and so should you.
