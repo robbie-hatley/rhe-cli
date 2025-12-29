@@ -71,25 +71,53 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
 use v5.36;
 use utf8::all;
+use List::Util 'min';
 
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
+# Min Abs Diff:
+sub mad ( $aref ) {
+   my %pairs;
+   my $n = scalar(@$aref);
+   foreach my $i (0..$n-2) {
+      my $x = $$aref[$i];
+      foreach my $j ($i+1..$n-1) {
+         my $y = $$aref[$j];
+         my $dist = abs($x-$y);
+         push @{$pairs{$dist}}, [sort {$a<=>$b} ($x, $y)];
+      }
+   }
+   @{$pairs{min keys %pairs}};
 }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) :
+(
+   # Example 1
+   [4, 2, 1, 3],
+   # Output: [1, 2], [2, 3], [3, 4]
+
+   # Example 2
+   [10, 100, 20, 30],
+   # Output: [10, 20], [20, 30]
+
+   # Example 3
+   [-5, -2, 0, 3],
+   # Output: [-2, 0]
+
+   # Example 4
+   [8, 1, 15, 3],
+   # Output: [1, 3]
+
+   # Example 5
+   [12, 5, 9, 1, 15],
+   # Output: [9, 12], [12, 15]
+);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   my @mad = mad($aref);
+   say join ', ', map {"[@$_]"} sort {$$a[0]<=>$$b[0]} @mad;
 }
