@@ -5,73 +5,48 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solution in Perl for The Weekly Challenge 354-1,
-written by Robbie Hatley on Mon Dec 29, 2025.
+written by Robbie Hatley on Tue Dec 30, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
 Task 354-1: Min Abs Diff
 Submitted by: Mohammad Sajid Anwar
-
-You are given an array of distinct integers.
-
-Write a script to find all pairs of elements with the minimum absolute difference.
-
+You are given an array of distinct integers. Write a script to
+find all pairs of elements with the minimum absolute difference.
 Rules (a,b):
 1: a, b are from the given array.
 2: a < b
 3: b - a = min abs diff any two elements in the given array
 
-Example 1
-
-Input: @ints= (4, 2, 1, 3)
-Output: [1, 2], [2, 3], [3, 4]
-
-
-Example 2
-
-Input: @ints = (10, 100, 20, 30)
-Output: [10, 20], [20, 30]
-
-
-Example 3
-
-Input: @ints = (-5, -2, 0, 3)
-Output: [-2, 0]
-
-
-Example 4
-
-Input: @ints = (8, 1, 15, 3)
-Output: [1, 3]
-
-
-Example 5
-
-Input: @ints = (12, 5, 9, 1, 15)
-Output: [9, 12], [12, 15]
-
+See "INPUTS:" section below for example inputs and corresponding
+expected outputs.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+To solve this problem, I make a hash of all possible pairs ($x,$y) keyed by abs($x-$y), then I simply return
+those pairs associated with the minimum key. The "min" function from "List::Util" is handy for this.
+I also sort elements within each pair in ascending order before hashing, and I sort the returned pairs in
+ascending order of first element.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of arrays of unique integers, in proper Perl syntax, like so:
 
-./ch-1.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-1.pl '([1,7,19,5,10,3,36],[24,84,64,4,104,44,-16])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
 =cut
 
 # ------------------------------------------------------------------------------------------------------------
-# PRAGMAS, MODULES, AND SUBS:
+# PRAGMAS, MODULES, VARIABLES, AND SUBS:
 
    use v5.36;
    use utf8::all;
    use List::Util 'min';
+
+   $"=', ';
 
    # Min Abs Diff:
    sub mad ( $aref ) {
@@ -88,31 +63,31 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
 my @arrays = @ARGV ? eval($ARGV[0]) :
+# Example inputs and corresponding expected outputs:
 (
-   # Example 1
+   # Example #1 input:
    [4, 2, 1, 3],
-   # Output: [1, 2], [2, 3], [3, 4]
+   # Expected output: [1, 2], [2, 3], [3, 4]
 
-   # Example 2
+   # Example #2 input:
    [10, 100, 20, 30],
-   # Output: [10, 20], [20, 30]
+   # Expected output: [10, 20], [20, 30]
 
-   # Example 3
+   # Example #3 input:
    [-5, -2, 0, 3],
-   # Output: [-2, 0]
+   # Expected output: [-2, 0]
 
-   # Example 4
+   # Example #4 input:
    [8, 1, 15, 3],
-   # Output: [1, 3]
+   # Expected output: [1, 3]
 
-   # Example 5
+   # Example #5 input:
    [12, 5, 9, 1, 15],
-   # Output: [9, 12], [12, 15]
+   # Expected output: [9, 12], [12, 15]
 );
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
-$"=', ';
 for my $aref (@arrays) {
    say '';
    say "Array = (@$aref)";

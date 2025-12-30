@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solution in Perl for The Weekly Challenge 354-2,
-written by Robbie Hatley on Mon Dec 29, 2025.
+written by Robbie Hatley on Tue Dec 30, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
@@ -26,72 +26,21 @@ row i wrap to the first column of the next row (i+1).
 Rule 3: Element at grid[m - 1][n - 1] moves to grid[0][0]
 This is the bottom-right corner: it wraps to the top-left corner.
 
-Examples:
-(
-   # Example 1 input:
-   [
-      [
-         [1, 2, 3],
-         [4, 5, 6],
-         [7, 8, 9],
-      ],
-      1,
-   ],
-   # Expected output: ([9, 1, 2], [3, 4, 5], [6, 7, 8],)
-
-   # Example 2 input:
-   [
-      [
-         [10, 20],
-         [30, 40],
-      ],
-      1,
-   ],
-   # Expected output: ([40, 10], [20, 30],)
-
-   # Example 3 input:
-   [
-      [
-         [1, 2],
-         [3, 4],
-         [5, 6],
-      ],
-      1,
-   ],
-   # Expected output: ([6, 1], [2, 3], [4, 5],)
-
-   # Example 4 input:
-   [
-      [
-         [1, 2, 3],
-         [4, 5, 6],
-      ],
-      5,
-   ],
-   # Expected output: ([2, 3, 4], [5, 6, 1],)
-
-   # Example 5 input:
-   [
-      [
-         [1, 2, 3, 4],
-      ],
-      1,
-   ],
-   # Expected output: ([4, 1, 2, 3])
-)
+See "INPUTS:" section below for example inputs and corresponding
+expected outputs.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
 To solve this problem, I'll first make note of the shape of the matrix, then flatten it into one long list,
-then shift the list, then reformat it as a matrix.
+then shift the list, then reformat it back to a matrix of the original dimensions.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays, which each inner array consisting of a matrix followed by an integer,
-in proper Perl syntax, like so:
+single-quoted array of arrays, with each inner array consisting of a matrix (of any elements) followed by
+an integer, in proper Perl syntax, like so:
 
-./ch-2.pl '([[[8,4],[6,5]], -1],[[[8,4,2],[7,6,5]],2])'
+./ch-2.pl '([[[8,4],[6,5]], -1],[[["z","g","q"],["l","p","w"]],2])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -150,6 +99,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
 my @inputs = @ARGV ? eval($ARGV[0]) :
+# Example inputs and corresponding expected outputs:
 (
    # Example 1 input:
    [
@@ -160,7 +110,10 @@ my @inputs = @ARGV ? eval($ARGV[0]) :
       ],
       1,
    ],
-   # Expected output: ([9, 1, 2], [3, 4, 5], [6, 7, 8],)
+   # Expected output:
+   # 9, 1, 2
+   # 3, 4, 5
+   # 6, 7, 8
 
    # Example 2 input:
    [
@@ -170,7 +123,9 @@ my @inputs = @ARGV ? eval($ARGV[0]) :
       ],
       1,
    ],
-   # Expected output: ([40, 10], [20, 30],)
+   # Expected output:
+   # 40, 10
+   # 20, 30
 
    # Example 3 input:
    [
@@ -181,7 +136,10 @@ my @inputs = @ARGV ? eval($ARGV[0]) :
       ],
       1,
    ],
-   # Expected output: ([6, 1], [2, 3], [4, 5],)
+   # Expected output:
+   # 6, 1
+   # 2, 3
+   # 4, 5
 
    # Example 4 input:
    [
@@ -191,7 +149,9 @@ my @inputs = @ARGV ? eval($ARGV[0]) :
       ],
       5,
    ],
-   # Expected output: ([2, 3, 4], [5, 6, 1],)
+   # Expected output:
+   # 2, 3, 4
+   # 5, 6, 1
 
    # Example 5 input:
    [
@@ -200,7 +160,8 @@ my @inputs = @ARGV ? eval($ARGV[0]) :
       ],
       1,
    ],
-   # Expected output: ([4, 1, 2, 3])
+   # Expected output:
+   # 4, 1, 2, 3
 );
 
 # ------------------------------------------------------------------------------------------------------------
@@ -208,10 +169,11 @@ my @inputs = @ARGV ? eval($ARGV[0]) :
 for my $iref (@inputs) {
    say '';
    my $mref = $$iref[0];
-   my $x    = $$iref[1];
+   my $shft = $$iref[1];
    say 'Original matrix:';
    say "@$_" for @$mref;
-   say "Amount to shift = $x";
+   say "Amount to shift = $shft";
+   my $sref = shift_matrix($shft, $mref);
    say 'Shifted matrix:';
-   say "@$_" for @{shift_matrix($x, $mref)};
+   say "@$_" for @$sref;
 }
