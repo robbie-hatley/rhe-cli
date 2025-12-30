@@ -110,25 +110,19 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       my @out;
       foreach my $row (@$mref) {
          foreach my $ele (@$row) {
-            push @out, $ele;
-         }
-      }
-      return @out;
-   }
+            push @out, $ele}}
+      return @out}
 
    # Unflatten an array to a $m by $n matrix:
    sub unflatten ( $m, $n, @array, ) {
       my $mref = [];
       foreach my $row (0..$m-1) {
-         push @$mref, [];
-      }
+         push @$mref, []}
       foreach my $idx (0..$#array) {
          my $row = int($idx/$n);
          my $col = $idx%$n;
-         $mref->[$row]->[$col] = $array[$idx];
-      }
-      return $mref;
-   }
+         $mref->[$row]->[$col] = $array[$idx]}
+      return $mref}
 
    # Right-shift an array by any integer $x:
    sub shift_array ( $x, @array ) {
@@ -136,29 +130,22 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       my $n = scalar(@array);
       if ($x > 0) {
          push @out, @array[$n-$x..$n-1];
-         push @out, @array[0..$n-$x-1];
-      }
+         push @out, @array[0..$n-$x-1]}
       elsif ($x < 0) {
          push @out, @array[(-$x)..$n-1];
-         push @out, @array[0..(-$x)-1];
-      }
+         push @out, @array[0..(-$x)-1]}
       else {
-         push @out, @array;
-      }
-      return @out;
-   }
+         push @out, @array}
+      return @out}
 
    # Right-shift a matrix by any integer $x:
    sub shift_matrix ( $x, $mref ) {
       my $m = scalar(@$mref);
       my $n = scalar(@{$$mref[0]});
       my @flat = flatten($mref);
-      say "flat = (@flat)";
       my @shft = shift_array($x, @flat);
-      say "shft = (@shft)";
       my $oref = unflatten($m, $n, @shft);
-      return $oref;
-   }
+      return $oref}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
@@ -222,6 +209,9 @@ for my $iref (@inputs) {
    say '';
    my $mref = $$iref[0];
    my $x    = $$iref[1];
-   my $shft = shift_matrix($x, $mref);
-   say "[@$_]" for @$shft;
+   say 'Original matrix:';
+   say "@$_" for @$mref;
+   say "Amount to shift = $x";
+   say 'Shifted matrix:';
+   say "@$_" for @{shift_matrix($x, $mref)};
 }

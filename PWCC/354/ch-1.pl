@@ -69,24 +69,21 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
-use List::Util 'min';
+   use v5.36;
+   use utf8::all;
+   use List::Util 'min';
 
-# Min Abs Diff:
-sub mad ( $aref ) {
-   my %pairs;
-   my $n = scalar(@$aref);
-   foreach my $i (0..$n-2) {
-      my $x = $$aref[$i];
-      foreach my $j ($i+1..$n-1) {
-         my $y = $$aref[$j];
-         my $dist = abs($x-$y);
-         push @{$pairs{$dist}}, [sort {$a<=>$b} ($x, $y)];
-      }
-   }
-   @{$pairs{min keys %pairs}};
-}
+   # Min Abs Diff:
+   sub mad ( $aref ) {
+      my %pairs;
+      my $n = scalar(@$aref);
+      foreach my $i (0..$n-2) {
+         my $x = $$aref[$i];
+         foreach my $j ($i+1..$n-1) {
+            my $y = $$aref[$j];
+            my $dist = abs($x-$y);
+            push @{$pairs{$dist}}, [sort {$a<=>$b} ($x, $y)]}}
+      sort {$$a[0]<=>$$b[0]} @{$pairs{min keys %pairs}}}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
@@ -118,6 +115,6 @@ my @arrays = @ARGV ? eval($ARGV[0]) :
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my @mad = mad($aref);
-   say join ', ', map {"[@$_]"} sort {$$a[0]<=>$$b[0]} @mad;
+   say "Array = (@$aref)";
+   say 'Min Abs Diff pairs = ', join ', ', map {"[@$_]"} mad($aref);
 }
