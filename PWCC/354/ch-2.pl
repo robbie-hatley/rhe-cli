@@ -31,7 +31,7 @@ expected outputs.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, I'll first make note of the shape of the matrix, then flatten it into one long list,
+To solve this problem, I first make note of the shape of the matrix, then flatten it into one long list,
 then shift the list, then reformat it back to a matrix of the original dimensions.
 
 --------------------------------------------------------------------------------------------------------------
