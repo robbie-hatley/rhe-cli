@@ -5,7 +5,7 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# gib2sha1.pl
+# gib2sha.pl
 # Renames each file in the current directory (and all subdirectories if a -r or --recurse option is used)
 # which has a 8-lower-case-letter "gibberish" file name to a name consisting of the sha1 hash of
 # the data in the file followed by the original file name extension.
