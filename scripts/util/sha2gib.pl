@@ -43,24 +43,6 @@ BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
 our    $cmpl_end;                              # Declare compilation end   time.
 INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
-# NOTE: Always remember, if using BEGIN blocks, only the declaration half of any "my|our $varname = value;"
-# statement is executed before the begin blocks; the "= value;" part is executed AFTER all BEGIN blocks!!!
-# So, THIS code:
-#    my $dog = 'Spot';
-#    BEGIN {defined $dog ? print("defined\n") : print("undefined\n");}
-#    print("My dog's name is $dog.\n");
-#    END   {print("$dog is a nice dog.\n");}
-# Is the same as THIS code:
-#    my $dog;
-#    defined $dog ? print("defined\n") : print("undefined\n");
-#    $dog = 'Spot';
-#    print("My dog's name is $dog.\n");
-#    print("$dog is a nice dog.\n");
-# And EITHER of those code blocks will print:
-#    undefined
-#    My dog's name is Spot.
-#    Spot is a nice dog.
-
 # ------- Local variables: -----------------------------------------------------------------------------------
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
@@ -70,18 +52,22 @@ my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
+my $Simulate  = 0         ; # Merely simulate renames?  bool      Don't simulate
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 # NOTE: There is no "$Target"    because this program renames regular files with SHA1 names only.
 # NOTE: There is no "$RegExp"    because this program renames regular files with SHA1 names only.
 # NOTE: There is no "$Predicate" because this program renames regular files with SHA1 names only.
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
 # SHA1 pattern:
 my $ShaPat = qr(^[0-9a-f]{40}(?:-\(\d{4}\))?(?:\.\w+)?$);
 
 # Counters:
-my $direcount = 0         ; # Count of directories processed by curdire().
-my $filecount = 0         ; # Count of files       processed by curfile().
-my $nonacount = 0         ; # Count of all files for which a gibberish name could not be found.
+my $direcount = 0; # Count of directories processed by curdire().
+my $filecount = 0; # Count of files       processed by curfile().
+my $nonacount = 0; # Count of all files for which a gibberish name could not be found.
+my $simucount = 0; # Count of file renames simulated.
+my $renacount = 0; # Count of files renamed.
+my $failcount = 0; # Count of failed attempts to rename files.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -137,6 +123,7 @@ sub help    ; # Print help and exit.
       say STDERR "Verbose   = $Verbose";
       say STDERR "OriDir    = $OriDir";
       say STDERR "Recurse   = $Recurse";
+      say STDERR "Simulate  = $Simulate";
       say STDERR '';
    }
 
@@ -192,13 +179,14 @@ sub argv {
 
    # Process options:
    for ( @Opts ) {
-      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
-      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default.
-      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
-      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
-      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
+      /^-$s*h/ || /^--help$/     and $Help     =  1  ;
+      /^-$s*e/ || /^--debug$/    and $Debug    =  1  ;
+      /^-$s*q/ || /^--quiet$/    and $Verbose  =  0  ;
+      /^-$s*t/ || /^--terse$/    and $Verbose  =  1  ; # Default.
+      /^-$s*v/ || /^--verbose$/  and $Verbose  =  2  ;
+      /^-$s*l/ || /^--local$/    and $Recurse  =  0  ; # Default.
+      /^-$s*r/ || /^--recurse$/  and $Recurse  =  1  ;
+      /^-$s*s/ || /^--simulate$/ and $Simulate =  1  ; # Default is to NOT simulate (actually rename files).
       # NOTE: $Target is always 'F', as only regular files can have SHA1 hashes.
    }
 
@@ -247,7 +235,7 @@ sub curfile ($path) {
 
    # Try to find a random file name that doesn't already exist in file's directory:
    my $new_name = find_avail_rand_name($dire, '', $suffix);
-   $Db and say STDERR "In curfile(). \$new_name = $new_name";
+   $Debug and say STDERR "In curfile(). \$new_name = $new_name";
 
    # Check to see if find_avail_rand_name returned an error code:
    '***ERROR***' eq $new_name
@@ -256,7 +244,7 @@ sub curfile ($path) {
    and return 0;
 
    # If debugging or simulating, just go through the motions then return 1:
-   $Db || $Simulate
+   $Debug || $Simulate
    and ++$simucount and say STDOUT "Simulated Rename: $name => $new_name" and return 1;
 
    # Otherwise, attempt rename:
@@ -276,10 +264,12 @@ sub stats {
    # If being terse or verbose, print basic stats to STDERR:
    if ( $Verbose >= 1 ) {
       say STDERR '';
-      say STDERR "Statistics for running script \"$pname\" on \"$OriDir\" directory tree";
-      say STDERR "with target \"$Target\", regexp \"$RegExp\", and predicate \"$Predicate\":";
+      say STDERR "Statistics for running script \"$pname\" on \"$OriDir\" directory tree:";
       say STDERR "Navigated $direcount directories.";
-      say STDERR "Processed $filecount files matching given target, regexp, and predicate.";
+      say STDERR "Found $filecount files with SHA1 file names.";
+      $Simulate and say STDERR "Simulated $simucount file renames."
+      or  say STDERR "Successfully randomized the names of $renacount files."
+      and say STDERR "Tried but failed to randomize the names of $failcount files.";
    }
    return 1;
 } # end sub stats
@@ -293,7 +283,8 @@ sub help {
 
    Welcome to "$pname". This program renames any files in the current directory
    (and all subdirectories if a -r or --recurse option is used) which have SHA1
-   names to gibberish names.
+   names to gibberish names consisting of a string of 8 random lower-case English
+   letter, followed by a period, followed by the file's original name suffix.
 
    -------------------------------------------------------------------------------
    Command lines:
@@ -312,7 +303,7 @@ sub help {
    -v or --verbose    Be verbose.
    -l or --local      DON'T recurse subdirectories.     (DEFAULT)
    -r or --recurse    DO    recurse subdirectories.
-   --           End of options (all further CL items are arguments).
+   --                 End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
    For example, use -vr to verbosely and recursively process items.
