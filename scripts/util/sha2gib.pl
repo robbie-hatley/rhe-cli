@@ -10,6 +10,7 @@
 # Written by Robbie Hatley.
 # Edit history:
 # Fri Jan 02, 2026: Wrote it.
+# Mon Jan 05, 2026: Nixed some unnecessary comments.
 ##############################################################################################################
 
 use v5.36;
@@ -34,8 +35,6 @@ $" = ', ' ; # Quoted-array element separator = ", ".
 
 # ------- Global Variables: ----------------------------------------------------------------------------------
 
-# WARNING: Do NOT initialize global variables on their declaration line! That wipes-out changes made to them
-#          by BEGIN, UNITCHECK, CHECK, and INIT blocks! Instead, initialize them in those blocks.
 our    $pname;                                 # Declare program name.
 BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
 our    $cmpl_beg;                              # Declare compilation begin time.
@@ -187,14 +186,16 @@ sub argv {
       /^-$s*l/ || /^--local$/    and $Recurse  =  0  ; # Default.
       /^-$s*r/ || /^--recurse$/  and $Recurse  =  1  ;
       /^-$s*s/ || /^--simulate$/ and $Simulate =  1  ; # Default is to NOT simulate (actually rename files).
-      # NOTE: $Target is always 'F', as only regular files can have SHA1 hashes.
+      # NOTE: There is no "$Target" because this program renames regular files with SHA1 names only.
    }
 
    # Get number of arguments:
    my $NA = scalar(@Args);
 
    # Ignore all arguments:
-   if ( $NA > 0 ) {warn "Warning: Ignoring argument(s).\n"}
+   # NOTE: There is no "$RegExp"    because this program renames regular files with SHA1 names only.
+   # NOTE: There is no "$Predicate" because this program renames regular files with SHA1 names only.
+   if ( 0 != $NA ) {warn "Warning: Ignoring argument(s).\n"}
 
    # Return success code 1 to caller:
    return 1;
