@@ -613,11 +613,12 @@ I now have 6 "rhe-.*" directories:
       rhe-win       (Microsoft-Windows-related stuff)
 
    in /f/:
-      rhe-extra     (lumber room)
+      rhe-extra     (archives and junk)
 
-Two of those are also Git repositories:
+Three of those are also Git repositories:
 Repo:     Privacy:   Description:
-rhe-cli   public     command-line programming
+rhe-cli   public     CLI programming
+rhe-gui   public     GUI programming
 rhe-pri   private    anything I don't want to share with the public
 
 --------------------------------------------------------------------------------------------------------------
@@ -638,3 +639,14 @@ a = print all contents of file
 g = print a section
 e = edit a section
 
+[Second thoughts, 11AM Sat Jan 10 2026: Dubious idea. High cost in time-and-effort, but low reward in that
+Kate and Micro are already good at that kind of thing. For user-owned files, just open in Kate and use Ctrl-F
+to find things. Select text with mouse Ctrl-C to copy, Ctrl-X to cut, Ctrl-V to paste, Ctrl-S to save.]
+
+--------------------------------------------------------------------------------------------------------------
+Fri Dec 26, 2025:
+
+I refactored all of my "Core" scripts to use "#!/usr/bin/env perl", "use utf8::all", and "use Cwd::utf8".
+I then deleted all usage of "d" and "e" from these scripts, I moved them from "Core" to "Util", and I
+deleted "Core", this dramatically simplifying my utility scripts collection (all utility scripts are in
+"/d/rhe-cli/scripts/util", period, with no need for remembering which are in "util" and which are in "core").

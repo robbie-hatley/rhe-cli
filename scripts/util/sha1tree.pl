@@ -10,15 +10,14 @@
 # Written by Robbie Hatley.
 # Edit history:
 # Fri Jan 09, 2026: Wrote it.
+# Sat Jan 10, 2026: Got rid of unnecessary "use" statements; explained what each remaining "use" is for.
 ##############################################################################################################
 
-use v5.36;
-use utf8::all;
-use Cwd::utf8;
-use Time::HiRes 'time';
-use List::Util 'none';
-use Digest::SHA 'sha1_hex';
-use RH::Dir;
+use v5.36;              # To get "signatures" feature.
+use utf8::all;          # Dramatically simplifies handing Unicode and UTF-8, except for cwd.
+use Cwd::utf8;          # Also makes cwd handle Unicode and UTF-8 correctly.
+use Time::HiRes 'time'; # For benchmarking.
+use RH::Dir;            # Gives "RecurseDirs", "glob_regexp_utf8", "is_data_file", "is_meta_file", and "sha1".
 
 # ======= VARIABLES: =========================================================================================
 
@@ -57,6 +56,7 @@ my %ht;
 sub argv     ; # Process @ARGV.
 sub sha1tree ; # Update file ".sha1tree" and return hash table of all paths hashed.
 sub curdire  ; # Process current directory.
+sub curfile  ; # Process current file.
 sub stats    ; # Print statistics.
 sub help     ; # Print help and exit.
 
@@ -72,25 +72,16 @@ sub help     ; # Print help and exit.
 
    # Print program entry message if being terse or verbose:
    if ( $Verbose >= 1 ) {
-      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
       $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
+      say STDERR "Top-level directory = $OriDir";
    }
 
-   # Print compilation time if being verbose:
+   # Print compilation time and variables: if being verbose:
    if ( $Verbose >= 2 ) {
-      printf STDERR "Compilation time was %.3fms\n\n",
+      printf STDERR "Compilation time was %.3fms\n",
       1000 * ($cmpl_end - $cmpl_beg);
-   }
-
-   # Print basic settings if being terse or verbose:
-   if ( $Verbose >= 1 ) {
-      say STDERR "OriDir    = $OriDir";
-      say STDERR '';
-   }
-
-   # If debugging, print the values of all variables except counters, after processing @ARGV:
-   if ( $Debug >= 1 ) {
-      say STDERR 'Debug: Values of variables after processing @ARGV:';
+      say STDERR 'Values of variables after processing @ARGV:';
       say STDERR "pname     = $pname";
       say STDERR "cmpl_beg  = $cmpl_beg";
       say STDERR "cmpl_end  = $cmpl_end";
@@ -103,45 +94,35 @@ sub help     ; # Print help and exit.
       say STDERR '';
    }
 
-   # Process current directory tree and print stats, unless user requested help,
-   # in which case just print help:
+   # If user requested help, just print help:
    if ($Help) {
       help;
    }
+
+   # Otherwise, process current directory tree:
    else {
-      # Gather files hashes frome all subdirectories:
+      # Gather files hashes from all subdirectories:
       RecurseDirs {curdire};
 
-      # Set $filecount equal to number of files hashed:
-      $filecount = scalar keys %ht;
-      if ($Debug) {say STDERR "In main in dir \"$OriDir\";\nhashed $filecount files."}
-
-      # If being verbose, print file hash:
-      if ($Verbose >= 2) {
-         printf("Path:                                                                           Size:        Timestamp:  Sha1:\n");
-         foreach my $key (sort {$a cmp $b} keys %ht) {
-            my $path = '"'.$key.'"';
-            my $size = $ht{$key}->{Size};
-            my $modt = $ht{$key}->{Modt};
-            my $sha1 = $ht{$key}->{Sha1};
-            printf("%-130s%13d  %12d  %-s\n", $path, $size, $modt, $sha1);
-         }
-      }
+      # If debugging, say number of files hashed by "RecurseDirs {curdire}":
+      if ($Debug) {say STDERR "Debug msg in main, in dir \"$OriDir\": hashed $filecount files.\n"}
 
       # Write %ht to '.sha1tree':
       my $fh = undef;
-      open($fh, '>', '.sha1tree') or die "Error: Couldn't open file \".sha1\" for writing in directory \"$OriDir\".\n$!\n";
-      foreach my $key (sort {$a cmp $b} keys %ht) {
-         my $path = '"'.$key.'"';
-         my $size = $ht{$key}->{Size};
-         my $modt = $ht{$key}->{Modt};
-         my $sha1 = $ht{$key}->{Sha1};
-         printf($fh "%-115s%13d  %12d  %-s\n", $path, $size, $modt, $sha1);
+      open($fh, '>', '.sha1tree')
+      or die "Error: Couldn't open file \".sha1tree\" for writing in directory \"$OriDir\".\n$!\n";
+      foreach my $path (sort {$a cmp $b} keys %ht) {
+         my $size = $ht{$path}->{Size};
+         my $modt = $ht{$path}->{Modt};
+         my $sha1 = $ht{$path}->{Sha1};
+         my $string = join "\0", $path, $size, $modt, $sha1;
+         print {$fh} $string, "\0\0";
       }
-      close($fh) or die "Error: Couldn't close file \".sha1\" in directory \"$OriDir\".\n$!\n";
+      close($fh)
+      or die "Error: Couldn't close file \".sha1\" in directory \"$OriDir\".\n$!\n";
 
       # Announce writing file:
-      say "Wrote \".sha1tree\" file to directory \"$OriDir\".";
+      say "\nWrote \".sha1tree\" file to directory \"$OriDir\".";
 
       # Print stats:
       stats;
@@ -208,36 +189,33 @@ sub curdire {
    # Get current working directory:
    my $cwd = cwd;
 
-   # Announce current working directory if being verbose:
-   if ( $Verbose >= 2 ) {
-      say STDERR "\nDirectory # $direcount: $cwd\n";
-   }
-
    # Get a sorted list of paths of all non-meta data files in current directory:
-   my @raw = glob_regexp_utf8($cwd, 'F');
-   my $nr = scalar(@raw);
-   my @paths;
-   my $nf = 0;
-   foreach my $path (@raw) {
+   my @paths = glob_regexp_utf8($cwd, 'F');
+
+   # For each path which is a non-meta data file, send it to curfile:
+   foreach my $path (@paths) {
       next if !is_data_file($path);
       next if  is_meta_file($path);
-      push @paths, $path;
-      ++$nf;
-   }
-   if ($Debug) {say STDERR "In curdire in dir \"$cwd\";\ngot $nr raw files and $nf data files."}
-
-   # Load %ht from @Paths:
-   foreach my $path (@paths) {
-      my @stats  = lstat $path;
-      my $size   = $stats[7];
-      my $modt   = $stats[9];
-      my $sha1   = sha1 $path;
-      $ht{$path} = {Size => $size, Modt => $modt, Sha1 => $sha1};
+      curfile($path);
    }
 
    # Return success code 1 to caller:
    return 1;
 } # end sub curdire
+
+# Record each path sent from curdire in %ht:
+sub curfile ($path) {
+   # Increment file counter:
+   ++$filecount;
+
+   # Associate a file-info hash (containing the size, mod time, and hex SHA-1 hash of the data in this file)
+   # to the file's path in %ht:
+   my @stats  = lstat $path;
+   my $size   = $stats[7];
+   my $modt   = $stats[9];
+   my $sha1   = sha1 $path;
+   $ht{$path} = {Size => $size, Modt => $modt, Sha1 => $sha1};
+}
 
 # Print statistics for this program run:
 sub stats {

@@ -940,10 +940,17 @@ sub FilesAreIdentical :prototype($$) ($filepath1, $filepath2) {
    }
    my $size2 = -s e $filepath2;
 
+   # If the two filepaths are the same, return 1, because every file is identical to itself; however, warn
+   # user, because comparing a file to itself isn't very useful, and hence might not be what was intended:
+   if ( $filepath1 eq $filepath2 ) {
+      warn "Warning in FilesAreIdentical: comparing \"$filepath1\" to itself.\n";
+      return 1;
+   }
+
    # If these files have different sizes, they can't be identical, so return 0:
    if ($size1 != $size2) {return 0;}
 
-   # If both files are emtpy, they are identical, so return 1:
+   # If both files are empty, they are identical, so return 1:
    if (0 == $size1 && 0 == $size2) {return 1 ;}
 
    # Try to open both files here, shortly before entering buffer loop.
@@ -982,7 +989,8 @@ sub FilesAreIdentical :prototype($$) ($filepath1, $filepath2) {
          warn "Error in FilesAreIdentical: Can't read first file\n";
          warn "$filepath1\n";
          warn "$!\n";
-         return 0;
+         $different = 1;
+         last BUFFER;
       }
 
       # Attempt to read 1MiB of data from second file:
@@ -993,7 +1001,8 @@ sub FilesAreIdentical :prototype($$) ($filepath1, $filepath2) {
          warn "Error in FilesAreIdentical: Can't read second file\n";
          warn "$filepath2\n";
          warn "$!\n";
-         return 0;
+         $different = 1;
+         last BUFFER;
       }
 
       # If the two read results are defined but not equal, print sync-failure
