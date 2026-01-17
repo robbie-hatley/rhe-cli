@@ -182,11 +182,22 @@ sub help    ; # Print help and exit.
    # unless user requested help, in which case just print help:
    if ($Help) {help}
    else {
+      # If debugging locally, also debug RH::Dir:
+      if ($Debug) {RhdDebug('on');}
+
+      # If recursing, apply RecurseDirs to curdire:
       if ($Recurse) {
          my $mlor = RecurseDirs {curdire};
          say "Maximum levels of recursion reached = $mlor";
       }
+
+      # Otherwise just execute curdire directly:
       else {curdire}
+
+      # If debugging locally, now turn RH::Dir debugging off:
+      if ($Debug) {RhdDebug('off');}
+
+      # Print statistics for this program run:
       stats
    }
 
@@ -288,7 +299,6 @@ sub curdire {
 
    # Process each path that matches $RegExp, $Target, and $Predicate:
    foreach my $file (sort {$a->{Name} cmp $b->{Name}} @$curdirfiles) {
-      BLAT "Debug msg in rnf, in curdire, in foreach: filename = $file->{Name}";
       curfile($file);
    }
 

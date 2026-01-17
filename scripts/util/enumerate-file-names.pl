@@ -170,12 +170,19 @@ sub help    ; # Print help and exit.
    # unless user requested help, in which case just print help:
    if ($Help) {help}
    else {
-      if ($Recurse) {
-         my $mlor = RecurseDirs {curdire};
-         say "\nMaximum levels of recursion reached = $mlor";
+      # If "$OriDir" is a real directory, perform the program's function:
+      if ( -e $OriDir && -d $OriDir ) {
+         if ($Recurse) {
+            my $mlor = RecurseDirs {curdire};
+            say "\nMaximum levels of recursion reached = $mlor";
+         }
+         else {curdire}
+         stats
       }
-      else {curdire}
-      stats
+      # Otherwise, just print an error message:
+      else { # Severe error!
+         say STDERR "Error: \"original\" directory \"$OriDir\" does not exist!\nSkipping execution.\n$!";
+      }
    }
 
    # Stop execution timer:

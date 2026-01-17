@@ -1,0 +1,13 @@
+#!/usr/bin/env perl
+open PIPE_TO_PERL, "|$^X" or die "Couldn't pipe to Perl.\n$!\n";
+while (<>) {
+   chomp;
+   my @t = split /\s+/, $_;
+   for my $i (0..$#t) {
+      if ($t[$i] =~ m/\pL/ && $t[$i] =~ m/\d/) {
+         $t[$i] =~ y/013579/olestg/;
+      }
+   }
+   print PIPE_TO_PERL join(' ', @t)."\n";
+}
+close PIPE_TO_PERL

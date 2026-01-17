@@ -1,0 +1,2164 @@
+ ------------------------------------------------------
+ | I am Aragorn son of Arathorn, Ranger of Arnor.     |
+ | If by life or by death I can save you, I will.     |
+ | (User-Mode Bash shell on Konsole on Manjaro Linux) |
+ ------------------------------------------------------
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:08:31 PM
+~
+%cd /g/
+Command #22049 job start time: 03:08:40 PM
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:08:40 PM
+/g
+%ff -frq '(?i:marot)'
+Command #22050 job start time: 03:08:51 PM
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/Waterdance/Sandgods---A-Tribute-to-Marot.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot01.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot02.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot03.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot04.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot05.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot06.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot07.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot08.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot09.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot10.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot11.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot12.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot13.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot14.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot15.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot16.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot17.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot18.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot19.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot20.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot21.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot22.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot23.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot24.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot25.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot26.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot27.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot28.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot29.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot30.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot31.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot32.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot33.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot34.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot35.jpg
+/home/aragorn/rem/Xanadu/Art/Photo-Art/Boys/marot/marot36.jpg
+/home/aragorn/rem/Xanadu/Boys/6-Middie/Naked/MAROT23.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Clothed-Boys/marot/marot01.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Clothed-Boys/marot/marot02.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Cosmos-Boring-Old-Reposts-2005-09-20/gmarot01.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Cosmos-Boring-Old-Reposts-2005-09-20/gmarot02.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT01.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT02-(1108).jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT02.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT03.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT04.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT05.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT06.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT07.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT08.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT09.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT10.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT11.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT12.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT13.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT14.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT15.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT16.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT17.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT18.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT19.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT20.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT21.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT22.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT23.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT24.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT25.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT26.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT27.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT28.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT29.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT30.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT31.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT32.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT33.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT34.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT35.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.p/Cosmos(NP-f49)/Post-021/MAROT/MAROT36.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT01.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT11.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT12.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT13.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT14.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT17.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT18.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT23.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT25.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT27.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT28.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT30.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT31.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT32.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT34.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT35.jpg
+/home/aragorn/rem/Xanadu/Boys-Series/Usenet/a.f.utb.naughty-boy/Victor-Victorian/2011-03/MAROT36.jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Single/Marco/marot01-(1885).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Single/Marco/marot02-(7563).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Cosmos Boring Old Reposts 2005-09-20/gmarot01-(0645).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Cosmos Boring Old Reposts 2005-09-20/gmarot02-(6852).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT01-(3297).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT02-(0922).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT03-(1755).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT04-(7475).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT05-(1609).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT06-(9495).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT07-(2640).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT08-(8523).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT09-(2948).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT10-(7445).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT11-(2418).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT12-(8264).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT13-(3259).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT14-(7337).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT15-(8107).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT16-(3973).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT17-(3431).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT18-(5981).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT19-(2091).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT20-(7744).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT21-(1936).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT22-(1830).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT23-(4621).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT24-(4960).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT25-(8699).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT26-(5295).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT27-(4048).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT28-(5769).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT29-(8184).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT30-(6175).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT31-(3922).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT32-(3927).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT33-(6064).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT34-(6623).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT35-(5568).jpg
+/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Usenet/a.f.p/Cosmos/Post-21/Collages/MAROT36-(2091).jpg
+/home/aragorn/rem/Xanadu/Presort/Boys/gmarot02-(8377).jpg
+/home/aragorn/rem/Xanadu/Presort/Boys/marot01-(8019).jpg
+/home/aragorn/rem/Xanadu/Presort/Boys/marot03-(9576).jpg
+/home/aragorn/rem/Xanadu/Presort/Boys/sandgods_-_a_tribute_to_marot-(7932).jpg
+/home/aragorn/rem/Xanadu/Unsorted/marot01.jpg
+/home/aragorn/rem/Xanadu/Unsorted/marot02.jpg
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:10:53 PM
+/g
+%cd /home/aragorn/rem/Xanadu/Boys-Series/Photo-Art/MAROT/
+Command #22051 job start time: 03:14:17 PM
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:14:17 PM
+~/rem/Xanadu/Boys-Series/Photo-Art/MAROT
+%ll
+Command #22052 job start time: 03:14:18 PM
+total 4276
+-rw-rw-r-- 1 aragorn aragorn  89579 2001-02-04 16:04 'MARAT01-(3431).jpg'
+-rw-rw-r-- 1 aragorn aragorn  89579 1997-09-27 20:48  MAROT01.jpg
+-rw-rw-r-- 1 aragorn aragorn 106498 2001-02-04 16:04 'MAROT02-(1108).jpg'
+-rw-rw-r-- 1 aragorn aragorn 106498 1997-09-27 20:50  MAROT02.jpg
+-rw-rw-r-- 1 aragorn aragorn 116465 1997-09-27 20:50  MAROT03.jpg
+-rw-rw-r-- 1 aragorn aragorn  91801 1997-09-27 20:51  MAROT04.jpg
+-rw-rw-r-- 1 aragorn aragorn 145259 1997-09-27 20:52  MAROT05.jpg
+-rw-rw-r-- 1 aragorn aragorn 132442 1997-09-27 20:52  MAROT06.jpg
+-rw-rw-r-- 1 aragorn aragorn 100419 1997-09-27 20:53  MAROT07.jpg
+-rw-rw-r-- 1 aragorn aragorn  58533 1997-09-27 20:59  MAROT08.jpg
+-rw-rw-r-- 1 aragorn aragorn 174870 1997-09-27 20:59  MAROT09.jpg
+-rw-rw-r-- 1 aragorn aragorn 201172 1997-09-27 21:00  MAROT10.jpg
+-rw-rw-r-- 1 aragorn aragorn 108760 1997-09-27 21:00  MAROT11.jpg
+-rw-rw-r-- 1 aragorn aragorn 134454 1997-09-27 21:01  MAROT12.jpg
+-rw-rw-r-- 1 aragorn aragorn  92797 1997-09-27 21:01  MAROT13.jpg
+-rw-rw-r-- 1 aragorn aragorn 106812 1997-09-27 21:02  MAROT14.jpg
+-rw-rw-r-- 1 aragorn aragorn  91483 1997-09-27 21:02  MAROT15.jpg
+-rw-rw-r-- 1 aragorn aragorn 118773 1997-09-27 21:02  MAROT16.jpg
+-rw-rw-r-- 1 aragorn aragorn 104510 1997-09-27 21:03  MAROT17.jpg
+-rw-rw-r-- 1 aragorn aragorn 140915 1997-09-27 21:03  MAROT18.jpg
+-rw-rw-r-- 1 aragorn aragorn 126685 1997-09-27 21:04  MAROT19.jpg
+-rw-rw-r-- 1 aragorn aragorn 103031 1997-09-27 21:04  MAROT20.jpg
+-rw-rw-r-- 1 aragorn aragorn 141126 1997-09-27 21:05  MAROT21.jpg
+-rw-rw-r-- 1 aragorn aragorn 109633 1997-09-27 21:05  MAROT22.jpg
+-rw-rw-r-- 1 aragorn aragorn 108438 1997-09-27 21:06  MAROT23.jpg
+-rw-rw-r-- 1 aragorn aragorn 109075 1997-09-27 21:06  MAROT24.jpg
+-rw-rw-r-- 1 aragorn aragorn 105582 1997-09-27 21:07  MAROT25.jpg
+-rw-rw-r-- 1 aragorn aragorn 134565 1997-09-27 21:08  MAROT26.jpg
+-rw-rw-r-- 1 aragorn aragorn 131211 1997-09-27 21:09  MAROT27.jpg
+-rw-rw-r-- 1 aragorn aragorn 129535 1997-09-27 21:09  MAROT28.jpg
+-rw-rw-r-- 1 aragorn aragorn  87334 1997-09-27 21:11  MAROT29.jpg
+-rw-rw-r-- 1 aragorn aragorn 110587 1997-09-27 21:12  MAROT30.jpg
+-rw-rw-r-- 1 aragorn aragorn 102757 1997-09-27 21:12  MAROT31.jpg
+-rw-rw-r-- 1 aragorn aragorn 118879 1997-09-27 21:13  MAROT32.jpg
+-rw-rw-r-- 1 aragorn aragorn 107487 1997-09-27 21:14  MAROT33.jpg
+-rw-rw-r-- 1 aragorn aragorn  83582 1997-09-27 21:14  MAROT34.jpg
+-rw-rw-r-- 1 aragorn aragorn  97234 1997-09-27 21:15  MAROT35.jpg
+-rw-rw-r-- 1 aragorn aragorn  80983 1997-09-27 21:15  MAROT36.jpg
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:14:18 PM
+~/rem/Xanadu/Boys-Series/Photo-Art/MAROT
+%dnf
+Command #22053 job start time: 03:14:21 PM
+Now entering program "dedup-newsbin-files.pl" at 15:14:22 on 1/14/2026.
+
+Basic settings:
+OriDir    = /home/aragorn/rem/Xanadu/Boys-Series/Photo-Art/MAROT
+Recurse   = 0
+RegExp    = (?^u:^.+$)
+Predicate = 1
+
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Photo-Art/MAROT/MAROT02-(1108).jpg
+
+Stats for running program "dedup-newsbin-files.pl" on dir tree "/home/aragorn/rem/Xanadu/Boys-Series/Photo-Art/MAROT":
+Navigated        1 directories.
+Found           39 files matching RegExp.
+Examined        38 file-name groups.
+Compaired        1 pairs of files.
+Found            1 pairs of duplicate files.
+Deleted          1 duplicate files.
+Failed           0 file deletion attempts.
+Simulated        0 file deletions.
+
+Now exiting program "dedup-newsbin-files.pl" at 15:14:22 on 1/14/2026.
+Execution time was 4.066ms.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:14:22 PM
+~/rem/Xanadu/Boys-Series/Photo-Art/MAROT
+%dfn
+Command #22054 job start time: 03:14:23 PM
+Now entering program "denumerate-file-names.pl" at 15:14:23 on 1/14/2026.
+
+Basic settings:
+OriDir    = /home/aragorn/rem/Xanadu/Boys-Series/Photo-Art/MAROT
+Recurse   = 0
+Target    = F
+RegExp    = (?^u:^.+$)
+Predicate = 1
+Hidden    = 0
+
+
+Directory # 1: /home/aragorn/rem/Xanadu/Boys-Series/Photo-Art/MAROT
+
+File rename attempt #1:
+Old name: MARAT01-(3431).jpg
+New name: MARAT01.jpg
+File successfully renamed!
+
+Statistics for program "denumerate-file-names.pl":
+Traversed        1 directories.
+Found           37 files matching RegExp.
+Bypassed        36 unnumerated files.
+Skipped          0 undenumerable files.
+Attempted        1 file renames.
+Denumerated      1 files.
+Failed           0 file rename attempts.
+Simulated        0 file renames.
+
+Now exiting program "denumerate-file-names.pl" at 15:14:23 on 1/14/2026.
+Execution time was 2.306ms.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:14:23 PM
+~/rem/Xanadu/Boys-Series/Photo-Art/MAROT
+%ddf
+Command #22055 job start time: 03:14:24 PM
+Now entering program "dedup-files.pl" at 15:14:25 on 1/14/2026.
+
+Compilation time was 2.166ms
+
+Basic settings:
+OriDir    = /home/aragorn/rem/Xanadu/Boys-Series/Photo-Art/MAROT
+Recurse   = 0
+Target    = A
+RegExp    = (?^u:^.+$)
+Predicate = 1
+prompt md = DupPrompt
+prejud md = Newer
+
+
+Dir # 1: "/home/aragorn/rem/Xanadu/Boys-Series/Photo-Art/MAROT"
+
+These two files are identical:
+MARAT01.jpg  Sun Feb  4, 2001  16:04:32  89579 bytes
+MAROT01.jpg  Sat Sep 27, 1997  20:48:34  89579 bytes
+Type 1 to unlink "MARAT01.jpg"
+Type 2 to unlink "MAROT01.jpg"
+Type 3 to ignore these duplicates
+Type 4 to enter no-prompt mode and unlink all newer duplicates
+Type 5 to enter no-prompt mode and unlink all older duplicates
+Type 6 to end program and return to bash
+Successfully unlinked MARAT01.jpg
+
+Statistics for this directory:
+Processed     38 files.
+Compared       1 pairs of files.
+Found          1 pairs of duplicate files.
+Ignored        0 pairs of duplicate files.
+Deleted        1 files.
+Failed         0 file deletion attempts.
+Suffered       0 errors.
+Simulated      0 file deletions.
+
+Statistics for this tree:
+Navigated      1 directories.
+Processed     38 files.
+Compared       1 pairs of files.
+Found          1 pairs of duplicate files.
+Ignored        0 pairs of duplicate files.
+Deleted        1 duplicate files.
+Failed         0 file deletion attempts.
+Suffered       0 errors.
+Simulated      0 file deletions.
+
+Now exiting program "dedup-files.pl" at 15:14:43 on 1/14/2026.
+Execution time was 18888.510ms.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:14:43 PM
+~/rem/Xanadu/Boys-Series/Photo-Art/MAROT
+%ll
+Command #22056 job start time: 03:14:45 PM
+total 4080
+-rw-rw-r-- 1 aragorn aragorn  89579 1997-09-27 20:48 MAROT01.jpg
+-rw-rw-r-- 1 aragorn aragorn 106498 1997-09-27 20:50 MAROT02.jpg
+-rw-rw-r-- 1 aragorn aragorn 116465 1997-09-27 20:50 MAROT03.jpg
+-rw-rw-r-- 1 aragorn aragorn  91801 1997-09-27 20:51 MAROT04.jpg
+-rw-rw-r-- 1 aragorn aragorn 145259 1997-09-27 20:52 MAROT05.jpg
+-rw-rw-r-- 1 aragorn aragorn 132442 1997-09-27 20:52 MAROT06.jpg
+-rw-rw-r-- 1 aragorn aragorn 100419 1997-09-27 20:53 MAROT07.jpg
+-rw-rw-r-- 1 aragorn aragorn  58533 1997-09-27 20:59 MAROT08.jpg
+-rw-rw-r-- 1 aragorn aragorn 174870 1997-09-27 20:59 MAROT09.jpg
+-rw-rw-r-- 1 aragorn aragorn 201172 1997-09-27 21:00 MAROT10.jpg
+-rw-rw-r-- 1 aragorn aragorn 108760 1997-09-27 21:00 MAROT11.jpg
+-rw-rw-r-- 1 aragorn aragorn 134454 1997-09-27 21:01 MAROT12.jpg
+-rw-rw-r-- 1 aragorn aragorn  92797 1997-09-27 21:01 MAROT13.jpg
+-rw-rw-r-- 1 aragorn aragorn 106812 1997-09-27 21:02 MAROT14.jpg
+-rw-rw-r-- 1 aragorn aragorn  91483 1997-09-27 21:02 MAROT15.jpg
+-rw-rw-r-- 1 aragorn aragorn 118773 1997-09-27 21:02 MAROT16.jpg
+-rw-rw-r-- 1 aragorn aragorn 104510 1997-09-27 21:03 MAROT17.jpg
+-rw-rw-r-- 1 aragorn aragorn 140915 1997-09-27 21:03 MAROT18.jpg
+-rw-rw-r-- 1 aragorn aragorn 126685 1997-09-27 21:04 MAROT19.jpg
+-rw-rw-r-- 1 aragorn aragorn 103031 1997-09-27 21:04 MAROT20.jpg
+-rw-rw-r-- 1 aragorn aragorn 141126 1997-09-27 21:05 MAROT21.jpg
+-rw-rw-r-- 1 aragorn aragorn 109633 1997-09-27 21:05 MAROT22.jpg
+-rw-rw-r-- 1 aragorn aragorn 108438 1997-09-27 21:06 MAROT23.jpg
+-rw-rw-r-- 1 aragorn aragorn 109075 1997-09-27 21:06 MAROT24.jpg
+-rw-rw-r-- 1 aragorn aragorn 105582 1997-09-27 21:07 MAROT25.jpg
+-rw-rw-r-- 1 aragorn aragorn 134565 1997-09-27 21:08 MAROT26.jpg
+-rw-rw-r-- 1 aragorn aragorn 131211 1997-09-27 21:09 MAROT27.jpg
+-rw-rw-r-- 1 aragorn aragorn 129535 1997-09-27 21:09 MAROT28.jpg
+-rw-rw-r-- 1 aragorn aragorn  87334 1997-09-27 21:11 MAROT29.jpg
+-rw-rw-r-- 1 aragorn aragorn 110587 1997-09-27 21:12 MAROT30.jpg
+-rw-rw-r-- 1 aragorn aragorn 102757 1997-09-27 21:12 MAROT31.jpg
+-rw-rw-r-- 1 aragorn aragorn 118879 1997-09-27 21:13 MAROT32.jpg
+-rw-rw-r-- 1 aragorn aragorn 107487 1997-09-27 21:14 MAROT33.jpg
+-rw-rw-r-- 1 aragorn aragorn  83582 1997-09-27 21:14 MAROT34.jpg
+-rw-rw-r-- 1 aragorn aragorn  97234 1997-09-27 21:15 MAROT35.jpg
+-rw-rw-r-- 1 aragorn aragorn  80983 1997-09-27 21:15 MAROT36.jpg
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:14:45 PM
+~/rem/Xanadu/Boys-Series/Photo-Art/MAROT
+%cd /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/
+Command #22057 job start time: 03:16:59 PM
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:16:59 PM
+~/rem/Xanadu/Boys-Series/International-Boys/dpp
+%rnf -flq '_7' '7'
+Command #22058 job start time: 03:17:11 PM
+
+Old Path = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp_7-0.jpg
+Old Name = dpp_7-0.jpg
+New Name = dpp7-0.jpg
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp_7-1.jpg
+Old Name = dpp_7-1.jpg
+New Name = dpp7-1.jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp_7-10.jpg
+Old Name = dpp_7-10.jpg
+New Name = dpp7-10.jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp_7-11.jpg
+Old Name = dpp_7-11.jpg
+New Name = dpp7-11.jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp_7-14.jpg
+Old Name = dpp_7-14.jpg
+New Name = dpp7-14.jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp_7-2.jpg
+Old Name = dpp_7-2.jpg
+New Name = dpp7-2.jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp_7-3.jpg
+Old Name = dpp_7-3.jpg
+New Name = dpp7-3.jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp_7-5.jpg
+Old Name = dpp_7-5.jpg
+New Name = dpp7-5.jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp_7-6.jpg
+Old Name = dpp_7-6.jpg
+New Name = dpp7-6.jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp_7-7.jpg
+Old Name = dpp_7-7.jpg
+New Name = dpp7-7.jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/pre_7.jpg
+Old Name = pre_7.jpg
+New Name = pre7.jpg
+File successfully renamed.
+
+Processed     1 directories.
+Found        11 files matching target, regexp, and predicate.
+Bypassed      0 files because new name was same as old name.
+Examined     11 files for which new name was different from old name.
+Skipped       0 files at user's request.
+Renamed      11 files.
+Failed        0 file rename attempts.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:17:13 PM
+~/rem/Xanadu/Boys-Series/International-Boys/dpp
+%cd /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp/
+Command #22059 job start time: 03:17:23 PM
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:17:23 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp
+%rnf -flq '_7' '7'
+Command #22060 job start time: 03:17:25 PM
+
+Old Path = /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp/pre_7-(6401).jpg
+Old Name = pre_7-(6401).jpg
+New Name = pre7-(6401).jpg
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+File successfully renamed.
+
+Processed     1 directories.
+Found         1 files matching target, regexp, and predicate.
+Bypassed      0 files because new name was same as old name.
+Examined      1 files for which new name was different from old name.
+Skipped       0 files at user's request.
+Renamed       1 files.
+Failed        0 file rename attempts.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:17:26 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp
+%
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:17:26 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp
+%rnf -flq ' 7' '7'
+Command #22061 job start time: 03:17:50 PM
+
+Old Path = /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp/dpp 7-0-(2959).jpg
+Old Name = dpp 7-0-(2959).jpg
+New Name = dpp7-0-(2959).jpg
+Rename? (Type y for yes, n for no, q to quit, or a to rename all).
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp/dpp 7-1-(5780).jpg
+Old Name = dpp 7-1-(5780).jpg
+New Name = dpp7-1-(5780).jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp/dpp 7-10-(1443).jpg
+Old Name = dpp 7-10-(1443).jpg
+New Name = dpp7-10-(1443).jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp/dpp 7-11-(7860).jpg
+Old Name = dpp 7-11-(7860).jpg
+New Name = dpp7-11-(7860).jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp/dpp 7-14-(3418).jpg
+Old Name = dpp 7-14-(3418).jpg
+New Name = dpp7-14-(3418).jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp/dpp 7-2-(7242).jpg
+Old Name = dpp 7-2-(7242).jpg
+New Name = dpp7-2-(7242).jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp/dpp 7-3-(3463).jpg
+Old Name = dpp 7-3-(3463).jpg
+New Name = dpp7-3-(3463).jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp/dpp 7-5-(9922).jpg
+Old Name = dpp 7-5-(9922).jpg
+New Name = dpp7-5-(9922).jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp/dpp 7-6-(1300).jpg
+Old Name = dpp 7-6-(1300).jpg
+New Name = dpp7-6-(1300).jpg
+File successfully renamed.
+
+Old Path = /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp/dpp 7-7-(3718).jpg
+Old Name = dpp 7-7-(3718).jpg
+New Name = dpp7-7-(3718).jpg
+File successfully renamed.
+
+Processed     1 directories.
+Found        10 files matching target, regexp, and predicate.
+Bypassed      0 files because new name was same as old name.
+Examined     10 files for which new name was different from old name.
+Skipped       0 files at user's request.
+Renamed      10 files.
+Failed        0 file rename attempts.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:17:52 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/dpp
+%cd /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/
+Command #22062 job start time: 03:18:00 PM
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:18:00 PM
+~/rem/Xanadu/Boys-Series/International-Boys/dpp
+%rnf -flq ' 7' '7'
+Command #22063 job start time: 03:18:02 PM
+
+Processed     1 directories.
+Found         0 files matching target, regexp, and predicate.
+Bypassed      0 files because new name was same as old name.
+Examined      0 files for which new name was different from old name.
+Skipped       0 files at user's request.
+Renamed       0 files.
+Failed        0 file rename attempts.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:18:02 PM
+~/rem/Xanadu/Boys-Series/International-Boys/dpp
+%cd /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/
+Command #22064 job start time: 03:18:29 PM
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:18:29 PM
+~/rem/Xanadu/Boys-Series/International-Boys/dpp
+%dnf
+Command #22065 job start time: 03:18:31 PM
+Now entering program "dedup-newsbin-files.pl" at 15:18:31 on 1/14/2026.
+
+Basic settings:
+OriDir    = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp
+Recurse   = 0
+RegExp    = (?^u:^.+$)
+Predicate = 1
+
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp1-0-(9571).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp1-00-(8119).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp1-05-(5518).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp1-07-(0103).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp1-09-(9954).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp1-10-(6676).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp1-11-(6768).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp1-12-(5990).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp1-13-(9687).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp11-02-(2333).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp11-06-(2585).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp11-08-(8206).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp2-00-(9696).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp2-01-(7989).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp2-02-(9956).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp2-03-(7455).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp2-04-(8558).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp2-05-(9287).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp2-06-(1126).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp2-07-(5207).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp2-08-(5006).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp2-09-(9698).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp2-13-(5792).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-10-(0759).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-11-(1400).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-12-(4363).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-13-(9218).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-14-(0794).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-15-(7470).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-16-(5125).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-19-(5488).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-2-(7700).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-3-(6860).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-4-(2501).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-5-(0049).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-7-(5840).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp3-8-(5585).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp4-10-(4125).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp4-12-(8150).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp5-4-(1404).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp5-8-(7235).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp6-10-(1279).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp6-11-(0590).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp6-12-(5432).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp6-13-(9255).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp6-14-(3891).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp6-2-(5366).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp6-6-(7200).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp6-7-(3856).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp6-9-(1633).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp7-0-(2959).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp7-1-(5780).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp7-10-(1443).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp7-11-(7860).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp7-14-(3418).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp7-2-(7242).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp7-3-(3463).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp7-5-(9922).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp7-6-(1300).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp7-7-(3718).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp8-1-(1001).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp8-10-(6899).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp8-13-(6062).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp8-7-(2085).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp8-8-(2395).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/dpp8-9-(0172).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp/pre7-(6401).jpg
+
+Stats for running program "dedup-newsbin-files.pl" on dir tree "/home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp":
+Navigated        1 directories.
+Found          135 files matching RegExp.
+Examined        68 file-name groups.
+Compaired       67 pairs of files.
+Found           67 pairs of duplicate files.
+Deleted         67 duplicate files.
+Failed           0 file deletion attempts.
+Simulated        0 file deletions.
+
+Now exiting program "dedup-newsbin-files.pl" at 15:18:31 on 1/14/2026.
+Execution time was 13.967ms.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:18:31 PM
+~/rem/Xanadu/Boys-Series/International-Boys/dpp
+%ddf
+Command #22066 job start time: 03:18:34 PM
+Now entering program "dedup-files.pl" at 15:18:34 on 1/14/2026.
+
+Compilation time was 2.182ms
+
+Basic settings:
+OriDir    = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp
+Recurse   = 0
+Target    = A
+RegExp    = (?^u:^.+$)
+Predicate = 1
+prompt md = DupPrompt
+prejud md = Newer
+
+
+Dir # 1: "/home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp"
+
+Statistics for this directory:
+Processed     68 files.
+Compared       0 pairs of files.
+Found          0 pairs of duplicate files.
+Ignored        0 pairs of duplicate files.
+Deleted        0 files.
+Failed         0 file deletion attempts.
+Suffered       0 errors.
+Simulated      0 file deletions.
+
+Statistics for this tree:
+Navigated      1 directories.
+Processed     68 files.
+Compared       0 pairs of files.
+Found          0 pairs of duplicate files.
+Ignored        0 pairs of duplicate files.
+Deleted        0 duplicate files.
+Failed         0 file deletion attempts.
+Suffered       0 errors.
+Simulated      0 file deletions.
+
+Now exiting program "dedup-files.pl" at 15:18:34 on 1/14/2026.
+Execution time was 4.154ms.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:18:34 PM
+~/rem/Xanadu/Boys-Series/International-Boys/dpp
+%dfn
+Command #22067 job start time: 03:18:37 PM
+Now entering program "denumerate-file-names.pl" at 15:18:37 on 1/14/2026.
+
+Basic settings:
+OriDir    = /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp
+Recurse   = 0
+Target    = F
+RegExp    = (?^u:^.+$)
+Predicate = 1
+Hidden    = 0
+
+
+Directory # 1: /home/aragorn/rem/Xanadu/Boys-Series/International-Boys/dpp
+
+Statistics for program "denumerate-file-names.pl":
+Traversed        1 directories.
+Found           67 files matching RegExp.
+Bypassed        67 unnumerated files.
+Skipped          0 undenumerable files.
+Attempted        0 file renames.
+Denumerated      0 files.
+Failed           0 file rename attempts.
+Simulated        0 file renames.
+
+Now exiting program "denumerate-file-names.pl" at 15:18:37 on 1/14/2026.
+Execution time was 2.544ms.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:18:37 PM
+~/rem/Xanadu/Boys-Series/International-Boys/dpp
+%ll
+Command #22068 job start time: 03:18:39 PM
+total 5196
+-rw-rw-r-- 1 aragorn aragorn  87282 2001-01-27 16:08 dpp1-00.jpg
+-rw-rw-r-- 1 aragorn aragorn  81929 2001-01-27 16:08 dpp1-05.jpg
+-rw-rw-r-- 1 aragorn aragorn  64977 2001-01-27 16:08 dpp1-07.jpg
+-rw-rw-r-- 1 aragorn aragorn  85438 2001-01-27 16:08 dpp1-09.jpg
+-rw-rw-r-- 1 aragorn aragorn  66976 2001-01-27 16:08 dpp1-0.jpg
+-rw-rw-r-- 1 aragorn aragorn 121240 2001-03-11 18:59 dpp11-02.jpg
+-rw-rw-r-- 1 aragorn aragorn 139312 2001-03-11 19:00 dpp11-06.jpg
+-rw-rw-r-- 1 aragorn aragorn 136096 2001-03-11 19:00 dpp11-08.jpg
+-rw-rw-r-- 1 aragorn aragorn  60098 2001-01-27 16:08 dpp1-10.jpg
+-rw-rw-r-- 1 aragorn aragorn  75329 2001-01-27 16:08 dpp1-11.jpg
+-rw-rw-r-- 1 aragorn aragorn  86746 2001-01-27 16:08 dpp1-12.jpg
+-rw-rw-r-- 1 aragorn aragorn  61643 2001-01-27 16:08 dpp1-13.jpg
+-rw-rw-r-- 1 aragorn aragorn  65885 2001-01-27 16:08 dpp2-00.jpg
+-rw-rw-r-- 1 aragorn aragorn  68268 2001-01-27 16:08 dpp2-01.jpg
+-rw-rw-r-- 1 aragorn aragorn  58472 2001-01-27 16:08 dpp2-02.jpg
+-rw-rw-r-- 1 aragorn aragorn  67963 2001-01-27 16:08 dpp2-03.jpg
+-rw-rw-r-- 1 aragorn aragorn  69811 2001-01-27 16:08 dpp2-04.jpg
+-rw-rw-r-- 1 aragorn aragorn  67032 2001-01-27 16:08 dpp2-05.jpg
+-rw-rw-r-- 1 aragorn aragorn  57595 2001-01-27 16:08 dpp2-06.jpg
+-rw-rw-r-- 1 aragorn aragorn  54602 2001-01-27 16:08 dpp2-07.jpg
+-rw-rw-r-- 1 aragorn aragorn  67988 2001-01-27 16:08 dpp2-08.jpg
+-rw-rw-r-- 1 aragorn aragorn  77593 2001-01-27 16:08 dpp2-09.jpg
+-rw-rw-r-- 1 aragorn aragorn  89628 2001-01-27 16:08 dpp2-13.jpg
+-rw-rw-r-- 1 aragorn aragorn  63534 2001-01-27 16:08 dpp3-10.jpg
+-rw-rw-r-- 1 aragorn aragorn  84896 2001-01-27 16:08 dpp3-11.jpg
+-rw-rw-r-- 1 aragorn aragorn  85703 2001-01-27 16:08 dpp3-12.jpg
+-rw-rw-r-- 1 aragorn aragorn  83796 2001-01-27 16:08 dpp3-13.jpg
+-rw-rw-r-- 1 aragorn aragorn  67571 2001-01-27 16:08 dpp3-14.jpg
+-rw-rw-r-- 1 aragorn aragorn  62038 2001-01-27 16:08 dpp3-15.jpg
+-rw-rw-r-- 1 aragorn aragorn  81964 2000-10-22 09:06 dpp3-16.jpg
+-rw-rw-r-- 1 aragorn aragorn  72737 2000-10-22 09:07 dpp3-19.jpg
+-rw-rw-r-- 1 aragorn aragorn  87193 2001-01-27 16:08 dpp3-2.jpg
+-rw-rw-r-- 1 aragorn aragorn  74428 2001-01-27 16:08 dpp3-3.jpg
+-rw-rw-r-- 1 aragorn aragorn 118616 2000-10-22 09:05 dpp3-4.jpg
+-rw-rw-r-- 1 aragorn aragorn  56987 2001-01-27 16:08 dpp3-5.jpg
+-rw-rw-r-- 1 aragorn aragorn 118338 2000-10-22 09:05 dpp3-7.jpg
+-rw-rw-r-- 1 aragorn aragorn 119212 2000-10-22 09:05 dpp3-8.jpg
+-rw-rw-r-- 1 aragorn aragorn  73685 2001-01-27 22:24 dpp4-10.jpg
+-rw-rw-r-- 1 aragorn aragorn  86809 2001-01-27 22:24 dpp4-12.jpg
+-rw-rw-r-- 1 aragorn aragorn  83591 2001-01-27 22:24 dpp5-4.jpg
+-rw-rw-r-- 1 aragorn aragorn  85240 2001-01-27 22:24 dpp5-8.jpg
+-rw-rw-r-- 1 aragorn aragorn  63713 2001-02-03 20:32 dpp6-10.jpg
+-rw-rw-r-- 1 aragorn aragorn  86792 2001-02-03 20:32 dpp6-11.jpg
+-rw-rw-r-- 1 aragorn aragorn  79038 2001-02-03 20:32 dpp6-12.jpg
+-rw-rw-r-- 1 aragorn aragorn  82622 2001-02-03 20:32 dpp6-13.jpg
+-rw-rw-r-- 1 aragorn aragorn  75120 2001-02-03 20:32 dpp6-14.jpg
+-rw-rw-r-- 1 aragorn aragorn  70918 2001-02-03 20:32 dpp6-2.jpg
+-rw-rw-r-- 1 aragorn aragorn  62280 2001-02-03 20:32 dpp6-6.jpg
+-rw-rw-r-- 1 aragorn aragorn  69633 2001-02-03 20:32 dpp6-7.jpg
+-rw-rw-r-- 1 aragorn aragorn  68782 2001-02-03 20:32 dpp6-9.jpg
+-rw-rw-r-- 1 aragorn aragorn  55882 2001-02-03 20:32 dpp7-0.jpg
+-rw-rw-r-- 1 aragorn aragorn  71664 2001-02-03 20:32 dpp7-10.jpg
+-rw-rw-r-- 1 aragorn aragorn  84265 2001-02-03 20:32 dpp7-11.jpg
+-rw-rw-r-- 1 aragorn aragorn  80633 2001-02-03 20:32 dpp7-14.jpg
+-rw-rw-r-- 1 aragorn aragorn  73444 2001-02-03 20:32 dpp7-1.jpg
+-rw-rw-r-- 1 aragorn aragorn  74177 2001-02-03 20:32 dpp7-2.jpg
+-rw-rw-r-- 1 aragorn aragorn  76184 2001-02-03 20:32 dpp7-3.jpg
+-rw-rw-r-- 1 aragorn aragorn  74357 2001-02-03 20:32 dpp7-5.jpg
+-rw-rw-r-- 1 aragorn aragorn  74655 2001-02-03 20:32 dpp7-6.jpg
+-rw-rw-r-- 1 aragorn aragorn  67686 2001-02-03 20:32 dpp7-7.jpg
+-rw-rw-r-- 1 aragorn aragorn  65804 2001-02-03 20:32 dpp8-10.jpg
+-rw-rw-r-- 1 aragorn aragorn  87170 2001-02-03 20:32 dpp8-13.jpg
+-rw-rw-r-- 1 aragorn aragorn  55464 2001-02-03 20:32 dpp8-1.jpg
+-rw-rw-r-- 1 aragorn aragorn  65258 2001-02-03 20:32 dpp8-7.jpg
+-rw-rw-r-- 1 aragorn aragorn  71238 2001-02-03 20:32 dpp8-8.jpg
+-rw-rw-r-- 1 aragorn aragorn  63478 2001-02-03 20:32 dpp8-9.jpg
+-rw-rw-r-- 1 aragorn aragorn  51611 2001-02-03 20:32 pre7.jpg
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:18:39 PM
+~/rem/Xanadu/Boys-Series/International-Boys/dpp
+%cd /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)/
+bash: syntax error near unexpected token `('
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:21:02 PM
+~/rem/Xanadu/Boys-Series/International-Boys/dpp
+%cd "/home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)/"
+Command #22070 job start time: 03:21:09 PM
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:21:09 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+%ll
+Command #22071 job start time: 03:21:12 PM
+total 2464
+-rw-rw-r-- 1 aragorn aragorn 61518 2000-12-25 12:42 'OXTRA01A-(4267).jpg'
+-rw-rw-r-- 1 aragorn aragorn 61680 2000-12-25 12:42 'OXTRA01B-(4192).jpg'
+-rw-rw-r-- 1 aragorn aragorn 64567 2000-12-25 12:42 'OXTRA02-(2168).jpg'
+-rw-rw-r-- 1 aragorn aragorn 42613 2000-12-25 12:42 'OXTRA03-(5710).jpg'
+-rw-rw-r-- 1 aragorn aragorn 50733 2000-12-25 12:42 'OXTRA04-(0191).jpg'
+-rw-rw-r-- 1 aragorn aragorn 41285 2000-12-25 12:42 'OXTRA05-(9354).jpg'
+-rw-rw-r-- 1 aragorn aragorn 56088 2000-12-25 12:42 'OXTRA06-(0482).jpg'
+-rw-rw-r-- 1 aragorn aragorn 58590 2000-12-25 12:42 'OXTRA07-(9870).jpg'
+-rw-rw-r-- 1 aragorn aragorn 54275 2000-12-25 12:42 'oxtra08-(4463).jpg'
+-rw-rw-r-- 1 aragorn aragorn 54137 2000-12-25 12:42 'oxtra09-(7220).jpg'
+-rw-rw-r-- 1 aragorn aragorn 27131 2000-12-25 12:42 'oxtra10-(7467).jpg'
+-rw-rw-r-- 1 aragorn aragorn 52247 2000-12-25 12:42 'oxtra11-(4104).jpg'
+-rw-rw-r-- 1 aragorn aragorn 46572 2000-12-25 12:42 'oxtra12-(1390).jpg'
+-rw-rw-r-- 1 aragorn aragorn 25048 2000-12-25 12:42 'OXTRA13-(8869).jpg'
+-rw-rw-r-- 1 aragorn aragorn 43438 2000-12-25 12:42 'oxtra14-(8142).jpg'
+-rw-rw-r-- 1 aragorn aragorn 46797 2000-12-25 12:42 'oxtra15-(7853).jpg'
+-rw-rw-r-- 1 aragorn aragorn 54345 2000-12-25 12:42 'oxtra16-(5286).jpg'
+-rw-rw-r-- 1 aragorn aragorn 19488 2000-12-25 12:42 'OXTRA17A-(4293).jpg'
+-rw-rw-r-- 1 aragorn aragorn 18338 2000-12-25 12:42 'oxtra17b-(1747).jpg'
+-rw-rw-r-- 1 aragorn aragorn 15175 2000-12-25 12:42 'oxtra18a-(2877).jpg'
+-rw-rw-r-- 1 aragorn aragorn 17773 2000-12-25 12:42 'oxtra18b-(6201).jpg'
+-rw-rw-r-- 1 aragorn aragorn 17372 2000-12-25 12:42 'OXTRA19A-(0907).jpg'
+-rw-rw-r-- 1 aragorn aragorn 16498 2000-12-25 12:42 'oxtra19b-(4265).jpg'
+-rw-rw-r-- 1 aragorn aragorn 20554 2000-12-25 12:42 'OXTRA20A-(0641).jpg'
+-rw-rw-r-- 1 aragorn aragorn 78600 2000-12-25 12:42 'oxtra20b-(0722).jpg'
+-rw-rw-r-- 1 aragorn aragorn 14442 2000-12-25 12:42 'oxtra21-(8518).jpg'
+-rw-rw-r-- 1 aragorn aragorn 20157 2000-12-25 12:42 'oxtra22-(1709).jpg'
+-rw-rw-r-- 1 aragorn aragorn 57128 2000-12-25 12:42 'OXTRA23A-(4033).jpg'
+-rw-rw-r-- 1 aragorn aragorn 45160 2000-12-25 12:42 'oxtra23b-(0644).jpg'
+-rw-rw-r-- 1 aragorn aragorn 33930 2000-12-25 12:42 'OXTRA24A-(2315).jpg'
+-rw-rw-r-- 1 aragorn aragorn 40147 2000-12-25 12:42 'OXTRA25-(2037).jpg'
+-rw-rw-r-- 1 aragorn aragorn 19505 2000-10-15 15:22 'oxtra26-(8896).jpg'
+-rw-rw-r-- 1 aragorn aragorn 47922 2000-12-25 12:42 'oxtra27a-(2122).jpg'
+-rw-rw-r-- 1 aragorn aragorn 45000 2000-12-25 12:42 'oxtra27b-(7958).jpg'
+-rw-rw-r-- 1 aragorn aragorn 39840 2000-12-25 12:42 'oxtra28-(3299).jpg'
+-rw-rw-r-- 1 aragorn aragorn 31482 2000-12-25 12:42 'oxtra29-(3102).jpg'
+-rw-rw-r-- 1 aragorn aragorn 33890 2000-12-25 12:42 'oxtra30a-(7655).jpg'
+-rw-rw-r-- 1 aragorn aragorn 45506 2000-12-25 12:42 'oxtra30b-(0724).jpg'
+-rw-rw-r-- 1 aragorn aragorn 53818 2000-12-25 12:42 'oxtra31a-(7343).jpg'
+-rw-rw-r-- 1 aragorn aragorn 60554 2000-12-25 12:42 'oxtra31b-(5950).jpg'
+-rw-rw-r-- 1 aragorn aragorn 68708 2000-12-25 12:42 'oxtra32a-(5403).jpg'
+-rw-rw-r-- 1 aragorn aragorn 39096 2000-12-25 12:42 'oxtra32b-(6830).jpg'
+-rw-rw-r-- 1 aragorn aragorn 50342 2000-12-25 12:42 'oxtra33a-(0257).jpg'
+-rw-rw-r-- 1 aragorn aragorn 49658 2000-12-25 12:42 'oxtra33b-(0097).jpg'
+-rw-rw-r-- 1 aragorn aragorn 32064 2000-12-25 12:42 'oxtra34-(1133).jpg'
+-rw-rw-r-- 1 aragorn aragorn 43047 2000-12-25 12:42 'oxtra35-(1996).jpg'
+-rw-rw-r-- 1 aragorn aragorn 36096 2000-12-25 12:42 'oxtra36-(9615).jpg'
+-rw-rw-r-- 1 aragorn aragorn 42240 2000-12-25 12:42 'oxtra37-(3716).jpg'
+-rw-rw-r-- 1 aragorn aragorn 45706 2000-10-15 15:23 'oxtra38-(5637).jpg'
+-rw-rw-r-- 1 aragorn aragorn 61557 2000-12-25 12:42 'oxtra39-(5997).jpg'
+-rw-rw-r-- 1 aragorn aragorn 27838 2000-10-15 15:23 'oxtra40-(8711).jpg'
+-rw-rw-r-- 1 aragorn aragorn 34831 2000-10-15 15:25 'oxtra41-(9496).jpg'
+-rw-rw-r-- 1 aragorn aragorn 31948 2000-12-25 12:42 'oxtra42-(1628).jpg'
+-rw-rw-r-- 1 aragorn aragorn 44886 2000-12-25 12:42 'oxtra43-(7561).jpg'
+-rw-rw-r-- 1 aragorn aragorn 35880 2000-12-25 12:42 'oxtra44-(2633).jpg'
+-rw-rw-r-- 1 aragorn aragorn 24110 2000-12-25 12:42 'oxtra45-(1192).jpg'
+-rw-rw-r-- 1 aragorn aragorn 49754 2000-12-25 12:42 'oxtra46-(3140).jpg'
+-rw-rw-r-- 1 aragorn aragorn 31462 2000-12-25 12:42 'oxtra47-(7548).jpg'
+-rw-rw-r-- 1 aragorn aragorn 14465 2000-12-25 12:42 'oxtra48-(9031).jpg'
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:21:12 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+%efn
+Command #22072 job start time: 03:21:16 PM
+Now entering program "enumerate-file-names.pl" at 15:21:16 on 1/14/2026.
+
+Basic settings:
+OriDir    = /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+Recurse   = 0
+Target    = F
+RegExp    = (?^u:^.+$)
+Predicate = 1
+Hidden    = 0
+Bypass    = 0
+
+
+Directory # 1: /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+
+File rename attempt #1:
+Old name: OXTRA01A-(4267).jpg
+New name: OXTRA01A-(4322).jpg
+File successfully renamed!
+
+File rename attempt #2:
+Old name: OXTRA01B-(4192).jpg
+New name: OXTRA01B-(2288).jpg
+File successfully renamed!
+
+File rename attempt #3:
+Old name: OXTRA02-(2168).jpg
+New name: OXTRA02-(3621).jpg
+File successfully renamed!
+
+File rename attempt #4:
+Old name: OXTRA03-(5710).jpg
+New name: OXTRA03-(0474).jpg
+File successfully renamed!
+
+File rename attempt #5:
+Old name: OXTRA04-(0191).jpg
+New name: OXTRA04-(6249).jpg
+File successfully renamed!
+
+File rename attempt #6:
+Old name: OXTRA05-(9354).jpg
+New name: OXTRA05-(2345).jpg
+File successfully renamed!
+
+File rename attempt #7:
+Old name: OXTRA06-(0482).jpg
+New name: OXTRA06-(3093).jpg
+File successfully renamed!
+
+File rename attempt #8:
+Old name: OXTRA07-(9870).jpg
+New name: OXTRA07-(4186).jpg
+File successfully renamed!
+
+File rename attempt #9:
+Old name: OXTRA13-(8869).jpg
+New name: OXTRA13-(8590).jpg
+File successfully renamed!
+
+File rename attempt #10:
+Old name: OXTRA17A-(4293).jpg
+New name: OXTRA17A-(6670).jpg
+File successfully renamed!
+
+File rename attempt #11:
+Old name: OXTRA19A-(0907).jpg
+New name: OXTRA19A-(3903).jpg
+File successfully renamed!
+
+File rename attempt #12:
+Old name: OXTRA20A-(0641).jpg
+New name: OXTRA20A-(1499).jpg
+File successfully renamed!
+
+File rename attempt #13:
+Old name: OXTRA23A-(4033).jpg
+New name: OXTRA23A-(0394).jpg
+File successfully renamed!
+
+File rename attempt #14:
+Old name: OXTRA24A-(2315).jpg
+New name: OXTRA24A-(8771).jpg
+File successfully renamed!
+
+File rename attempt #15:
+Old name: OXTRA25-(2037).jpg
+New name: OXTRA25-(3394).jpg
+File successfully renamed!
+
+File rename attempt #16:
+Old name: oxtra08-(4463).jpg
+New name: oxtra08-(8305).jpg
+File successfully renamed!
+
+File rename attempt #17:
+Old name: oxtra09-(7220).jpg
+New name: oxtra09-(8726).jpg
+File successfully renamed!
+
+File rename attempt #18:
+Old name: oxtra10-(7467).jpg
+New name: oxtra10-(4887).jpg
+File successfully renamed!
+
+File rename attempt #19:
+Old name: oxtra11-(4104).jpg
+New name: oxtra11-(8944).jpg
+File successfully renamed!
+
+File rename attempt #20:
+Old name: oxtra12-(1390).jpg
+New name: oxtra12-(5267).jpg
+File successfully renamed!
+
+File rename attempt #21:
+Old name: oxtra14-(8142).jpg
+New name: oxtra14-(6101).jpg
+File successfully renamed!
+
+File rename attempt #22:
+Old name: oxtra15-(7853).jpg
+New name: oxtra15-(7473).jpg
+File successfully renamed!
+
+File rename attempt #23:
+Old name: oxtra16-(5286).jpg
+New name: oxtra16-(8075).jpg
+File successfully renamed!
+
+File rename attempt #24:
+Old name: oxtra17b-(1747).jpg
+New name: oxtra17b-(2589).jpg
+File successfully renamed!
+
+File rename attempt #25:
+Old name: oxtra18a-(2877).jpg
+New name: oxtra18a-(0156).jpg
+File successfully renamed!
+
+File rename attempt #26:
+Old name: oxtra18b-(6201).jpg
+New name: oxtra18b-(8472).jpg
+File successfully renamed!
+
+File rename attempt #27:
+Old name: oxtra19b-(4265).jpg
+New name: oxtra19b-(7660).jpg
+File successfully renamed!
+
+File rename attempt #28:
+Old name: oxtra20b-(0722).jpg
+New name: oxtra20b-(6620).jpg
+File successfully renamed!
+
+File rename attempt #29:
+Old name: oxtra21-(8518).jpg
+New name: oxtra21-(8190).jpg
+File successfully renamed!
+
+File rename attempt #30:
+Old name: oxtra22-(1709).jpg
+New name: oxtra22-(7145).jpg
+File successfully renamed!
+
+File rename attempt #31:
+Old name: oxtra23b-(0644).jpg
+New name: oxtra23b-(9735).jpg
+File successfully renamed!
+
+File rename attempt #32:
+Old name: oxtra26-(8896).jpg
+New name: oxtra26-(9544).jpg
+File successfully renamed!
+
+File rename attempt #33:
+Old name: oxtra27a-(2122).jpg
+New name: oxtra27a-(0479).jpg
+File successfully renamed!
+
+File rename attempt #34:
+Old name: oxtra27b-(7958).jpg
+New name: oxtra27b-(5229).jpg
+File successfully renamed!
+
+File rename attempt #35:
+Old name: oxtra28-(3299).jpg
+New name: oxtra28-(6498).jpg
+File successfully renamed!
+
+File rename attempt #36:
+Old name: oxtra29-(3102).jpg
+New name: oxtra29-(6216).jpg
+File successfully renamed!
+
+File rename attempt #37:
+Old name: oxtra30a-(7655).jpg
+New name: oxtra30a-(8983).jpg
+File successfully renamed!
+
+File rename attempt #38:
+Old name: oxtra30b-(0724).jpg
+New name: oxtra30b-(4999).jpg
+File successfully renamed!
+
+File rename attempt #39:
+Old name: oxtra31a-(7343).jpg
+New name: oxtra31a-(9759).jpg
+File successfully renamed!
+
+File rename attempt #40:
+Old name: oxtra31b-(5950).jpg
+New name: oxtra31b-(9031).jpg
+File successfully renamed!
+
+File rename attempt #41:
+Old name: oxtra32a-(5403).jpg
+New name: oxtra32a-(7513).jpg
+File successfully renamed!
+
+File rename attempt #42:
+Old name: oxtra32b-(6830).jpg
+New name: oxtra32b-(9784).jpg
+File successfully renamed!
+
+File rename attempt #43:
+Old name: oxtra33a-(0257).jpg
+New name: oxtra33a-(4704).jpg
+File successfully renamed!
+
+File rename attempt #44:
+Old name: oxtra33b-(0097).jpg
+New name: oxtra33b-(1339).jpg
+File successfully renamed!
+
+File rename attempt #45:
+Old name: oxtra34-(1133).jpg
+New name: oxtra34-(7126).jpg
+File successfully renamed!
+
+File rename attempt #46:
+Old name: oxtra35-(1996).jpg
+New name: oxtra35-(8274).jpg
+File successfully renamed!
+
+File rename attempt #47:
+Old name: oxtra36-(9615).jpg
+New name: oxtra36-(5720).jpg
+File successfully renamed!
+
+File rename attempt #48:
+Old name: oxtra37-(3716).jpg
+New name: oxtra37-(7371).jpg
+File successfully renamed!
+
+File rename attempt #49:
+Old name: oxtra38-(5637).jpg
+New name: oxtra38-(5874).jpg
+File successfully renamed!
+
+File rename attempt #50:
+Old name: oxtra39-(5997).jpg
+New name: oxtra39-(2698).jpg
+File successfully renamed!
+
+File rename attempt #51:
+Old name: oxtra40-(8711).jpg
+New name: oxtra40-(4192).jpg
+File successfully renamed!
+
+File rename attempt #52:
+Old name: oxtra41-(9496).jpg
+New name: oxtra41-(5882).jpg
+File successfully renamed!
+
+File rename attempt #53:
+Old name: oxtra42-(1628).jpg
+New name: oxtra42-(5506).jpg
+File successfully renamed!
+
+File rename attempt #54:
+Old name: oxtra43-(7561).jpg
+New name: oxtra43-(1141).jpg
+File successfully renamed!
+
+File rename attempt #55:
+Old name: oxtra44-(2633).jpg
+New name: oxtra44-(7429).jpg
+File successfully renamed!
+
+File rename attempt #56:
+Old name: oxtra45-(1192).jpg
+New name: oxtra45-(1270).jpg
+File successfully renamed!
+
+File rename attempt #57:
+Old name: oxtra46-(3140).jpg
+New name: oxtra46-(2932).jpg
+File successfully renamed!
+
+File rename attempt #58:
+Old name: oxtra47-(7548).jpg
+New name: oxtra47-(7818).jpg
+File successfully renamed!
+
+File rename attempt #59:
+Old name: oxtra48-(9031).jpg
+New name: oxtra48-(1805).jpg
+File successfully renamed!
+
+Statistics for program "enumerate-file-names.pl":
+Traversed        1 directories.
+Found           59 files matching RegExp.
+Bypassed         0 numerated files.
+Skipped          0 unenumerable files
+Attempted       59 file renames.
+Enumerated      59 files.
+Failed           0 file rename attempts.
+Simulated        0 file renames.
+
+Now exiting program "enumerate-file-names.pl" at 15:21:16 on 1/14/2026.
+Execution time was 6.715ms.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:21:16 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+%ftl
+Command #22073 job start time: 03:21:20 PM
+
+Directory # 1: /home/aragorn/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+
+"OXTRA01A-(4322).jpg" -> "oxtra01a-(4322).jpg"
+"OXTRA01B-(2288).jpg" -> "oxtra01b-(2288).jpg"
+"OXTRA02-(3621).jpg" -> "oxtra02-(3621).jpg"
+"OXTRA03-(0474).jpg" -> "oxtra03-(0474).jpg"
+"OXTRA04-(6249).jpg" -> "oxtra04-(6249).jpg"
+"OXTRA05-(2345).jpg" -> "oxtra05-(2345).jpg"
+"OXTRA06-(3093).jpg" -> "oxtra06-(3093).jpg"
+"OXTRA07-(4186).jpg" -> "oxtra07-(4186).jpg"
+"OXTRA13-(8590).jpg" -> "oxtra13-(8590).jpg"
+"OXTRA17A-(6670).jpg" -> "oxtra17a-(6670).jpg"
+"OXTRA19A-(3903).jpg" -> "oxtra19a-(3903).jpg"
+"OXTRA20A-(1499).jpg" -> "oxtra20a-(1499).jpg"
+"OXTRA23A-(0394).jpg" -> "oxtra23a-(0394).jpg"
+"OXTRA24A-(8771).jpg" -> "oxtra24a-(8771).jpg"
+"OXTRA25-(3394).jpg" -> "oxtra25-(3394).jpg"
+Skipped file "oxtra08-(8305).jpg" because new name was same as old.
+Skipped file "oxtra09-(8726).jpg" because new name was same as old.
+Skipped file "oxtra10-(4887).jpg" because new name was same as old.
+Skipped file "oxtra11-(8944).jpg" because new name was same as old.
+Skipped file "oxtra12-(5267).jpg" because new name was same as old.
+Skipped file "oxtra14-(6101).jpg" because new name was same as old.
+Skipped file "oxtra15-(7473).jpg" because new name was same as old.
+Skipped file "oxtra16-(8075).jpg" because new name was same as old.
+Skipped file "oxtra17b-(2589).jpg" because new name was same as old.
+Skipped file "oxtra18a-(0156).jpg" because new name was same as old.
+Skipped file "oxtra18b-(8472).jpg" because new name was same as old.
+Skipped file "oxtra19b-(7660).jpg" because new name was same as old.
+Skipped file "oxtra20b-(6620).jpg" because new name was same as old.
+Skipped file "oxtra21-(8190).jpg" because new name was same as old.
+Skipped file "oxtra22-(7145).jpg" because new name was same as old.
+Skipped file "oxtra23b-(9735).jpg" because new name was same as old.
+Skipped file "oxtra26-(9544).jpg" because new name was same as old.
+Skipped file "oxtra27a-(0479).jpg" because new name was same as old.
+Skipped file "oxtra27b-(5229).jpg" because new name was same as old.
+Skipped file "oxtra28-(6498).jpg" because new name was same as old.
+Skipped file "oxtra29-(6216).jpg" because new name was same as old.
+Skipped file "oxtra30a-(8983).jpg" because new name was same as old.
+Skipped file "oxtra30b-(4999).jpg" because new name was same as old.
+Skipped file "oxtra31a-(9759).jpg" because new name was same as old.
+Skipped file "oxtra31b-(9031).jpg" because new name was same as old.
+Skipped file "oxtra32a-(7513).jpg" because new name was same as old.
+Skipped file "oxtra32b-(9784).jpg" because new name was same as old.
+Skipped file "oxtra33a-(4704).jpg" because new name was same as old.
+Skipped file "oxtra33b-(1339).jpg" because new name was same as old.
+Skipped file "oxtra34-(7126).jpg" because new name was same as old.
+Skipped file "oxtra35-(8274).jpg" because new name was same as old.
+Skipped file "oxtra36-(5720).jpg" because new name was same as old.
+Skipped file "oxtra37-(7371).jpg" because new name was same as old.
+Skipped file "oxtra38-(5874).jpg" because new name was same as old.
+Skipped file "oxtra39-(2698).jpg" because new name was same as old.
+Skipped file "oxtra40-(4192).jpg" because new name was same as old.
+Skipped file "oxtra41-(5882).jpg" because new name was same as old.
+Skipped file "oxtra42-(5506).jpg" because new name was same as old.
+Skipped file "oxtra43-(1141).jpg" because new name was same as old.
+Skipped file "oxtra44-(7429).jpg" because new name was same as old.
+Skipped file "oxtra45-(1270).jpg" because new name was same as old.
+Skipped file "oxtra46-(2932).jpg" because new name was same as old.
+Skipped file "oxtra47-(7818).jpg" because new name was same as old.
+Skipped file "oxtra48-(1805).jpg" because new name was same as old.
+
+Statistics for program "pname":
+Navigated 1 directories.
+Found 59 files matching RegExp (?^u:^.+$).
+Found 59 files also matching predicate 1.
+Skipped 44 files.
+Renamed 15 files.
+Failed 0 file rename attempts.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:21:20 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+%cd /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/
+bash: syntax error near unexpected token `('
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:21:57 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+%efn
+Command #22075 job start time: 03:21:59 PM
+pwd: couldn't find directory entry in ‘..’ with matching i-node
+Now entering program "enumerate-file-names.pl" at 15:21:59 on 1/14/2026.
+
+Basic settings:
+OriDir    =
+Recurse   = 0
+Target    = F
+RegExp    = (?^u:^.+$)
+Predicate = 1
+Hidden    = 0
+Bypass    = 0
+
+pwd: couldn't find directory entry in ‘..’ with matching i-node
+
+Directory # 1:
+Fatal error in readdir_regexp_utf8: Invalid directory ''.
+No such file or directory
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:21:59 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+%which perl
+Command #22076 job start time: 03:23:06 PM
+/usr/bin/perl
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:23:06 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+%perlbrew --help
+Command #22077 job start time: 03:23:20 PM
+Usage:
+    perlbrew command syntax:
+
+        perlbrew <command> [options] [arguments]
+
+    Commands:
+
+        init           Initialize perlbrew environment.
+        info           Show useful information about the perlbrew installation
+
+        install        Install perl
+        uninstall      Uninstall the given installation
+        available      List perls available to install
+        lib            Manage local::lib directories.
+        alias          Give perl installations a new name
+        upgrade-perl   Upgrade the current perl
+
+        list           List perl installations
+        use            Use the specified perl in current shell
+        off            Turn off perlbrew in current shell
+        switch         Permanently use the specified perl as default
+        switch-off     Permanently turn off perlbrew (revert to system perl)
+        exec           Execute programs with specified perl environments.
+
+        list-modules   List installed CPAN modules for the current Perl version in use
+        clone-modules  Re-installs all CPAN modules from one installation to another
+
+        self-install       Install perlbrew itself under PERLBREW_ROOT/bin
+        self-upgrade       Upgrade perlbrew itself.
+
+        install-patchperl  Install patchperl
+        install-cpanm      Install cpanm, a friendly companion.
+        install-cpm        Install cpm, a faster but still friendly companion.
+        install-multiple   Install multiple versions and flavors of perl
+
+        download       Download the specified perl distribution tarball.
+        clean          Purge tarballs and build directories
+        version        Display version
+        help           Read more detailed instructions
+
+    Generic command options:
+
+        -q --quiet     Be quiet on informative output message.
+        -v --verbose   Tell me more about it.
+
+    See `perlbrew help` for the full documentation of perlbrew, or
+
+    See `perlbrew help <command>` for detail description of the command.
+
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:23:20 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+%perlbrew switch-off
+Command #22078 job start time: 03:23:37 PM
+perlbrew is switched off.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:23:37 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+%ll
+Command #22079 job start time: 03:23:43 PM
+total 0
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:23:43 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+%ll
+Command #22080 job start time: 03:23:47 PM
+total 0
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:23:47 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+%cd /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/
+bash: syntax error near unexpected token `('
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:24:20 PM
+~/rem/Xanadu/Hatheg/Boys-Series/Clothed-Boys/oxtra-(Oliver-Extra)
+%cd "/home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)"
+Command #22082 job start time: 03:24:28 PM
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:24:28 PM
+~/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)
+%la
+Command #22083 job start time: 03:24:31 PM
+total 5480
+drwxrwxr-x   2 aragorn aragorn  4096 2026-01-14 15:21  .
+drwxrwxr-x 269 aragorn aragorn 12288 2026-01-14 14:37  ..
+-rw-rw-r--   1 aragorn aragorn 61518 2000-12-25 12:42 'oxtra01a-(4322).jpg'
+-rw-rw-r--   1 aragorn aragorn 61518 1998-11-29 09:41  oxtra01a.jpg
+-rw-rw-r--   1 aragorn aragorn 61680 2000-12-25 12:42 'oxtra01b-(2288).jpg'
+-rw-rw-r--   1 aragorn aragorn 61680 1998-11-29 09:43  oxtra01b.jpg
+-rw-rw-r--   1 aragorn aragorn 64567 2000-12-25 12:42 'oxtra02-(3621).jpg'
+-rw-rw-r--   1 aragorn aragorn 64567 1998-11-30 00:53  oxtra02.jpg
+-rw-rw-r--   1 aragorn aragorn 42613 2000-12-25 12:42 'oxtra03-(0474).jpg'
+-rw-rw-r--   1 aragorn aragorn 42613 1998-11-30 00:50  oxtra03.jpg
+-rw-rw-r--   1 aragorn aragorn 50733 2000-12-25 12:42 'oxtra04-(6249).jpg'
+-rw-rw-r--   1 aragorn aragorn 50733 1998-11-30 00:51  oxtra04.jpg
+-rw-rw-r--   1 aragorn aragorn 41285 2000-12-25 12:42 'oxtra05-(2345).jpg'
+-rw-rw-r--   1 aragorn aragorn 41285 1998-11-30 00:52  oxtra05.jpg
+-rw-rw-r--   1 aragorn aragorn 56088 2000-12-25 12:42 'oxtra06-(3093).jpg'
+-rw-rw-r--   1 aragorn aragorn 56088 1998-11-30 00:55  oxtra06.jpg
+-rw-rw-r--   1 aragorn aragorn 58590 2000-12-25 12:42 'oxtra07-(4186).jpg'
+-rw-rw-r--   1 aragorn aragorn 58590 1999-01-12 00:05  oxtra07.jpg
+-rw-rw-r--   1 aragorn aragorn 57658 2001-08-05 22:20  OXTRA07.jpg
+-rw-rw-r--   1 aragorn aragorn 54275 2000-12-25 12:42 'oxtra08-(8305).jpg'
+-rw-rw-r--   1 aragorn aragorn 54275 2000-12-25 12:42  oxtra08.jpg
+-rw-rw-r--   1 aragorn aragorn 54137 2000-12-25 12:42 'oxtra09-(8726).jpg'
+-rw-rw-r--   1 aragorn aragorn 54137 2000-12-25 12:42  oxtra09.jpg
+-rw-rw-r--   1 aragorn aragorn 27131 2000-12-25 12:42 'oxtra10-(4887).jpg'
+-rw-rw-r--   1 aragorn aragorn 27131 2000-10-19 01:00  oxtra10.jpg
+-rw-rw-r--   1 aragorn aragorn 52247 2000-12-25 12:42 'oxtra11-(8944).jpg'
+-rw-rw-r--   1 aragorn aragorn 52247 2000-12-25 12:42  oxtra11.jpg
+-rw-rw-r--   1 aragorn aragorn 46572 2000-12-25 12:42 'oxtra12-(5267).jpg'
+-rw-rw-r--   1 aragorn aragorn 46572 2000-12-25 12:42  oxtra12.jpg
+-rw-rw-r--   1 aragorn aragorn 25048 2000-12-25 12:42 'oxtra13-(8590).jpg'
+-rw-rw-r--   1 aragorn aragorn 25048 1998-11-30 00:57  oxtra13.jpg
+-rw-rw-r--   1 aragorn aragorn 43438 2000-12-25 12:42 'oxtra14-(6101).jpg'
+-rw-rw-r--   1 aragorn aragorn 43438 2000-12-25 12:42  oxtra14.jpg
+-rw-rw-r--   1 aragorn aragorn 46797 2000-12-25 12:42 'oxtra15-(7473).jpg'
+-rw-rw-r--   1 aragorn aragorn 46797 2000-12-25 12:42  oxtra15.jpg
+-rw-rw-r--   1 aragorn aragorn 54345 2000-12-25 12:42 'oxtra16-(8075).jpg'
+-rw-rw-r--   1 aragorn aragorn 54345 2000-12-25 12:42  oxtra16.jpg
+-rw-rw-r--   1 aragorn aragorn 19488 2000-12-25 12:42 'oxtra17a-(6670).jpg'
+-rw-rw-r--   1 aragorn aragorn 19488 1998-11-30 00:44  oxtra17a.jpg
+-rw-rw-r--   1 aragorn aragorn 18338 2000-12-25 12:42 'oxtra17b-(2589).jpg'
+-rw-rw-r--   1 aragorn aragorn 18338 2000-10-19 01:01  oxtra17b.jpg
+-rw-rw-r--   1 aragorn aragorn 15175 2000-12-25 12:42 'oxtra18a-(0156).jpg'
+-rw-rw-r--   1 aragorn aragorn 15175 2000-12-25 12:42 'oxtra18a-(9606).jpg'
+-rw-rw-r--   1 aragorn aragorn 16791 2001-08-05 21:20  oxtra18a.jpg
+-rw-rw-r--   1 aragorn aragorn 17773 2000-12-25 12:42 'oxtra18b-(8472).jpg'
+-rw-rw-r--   1 aragorn aragorn 17773 2000-12-25 12:42  oxtra18b.jpg
+-rw-rw-r--   1 aragorn aragorn 17372 2000-12-25 12:42 'oxtra19a-(3903).jpg'
+-rw-rw-r--   1 aragorn aragorn 17372 1998-11-30 00:46  oxtra19a.jpg
+-rw-rw-r--   1 aragorn aragorn 16498 2000-12-25 12:42 'oxtra19b-(7660).jpg'
+-rw-rw-r--   1 aragorn aragorn 16498 2000-10-19 01:02  oxtra19b.jpg
+-rw-rw-r--   1 aragorn aragorn 20554 2000-12-25 12:42 'oxtra20a-(1499).jpg'
+-rw-rw-r--   1 aragorn aragorn 20554 1998-11-30 00:45  oxtra20a.jpg
+-rw-rw-r--   1 aragorn aragorn 78600 2000-12-25 12:42 'oxtra20b-(6620).jpg'
+-rw-rw-r--   1 aragorn aragorn 78600 2000-12-25 12:42  oxtra20b.jpg
+-rw-rw-r--   1 aragorn aragorn 14442 2000-12-25 12:42 'oxtra21-(8190).jpg'
+-rw-rw-r--   1 aragorn aragorn 16861 2001-08-05 22:20 'oxtra21-(8763).jpg'
+-rw-rw-r--   1 aragorn aragorn 14442 2000-10-19 01:02  oxtra21.jpg
+-rw-rw-r--   1 aragorn aragorn 20157 2000-12-25 12:42 'oxtra22-(7145).jpg'
+-rw-rw-r--   1 aragorn aragorn 20157 2000-10-19 01:02  oxtra22.jpg
+-rw-rw-r--   1 aragorn aragorn 57128 2000-12-25 12:42 'oxtra23a-(0394).jpg'
+-rw-rw-r--   1 aragorn aragorn 57128 1998-11-30 00:47  oxtra23a.jpg
+-rw-rw-r--   1 aragorn aragorn 48745 2001-08-05 22:20  OXTRA23A.jpg
+-rw-rw-r--   1 aragorn aragorn 53912 2001-08-05 21:20 'oxtra23b-(7808).jpg'
+-rw-rw-r--   1 aragorn aragorn 45160 2000-12-25 12:42 'oxtra23b-(9735).jpg'
+-rw-rw-r--   1 aragorn aragorn 45160 2000-12-25 12:42  oxtra23b.jpg
+-rw-rw-r--   1 aragorn aragorn 33930 2000-12-25 12:42 'oxtra24a-(8771).jpg'
+-rw-rw-r--   1 aragorn aragorn 33930 1998-11-30 00:48  oxtra24a.jpg
+-rw-rw-r--   1 aragorn aragorn 40147 2000-12-25 12:42 'oxtra25-(3394).jpg'
+-rw-rw-r--   1 aragorn aragorn 40147 1998-11-30 00:57  oxtra25.jpg
+-rw-rw-r--   1 aragorn aragorn 19505 2000-10-15 15:22 'oxtra26-(9544).jpg'
+-rw-rw-r--   1 aragorn aragorn 19505 2000-10-15 15:22  oxtra26.jpg
+-rw-rw-r--   1 aragorn aragorn 47922 2000-12-25 12:42 'oxtra27a-(0479).jpg'
+-rw-rw-r--   1 aragorn aragorn 47922 2000-12-25 12:42  oxtra27a.jpg
+-rw-rw-r--   1 aragorn aragorn 45000 2000-12-25 12:42 'oxtra27b-(5229).jpg'
+-rw-rw-r--   1 aragorn aragorn 45000 2000-12-25 12:42  oxtra27b.jpg
+-rw-rw-r--   1 aragorn aragorn 39840 2000-12-25 12:42 'oxtra28-(6498).jpg'
+-rw-rw-r--   1 aragorn aragorn 39840 2000-12-25 12:42  oxtra28.jpg
+-rw-rw-r--   1 aragorn aragorn 31482 2000-12-25 12:42 'oxtra29-(6216).jpg'
+-rw-rw-r--   1 aragorn aragorn 31482 2000-10-19 01:03  oxtra29.jpg
+-rw-rw-r--   1 aragorn aragorn 33890 2000-12-25 12:42 'oxtra30a-(8983).jpg'
+-rw-rw-r--   1 aragorn aragorn 91545 2001-08-05 21:20  oxtra30a-colorized.jpg
+-rw-rw-r--   1 aragorn aragorn 33890 2000-10-19 01:03  oxtra30a.jpg
+-rw-rw-r--   1 aragorn aragorn 45506 2000-12-25 12:42 'oxtra30b-(4999).jpg'
+-rw-rw-r--   1 aragorn aragorn 45506 2000-12-25 12:42  oxtra30b.jpg
+-rw-rw-r--   1 aragorn aragorn 91545 2001-08-05 22:20  oxtra30x.jpg
+-rw-rw-r--   1 aragorn aragorn 53818 2000-12-25 12:42 'oxtra31a-(9759).jpg'
+-rw-rw-r--   1 aragorn aragorn 53818 2000-12-25 12:42  oxtra31a.jpg
+-rw-rw-r--   1 aragorn aragorn 60554 2000-12-25 12:42 'oxtra31b-(4470).jpg'
+-rw-rw-r--   1 aragorn aragorn 60554 2000-12-25 12:42 'oxtra31b-(9031).jpg'
+-rw-rw-r--   1 aragorn aragorn 58282 2001-08-05 21:20  oxtra31b.jpg
+-rw-rw-r--   1 aragorn aragorn 68708 2000-12-25 12:42 'oxtra32a-(7513).jpg'
+-rw-rw-r--   1 aragorn aragorn 68708 2000-12-25 12:42  oxtra32a.jpg
+-rw-rw-r--   1 aragorn aragorn 39096 2000-12-25 12:42 'oxtra32b-(9784).jpg'
+-rw-rw-r--   1 aragorn aragorn 39096 2000-12-25 12:42  oxtra32b.jpg
+-rw-rw-r--   1 aragorn aragorn 50342 2000-12-25 12:42 'oxtra33a-(4704).jpg'
+-rw-rw-r--   1 aragorn aragorn 50342 2000-12-25 12:42  oxtra33a.jpg
+-rw-rw-r--   1 aragorn aragorn 49658 2000-12-25 12:42 'oxtra33b-(1339).jpg'
+-rw-rw-r--   1 aragorn aragorn 48554 2001-08-05 21:20 'oxtra33b-(8540).jpg'
+-rw-rw-r--   1 aragorn aragorn 49658 2000-12-25 12:42  oxtra33b.jpg
+-rw-rw-r--   1 aragorn aragorn 32064 2000-12-25 12:42 'oxtra34-(7126).jpg'
+-rw-rw-r--   1 aragorn aragorn 32064 2000-10-19 01:03  oxtra34.jpg
+-rw-rw-r--   1 aragorn aragorn 43047 2000-12-25 12:42 'oxtra35-(8274).jpg'
+-rw-rw-r--   1 aragorn aragorn 43047 2000-12-25 12:42  oxtra35.jpg
+-rw-rw-r--   1 aragorn aragorn 36096 2000-12-25 12:42 'oxtra36-(5720).jpg'
+-rw-rw-r--   1 aragorn aragorn 36096 2000-10-19 01:03  oxtra36.jpg
+-rw-rw-r--   1 aragorn aragorn 42240 2000-12-25 12:42 'oxtra37-(7371).jpg'
+-rw-rw-r--   1 aragorn aragorn 42240 2000-12-25 12:42  oxtra37.jpg
+-rw-rw-r--   1 aragorn aragorn 45706 2000-10-15 15:23 'oxtra38-(5874).jpg'
+-rw-rw-r--   1 aragorn aragorn 45706 2000-10-15 15:23  oxtra38.jpg
+-rw-rw-r--   1 aragorn aragorn 61557 2000-12-25 12:42 'oxtra39-(2698).jpg'
+-rw-rw-r--   1 aragorn aragorn 61557 2000-12-25 12:42  oxtra39.jpg
+-rw-rw-r--   1 aragorn aragorn 27838 2000-10-15 15:23 'oxtra40-(4192).jpg'
+-rw-rw-r--   1 aragorn aragorn 27838 2000-10-15 15:23  oxtra40.jpg
+-rw-rw-r--   1 aragorn aragorn 34831 2000-10-15 15:25 'oxtra41-(5882).jpg'
+-rw-rw-r--   1 aragorn aragorn 34831 2000-10-15 15:25  oxtra41.jpg
+-rw-rw-r--   1 aragorn aragorn 31948 2000-12-25 12:42 'oxtra42-(5506).jpg'
+-rw-rw-r--   1 aragorn aragorn 31948 2000-10-15 16:25  oxtra42.jpg
+-rw-rw-r--   1 aragorn aragorn 44886 2000-12-25 12:42 'oxtra43-(1141).jpg'
+-rw-rw-r--   1 aragorn aragorn 44886 2000-12-25 12:42  oxtra43.jpg
+-rw-rw-r--   1 aragorn aragorn 35880 2000-12-25 12:42 'oxtra44-(7429).jpg'
+-rw-rw-r--   1 aragorn aragorn 35880 2000-10-19 01:04  oxtra44.jpg
+-rw-rw-r--   1 aragorn aragorn 24110 2000-12-25 12:42 'oxtra45-(1270).jpg'
+-rw-rw-r--   1 aragorn aragorn 24110 2000-10-19 01:04 'oxtra45-(8923).jpg'
+-rw-rw-r--   1 aragorn aragorn 28927 2001-08-05 22:20  oxtra45.jpg
+-rw-rw-r--   1 aragorn aragorn 49754 2000-12-25 12:42 'oxtra46-(2932).jpg'
+-rw-rw-r--   1 aragorn aragorn 49754 2000-12-25 12:42  oxtra46.jpg
+-rw-rw-r--   1 aragorn aragorn 31462 2000-12-25 12:42 'oxtra47-(7818).jpg'
+-rw-rw-r--   1 aragorn aragorn 31462 2000-10-19 01:04  oxtra47.jpg
+-rw-rw-r--   1 aragorn aragorn 14465 2000-12-25 12:42 'oxtra48-(1805).jpg'
+-rw-rw-r--   1 aragorn aragorn 14465 2000-10-19 01:04  oxtra48.jpg
+-rw-rw-r--   1 aragorn aragorn  4843 2025-03-26 21:42  .sha1
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:24:31 PM
+~/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)
+%ll
+Command #22084 job start time: 03:24:33 PM
+total 5456
+-rw-rw-r-- 1 aragorn aragorn 61518 2000-12-25 12:42 'oxtra01a-(4322).jpg'
+-rw-rw-r-- 1 aragorn aragorn 61518 1998-11-29 09:41  oxtra01a.jpg
+-rw-rw-r-- 1 aragorn aragorn 61680 2000-12-25 12:42 'oxtra01b-(2288).jpg'
+-rw-rw-r-- 1 aragorn aragorn 61680 1998-11-29 09:43  oxtra01b.jpg
+-rw-rw-r-- 1 aragorn aragorn 64567 2000-12-25 12:42 'oxtra02-(3621).jpg'
+-rw-rw-r-- 1 aragorn aragorn 64567 1998-11-30 00:53  oxtra02.jpg
+-rw-rw-r-- 1 aragorn aragorn 42613 2000-12-25 12:42 'oxtra03-(0474).jpg'
+-rw-rw-r-- 1 aragorn aragorn 42613 1998-11-30 00:50  oxtra03.jpg
+-rw-rw-r-- 1 aragorn aragorn 50733 2000-12-25 12:42 'oxtra04-(6249).jpg'
+-rw-rw-r-- 1 aragorn aragorn 50733 1998-11-30 00:51  oxtra04.jpg
+-rw-rw-r-- 1 aragorn aragorn 41285 2000-12-25 12:42 'oxtra05-(2345).jpg'
+-rw-rw-r-- 1 aragorn aragorn 41285 1998-11-30 00:52  oxtra05.jpg
+-rw-rw-r-- 1 aragorn aragorn 56088 2000-12-25 12:42 'oxtra06-(3093).jpg'
+-rw-rw-r-- 1 aragorn aragorn 56088 1998-11-30 00:55  oxtra06.jpg
+-rw-rw-r-- 1 aragorn aragorn 58590 2000-12-25 12:42 'oxtra07-(4186).jpg'
+-rw-rw-r-- 1 aragorn aragorn 58590 1999-01-12 00:05  oxtra07.jpg
+-rw-rw-r-- 1 aragorn aragorn 57658 2001-08-05 22:20  OXTRA07.jpg
+-rw-rw-r-- 1 aragorn aragorn 54275 2000-12-25 12:42 'oxtra08-(8305).jpg'
+-rw-rw-r-- 1 aragorn aragorn 54275 2000-12-25 12:42  oxtra08.jpg
+-rw-rw-r-- 1 aragorn aragorn 54137 2000-12-25 12:42 'oxtra09-(8726).jpg'
+-rw-rw-r-- 1 aragorn aragorn 54137 2000-12-25 12:42  oxtra09.jpg
+-rw-rw-r-- 1 aragorn aragorn 27131 2000-12-25 12:42 'oxtra10-(4887).jpg'
+-rw-rw-r-- 1 aragorn aragorn 27131 2000-10-19 01:00  oxtra10.jpg
+-rw-rw-r-- 1 aragorn aragorn 52247 2000-12-25 12:42 'oxtra11-(8944).jpg'
+-rw-rw-r-- 1 aragorn aragorn 52247 2000-12-25 12:42  oxtra11.jpg
+-rw-rw-r-- 1 aragorn aragorn 46572 2000-12-25 12:42 'oxtra12-(5267).jpg'
+-rw-rw-r-- 1 aragorn aragorn 46572 2000-12-25 12:42  oxtra12.jpg
+-rw-rw-r-- 1 aragorn aragorn 25048 2000-12-25 12:42 'oxtra13-(8590).jpg'
+-rw-rw-r-- 1 aragorn aragorn 25048 1998-11-30 00:57  oxtra13.jpg
+-rw-rw-r-- 1 aragorn aragorn 43438 2000-12-25 12:42 'oxtra14-(6101).jpg'
+-rw-rw-r-- 1 aragorn aragorn 43438 2000-12-25 12:42  oxtra14.jpg
+-rw-rw-r-- 1 aragorn aragorn 46797 2000-12-25 12:42 'oxtra15-(7473).jpg'
+-rw-rw-r-- 1 aragorn aragorn 46797 2000-12-25 12:42  oxtra15.jpg
+-rw-rw-r-- 1 aragorn aragorn 54345 2000-12-25 12:42 'oxtra16-(8075).jpg'
+-rw-rw-r-- 1 aragorn aragorn 54345 2000-12-25 12:42  oxtra16.jpg
+-rw-rw-r-- 1 aragorn aragorn 19488 2000-12-25 12:42 'oxtra17a-(6670).jpg'
+-rw-rw-r-- 1 aragorn aragorn 19488 1998-11-30 00:44  oxtra17a.jpg
+-rw-rw-r-- 1 aragorn aragorn 18338 2000-12-25 12:42 'oxtra17b-(2589).jpg'
+-rw-rw-r-- 1 aragorn aragorn 18338 2000-10-19 01:01  oxtra17b.jpg
+-rw-rw-r-- 1 aragorn aragorn 15175 2000-12-25 12:42 'oxtra18a-(0156).jpg'
+-rw-rw-r-- 1 aragorn aragorn 15175 2000-12-25 12:42 'oxtra18a-(9606).jpg'
+-rw-rw-r-- 1 aragorn aragorn 16791 2001-08-05 21:20  oxtra18a.jpg
+-rw-rw-r-- 1 aragorn aragorn 17773 2000-12-25 12:42 'oxtra18b-(8472).jpg'
+-rw-rw-r-- 1 aragorn aragorn 17773 2000-12-25 12:42  oxtra18b.jpg
+-rw-rw-r-- 1 aragorn aragorn 17372 2000-12-25 12:42 'oxtra19a-(3903).jpg'
+-rw-rw-r-- 1 aragorn aragorn 17372 1998-11-30 00:46  oxtra19a.jpg
+-rw-rw-r-- 1 aragorn aragorn 16498 2000-12-25 12:42 'oxtra19b-(7660).jpg'
+-rw-rw-r-- 1 aragorn aragorn 16498 2000-10-19 01:02  oxtra19b.jpg
+-rw-rw-r-- 1 aragorn aragorn 20554 2000-12-25 12:42 'oxtra20a-(1499).jpg'
+-rw-rw-r-- 1 aragorn aragorn 20554 1998-11-30 00:45  oxtra20a.jpg
+-rw-rw-r-- 1 aragorn aragorn 78600 2000-12-25 12:42 'oxtra20b-(6620).jpg'
+-rw-rw-r-- 1 aragorn aragorn 78600 2000-12-25 12:42  oxtra20b.jpg
+-rw-rw-r-- 1 aragorn aragorn 14442 2000-12-25 12:42 'oxtra21-(8190).jpg'
+-rw-rw-r-- 1 aragorn aragorn 16861 2001-08-05 22:20 'oxtra21-(8763).jpg'
+-rw-rw-r-- 1 aragorn aragorn 14442 2000-10-19 01:02  oxtra21.jpg
+-rw-rw-r-- 1 aragorn aragorn 20157 2000-12-25 12:42 'oxtra22-(7145).jpg'
+-rw-rw-r-- 1 aragorn aragorn 20157 2000-10-19 01:02  oxtra22.jpg
+-rw-rw-r-- 1 aragorn aragorn 57128 2000-12-25 12:42 'oxtra23a-(0394).jpg'
+-rw-rw-r-- 1 aragorn aragorn 57128 1998-11-30 00:47  oxtra23a.jpg
+-rw-rw-r-- 1 aragorn aragorn 48745 2001-08-05 22:20  OXTRA23A.jpg
+-rw-rw-r-- 1 aragorn aragorn 53912 2001-08-05 21:20 'oxtra23b-(7808).jpg'
+-rw-rw-r-- 1 aragorn aragorn 45160 2000-12-25 12:42 'oxtra23b-(9735).jpg'
+-rw-rw-r-- 1 aragorn aragorn 45160 2000-12-25 12:42  oxtra23b.jpg
+-rw-rw-r-- 1 aragorn aragorn 33930 2000-12-25 12:42 'oxtra24a-(8771).jpg'
+-rw-rw-r-- 1 aragorn aragorn 33930 1998-11-30 00:48  oxtra24a.jpg
+-rw-rw-r-- 1 aragorn aragorn 40147 2000-12-25 12:42 'oxtra25-(3394).jpg'
+-rw-rw-r-- 1 aragorn aragorn 40147 1998-11-30 00:57  oxtra25.jpg
+-rw-rw-r-- 1 aragorn aragorn 19505 2000-10-15 15:22 'oxtra26-(9544).jpg'
+-rw-rw-r-- 1 aragorn aragorn 19505 2000-10-15 15:22  oxtra26.jpg
+-rw-rw-r-- 1 aragorn aragorn 47922 2000-12-25 12:42 'oxtra27a-(0479).jpg'
+-rw-rw-r-- 1 aragorn aragorn 47922 2000-12-25 12:42  oxtra27a.jpg
+-rw-rw-r-- 1 aragorn aragorn 45000 2000-12-25 12:42 'oxtra27b-(5229).jpg'
+-rw-rw-r-- 1 aragorn aragorn 45000 2000-12-25 12:42  oxtra27b.jpg
+-rw-rw-r-- 1 aragorn aragorn 39840 2000-12-25 12:42 'oxtra28-(6498).jpg'
+-rw-rw-r-- 1 aragorn aragorn 39840 2000-12-25 12:42  oxtra28.jpg
+-rw-rw-r-- 1 aragorn aragorn 31482 2000-12-25 12:42 'oxtra29-(6216).jpg'
+-rw-rw-r-- 1 aragorn aragorn 31482 2000-10-19 01:03  oxtra29.jpg
+-rw-rw-r-- 1 aragorn aragorn 33890 2000-12-25 12:42 'oxtra30a-(8983).jpg'
+-rw-rw-r-- 1 aragorn aragorn 91545 2001-08-05 21:20  oxtra30a-colorized.jpg
+-rw-rw-r-- 1 aragorn aragorn 33890 2000-10-19 01:03  oxtra30a.jpg
+-rw-rw-r-- 1 aragorn aragorn 45506 2000-12-25 12:42 'oxtra30b-(4999).jpg'
+-rw-rw-r-- 1 aragorn aragorn 45506 2000-12-25 12:42  oxtra30b.jpg
+-rw-rw-r-- 1 aragorn aragorn 91545 2001-08-05 22:20  oxtra30x.jpg
+-rw-rw-r-- 1 aragorn aragorn 53818 2000-12-25 12:42 'oxtra31a-(9759).jpg'
+-rw-rw-r-- 1 aragorn aragorn 53818 2000-12-25 12:42  oxtra31a.jpg
+-rw-rw-r-- 1 aragorn aragorn 60554 2000-12-25 12:42 'oxtra31b-(4470).jpg'
+-rw-rw-r-- 1 aragorn aragorn 60554 2000-12-25 12:42 'oxtra31b-(9031).jpg'
+-rw-rw-r-- 1 aragorn aragorn 58282 2001-08-05 21:20  oxtra31b.jpg
+-rw-rw-r-- 1 aragorn aragorn 68708 2000-12-25 12:42 'oxtra32a-(7513).jpg'
+-rw-rw-r-- 1 aragorn aragorn 68708 2000-12-25 12:42  oxtra32a.jpg
+-rw-rw-r-- 1 aragorn aragorn 39096 2000-12-25 12:42 'oxtra32b-(9784).jpg'
+-rw-rw-r-- 1 aragorn aragorn 39096 2000-12-25 12:42  oxtra32b.jpg
+-rw-rw-r-- 1 aragorn aragorn 50342 2000-12-25 12:42 'oxtra33a-(4704).jpg'
+-rw-rw-r-- 1 aragorn aragorn 50342 2000-12-25 12:42  oxtra33a.jpg
+-rw-rw-r-- 1 aragorn aragorn 49658 2000-12-25 12:42 'oxtra33b-(1339).jpg'
+-rw-rw-r-- 1 aragorn aragorn 48554 2001-08-05 21:20 'oxtra33b-(8540).jpg'
+-rw-rw-r-- 1 aragorn aragorn 49658 2000-12-25 12:42  oxtra33b.jpg
+-rw-rw-r-- 1 aragorn aragorn 32064 2000-12-25 12:42 'oxtra34-(7126).jpg'
+-rw-rw-r-- 1 aragorn aragorn 32064 2000-10-19 01:03  oxtra34.jpg
+-rw-rw-r-- 1 aragorn aragorn 43047 2000-12-25 12:42 'oxtra35-(8274).jpg'
+-rw-rw-r-- 1 aragorn aragorn 43047 2000-12-25 12:42  oxtra35.jpg
+-rw-rw-r-- 1 aragorn aragorn 36096 2000-12-25 12:42 'oxtra36-(5720).jpg'
+-rw-rw-r-- 1 aragorn aragorn 36096 2000-10-19 01:03  oxtra36.jpg
+-rw-rw-r-- 1 aragorn aragorn 42240 2000-12-25 12:42 'oxtra37-(7371).jpg'
+-rw-rw-r-- 1 aragorn aragorn 42240 2000-12-25 12:42  oxtra37.jpg
+-rw-rw-r-- 1 aragorn aragorn 45706 2000-10-15 15:23 'oxtra38-(5874).jpg'
+-rw-rw-r-- 1 aragorn aragorn 45706 2000-10-15 15:23  oxtra38.jpg
+-rw-rw-r-- 1 aragorn aragorn 61557 2000-12-25 12:42 'oxtra39-(2698).jpg'
+-rw-rw-r-- 1 aragorn aragorn 61557 2000-12-25 12:42  oxtra39.jpg
+-rw-rw-r-- 1 aragorn aragorn 27838 2000-10-15 15:23 'oxtra40-(4192).jpg'
+-rw-rw-r-- 1 aragorn aragorn 27838 2000-10-15 15:23  oxtra40.jpg
+-rw-rw-r-- 1 aragorn aragorn 34831 2000-10-15 15:25 'oxtra41-(5882).jpg'
+-rw-rw-r-- 1 aragorn aragorn 34831 2000-10-15 15:25  oxtra41.jpg
+-rw-rw-r-- 1 aragorn aragorn 31948 2000-12-25 12:42 'oxtra42-(5506).jpg'
+-rw-rw-r-- 1 aragorn aragorn 31948 2000-10-15 16:25  oxtra42.jpg
+-rw-rw-r-- 1 aragorn aragorn 44886 2000-12-25 12:42 'oxtra43-(1141).jpg'
+-rw-rw-r-- 1 aragorn aragorn 44886 2000-12-25 12:42  oxtra43.jpg
+-rw-rw-r-- 1 aragorn aragorn 35880 2000-12-25 12:42 'oxtra44-(7429).jpg'
+-rw-rw-r-- 1 aragorn aragorn 35880 2000-10-19 01:04  oxtra44.jpg
+-rw-rw-r-- 1 aragorn aragorn 24110 2000-12-25 12:42 'oxtra45-(1270).jpg'
+-rw-rw-r-- 1 aragorn aragorn 24110 2000-10-19 01:04 'oxtra45-(8923).jpg'
+-rw-rw-r-- 1 aragorn aragorn 28927 2001-08-05 22:20  oxtra45.jpg
+-rw-rw-r-- 1 aragorn aragorn 49754 2000-12-25 12:42 'oxtra46-(2932).jpg'
+-rw-rw-r-- 1 aragorn aragorn 49754 2000-12-25 12:42  oxtra46.jpg
+-rw-rw-r-- 1 aragorn aragorn 31462 2000-12-25 12:42 'oxtra47-(7818).jpg'
+-rw-rw-r-- 1 aragorn aragorn 31462 2000-10-19 01:04  oxtra47.jpg
+-rw-rw-r-- 1 aragorn aragorn 14465 2000-12-25 12:42 'oxtra48-(1805).jpg'
+-rw-rw-r-- 1 aragorn aragorn 14465 2000-10-19 01:04  oxtra48.jpg
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:24:33 PM
+~/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)
+%dnf
+Command #22085 job start time: 03:24:38 PM
+Now entering program "dedup-newsbin-files.pl" at 15:24:38 on 1/14/2026.
+
+Basic settings:
+OriDir    = /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)
+Recurse   = 0
+RegExp    = (?^u:^.+$)
+Predicate = 1
+
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra01a-(4322).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra01b-(2288).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra02-(3621).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra03-(0474).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra04-(6249).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra05-(2345).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra06-(3093).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra07-(4186).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra08-(8305).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra09-(8726).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra10-(4887).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra11-(8944).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra12-(5267).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra13-(8590).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra14-(6101).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra15-(7473).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra16-(8075).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra17a-(6670).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra17b-(2589).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra18a-(0156).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra18b-(8472).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra19a-(3903).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra19b-(7660).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra20a-(1499).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra20b-(6620).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra21-(8190).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra22-(7145).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra23a-(0394).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra23b-(9735).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra24a-(8771).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra25-(3394).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra26-(9544).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra27a-(0479).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra27b-(5229).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra28-(6498).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra29-(6216).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra30a-(8983).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra30b-(4999).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra31a-(9759).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra31b-(4470).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra32a-(7513).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra32b-(9784).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra33a-(4704).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra33b-(1339).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra34-(7126).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra35-(8274).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra36-(5720).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra37-(7371).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra38-(5874).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra39-(2698).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra40-(4192).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra41-(5882).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra42-(5506).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra43-(1141).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra44-(7429).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra45-(1270).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra46-(2932).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra47-(7818).jpg
+Erased /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)/oxtra48-(1805).jpg
+
+Stats for running program "dedup-newsbin-files.pl" on dir tree "/home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)":
+Navigated        1 directories.
+Found          129 files matching RegExp.
+Examined        64 file-name groups.
+Compaired       59 pairs of files.
+Found           59 pairs of duplicate files.
+Deleted         59 duplicate files.
+Failed           0 file deletion attempts.
+Simulated        0 file deletions.
+
+Now exiting program "dedup-newsbin-files.pl" at 15:24:38 on 1/14/2026.
+Execution time was 15.085ms.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:24:38 PM
+~/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)
+%dfn
+Command #22086 job start time: 03:24:41 PM
+Now entering program "denumerate-file-names.pl" at 15:24:41 on 1/14/2026.
+
+Basic settings:
+OriDir    = /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)
+Recurse   = 0
+Target    = F
+RegExp    = (?^u:^.+$)
+Predicate = 1
+Hidden    = 0
+
+
+Directory # 1: /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)
+
+Can't denumerate "oxtra18a-(9606).jpg" because file with same base name already exists.
+
+Can't denumerate "oxtra21-(8763).jpg" because file with same base name already exists.
+
+Can't denumerate "oxtra23b-(7808).jpg" because file with same base name already exists.
+
+Can't denumerate "oxtra31b-(9031).jpg" because file with same base name already exists.
+
+Can't denumerate "oxtra33b-(8540).jpg" because file with same base name already exists.
+
+Can't denumerate "oxtra45-(8923).jpg" because file with same base name already exists.
+
+Statistics for program "denumerate-file-names.pl":
+Traversed        1 directories.
+Found           69 files matching RegExp.
+Bypassed        63 unnumerated files.
+Skipped          6 undenumerable files.
+Attempted        0 file renames.
+Denumerated      0 files.
+Failed           0 file rename attempts.
+Simulated        0 file renames.
+
+Now exiting program "denumerate-file-names.pl" at 15:24:41 on 1/14/2026.
+Execution time was 2.685ms.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:24:41 PM
+~/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)
+%efn
+Command #22087 job start time: 03:24:50 PM
+Now entering program "enumerate-file-names.pl" at 15:24:51 on 1/14/2026.
+
+Basic settings:
+OriDir    = /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)
+Recurse   = 0
+Target    = F
+RegExp    = (?^u:^.+$)
+Predicate = 1
+Hidden    = 0
+Bypass    = 0
+
+
+Directory # 1: /home/aragorn/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)
+
+File rename attempt #1:
+Old name: OXTRA07.jpg
+New name: OXTRA07-(0408).jpg
+File successfully renamed!
+
+File rename attempt #2:
+Old name: OXTRA23A.jpg
+New name: OXTRA23A-(7172).jpg
+File successfully renamed!
+
+File rename attempt #3:
+Old name: oxtra01a.jpg
+New name: oxtra01a-(9379).jpg
+File successfully renamed!
+
+File rename attempt #4:
+Old name: oxtra01b.jpg
+New name: oxtra01b-(7694).jpg
+File successfully renamed!
+
+File rename attempt #5:
+Old name: oxtra02.jpg
+New name: oxtra02-(6360).jpg
+File successfully renamed!
+
+File rename attempt #6:
+Old name: oxtra03.jpg
+New name: oxtra03-(1713).jpg
+File successfully renamed!
+
+File rename attempt #7:
+Old name: oxtra04.jpg
+New name: oxtra04-(9530).jpg
+File successfully renamed!
+
+File rename attempt #8:
+Old name: oxtra05.jpg
+New name: oxtra05-(6292).jpg
+File successfully renamed!
+
+File rename attempt #9:
+Old name: oxtra06.jpg
+New name: oxtra06-(3988).jpg
+File successfully renamed!
+
+File rename attempt #10:
+Old name: oxtra07.jpg
+New name: oxtra07-(3372).jpg
+File successfully renamed!
+
+File rename attempt #11:
+Old name: oxtra08.jpg
+New name: oxtra08-(2045).jpg
+File successfully renamed!
+
+File rename attempt #12:
+Old name: oxtra09.jpg
+New name: oxtra09-(3395).jpg
+File successfully renamed!
+
+File rename attempt #13:
+Old name: oxtra10.jpg
+New name: oxtra10-(6769).jpg
+File successfully renamed!
+
+File rename attempt #14:
+Old name: oxtra11.jpg
+New name: oxtra11-(5128).jpg
+File successfully renamed!
+
+File rename attempt #15:
+Old name: oxtra12.jpg
+New name: oxtra12-(2002).jpg
+File successfully renamed!
+
+File rename attempt #16:
+Old name: oxtra13.jpg
+New name: oxtra13-(6205).jpg
+File successfully renamed!
+
+File rename attempt #17:
+Old name: oxtra14.jpg
+New name: oxtra14-(9672).jpg
+File successfully renamed!
+
+File rename attempt #18:
+Old name: oxtra15.jpg
+New name: oxtra15-(7635).jpg
+File successfully renamed!
+
+File rename attempt #19:
+Old name: oxtra16.jpg
+New name: oxtra16-(1180).jpg
+File successfully renamed!
+
+File rename attempt #20:
+Old name: oxtra17a.jpg
+New name: oxtra17a-(6691).jpg
+File successfully renamed!
+
+File rename attempt #21:
+Old name: oxtra17b.jpg
+New name: oxtra17b-(7073).jpg
+File successfully renamed!
+
+File rename attempt #22:
+Old name: oxtra18a-(9606).jpg
+New name: oxtra18a-(9872).jpg
+File successfully renamed!
+
+File rename attempt #23:
+Old name: oxtra18a.jpg
+New name: oxtra18a-(3416).jpg
+File successfully renamed!
+
+File rename attempt #24:
+Old name: oxtra18b.jpg
+New name: oxtra18b-(2965).jpg
+File successfully renamed!
+
+File rename attempt #25:
+Old name: oxtra19a.jpg
+New name: oxtra19a-(8057).jpg
+File successfully renamed!
+
+File rename attempt #26:
+Old name: oxtra19b.jpg
+New name: oxtra19b-(1606).jpg
+File successfully renamed!
+
+File rename attempt #27:
+Old name: oxtra20a.jpg
+New name: oxtra20a-(0453).jpg
+File successfully renamed!
+
+File rename attempt #28:
+Old name: oxtra20b.jpg
+New name: oxtra20b-(5782).jpg
+File successfully renamed!
+
+File rename attempt #29:
+Old name: oxtra21-(8763).jpg
+New name: oxtra21-(4256).jpg
+File successfully renamed!
+
+File rename attempt #30:
+Old name: oxtra21.jpg
+New name: oxtra21-(4935).jpg
+File successfully renamed!
+
+File rename attempt #31:
+Old name: oxtra22.jpg
+New name: oxtra22-(8317).jpg
+File successfully renamed!
+
+File rename attempt #32:
+Old name: oxtra23a.jpg
+New name: oxtra23a-(3904).jpg
+File successfully renamed!
+
+File rename attempt #33:
+Old name: oxtra23b-(7808).jpg
+New name: oxtra23b-(6607).jpg
+File successfully renamed!
+
+File rename attempt #34:
+Old name: oxtra23b.jpg
+New name: oxtra23b-(0206).jpg
+File successfully renamed!
+
+File rename attempt #35:
+Old name: oxtra24a.jpg
+New name: oxtra24a-(9274).jpg
+File successfully renamed!
+
+File rename attempt #36:
+Old name: oxtra25.jpg
+New name: oxtra25-(4889).jpg
+File successfully renamed!
+
+File rename attempt #37:
+Old name: oxtra26.jpg
+New name: oxtra26-(0161).jpg
+File successfully renamed!
+
+File rename attempt #38:
+Old name: oxtra27a.jpg
+New name: oxtra27a-(4354).jpg
+File successfully renamed!
+
+File rename attempt #39:
+Old name: oxtra27b.jpg
+New name: oxtra27b-(7152).jpg
+File successfully renamed!
+
+File rename attempt #40:
+Old name: oxtra28.jpg
+New name: oxtra28-(4698).jpg
+File successfully renamed!
+
+File rename attempt #41:
+Old name: oxtra29.jpg
+New name: oxtra29-(5514).jpg
+File successfully renamed!
+
+File rename attempt #42:
+Old name: oxtra30a-colorized.jpg
+New name: oxtra30a-colorized-(3740).jpg
+File successfully renamed!
+
+File rename attempt #43:
+Old name: oxtra30a.jpg
+New name: oxtra30a-(8378).jpg
+File successfully renamed!
+
+File rename attempt #44:
+Old name: oxtra30b.jpg
+New name: oxtra30b-(9128).jpg
+File successfully renamed!
+
+File rename attempt #45:
+Old name: oxtra30x.jpg
+New name: oxtra30x-(3117).jpg
+File successfully renamed!
+
+File rename attempt #46:
+Old name: oxtra31a.jpg
+New name: oxtra31a-(5293).jpg
+File successfully renamed!
+
+File rename attempt #47:
+Old name: oxtra31b-(9031).jpg
+New name: oxtra31b-(8987).jpg
+File successfully renamed!
+
+File rename attempt #48:
+Old name: oxtra31b.jpg
+New name: oxtra31b-(7533).jpg
+File successfully renamed!
+
+File rename attempt #49:
+Old name: oxtra32a.jpg
+New name: oxtra32a-(2094).jpg
+File successfully renamed!
+
+File rename attempt #50:
+Old name: oxtra32b.jpg
+New name: oxtra32b-(8577).jpg
+File successfully renamed!
+
+File rename attempt #51:
+Old name: oxtra33a.jpg
+New name: oxtra33a-(0006).jpg
+File successfully renamed!
+
+File rename attempt #52:
+Old name: oxtra33b-(8540).jpg
+New name: oxtra33b-(8552).jpg
+File successfully renamed!
+
+File rename attempt #53:
+Old name: oxtra33b.jpg
+New name: oxtra33b-(8677).jpg
+File successfully renamed!
+
+File rename attempt #54:
+Old name: oxtra34.jpg
+New name: oxtra34-(1505).jpg
+File successfully renamed!
+
+File rename attempt #55:
+Old name: oxtra35.jpg
+New name: oxtra35-(2873).jpg
+File successfully renamed!
+
+File rename attempt #56:
+Old name: oxtra36.jpg
+New name: oxtra36-(4088).jpg
+File successfully renamed!
+
+File rename attempt #57:
+Old name: oxtra37.jpg
+New name: oxtra37-(4551).jpg
+File successfully renamed!
+
+File rename attempt #58:
+Old name: oxtra38.jpg
+New name: oxtra38-(6061).jpg
+File successfully renamed!
+
+File rename attempt #59:
+Old name: oxtra39.jpg
+New name: oxtra39-(0481).jpg
+File successfully renamed!
+
+File rename attempt #60:
+Old name: oxtra40.jpg
+New name: oxtra40-(0816).jpg
+File successfully renamed!
+
+File rename attempt #61:
+Old name: oxtra41.jpg
+New name: oxtra41-(1781).jpg
+File successfully renamed!
+
+File rename attempt #62:
+Old name: oxtra42.jpg
+New name: oxtra42-(9556).jpg
+File successfully renamed!
+
+File rename attempt #63:
+Old name: oxtra43.jpg
+New name: oxtra43-(2457).jpg
+File successfully renamed!
+
+File rename attempt #64:
+Old name: oxtra44.jpg
+New name: oxtra44-(3808).jpg
+File successfully renamed!
+
+File rename attempt #65:
+Old name: oxtra45-(8923).jpg
+New name: oxtra45-(6194).jpg
+File successfully renamed!
+
+File rename attempt #66:
+Old name: oxtra45.jpg
+New name: oxtra45-(6670).jpg
+File successfully renamed!
+
+File rename attempt #67:
+Old name: oxtra46.jpg
+New name: oxtra46-(9502).jpg
+File successfully renamed!
+
+File rename attempt #68:
+Old name: oxtra47.jpg
+New name: oxtra47-(9018).jpg
+File successfully renamed!
+
+File rename attempt #69:
+Old name: oxtra48.jpg
+New name: oxtra48-(3666).jpg
+File successfully renamed!
+
+Statistics for program "enumerate-file-names.pl":
+Traversed        1 directories.
+Found           69 files matching RegExp.
+Bypassed         0 numerated files.
+Skipped          0 unenumerable files
+Attempted       69 file renames.
+Enumerated      69 files.
+Failed           0 file rename attempts.
+Simulated        0 file renames.
+
+Now exiting program "enumerate-file-names.pl" at 15:24:51 on 1/14/2026.
+Execution time was 7.160ms.
+
+BASH on Manjaro Linux aragorn@Excalibur Wed 2026-01-14, 03:24:51 PM
+~/rem/Xanadu/Boys-Series/Naked/Oliver-Extra(oxtra)
+%
+
