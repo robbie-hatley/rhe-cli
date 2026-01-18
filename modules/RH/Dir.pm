@@ -20,7 +20,7 @@
 #                   also added some comments; also v5.30.3.
 # Tue Sep 15, 2020: Clarified comments in GetFiles about the return values from glob_utf8(). Also replaced
 #                   "copy" with "cp" in clone_file() as copy was smashing timestamps.
-# Tue Oct 27, 2020: Added subs eight_rand_lc_letters and find_available_random.
+# Tue Oct 27, 2020: Added subs rhd_eight_rand_lc and find_available_random.
 # Thu Dec 31, 2020: Increased width of this file to 110 characters. Got rid of subs "copy_wide_jpgs",
 #                   "directory_exists", "aggregate_file", "clone_file", and "merge_file". Added subs
 #                   "copy_large_images_verbatim", "copy_large_images_sha1", "is_large_image", "copy_file",
@@ -86,6 +86,9 @@
 # Tue May 20, 2025: Fixed bug in readdir_regexp_utf8, in name loop, due to "switch" misinterpretting "next"
 #                   to mean "fall through to next case" rather than "jump to next iteration of foreach loop".
 #                   The solution was to lable the loop "NAME" and use "next NAME" instead of just "next".
+# Sun Jan 18, 2025: Finally got internal-only debugging working correctly. Renamed all private subroutines
+#                   to all-lower-case prefixed with "rhd_". Changed internal debugging variable to "$rhddb"
+#                   and made it global so that outside callers may see it and alter it.
 ##############################################################################################################
 
 # ======= INTRO: =============================================================================================
@@ -173,7 +176,7 @@ our $zombcount = 0; # Count of all regular files with  < 0 hard links (zombies).
 our $unkncount = 0; # Count of all files of unknown nature.
 
 # Shall we debug RH::Dir?
-our $RhdDb     = 0; # Set to 1 for debugging, 0 for no debugging.
+our $rhddb     = 0; # Set to 1 for debugging, 0 for no debugging.
 
 # ------- Local Variables: -----------------------------------------------------------------------------------
 
@@ -184,12 +187,12 @@ my $gib16 = 'Ä♁k剐э燥Ч♆♪♫ХÿaÊ♭山';
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
 # Section 1, Private subroutines (NOT exported):
-sub rand_int               :prototype($$)   ; # Get a random integer in closed interval [arg1, arg2].
-sub is_ascii               :prototype($)    ; # Is a given text string encoded in ASCII?
-sub is_iso_8859_1          :prototype($)    ; # Is a given text string encoded in ISO-8859-1?
-sub is_utf8                :prototype($)    ; # Is a given text string encoded in UTF-8?
-sub eight_rand_lc_letters  :prototype()     ; # Get a random string of 8 lower-case English letters.
-sub RhdBlat                :prototype($)    ; # Print messages only if debugging.
+sub rhd_blat               :prototype($)    ; # Print messages only if debugging.
+sub rhd_rand_int           :prototype($$)   ; # Get a random integer in closed interval [arg1, arg2].
+sub rhd_is_ascii           :prototype($)    ; # Is a given text string encoded in ASCII?
+sub rhd_is_iso_8859_1      :prototype($)    ; # Is a given text string encoded in ISO-8859-1?
+sub rhd_is_utf8            :prototype($)    ; # Is a given text string encoded in UTF-8?
+sub rhd_eight_rand_lc      :prototype()     ; # Get a random string of 8 lower-case English letters.
 
 # Section 2, UTF-8-related subroutines:
 sub d                                       ; # utf8-decode.
@@ -208,7 +211,7 @@ sub copy_files             :prototype($$;@) ; # Copy files  from source director
 sub move_files             :prototype($$;@) ; # Move files  from source directory to destination directory.
 
 # Section 4, Minor Subroutines (code is (relatively) short and simple):
-sub RhdDebug               :prototype(;$)   ; # Turn debugging on or off in this module.
+sub rhd_debug              :prototype(;$)   ; # Turn debugging on or off in this module.
 sub rename_file            :prototype($$)   ; # Rename a file, taking precautions.
 sub time_from_mtime        :prototype($)    ; # Get time from mtime.
 sub date_from_mtime        :prototype($)    ; # Get date from mtime.
@@ -247,7 +250,7 @@ our @EXPORT =
       copy_file               copy_files              move_file
       move_files              get_correct_suffix
 
-      RhdDebug                rename_file             time_from_mtime
+      rhd_debug                rename_file             time_from_mtime
       date_from_mtime         get_prefix              get_suffix
       get_dir_from_path       get_dirname_from_path   get_name_from_path
       path                    denumerate_file_name    enumerate_file_name
@@ -265,7 +268,7 @@ our @EXPORT_OK =
       $totfcount $noexcount $ottycount $cspccount $bspccount
       $sockcount $pipecount $brkncount $slkdcount $linkcount
       $weircount $sdircount $hlnkcount $regfcount $orphcount
-      $zombcount $unkncount $RhdDb
+      $zombcount $unkncount $rhddb
    );
 
 # ======= IMPORTER: ==========================================================================================
@@ -287,20 +290,6 @@ sub import {
       if ( 'RH::Dir' eq $item ) {
          ; # Do nothing.
       }
-      # If we're waiting for a value for a var, store it:
-      elsif ( defined $varref ) {
-         if ( $varref == \$RhdDb ) {
-            switch ($item) {
-               case qr/(?i:0|off|no)/ {$$varref = 0}
-               case qr/(?i:1|on|yes)/ {$$varref = 1}
-            }
-         }
-         $varref = undef;
-      }
-      # If we received a debug command, point $varref to $RhdDb:
-      elsif ( 'debug' eq $item ) {
-         $varref = \$RhdDb;
-      }
       # Otherwise, $item is something user wants us to export:
       else {
          push @EXPORT, $item;
@@ -313,14 +302,17 @@ sub import {
 
 # ======= SECTION 1, PRIVATE SUBROUTINES: ====================================================================
 
+# Print messages if debugging, in this module only:
+sub rhd_blat :prototype($) ($string) {if ($rhddb) {say STDERR $string}}
+
 # Does a given scalar consist only of commonly-used ASCII whitespace and/or glyphical (visible) characters?
-sub is_ascii :prototype($) ($text) {
+sub rhd_is_ascii :prototype($) ($text) {
    my ($cpac, $cfil) = caller;
-   die "Fatal error: function \"is_ascii\" in module \"RH::Dir\" is private.\n"
+   die "Fatal error: function \"rhd_is_ascii\" in module \"RH::Dir\" is private.\n"
    unless $cpac eq __PACKAGE__ && $cfil eq __FILE__;
-   my $is_ascii = 1;
+   my $ia = 1;
    foreach my $ord (map {ord} split //, $text) {
-      if ($RhdDb) {say STDERR "In is_ascii(), at top of foreach. \$ord = $ord"}
+      rhd_blat "In rhd_is_ascii(), at top of foreach. \$ord = $ord";
       # Is this character a commonly-used ASCII white-space character?
       next if (  9 == $ord ); # HT
       next if ( 10 == $ord ); # LF
@@ -332,22 +324,22 @@ sub is_ascii :prototype($) ($text) {
              && $ord <= 126); # ASCII glyph
       # If we get to here, all of the above tests failed, which means that our current character
       # is neither commonly-used ASCII whitespace nor an ASCII glyphical character,
-      # so set $is_ascii to 0 and break from loop:
-      $is_ascii = 0;
+      # so set $ia to 0 and break from loop:
+      $ia = 0;
       last;
    }
-   if ($RhdDb) {say STDERR "In is_ascii(), about to return. \$is_ascii = $is_ascii"}
-   return $is_ascii;
-} # end sub is_ascii :prototype($) ($text)
+   rhd_blat "In rhd_is_ascii(), about to return. \$ia = $ia";
+   return $ia;
+} # end sub rhd_is_ascii :prototype($) ($text)
 
 # Is a line of text encoded in iso-8859-1?
-sub is_iso_8859_1 :prototype($) ($text) {
+sub rhd_is_iso_8859_1 :prototype($) ($text) {
    my ($cpac, $cfil) = caller;
-   die "Fatal error: function \"is_iso_8859_1\" in module \"RH::Dir\" is private.\n"
+   die "Fatal error: function \"rhd_is_iso_8859_1\" in module \"RH::Dir\" is private.\n"
    unless $cpac eq __PACKAGE__ && $cfil eq __FILE__;
-   my $is_iso = 1;
+   my $ii = 1;
    foreach my $ord (map {ord} split //, $text) {
-      if ($RhdDb) {say STDERR "In is_iso_8859_1(), at top of foreach. \$ord = $ord"}
+      rhd_blat "In rhd_is_iso_8859_1(), at top of foreach. \$ord = $ord";
       next if (  9 == $ord ); # HT
       next if ( 10 == $ord ); # LF
       next if ( 11 == $ord ); # VT
@@ -359,48 +351,45 @@ sub is_iso_8859_1 :prototype($) ($text) {
              && $ord <= 255); # iso-8859-1 character
       # If we get to here, all of the above tests failed, which means that our current character
       # is neither commonly-used iso-8859-1 whitespace nor an iso-8859-1 glyphical character,
-      # so set $is_iso to 0 and break from loop:
-      $is_iso = 0;
+      # so set $ii to 0 and break from loop:
+      $ii = 0;
       last;
    }
-   if ($RhdDb) {say STDERR "In is_iso_8859_1(), about to return. \$is_iso = $is_iso"}
-   return $is_iso;
-} # end sub is_iso_8859_1 :prototype($) ($text)
+   rhd_blat "In rhd_is_iso_8859_1(), about to return. \$ii = $ii";
+   return $ii;
+} # end sub rhd_is_iso_8859_1 :prototype($) ($text)
 
 # Is a line of text encoded in Unicode then transformed to UTF-8?
-sub is_utf8 :prototype($) ($text) {
+sub rhd_is_utf8 :prototype($) ($text) {
    my ($cpac, $cfil) = caller;
-   die "Fatal error: function \"is_utf8\" in module \"RH::Dir\" is private.\n"
+   die "Fatal error: function \"rhd_is_utf8\" in module \"RH::Dir\" is private.\n"
    unless $cpac eq __PACKAGE__ && $cfil eq __FILE__;
-   my $is_utf8;
+   my $iu;
    if ( eval {decode('UTF-8', $text, DIE_ON_ERR|LEAVE_SRC)} ) {
-      $is_utf8 = 1;
+      $iu = 1;
    }
    else {
-      $is_utf8 = 0;
+      $iu = 0;
    }
-   if ($RhdDb) {say STDERR "In is_utf8(), about to return. \$is_utf8 = $is_utf8"}
-   return $is_utf8;
+   rhd_blat "In rhd_is_utf8(), about to return. \$iu = $iu";
+   return $iu;
 }
 
 # Return a random integer in the range [m,n] inclusive:
-sub rand_int :prototype($$) ($min, $max) {
+sub rhd_rand_int :prototype($$) ($min, $max) {
    my ($cpac, $cfil) = caller;
-   die "Fatal error: function \"rand_int\" in module \"RH::Dir\" is private.\n"
+   die "Fatal error: function \"rhd_rand_int\" in module \"RH::Dir\" is private.\n"
    unless $cpac eq __PACKAGE__ && $cfil eq __FILE__;
    return floor($min+rand($max-$min+1));
-} # end sub rand_int
+} # end sub rhd_rand_int
 
 # Return a string of 8 random lower-case English letters:
-sub eight_rand_lc_letters :prototype() {
+sub rhd_eight_rand_lc :prototype() {
    my ($cpac, $cfil) = caller;
-   die "Fatal error: function \"eight_rand_lc_letters\" in module \"RH::Dir\" is private.\n"
+   die "Fatal error: function \"rhd_eight_rand_lc\" in module \"RH::Dir\" is private.\n"
    unless $cpac eq __PACKAGE__ && $cfil eq __FILE__;
-   return join '', map {chr(rand_int(97, 122))} (1..8);
+   return join '', map {chr(rhd_rand_int(97, 122))} (1..8);
 }
-
-# Print messages if debugging, in this module only:
-sub RhdBlat :prototype($) ($string) {if ($RhdDb) {say STDERR $string}}
 
 # ======= SECTION 2, UTF-8 SUBROUTINES: ======================================================================
 # (Subroutines for decoding from UTF-8 or encoding to UTF-8.)
@@ -494,10 +483,10 @@ For example, use '((-s)>=50000)' to process only files at least 50kB in size.
 sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(^.+$)o, $predicate='1') {
 
    # If debugging, announce inputs:
-      RhdBlat "In \"readdir_regexp_utf8\", near top.\n"
-          ."\$dir    = $dir\n"
-          ."\$target = $target\n"
-          ."\$regex  = $regexp";
+   rhd_blat "In \"readdir_regexp_utf8\", near top.\n"
+           ."\$dir    = $dir\n"
+           ."\$target = $target\n"
+           ."\$regex  = $regexp";
 
    # But do those inputs even make any sense?? Let's check now!
    if ( !(-e e($dir)) || !(-d e($dir)) ) {
@@ -527,11 +516,11 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
    # $predicate, and storing remainder in an array called @names:
    my @names = ();
    NAME: foreach my $name (@raw) {
-      RhdBlat "In readdir_regexp_utf8. Name from readdir: \"$name\"";
+      rhd_blat "In readdir_regexp_utf8. Name from readdir: \"$name\"";
 
       # Skip '.' and '..':
-      if ('.'  eq $name) {RhdBlat "In readdir_regexp_utf8; skipped \".\". "; next NAME;}
-      if ('..' eq $name) {RhdBlat "In readdir_regexp_utf8; skipped \"..\"."; next NAME;}
+      if ('.'  eq $name) {rhd_blat "In readdir_regexp_utf8; skipped \".\". "; next NAME;}
+      if ('..' eq $name) {rhd_blat "In readdir_regexp_utf8; skipped \"..\"."; next NAME;}
 
       # Do NOT run an existence check here, else we will get a constant stream of nuisance warnings,
       # because it is NORMAL for many links to point to things that will not exist until some program
@@ -551,43 +540,45 @@ sub readdir_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=
              ."Moving on to next file.\n";
          next NAME;
       }
-      RhdBlat "In readdir_regexp_utf8. Successfully got 13 stats for \"$name\".";
+      rhd_blat "In readdir_regexp_utf8. Successfully got 13 stats for \"$name\".";
 
       # Skip this file if it doesn't match our target:
       switch($target) {
-         case 'F' { if ( !     -f _                 ) {RhdBlat "\"$name\" Failed target \"F\"."; next NAME;} }
-         case 'D' { if ( !                 -d _     ) {RhdBlat "\"$name\" Failed target \"D\"."; next NAME;} }
-         case 'B' { if ( ! ( ( -f _ ) || ( -d _ ) ) ) {RhdBlat "\"$name\" Failed target \"B\"."; next NAME;} }
+         case 'F' { if ( !     -f _                 ) {rhd_blat "\"$name\" Failed target \"F\"."; next NAME;} }
+         case 'D' { if ( !                 -d _     ) {rhd_blat "\"$name\" Failed target \"D\"."; next NAME;} }
+         case 'B' { if ( ! ( ( -f _ ) || ( -d _ ) ) ) {rhd_blat "\"$name\" Failed target \"B\"."; next NAME;} }
          case 'A' {;} # Do nothing.
          else     {;} # Do nothing.
       }
-      RhdBlat "In readdir_regexp_utf8. \"$name\" accepted by target switch.";
+      rhd_blat "In readdir_regexp_utf8. \"$name\" accepted by target switch.";
 
       # Skip this file if it doesn't match our regexp:
       if ($name !~ m/$regexp/) {
-         RhdBlat "In readdir_regexp_utf8. Skipping \"$name\" because name doesn't match regexp.";
+         rhd_blat "In readdir_regexp_utf8. Skipping \"$name\" because name doesn't match regexp.";
          next NAME;
       }
-      RhdBlat "In readdir_regexp_utf8. \"$name\" passed regexp test.";
+      rhd_blat "In readdir_regexp_utf8. \"$name\" passed regexp test.";
 
       # Skip this file if it doesn't match our predicate:
       if ( '1' ne "$predicate" ) {
          local $_ = e($name);
          if ( ! eval $predicate ) {
-            RhdBlat "In readdir_regexp_utf8. Skipping \"$name\" because it doesn't match predicate.";
+            rhd_blat "In readdir_regexp_utf8. Skipping \"$name\" because it doesn't match predicate.";
             next;
          }
       }
-      RhdBlat "In readdir_regexp_utf8. \"$name\" also passed predicate test; pushing to \"\@names\".";
+      rhd_blat "In readdir_regexp_utf8. \"$name\" also passed predicate test; pushing to \"\@names\".";
 
       # If we get to here, include this file among those to be returned:
       push @names, $name;
    } # end foreach my $name (@raw)
 
    # If debugging, print names:
-   RhdBlat "In readdir_regexp_utf8 at end.\n"
-       ."Names:\n"
-       .join "\n", @names;
+   rhd_blat "\n"
+          . "In readdir_regexp_utf8 at end.\n"
+          . "Names:\n"
+          . join("\n", @names)
+          . "\n";
 
    # Return results:
    return @names;
@@ -641,9 +632,9 @@ sub glob_regexp_utf8 :prototype(;$$$$) ($dir=d(getcwd), $target='A', $regexp=qr(
    my @paths = map {path($dir, $_)} @names;
 
    # If debugging, print paths:
-   RhdBlat "In glob_regexp_utf8 at end.\n"
-       ."Paths:\n"
-       .join "\n", @paths;
+   rhd_blat "In glob_regexp_utf8 at end.\n"
+          . "Paths:\n"
+          . join "\n", @paths;
 
    # Return results:
    return @paths;
@@ -694,11 +685,11 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
    # "$regexp"  =  What regular expression should we use for selecting files?
 
    # If debugging, print diagnostics:
-   RhdBlat "Debug msg in GetFiles:\n"
-       ."\$dir       = $dir\n"
-       ."\$target    = $target\n"
-       ."\$regexp    = $regexp\n"
-       ."\$predicate = $predicate";
+   rhd_blat "Debug msg in GetFiles:\n"
+          . "\$dir       = $dir\n"
+          . "\$target    = $target\n"
+          . "\$regexp    = $regexp\n"
+          . "\$predicate = $predicate";
 
    if ($dir !~ m/^\//) {
       say STDERR "Error in GetFiles: Directory \"$dir\" is invalid.\n"
@@ -733,10 +724,7 @@ sub GetFiles :prototype(;$$$$) ($dir = d(getcwd), $target = 'A', $regexp = qr(^.
    my @paths = glob_regexp_utf8($dir, $target, $regexp, $predicate);
 
    # If debugging, print diagnostics:
-   if ($RhdDb) {
-      say 'IN GetFiles. Raw paths from glob_regexp_utf8:';
-      say for @paths;
-   }
+   rhd_blat "IN GetFiles. Raw paths from glob_regexp_utf8:\n" . join("\n", @paths);
 
    # Iterate through file paths, collecting info on files and pushing that hashes of that info onto
    # @filerecords, then returning a ref to @filerecords after the loop:
@@ -904,12 +892,10 @@ For example, use '((-s)>=50000)' to process only files at least 50kB in size.
 =cut
 sub GetRegularFilesBySize :prototype(;$$$) ($dir = d(getcwd), $regexp = qr(^.+$)o, $predicate = 1) {
    # If debugging, print diagnostics:
-   if ($RhdDb) {
-      say STDERR "\nDebug msg in GetRegularFilesBySize(), at top:\n"
-                ."\$dir       = $dir\n"
-                ."\$regexp    = $regexp\n"
-                ."\$predicate = $predicate";
-   }
+   rhd_blat "\nDebug msg in GetRegularFilesBySize(), at top:\n"
+          . "\$dir       = $dir\n"
+          . "\$regexp    = $regexp\n"
+          . "\$predicate = $predicate";
    my $files = GetFiles($dir, 'F', $regexp, $predicate);
    my %filerecords;
    foreach my $file (@$files) {push @{$filerecords{$file->{Size}}}, $file}
@@ -1064,10 +1050,8 @@ sub RecurseDirs :prototype(&) ($f) {
 
    # ------- WHO'S CALLING? ----------------------------------------------------------------------------------
 
-   if ($RhdDb) {
-      my ($pac,$fil,$lin)=caller;
-      say STDERR "RecurseDirs called by package \"$pac\", file \"$fil\", line \"$lin\".";
-   }
+   my ($pac,$fil,$lin)=caller;
+   rhd_blat "RecurseDirs called by package \"$pac\", file \"$fil\", line \"$lin\".";
 
    # ------- RECURSION CHECKS: -------------------------------------------------------------------------------
 
@@ -1086,9 +1070,9 @@ sub RecurseDirs :prototype(&) ($f) {
    # RecurseDirs() exited unexpectedly on a previous recursive run, it may be non-zero on first entry of next
    # recursive run. So to combat that, we COULD reset it to zero if calling package is not "RH:Dir":
 
-   # if ($RhdDb) {say STDERR "(1) Recursion Level = $recursion";}
+   # rhd_blat "(1) Recursion Level = $recursion";
    # if ('RH::Dir' ne (caller())[0]) {$recursion = 0;}
-   # if ($RhdDb) {say STDERR "(2) Recursion Level = $recursion";}
+   # rhd_blat "(2) Recursion Level = $recursion";
 
    # NOTE RH 2025-03-23_01-06: No, let's not do that. It just wastes time, because a set of recursive calls to
    # this subroutine will either:
@@ -1202,12 +1186,7 @@ sub RecurseDirs :prototype(&) ($f) {
       die "Fatal error in RecurseDirs: Couldn't close directory \"$curdir\".\n$!\n";
    }
 
-   if ($RhdDb) {
-      say STDERR '';
-      say STDERR "In RecurseDirs(); list of entries in directory \"$curdir\":";
-      say STDERR for @subdirs;
-      say STDERR '';
-   }
+   rhd_blat "\nIn RecurseDirs(); list of entries in directory \"$curdir\":\n" . join("\n", @subdirs);
 
    # ------- NAVIGATE SUBDIRS (IF ANY) OF CURRENT DIRECTORY: -------------------------------------------------
    SUBDIR: foreach my $subdir (@subdirs) {
@@ -1276,9 +1255,9 @@ sub RecurseDirs :prototype(&) ($f) {
       # Recurse:
       ++$recursion;
       if ( $recursion > $max_recursion ) { $max_recursion = $recursion }
-      if ($RhdDb) {say STDERR "In RecurseDirs, in \"$new_cwd\", about to recurse.";}
+      rhd_blat "In RecurseDirs, in \"$new_cwd\", about to recurse.";
       RecurseDirs(\&{$f});
-      if ($RhdDb) {say STDERR "In RecurseDirs, in \"$new_cwd\", just returned from recursion.";}
+      rhd_blat "In RecurseDirs, in \"$new_cwd\", just returned from recursion.";
       --$recursion;
 
       # Try to cd back to $curdir (and die if that fails):
@@ -1304,10 +1283,11 @@ sub RecurseDirs :prototype(&) ($f) {
          ."but that doesn't match our presumed current directory which is \"$curdir\".\n"
          ."Aborting program to avoid damaging file system.";
    }
-   if ($RhdDb) {say STDERR "In RecurseDirs, in \"$new_cwd\", about to execute function.";}
+   rhd_blat "In RecurseDirs, in directory \"$new_cwd\", about to execute function.";
    if ( ! $f->() ) {
       warn "Warning from RecurseDirs: Couldn't apply function in directory $new_cwd!\n";
    }
+   rhd_blat "In RecurseDirs, in directory \"$new_cwd\", just executed function.";
 
    # ------- RETURN: -----------------------------------------------------------------------------------------
    # If we get to here, we've succeeded, so return:
@@ -1363,14 +1343,12 @@ sub copy_file :prototype($$;@)
    my $dname;                                 # File-name        for destination file.
 
    # If debugging, print diagnostics:
-   if ($RhdDb) {
-      say STDERR "                      ";
-      say STDERR "In copy_file, at top. ";
-      say STDERR "\$spath = \"$spath\"  ";
-      say STDERR "\$ddire = \"$ddire\"  ";
-      say STDERR "\@args  = (@args)     ";
-      say STDERR "                      ";
-   }
+   rhd_blat "                      "
+          . "In copy_file, at top. "
+          . "\$spath = \"$spath\"  "
+          . "\$ddire = \"$ddire\"  "
+          . "\@args  = (@args)     "
+          . "                      ";
 
    # Bail if $spath is not a path to an existing regular file:
    if ( ! -e e $spath || ! -f e $spath ) {
@@ -1414,15 +1392,13 @@ sub copy_file :prototype($$;@)
    }
 
    # If debugging, print diagnostics:
-   if ($RhdDb) {
-      say STDERR "                                          ";
-      say STDERR "In copy_file, after processing arguments. ";
-      say STDERR "\$mode  = \"$mode\"                       ";
-      say STDERR "\$uname = \"$uname\"                      ";
-      say STDERR "\$sl    = \"$sl\"                         ";
-      say STDERR "\$corr  = \"$corr\"                       ";
-      say STDERR "                                          ";
-   }
+   rhd_blat "                                          \n"
+          . "In copy_file, after processing arguments. \n"
+          . "\$mode  = \"$mode\"                       \n"
+          . "\$uname = \"$uname\"                      \n"
+          . "\$sl    = \"$sl\"                         \n"
+          . "\$corr  = \"$corr\"                       \n"
+          . "                                          \n";
 
    # Set destination prefix and suffix depending on mode:
    switch ($mode) {
@@ -1565,15 +1541,14 @@ sub copy_files :prototype($$;@)
    my $byp_cnt  = 0                     ; # $byp_cnt  = count of files bypassed because of dup in dest
 
    # If debugging, print diagnostics:
-   if ($RhdDb) {
-      warn "\nJust entered sub \"copy_files\".\n",
-           "Src dir = \"$src\".   \n",
-           "Dst dir = \"$dst\".   \n",
-           "Target  = \"$target\".\n",
-           "Args    =             \n",
-           join "\n", @args          ,
-           "\n";
-   }
+   rhd_blat "\n"
+          . "Just entered sub \"copy_files\". \n"
+          . "Src dir = \"$src\".              \n"
+          . "Dst dir = \"$dst\".              \n"
+          . "Target  = \"$target\".           \n"
+          . "Args    =                        \n"
+          . join("\n", @args)
+          . "\n";
 
    # Process only those arguments we need (some will be simply passed-on to copy_file):
    foreach (@args) {
@@ -1584,13 +1559,12 @@ sub copy_files :prototype($$;@)
    }
 
    # If debugging, print diagnostics:
-   if ($RhdDb) {
-      warn "\nIn middle of sub \"copy_files\".\n",
-           "RegExp  = \"$regexp\".\n",
-           "SL      = \"$sl\".    \n",
-           "Unique  = \"$unique\".\n",
-           "Large   = \"$large\". \n";
-   }
+   rhd_blat "                                 \n"
+          . "In middle of sub \"copy_files\". \n"
+          . "RegExp  = \"$regexp\".           \n"
+          . "SL      = \"$sl\".               \n"
+          . "Unique  = \"$unique\".           \n"
+          . "Large   = \"$large\".            \n";
 
    # Create variables for the "display" versions of the directories:
    my $srcdsh = $src;   #   Source    directory, short version. (Defaults to $src.)
@@ -1616,7 +1590,7 @@ sub copy_files :prototype($$;@)
 
    # If being unique, don't copy files from source which have duplicates in destination:
    if ($unique) {
-      say "\nJust entered \"if (\$unique)\"; about to get src & dst file hashes." if $RhdDb;
+      rhd_blat "\nJust entered \"if (\$unique)\"; about to get src & dst file hashes.";
 
       # Note starting directory:
       my $startdir = d(getcwd);
@@ -1640,7 +1614,7 @@ sub copy_files :prototype($$;@)
       # For each size of source file, copy each file of that size to destination if-and-only-if no identical
       # file exists in destination:
       SIZE: foreach my $ssize (keys %{$ssizes}) {
-         say "\nProcessing size group \"$ssize\"." if $RhdDb;
+         rhd_blat "\nProcessing size group \"$ssize\".";
 
          # Get array of file records for this size:
          @sfiles = @{$ssizes->{$ssize}};
@@ -1658,11 +1632,11 @@ sub copy_files :prototype($$;@)
 
          # Iterate through the source file records for this size:
          SFILE: foreach my $sfile (@sfiles) {
-            say "\nProcessing src file \"$sfile->{Name}\"." if $RhdDb;
+            rhd_blat "\nProcessing src file \"$sfile->{Name}\".";
 
             # If in "large" mode, skip this file if it's not a large image:
             if ( $large && ! is_large_image($sfile->{Path}) ) {
-               say "\nSkipping \"$sfile->{Name}\" because it's not a large image." if $RhdDb;
+               rhd_blat "\nSkipping \"$sfile->{Name}\" because it's not a large image.";
                ++$skp_cnt;
                next SFILE;
             }
@@ -1671,7 +1645,7 @@ sub copy_files :prototype($$;@)
             if ($both) { # Do files of this size exist in both directories?
                DFILE: foreach my $dfile (@dfiles) {
                   if (FilesAreIdentical($sfile->{Path}, $dfile->{Path})) {
-                     say "\nBypassing \"$sfile->{Name}\" because it has a dup in dst." if $RhdDb;
+                     rhd_blat "\nBypassing \"$sfile->{Name}\" because it has a dup in dst.";
                      ++$byp_cnt;
                      next SFILE;
                   }
@@ -1690,12 +1664,12 @@ sub copy_files :prototype($$;@)
       # Get list of paths of existing regular files in source folder:
       my @spaths = glob_regexp_utf8($src, $target, $regexp);
       SOURCE: foreach my $spath (@spaths) {
-         my $sname = get_name_from_path($spath) if $RhdDb;
-         say "\nProcessing src file \"$sname\"." if $RhdDb;
+         my $sname = get_name_from_path($spath);
+         rhd_blat "\nProcessing src file \"$sname\".";
 
          # If in "large" mode, skip this file if it's not a large image:
          if ( $large && ! is_large_image($spath) ) {
-            say "\nSkipping \"$sname\" because it's not a large image." if $RhdDb;
+            rhd_blat "\nSkipping \"$sname\" because it's not a large image.";
             ++$skp_cnt;
             next SOURCE;
          }
@@ -1753,14 +1727,11 @@ sub move_file :prototype($$;@)
    my $sl       = 0;                          # Shorten names for Spotlight image processing?
 
    # If debugging, print diagnostics:
-   if ($RhdDb) {
-      say STDERR "                      ";
-      say STDERR "In move_file, at top. ";
-      say STDERR "\$spath = \"$spath\"  ";
-      say STDERR "\$dst   = \"$dst\"    ";
-      say STDERR "\@args  = (@args)     ";
-      say STDERR "                      ";
-   }
+   rhd_blat "                      \n"
+          . "In move_file, at top. \n"
+          . "\$spath = \"$spath\"  \n"
+          . "\$dst   = \"$dst\"    \n"
+          . "\@args  = (@args)     \n";
 
    # Bail if $spath is not a path to an existing regular file:
    if ( ! -e e $spath || ! -f e $spath ) {
@@ -1798,7 +1769,7 @@ sub move_file :prototype($$;@)
    }
 
    # If debugging, print diagnostics:
-   if ($RhdDb) {
+   if ($rhddb) {
       say STDERR "                                          ";
       say STDERR "In move_file, after processing arguments. ";
       say STDERR "\$mode = \"$mode\"                        ";
@@ -1841,7 +1812,7 @@ sub move_file :prototype($$;@)
    } # end for ($mode)
 
    # Print diagnostics if debugging:
-   say STDERR "\nIn move_file, after for(\$mode).\n\$dname = \"$dname\".\n" if $RhdDb;
+   say STDERR "\nIn move_file, after for(\$mode).\n\$dname = \"$dname\".\n" if $rhddb;
 
    # Regardless of what Naming Mode we just used, if $dname already exists in $dst,
    # we'll have to come up with a new name! Let's try enumerating:
@@ -1954,7 +1925,7 @@ sub move_files :prototype($$;@)
    my $byp_cnt  = 0                     ; # $byp_cnt  = count of files bypassed because of dup in dest
 
    # If debugging, print diagnostics:
-   if ($RhdDb) {
+   if ($rhddb) {
       say STDERR "                                 ";
       say STDERR "Just entered sub \"move_files\". ";
       say STDERR "Src dir = \"$src\".              ";
@@ -1973,7 +1944,7 @@ sub move_files :prototype($$;@)
    }
 
    # If debugging, print diagnostics:
-   if ($RhdDb) {
+   if ($rhddb) {
       say STDERR "                                 ";
       say STDERR "In middle of sub \"move_files\". ";
       say STDERR "RegExp  = \"$regexp\".           ";
@@ -2007,7 +1978,7 @@ sub move_files :prototype($$;@)
 
    # If being unique, don't move files from source which have duplicates in destination:
    if ($unique) {
-      say "\nJust entered \"if (\$unique)\"; about to get src & dst file hashes." if $RhdDb;
+      say "\nJust entered \"if (\$unique)\"; about to get src & dst file hashes." if $rhddb;
 
       # Note starting directory:
       my $startdir = d(getcwd);
@@ -2031,7 +2002,7 @@ sub move_files :prototype($$;@)
       # For each size of source file, copy each file of that size to destination if-and-only-if no identical
       # file exists in destination:
       SIZE: foreach my $ssize (keys %{$ssizes}) {
-         say "\nProcessing size group \"$ssize\"." if $RhdDb;
+         say "\nProcessing size group \"$ssize\"." if $rhddb;
 
          # Get array of file records for this size:
          @sfiles = @{$ssizes->{$ssize}};
@@ -2049,11 +2020,11 @@ sub move_files :prototype($$;@)
 
          # Iterate through the source file records for this size:
          SFILE: foreach my $sfile (@sfiles) {
-            say "\nProcessing src file \"$sfile->{Name}\"." if $RhdDb;
+            say "\nProcessing src file \"$sfile->{Name}\"." if $rhddb;
 
             # If in "large" mode, skip this file if it's not a large image:
             if ( $large && ! is_large_image($sfile->{Path}) ) {
-               say "\nSkipping \"$sfile->{Name}\" because it's not a large image." if $RhdDb;
+               say "\nSkipping \"$sfile->{Name}\" because it's not a large image." if $rhddb;
                ++$skp_cnt;
                next SFILE;
             }
@@ -2062,7 +2033,7 @@ sub move_files :prototype($$;@)
             if ($both) { # Do files of this size exist in both directories?
                DFILE: foreach my $dfile (@dfiles) {
                   if (FilesAreIdentical($sfile->{Path}, $dfile->{Path})) {
-                     say "\nBypassing \"$sfile->{Name}\" because it has a dup in dst." if $RhdDb;
+                     say "\nBypassing \"$sfile->{Name}\" because it has a dup in dst." if $rhddb;
                      ++$byp_cnt;
                      next SFILE;
                   }
@@ -2080,12 +2051,12 @@ sub move_files :prototype($$;@)
       # Get list of paths of existing regular files in source folder:
       my @spaths = glob_regexp_utf8($src, $target, $regexp);
       SOURCE: foreach my $spath (@spaths) {
-         my $sname = get_name_from_path($spath) if $RhdDb;
-         say "\nProcessing src file \"$sname\"." if $RhdDb;
+         my $sname = get_name_from_path($spath) if $rhddb;
+         say "\nProcessing src file \"$sname\"." if $rhddb;
 
          # If in "large" mode, skip this file if it's not a large image:
          if ( $large && ! is_large_image($spath) ) {
-            say "\nSkipping \"$sname\" because it's not a large image." if $RhdDb;
+            say "\nSkipping \"$sname\" because it's not a large image." if $rhddb;
             ++$skp_cnt;
             next SOURCE;
          }
@@ -2123,7 +2094,7 @@ Return codes:
 sub get_correct_suffix :prototype($) ($path) {
    my $name  = get_name_from_path($path);
    my $suff  = get_suffix($name);
-   if ($RhdDb) {
+   if ($rhddb) {
       say STDERR '';
       say STDERR "In get_correct_suffix(), near top.";
       say STDERR "\$path = $path";
@@ -2154,7 +2125,7 @@ sub get_correct_suffix :prototype($) ($path) {
    $type =~ s%\+\pL+%%;   # Get rid of alternate type interpretations (eg, xml for svg).
 
    # Announce type if debugging:
-   if ( $RhdDb ) {
+   if ( $rhddb ) {
       say STDERR '';
       say STDERR "In get_correct_suffix(), just got type.";
       say STDERR "\$type = $type";
@@ -2225,7 +2196,7 @@ sub get_correct_suffix :prototype($) ($path) {
       my $bytes = length($buffer);
       $bytes >= 10                  or return '***ERROR***' ; # Should have been able to read 10+ bytes.
 
-      if ( $RhdDb ) {
+      if ( $rhddb ) {
          say STDERR '';
          say STDERR "In get_correct_suffix(), just loaded \$buffer.";
          say STDERR "\$size  = $size";
@@ -2282,15 +2253,15 @@ sub get_correct_suffix :prototype($) ($path) {
 
       # Might this be an HTML file?
       $type eq 'application/octet-stream'
-      && is_utf8($buffer)
+      && rhd_is_utf8($buffer)
       && substr($buffer, 0, 75) =~ m%^<!doctype\s*html%i   and return '.html' ; # HTML (markup)
 
       # Save "txt" for last, else other types (eg, html)
       # may falsely be reported as being "txt":
       if ( $type eq 'application/octet-stream' ) {
-         is_ascii($buffer)                                 and return '.txt'  ; # ASCII      text file.
-         is_iso_8859_1($buffer)                            and return '.txt'  ; # ISO-8859-1 text file.
-         is_utf8($buffer)                                  and return '.txt'  ; # UTF-8      text file.
+         rhd_is_ascii($buffer)                                 and return '.txt'  ; # ASCII      text file.
+         rhd_is_iso_8859_1($buffer)                            and return '.txt'  ; # ISO-8859-1 text file.
+         rhd_is_utf8($buffer)                                  and return '.txt'  ; # UTF-8      text file.
       }
    }
 
@@ -2320,9 +2291,9 @@ Description of arguments:
   An argument of "0", "off", or "no"  turns debugging off.
   An argument of "1", "on",  or "yes" turns debugging on.
 =cut
-sub RhdDebug :prototype(;$) ($status = 'on') {
-   if ( $status =~ m/(?i:0|off|no)/ ) { $RH::Dir::RhdDb = 0 }
-   if ( $status =~ m/(?i:1|on|yes)/ ) { $RH::Dir::RhdDb = 1 }
+sub rhd_debug :prototype(;$) ($status = 'on') {
+   if ( $status =~ m/(?i:0|off|no)/ ) { $RH::Dir::rhddb = 0 }
+   if ( $status =~ m/(?i:1|on|yes)/ ) { $RH::Dir::rhddb = 1 }
 }
 
 =head2 rename_file
@@ -2385,12 +2356,12 @@ sub rename_file :prototype($$) ($OldPath, $NewPath) {
          # Find an available intermediate name and path:
          my $IntName = find_avail_rand_name($NewDir,$NewName);
          my $IntPath = path($NewDir, $IntName);
-         RhdBlat "About to rename \"$OldPath\" to \"$IntPath\".";
+         rhd_blat "About to rename \"$OldPath\" to \"$IntPath\".";
          rename(e($OldPath), e($IntPath))
             or warn "Error in \"rename_file\" in \"RH::Dir.pm\":\n"
                   . "couldn't rename \"$OldPath\" to \"$IntPath\" during case change.\n"
             and return 0;
-         RhdBlat "About to rename \"$IntPath\" to \"$NewPath\".";
+         rhd_blat "About to rename \"$IntPath\" to \"$NewPath\".";
          rename(e($IntPath), e($NewPath))
             or warn "Error in \"rename_file\" in \"RH::Dir.pm\":\n"
                   . "couldn't rename \"$IntPath\" to \"$NewPath\" during case change.\n"
@@ -2411,7 +2382,7 @@ sub rename_file :prototype($$) ($OldPath, $NewPath) {
    # executed from current directory "/hjkl", will rename file "/hjkl/asdf/qwer" to "/hjkl/yuio", NOT to
    # "/hhjkl/asdf/yuio".
    else {
-      RhdBlat "About to rename \"$OldPath\" to \"$NewPath\".";
+      rhd_blat "About to rename \"$OldPath\" to \"$NewPath\".";
       rename(e($OldPath), e($NewPath))
          or warn "Error in \"rename_file\" in \"RH::Dir.pm\":\n"
                . "couldn't rename \"$OldPath\" to \"$NewPath\".\n"
@@ -2637,7 +2608,7 @@ sub enumerate_file_name :prototype($) ($name) {
    my $prefix = get_prefix($name);
    my $suffix = get_suffix($name);
    $prefix =~ s/-\(\d\d\d\d\)$//g;
-   my $numerator = sprintf("-(%04d)", rand_int(0,9999));
+   my $numerator = sprintf("-(%04d)", rhd_rand_int(0,9999));
    $prefix = $prefix . $numerator;
    return $prefix . $suffix;
 } # end sub enumerate_file_name
@@ -2700,10 +2671,10 @@ sub find_avail_enum_name :prototype($;$) ($name, $dir = d(getcwd)) {
 
    # Next, try up to 100 different random numerators:
    RAN: for ( 1 .. 100 ) {
-      $numerator = sprintf("-(%04d)", rand_int(0,9999));
+      $numerator = sprintf("-(%04d)", rhd_rand_int(0,9999));
       $tryname   = $prefix . $numerator . $suffix;
       if ( ! -e e path($dir, $tryname) ) {
-         if ($RhdDb) {say "Random enumeration succeeded on attempt # $_.";}
+         if ($rhddb) {say "Random enumeration succeeded on attempt # $_.";}
          return $tryname;
       }
    } # Stop trying random numerators.
@@ -2714,7 +2685,7 @@ sub find_avail_enum_name :prototype($;$) ($name, $dir = d(getcwd)) {
       $numerator = sprintf("-(%04d)", $_);
       $tryname = $prefix . $numerator . $suffix;
       if ( ! -e e path($dir, $tryname) ) {
-         if ($RhdDb) {say "Sequential enumeration succeeded on attempt # $_.";}
+         if ($rhddb) {say "Sequential enumeration succeeded on attempt # $_.";}
          return $tryname;
       }
    } # Stop trying sequential numeration.
@@ -2748,7 +2719,7 @@ sub find_avail_rand_name :prototype($;$$) ($dir, $prefix='', $suffix='') {
    # Make up to 100 attempts to find a random file name with given prefix
    # and suffix that doesn't already exist in given directory:
    for ( $attempts = 0, $name_success = 0 ; $attempts < 100 ; ++$attempts ) {
-      $random = eight_rand_lc_letters;
+      $random = rhd_eight_rand_lc;
       $new_name   = $prefix . $random . $suffix;
       if ( ! -e e path($dir, $new_name) ) {
          $name_success = 1;
@@ -2785,7 +2756,7 @@ sub is_large_image :prototype($) ($path) {
 
    # Return 0 if this file is not an image file:
    $FileType = $FileTyper->checktype_filename($path);
-   if ($RhdDb) {warn "In is_large_image. File type = \"$FileType\".\n";}
+   if ($rhddb) {warn "In is_large_image. File type = \"$FileType\".\n";}
    return 0 if $FileType ne 'image/bmp'
             && $FileType ne 'image/gif'
             && $FileType ne 'image/jpeg'
@@ -3078,7 +3049,7 @@ sub update_sha1 :prototype(;$) ($dir=d(getcwd)) {
       push @names, $name;
       ++$nf;
    }
-   if ($RhdDb) {say STDERR "In update_sha1; got $nr raw files and $nf data files."}
+   rhd_blat "In update_sha1; got $nr raw files and $nf data files.";
 
    # Get path to ".sha1" file, if any:
    my $sha1_path = path($dir, ".sha1");
@@ -3126,7 +3097,7 @@ sub update_sha1 :prototype(;$) ($dir=d(getcwd)) {
          # If $name isn't in table, or if size or mod-date have changed,
          # get new hash and update entry in table:
          if ( ! defined $ht{$name} || $size != $ht{$name}->{Size} || $modt != $ht{$name}->{Modt} ) {
-            if ($RhdDb) {say STDERR "File \"$name\" in directory \"$dir\" is not in hash table.";}
+            rhd_blat "File \"$name\" in directory \"$dir\" is not in hash table.";
             my $sha1 = sha1($path);
             $ht{$name} = {Size => $size, Modt => $modt, Sha1 => $sha1};
             $upd_flag = 1;
@@ -3135,7 +3106,7 @@ sub update_sha1 :prototype(;$) ($dir=d(getcwd)) {
       # Delete any %ht entries that don't correspond to anything in @names:
       foreach my $key (keys %ht) {
          if ( none { $_ eq $key } @names ) {
-            if ($RhdDb) {say STDERR "Hash-table key \"$key\" is not in directory \"$dir\".";}
+            rhd_blat "Hash-table key \"$key\" is not in directory \"$dir\".";
             delete $ht{$key};
             $upd_flag = 1;
          } # end if nothing in directory corresonds to $key

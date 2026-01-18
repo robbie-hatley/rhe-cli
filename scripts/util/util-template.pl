@@ -102,6 +102,8 @@
 # Mon May 05, 2025: Split "Template.pl" into "util/util-template.pl" (dependent on "utf8::all" and "Cwd::utf8"
 #                   and NOT compatible with Cygwin) and "core/core-template.pl" (NOT dependent on "utf8::all"
 #                   or "Cwd::utf8" and hence Cygwin compatible).
+# Sun Jan 18, 2026: Added provision for checking if $OriDir is actually valid (because I've seen that in some
+#                   edge cases it may not be!); now also doing RH::Dir debugging if doing local debugging.
 ##############################################################################################################
 
 ##############################################################################################################
@@ -258,12 +260,21 @@ sub help    ; # Print help and exit.
    # unless user requested help, in which case just print help:
    if ($Help) {help}
    else {
-      if ($Recurse) {
-         my $mlor = RecurseDirs {curdire};
-         say "\nMaximum levels of recursion reached = $mlor";
+      # If "$OriDir" is a real directory, perform the program's function:
+      if ( -e $OriDir && -d $OriDir ) {
+         $Debug and RH::Dir::rhd_debug('on');
+         if ($Recurse) {
+            my $mlor = RecurseDirs {curdire};
+            say "\nMaximum levels of recursion reached = $mlor";
+         }
+         else {curdire}
+         $Debug and RH::Dir::rhd_debug('off');
+         stats
       }
-      else {curdire}
-      stats
+      # Otherwise, just print an error message:
+      else { # Severe error!
+         say STDERR "Error: \"original\" directory \"$OriDir\" does not exist!\nSkipping execution.\n$!";
+      }
    }
 
    # Stop execution timer:

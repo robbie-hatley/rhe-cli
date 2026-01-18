@@ -53,6 +53,7 @@
 #                   Modernized, importing much content from latest "core-utils.pl".
 # Fri Dec 26, 2025: Re-reverted to "#!/usr/bin/env perl", "use utf8::all", "use Cwd::utf8".
 #                   Moved from "core" to "util". Deleted "core".
+# Sun Jan 18, 2026: Now also debugging RH::Dir if doing local debugging.
 ##############################################################################################################
 
 use v5.36;

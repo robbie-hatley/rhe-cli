@@ -183,7 +183,7 @@ sub help    ; # Print help and exit.
    if ($Help) {help}
    else {
       # If debugging locally, also debug RH::Dir:
-      if ($Debug) {RhdDebug('on');}
+      $Debug and RH::Dir::rhd_debug('on');
 
       # If recursing, apply RecurseDirs to curdire:
       if ($Recurse) {
@@ -195,7 +195,7 @@ sub help    ; # Print help and exit.
       else {curdire}
 
       # If debugging locally, now turn RH::Dir debugging off:
-      if ($Debug) {RhdDebug('off');}
+      $Debug and RH::Dir::rhd_debug('off');
 
       # Print statistics for this program run:
       stats
