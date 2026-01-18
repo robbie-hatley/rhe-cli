@@ -53,7 +53,8 @@
 #                   Modernized, importing much content from latest "core-utils.pl".
 # Fri Dec 26, 2025: Re-reverted to "#!/usr/bin/env perl", "use utf8::all", "use Cwd::utf8".
 #                   Moved from "core" to "util". Deleted "core".
-# Sun Jan 18, 2026: Now also debugging RH::Dir if doing local debugging.
+# Sun Jan 18, 2026: Added provision for checking if $OriDir is actually valid (because I've seen that in some
+#                   edge cases it may not be!); now also doing RH::Dir debugging if doing local debugging.
 ##############################################################################################################
 
 use v5.36;
@@ -169,20 +170,28 @@ sub help    ; # Print help and exit.
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   if ($Help) {help}
+   if ($Help) {
+      help
+   }
    else {
       # If "$OriDir" is a real directory, perform the program's function:
       if ( -e $OriDir && -d $OriDir ) {
+         $Debug and RH::Dir::rhd_debug('on');
          if ($Recurse) {
             my $mlor = RecurseDirs {curdire};
-            say "\nMaximum levels of recursion reached = $mlor";
+            say "\nMaximum levels of recursion reached = $mlor" if $Verbose >= 1;
          }
-         else {curdire}
-         stats
+         else {
+            curdire;
+         }
+         $Debug and RH::Dir::rhd_debug('off');
+         stats;
       }
       # Otherwise, just print an error message:
       else { # Severe error!
-         say STDERR "Error: \"original\" directory \"$OriDir\" does not exist!\nSkipping execution.\n$!";
+         say STDERR "Error in \"$pname\": \"original\" directory \"$OriDir\" does not exist!\n"
+                  . "Skipping execution.\n"
+                  . "$!";
       }
    }
 

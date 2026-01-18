@@ -65,6 +65,8 @@
 # Mon May 05, 2025: Reverted to "-C63", "utf8", "Cwd", "d", "e", for Cygwin compatibility.
 # Fri Dec 26, 2025: Re-reverted to "#!/usr/bin/env perl", "use utf8::all", "use Cwd::utf8".
 #                   Moved from "core" to "util". Deleted "core".
+# Sun Jan 18, 2026: Added provision for checking if $OriDir is actually valid (because I've seen that in some
+#                   edge cases it may not be!); now also doing RH::Dir debugging if doing local debugging.
 ##############################################################################################################
 
 use v5.36;
@@ -180,25 +182,29 @@ sub help    ; # Print help and exit.
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   if ($Help) {help}
+   if ($Help) {
+      help
+   }
    else {
-      # If debugging locally, also debug RH::Dir:
-      $Debug and RH::Dir::rhd_debug('on');
-
-      # If recursing, apply RecurseDirs to curdire:
-      if ($Recurse) {
-         my $mlor = RecurseDirs {curdire};
-         say "Maximum levels of recursion reached = $mlor";
+      # If "$OriDir" is a real directory, perform the program's function:
+      if ( -e $OriDir && -d $OriDir ) {
+         $Debug and RH::Dir::rhd_debug('on');
+         if ($Recurse) {
+            my $mlor = RecurseDirs {curdire};
+            say "\nMaximum levels of recursion reached = $mlor" if $Verbose >= 1;
+         }
+         else {
+            curdire;
+         }
+         $Debug and RH::Dir::rhd_debug('off');
+         stats;
       }
-
-      # Otherwise just execute curdire directly:
-      else {curdire}
-
-      # If debugging locally, now turn RH::Dir debugging off:
-      $Debug and RH::Dir::rhd_debug('off');
-
-      # Print statistics for this program run:
-      stats
+      # Otherwise, just print an error message:
+      else { # Severe error!
+         say STDERR "Error in \"$pname\": \"original\" directory \"$OriDir\" does not exist!\n"
+                  . "Skipping execution.\n"
+                  . "$!";
+      }
    }
 
    # Stop execution timer:

@@ -47,16 +47,16 @@ To solve this problem, I simply use the generative formula given by the Wikipedi
 "Kolakoski Sequence":
 1. Start with interation index i=1.
 2. Let sequence k be Kolakoski Sequence
-3. Let sequence x be the sequence of run lengths.
+3. Let sequence r be the sequence of run lengths.
 4. For each iteration i
       if k[i] has been defined
-         set x[i] = k[i]
+         set r[i] = k[i]
       otherwise
-         set x[i] = i
+         set r[i] = i
 5. If i is odd
-      push x[i] copies of '1' as elements to the right end of sequence k
+      push r[i] copies of '1' as elements to the right end of sequence k
    otherwise
-      push x[i] copies of '2' as elements to the right end of sequence k
+      push r[i] copies of '2' as elements to the right end of sequence k
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
@@ -97,7 +97,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
          if ( 1 == $i % 2 ) {
             push @k, (1)x$r[$i];
          }
-         # Otherwise, push x[i] copies of '2' to k:
+         # Otherwise, push r[i] copies of '2' to k:
          else {
             push @k, (2)x$r[$i]
          }
@@ -118,7 +118,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
 my @ints = @ARGV ? eval($ARGV[0]) : (4,5,6,7,8);
-# Expected outputs:
+# Expected outputs                :  2,3,3,4,4
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:

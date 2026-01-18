@@ -258,22 +258,28 @@ sub help    ; # Print help and exit.
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   if ($Help) {help}
+   if ($Help) {
+      help
+   }
    else {
       # If "$OriDir" is a real directory, perform the program's function:
       if ( -e $OriDir && -d $OriDir ) {
          $Debug and RH::Dir::rhd_debug('on');
          if ($Recurse) {
             my $mlor = RecurseDirs {curdire};
-            say "\nMaximum levels of recursion reached = $mlor";
+            say "\nMaximum levels of recursion reached = $mlor" if $Verbose >= 1;
          }
-         else {curdire}
+         else {
+            curdire;
+         }
          $Debug and RH::Dir::rhd_debug('off');
-         stats
+         stats;
       }
       # Otherwise, just print an error message:
       else { # Severe error!
-         say STDERR "Error: \"original\" directory \"$OriDir\" does not exist!\nSkipping execution.\n$!";
+         say STDERR "Error in \"$pname\": \"original\" directory \"$OriDir\" does not exist!\n"
+                  . "Skipping execution.\n"
+                  . "$!";
       }
    }
 
