@@ -62,7 +62,7 @@ Output: "Team 5 defeated Team 1"
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, I make lists of winners sorted by seeds for each of the first two weeks..
+To solve this problem, I make lists of winners sorted by seeds for each of the first two weeks.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
