@@ -179,6 +179,7 @@ INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
 my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
@@ -186,7 +187,8 @@ my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
+
+
 
 # Counters:
 my $direcount = 0         ; # Count of directories processed by curdire().
@@ -235,27 +237,28 @@ sub help    ; # Print help and exit.
       say STDERR "Target    = $Target";
       say STDERR "RegExp    = $RegExp";
       say STDERR "Predicate = $Predicate";
+
+
       say STDERR '';
    }
 
    # If debugging, print the values of all variables except counters, after processing @ARGV:
-   if ( $Debug >= 1 ) {
-      say STDERR 'Debug: Values of variables after processing @ARGV:';
-      say STDERR "pname     = $pname";
-      say STDERR "cmpl_beg  = $cmpl_beg";
-      say STDERR "cmpl_end  = $cmpl_end";
-      say STDERR "Options   = (@Opts)";
-      say STDERR "Arguments = (@Args)";
-      say STDERR "Debug     = $Debug";
-      say STDERR "Help      = $Help";
-      say STDERR "Verbose   = $Verbose";
-      say STDERR "OriDir    = $OriDir";
-      say STDERR "Recurse   = $Recurse";
-      say STDERR "Target    = $Target";
-      say STDERR "RegExp    = $RegExp";
-      say STDERR "Predicate = $Predicate";
-      say STDERR '';
-   }
+   BLAT "Debug message: Values of variables after running argv():\n"
+      . "pname     = $pname     \n"
+      . "cmpl_beg  = $cmpl_beg  \n"
+      . "cmpl_end  = $cmpl_end  \n"
+      . "Options   = (@Opts)    \n"
+      . "Arguments = (@Args)    \n"
+      . "OriDir    = $OriDir    \n"
+      . "Debug     = $Debug     \n"
+      . "Help      = $Help      \n"
+      . "Verbose   = $Verbose   \n"
+      . "Recurse   = $Recurse   \n"
+      . "Target    = $Target    \n"
+      . "RegExp    = $RegExp    \n"
+      . "Predicate = $Predicate \n";
+
+
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
@@ -530,7 +533,6 @@ sub help {
    or complex number, please keep THAT to yourself. Some things would be better
    for my sanity for me not to know. I don't want to find myself enthralled to
    Cthulhu.
-
 
    Happy item processing!
 

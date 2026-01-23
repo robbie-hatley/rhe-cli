@@ -83,11 +83,11 @@ INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
 my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Target    = 'F'       ; # Target                    F|D|B|A   Target files only.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
@@ -124,25 +124,6 @@ sub help    ; # Print help and exit.
    # Process @ARGV and set settings:
    argv;
 
-   # If debugging, print the values of all variables except counters, after processing @ARGV:
-   BLAT "Debug msg: Values of variables after running argv():\n"
-       ."pname     = $pname     \n"
-       ."cmpl_beg  = $cmpl_beg  \n"
-       ."cmpl_end  = $cmpl_end  \n"
-       ."Options   = (@Opts)    \n"
-       ."Arguments = (@Args)    \n"
-       ."Debug     = $Debug     \n"
-       ."Help      = $Help      \n"
-       ."Verbose   = $Verbose   \n"
-       ."Recurse   = $Recurse   \n"
-       ."Target    = $Target    \n"
-       ."RegExp    = $RegExp    \n"
-       ."Predicate = $Predicate \n"
-       ."OriDir    = $OriDir    \n"
-       ."Hidden    = $Hidden    \n"
-
-       .'';
-
    # Print program entry message if being terse or verbose:
    if ( $Verbose >= 1 ) {
       printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
@@ -167,6 +148,24 @@ sub help    ; # Print help and exit.
 
       say STDERR '';
    }
+
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   BLAT "Debug message: Values of variables after running argv():\n"
+      . "pname     = $pname     \n"
+      . "cmpl_beg  = $cmpl_beg  \n"
+      . "cmpl_end  = $cmpl_end  \n"
+      . "Options   = (@Opts)    \n"
+      . "Arguments = (@Args)    \n"
+      . "OriDir    = $OriDir    \n"
+      . "Debug     = $Debug     \n"
+      . "Help      = $Help      \n"
+      . "Verbose   = $Verbose   \n"
+      . "Recurse   = $Recurse   \n"
+      . "Target    = $Target    \n"
+      . "RegExp    = $RegExp    \n"
+      . "Predicate = $Predicate \n"
+      . "Hidden    = $Hidden    \n";
+
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
@@ -213,6 +212,7 @@ sub help    ; # Print help and exit.
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
+# Process @ARGV:
 sub argv {
    # Get options and arguments:
    my $end = 0;              # end-of-options flag
@@ -234,18 +234,18 @@ sub argv {
 
    # Process options:
    for ( @Opts ) {
-      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
-      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
-      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
-      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
-      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
-      /^-$s*f/ || /^--files$/   and $Target  = 'F' ;
-      /^-$s*d/ || /^--dirs$/    and $Target  = 'D' ;
-      /^-$s*b/ || /^--both$/    and $Target  = 'B' ;
-      /^-$s*a/ || /^--all$/     and $Target  = 'A' ; # Default.
-      /^-$s*i/ || /^--hidden$/  and $Hidden  =  1  ;
+      /^-$s*h/ || /^--help$/      and $Help    =  1  ;
+      /^-$s*e/ || /^--debug$/     and $Debug   =  1  ;
+      /^-$s*q/ || /^--quiet$/     and $Verbose =  0  ;
+      /^-$s*t/ || /^--terse$/     and $Verbose =  1  ; # Default.
+      /^-$s*v/ || /^--verbose$/   and $Verbose =  2  ;
+      /^-$s*l/ || /^--local$/     and $Recurse =  0  ; # Default.
+      /^-$s*r/ || /^--recurse$/   and $Recurse =  1  ;
+      /^-$s*f/ || /^--files$/     and $Target  = 'F' ; # Default.
+      /^-$s*d/ || /^--dirs$/      and $Target  = 'D' ;
+      /^-$s*b/ || /^--both$/      and $Target  = 'B' ;
+      /^-$s*a/ || /^--all$/       and $Target  = 'A' ;
+      /^-$s*i/ || /^--hidden$/    and $Hidden  =  1  ;
 
    }
 
@@ -282,9 +282,10 @@ sub curdire {
    # Get current working directory:
    my $cwd = cwd;
 
-   # Announce current working directory:
-   say STDOUT '';
-   say STDOUT "Directory # $direcount: $cwd";
+   # Announce current working directory if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      say STDERR "\nDirectory # $direcount: $cwd\n";
+   }
 
    # Get list of file names in $cwd matching $Target, $RegExp, and $Predicate:
    my @names = readdir_regexp_utf8($cwd, $Target, $RegExp, $Predicate);
@@ -386,12 +387,12 @@ sub error ($NA)
 # Print help:
 sub help
 {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print ((<<"   END_OF_HELP") =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to DenumerateFileNames, Robbie Hatley's file-denumerating script. This
+   Welcome to "$pname", Robbie Hatley's file-denumerating script. This
    program removes all "numerators" of the form "-(####)" (where "#" is any digit)
    from the ends of the prefixes of all regular files in the current working
    directory (and all of its subdirectories if a -r or --recurse option is used).
@@ -416,16 +417,15 @@ sub help
    -h or --help       Print this help and exit.
    -e or --debug      Print diagnostics and simulate renames.
    -q or --quiet      Be quiet.
-   -t or --terse      Be terse.                               (DEFAULT)
+   -t or --terse      Be terse.                         (DEFAULT)
    -v or --verbose    Be verbose.
-   -l or --local      DON'T recurse subdirectories.           (DEFAULT)
+   -l or --local      DON'T recurse subdirectories.     (DEFAULT)
    -r or --recurse    DO    recurse subdirectories.
-   -f or --files      Target Files.                           (DEFAULT)
+   -f or --files      Target Files.                     (DEFAULT)
    -d or --dirs       Target Directories.
    -b or --both       Target Both.
    -a or --all        Target All.
    -i or --hidden     Also process hidden files.
-
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
