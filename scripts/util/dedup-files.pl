@@ -70,7 +70,7 @@
 #                   "$main::VarName = DefaultValue;"
 # Mon Feb 01, 2021: Widened to 120 characters. Cleaned up comments. Simplified padding of file name field.
 # Thu Feb 11, 2021: Got rid of "delete both files" option. Clarified Help. Replaced multiple mode variables
-#                   with "$PromptMode". Clarified comments. Now using "use experimental 'switch';".
+#                   with "$PMode". Clarified comments. Now using "use experimental 'switch';".
 # Fri Nov 05, 2021: Now presents per-directory stats as well as per-tree stats. In order to do this, I had to
 #                   make most functions return result-code strings rather than just return 0 or 1.
 # Tue Nov 16, 2021: Got rid of most of the boilerplate; now using common::sense instead. Also, now putting
@@ -104,6 +104,7 @@
 #                   Moved from "core" to "util". Deleted "core".
 # Sun Jan 18, 2026: Added provision for checking if $OriDir is actually valid (because I've seen that in some
 #                   edge cases it may not be!); now also doing RH::Dir debugging if doing local debugging.
+# Fri Jan 23, 2026: Added verbosity controls, shortened some variable names, and improved help().
 ##############################################################################################################
 
 use v5.36;
@@ -137,23 +138,23 @@ my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-# NOTE: This program has no variable "$Verbose", because this program requires maximum verbosity, always.
+my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
-my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
+# NOTE: There's no variable "$Target" because this program processes data files only.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
 # Modes:
-my $PromptMode = 0 ; # Prompting Mode. 0 => DupPrompt (ask user what to do)
-                     #                 1 => Spotlight (process Spotlight files)
-                     #                 2 => NoPrompt  (act without prompting user)
-my $PrejudMode = 0 ; # Prejudice Mode. 0 => Newer     (erase newer duplicates)
-                     #                 1 => Older     (erase older duplicates)
+my $PMode = 0 ; # Prompting Mode. 0 => DupPrompt (ask user what to do)
+                #                 1 => Spotlight (process Spotlight files)
+                #                 2 => NoPrompt  (act without prompting user)
+my $JMode = 0 ; # Prejudice Mode. 0 => Newer     (erase newer duplicates)
+                #                 1 => Older     (erase older duplicates)
 
 # Hashes:
-my %PromptHash = ( 0 => 'DupPrompt' , 1 => 'Spotlight' , 2 => 'NoPrompt' );
-my %PrejudHash = ( 0 => 'Newer'     , 1 => 'Older'                       );
+my %PHash = ( 0 => 'DupPrompt' , 1 => 'Spotlight' , 2 => 'NoPrompt' );
+my %JHash = ( 0 => 'Newer'     , 1 => 'Older'                       );
 
 # RegExps:
 my $shapat = qr(^[0-9a-f]{40}(?:-\(\d{4}\))?(?:\.\w+)?$); # SHA1 hash pattern
@@ -242,12 +243,13 @@ sub help        ; # Print help  message.
       say STDERR "Arguments = (@Args)";
       say STDERR "Debug     = $Debug";
       say STDERR "Help      = $Help";
-      say STDERR "OriDir    = $OriDir";
+      say STDERR "Verbose   = $Verbose";
       say STDERR "Recurse   = $Recurse";
       say STDERR "RegExp    = $RegExp";
       say STDERR "Predicate = $Predicate";
-      say STDERR "Prompt md = $PromptHash{$PromptMode}" ;
-      say STDERR "Prejud md = $PrejudHash{$PrejudMode}" ;
+      say STDERR "OriDir    = $OriDir";
+      say STDERR "Prompt md = $PHash{$PMode}";
+      say STDERR "Prejud md = $JHash{$JMode}";
       say STDERR '';
    }
 
@@ -257,13 +259,12 @@ sub help        ; # Print help  message.
    printf STDERR "Compilation time was %.3fms\n\n",
                  1000 * ($cmpl_end - $cmpl_beg);
    say STDERR 'Basic settings:';
-   say STDERR "OriDir    = $OriDir"                  ;
-   say STDERR "Recurse   = $Recurse"                 ;
-   say STDERR "Target    = $Target"                  ;
-   say STDERR "RegExp    = $RegExp"                  ;
-   say STDERR "Predicate = $Predicate"               ;
-   say STDERR "prompt md = $PromptHash{$PromptMode}" ;
-   say STDERR "prejud md = $PrejudHash{$PrejudMode}" ;
+   say STDERR "OriDir    = $OriDir";
+   say STDERR "Recurse   = $Recurse";
+   say STDERR "RegExp    = $RegExp";
+   say STDERR "Predicate = $Predicate";
+   say STDERR "prompt md = $PHash{$PMode}";
+   say STDERR "prejud md = $JHash{$JMode}";
    say STDERR '';
 
    # Process current directory (and all subdirectories if recursing) and print stats,
@@ -297,11 +298,13 @@ sub help        ; # Print help  message.
    my $t1 = time;
    my @s1 = localtime($t1);
 
-   # Print exit messages:
-   my $te = $t1 - $t0; my $ms = 1000 * $te;
-   printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
-                 $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
-   printf STDERR "Execution time was %.3fms.\n", $ms;
+   # Print exit message if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      my $te = $t1 - $t0; my $ms = 1000 * $te;
+      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                    $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
+      printf STDERR "Execution time was %.3fms.\n", $ms;
+   }
 
    # Exit program, returning success code "0" to caller:
    exit 0;
@@ -309,6 +312,7 @@ sub help        ; # Print help  message.
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
+# Process @ARGV:
 sub argv {
    # Get options and arguments:
    my $end = 0;              # end-of-options flag
@@ -330,19 +334,18 @@ sub argv {
 
    # Process options:
    for ( @Opts ) {
-      /^-$s*h/ || /^--help$/      and $Help       = 1  ;
-      /^-$s*e/ || /^--debug$/     and $Debug      = 1  ;
-      /^-$s*l/ || /^--local$/     and $Recurse    = 0  ; # Default.
-      /^-$s*r/ || /^--recurse$/   and $Recurse    = 1  ;
-      /^-$s*s/ || /^--spotlight$/ and $PromptMode = 1  ;
-      /^-$s*n/ || /^--newer$/     and $PromptMode = 2 and $PrejudMode = 0;
-      /^-$s*o/ || /^--older$/     and $PromptMode = 2 and $PrejudMode = 1;
+      /^-$s*h/ || /^--help$/      and $Help    = 1;
+      /^-$s*e/ || /^--debug$/     and $Debug   = 1;
+      /^-$s*q/ || /^--quiet$/     and $Verbose = 0;
+      /^-$s*t/ || /^--terse$/     and $Verbose = 1; # Default.
+      /^-$s*v/ || /^--verbose$/   and $Verbose = 2;
+      /^-$s*l/ || /^--local$/     and $Recurse = 0; # Default.
+      /^-$s*r/ || /^--recurse$/   and $Recurse = 1;
+      /^-$s*s/ || /^--spotlight$/ and $PMode   = 1;
+      /^-$s*n/ || /^--newer$/     and $PMode   = 2 and $JMode = 0;
+      /^-$s*o/ || /^--older$/     and $PMode   = 2 and $JMode = 1;
    }
-
-   # NOTE: There are no verbosity controls in this program, because this program requires maximum verbosity
-   # always, because of its inherently highly-interactive nature.
-
-   # NOTE: Likewise, there are no target controls, because this program processes data files only.
+   # NOTE: There are no target controls, because this program processes data files only.
 
    # Get number of arguments:
    my $NA = scalar(@Args);
@@ -374,10 +377,13 @@ sub curdire {
    # Increment directory counter:
    ++$direcount;
 
-   # Get and announce current working directory:
+   # Get current working directory:
    my $cwd = cwd;
-   say '';
-   say "Dir # $direcount: \"$cwd\"";
+
+   # Announce current working directory if being verbose:
+   if ( $Verbose >= 2 ) {
+      say STDERR "\nDirectory # $direcount: $cwd\n";
+   }
 
    # Get hash of arrays of file records for for all regular files
    # in current directory, keyed by size:
@@ -488,8 +494,8 @@ sub curdire {
                # Create a "result" variable to hold the result of processing pair of duplicate files:
                my $result = '';
 
-               # Call appropriate subroutine (depending on value of $PromptMode) and store result in $result:
-               switch ($PromptMode) {
+               # Call appropriate subroutine (depending on value of $PMode) and store result in $result:
+               switch ($PMode) {
                   case 0 {$result = dup_prompt($file1, $file2)} # DupPrompt mode
                   case 1 {$result = spotlight ($file1, $file2)} # Spotlight mode
                   case 2 {$result = no_prompt ($file1, $file2)} # NoPrompt  mode
@@ -560,15 +566,15 @@ sub dup_prompt ($file1, $file2) {
 
       elsif ('4' eq $char) { # ERASE ALL NEWER DUPLICATES WITHOUT PROMPTING
          say "Entering no-prompt mode and erasing all newer duplicates.";
-         $PromptMode = 2;
-         $PrejudMode = 0;
+         $PMode = 2;
+         $JMode = 0;
          return erase_newer ($file1, $file2);
       }
 
       elsif ('5' eq $char) { # ERASE ALL OLDER DUPLICATES WITHOUT PROMPTING
          say "Entering no-prompt mode and erasing all older duplicates.";
-         $PromptMode = 2;
-         $PrejudMode = 1;
+         $PMode = 2;
+         $JMode = 1;
          return erase_older ($file1, $file2);
       }
 
@@ -644,7 +650,7 @@ sub spotlight ($file1, $file2) {
 
 # Mode 2 (NoPrompt = "Erase a duplicate file automatically without prompting the user."):
 sub no_prompt ($file1, $file2) {
-   if ( 1 == $PrejudMode ) {
+   if ( 1 == $JMode ) {
       return erase_older($file1, $file2);
    }
    else
@@ -775,40 +781,44 @@ sub error ($NA) {
    return 1;
 } # end sub error
 
-# Print help for this program:
+# Print help:
 sub help {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print STDERR ((<<"   END_OF_HELP") =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "dedup-files.pl", Robbie Hatley's nifty duplicate-file deleter.
+   Welcome to "$pname", Robbie Hatley's nifty duplicate-file deleter.
 
    -------------------------------------------------------------------------------
    Command Lines:
 
-   dedup-files.pl [-h|--help]    (to print this help and exit)
-   dedup-files.pl [options]      (to find and delete duplicate files)
+   $pname  [-h|--help]   (to print this help and exit)
+   $pname  [options]     (to find and delete duplicate files)
 
    -------------------------------------------------------------------------------
    Description of Options:
 
-   Option:             Meaning:
-   -h or --help        Print help and exit.
-   -e or --debug       Print diagnostics and simulate deletions.
-   -l or --local       DON'T recurse subdirectories. (DEFAULT)
-   -r or --recurse     DO    recurse subdirectories.
-   -s or --spotlight   Enter Spotlight mode (erase gibberish names).
-   -n or --newer       Erase all newer duplicates without prompting.
-   -o or --older       Erase all older duplicates without prompting.
-         --            End of options (all further CL items are arguments).
+   Option:            Meaning:
+   -h or --help       Print help and exit.
+   -e or --debug      Print diagnostics and simulate file deletions.
+   -q or --quiet      Be quiet.
+   -t or --terse      Be terse.                         (DEFAULT)
+   -v or --verbose    Be verbose.
+   -l or --local      DON'T recurse subdirectories.     (DEFAULT)
+   -r or --recurse    DO    recurse subdirectories.
+   -s or --spotlight  Enter Spotlight mode (erase gibberish names).
+   -n or --newer      Erase all newer duplicates without prompting.
+   -o or --older      Erase all older duplicates without prompting.
+         --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
-   For example, use -re to recursively simulate deletions.
+   For example, use -vre to verbosely and recursively simulate deletions.
 
-   If multiple conflicting separate options are given, later overrides earlier.
+   If multiple conflicting separate options are given, latter overrides former.
+
    If multiple conflicting single-letter options are piled after a single hyphen,
-   the result is determined by this descending order of precedence: hdonsrl.
+   the precedence is the inverse of the options in the above table.
 
    If you want to use an argument that looks like an option (say, you want to
    search for files which contain "--recurse" as part of their name), use a "--"

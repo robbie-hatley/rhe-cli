@@ -50,6 +50,7 @@
 #                   Moved from "core" to "util". Deleted "core".
 # Sun Jan 18, 2026: Added provision for checking if $OriDir is actually valid (because I've seen that in some
 #                   edge cases it may not be!); now also doing RH::Dir debugging if doing local debugging.
+# Fri Jan 23, 2026: Improved help().
 ##############################################################################################################
 
 use v5.36;
@@ -83,10 +84,10 @@ my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 # NOTE: There's no variable "$Target" because this program processes data files only.
 my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
 # Counters:
 my $direcount = 0         ; # Count of directories processed by curdire().
@@ -127,10 +128,10 @@ sub help    ; # Print help and exit.
        ."Debug     = $Debug     \n"
        ."Help      = $Help      \n"
        ."Verbose   = $Verbose   \n"
-       ."OriDir    = $OriDir    \n"
        ."Recurse   = $Recurse   \n"
        ."RegExp    = $RegExp    \n"
        ."Predicate = $Predicate \n"
+       ."OriDir    = $OriDir    \n"
        .'';
 
    # Print program entry message if being terse or verbose:
@@ -200,6 +201,7 @@ sub help    ; # Print help and exit.
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
+# Process @ARGV:
 sub argv {
    # Get options and arguments:
    my $end = 0;              # end-of-options flag
@@ -221,14 +223,15 @@ sub argv {
 
    # Process options:
    for ( @Opts ) {
-      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
-      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default.
-      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
-      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
-      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
+      /^-$s*h/ || /^--help$/      and $Help    = 1;
+      /^-$s*e/ || /^--debug$/     and $Debug   = 1;
+      /^-$s*q/ || /^--quiet$/     and $Verbose = 0;
+      /^-$s*t/ || /^--terse$/     and $Verbose = 1; # Default.
+      /^-$s*v/ || /^--verbose$/   and $Verbose = 2;
+      /^-$s*l/ || /^--local$/     and $Recurse = 0; # Default.
+      /^-$s*r/ || /^--recurse$/   and $Recurse = 1;
    }
+   # NOTE: There are no target controls, because this program processes data files only.
 
    # Get number of arguments:
    my $NA = scalar(@Args);
@@ -255,17 +258,17 @@ sub argv {
    return 1;
 } # end sub argv
 
+# Process current directory:
 sub curdire {
+   # Increment directory counter:
    ++$direcount;
 
    # Get current working directory:
    my $cwd = cwd;
 
-   # If being verbose, announce directory:
+   # Announce current working directory if being verbose:
    if ( $Verbose >= 2 ) {
-      say STDOUT '';
-      say STDOUT "Directory # $direcount: $cwd";
-      say STDOUT '';
+      say STDERR "\nDirectory # $direcount: $cwd\n";
    }
 
    # Get reference to array of references to file records for all regular files
@@ -420,12 +423,12 @@ sub error ($NA) {
 
 # Print help:
 sub help {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print STDERR ((<<"   END_OF_HELP") =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "dedup-newsbin-files.pl", Robbie Hatley's nifty program for
+   Welcome to "$pname", Robbie Hatley's nifty program for
    erasing duplicate files within groups of files having the same base name but
    different "numerators", where a "numerator" is a substring of the form
    "-(####)" (where the "####" are any 4 digits) immediately before the
@@ -444,24 +447,24 @@ sub help {
    -------------------------------------------------------------------------------
    Command lines:
 
-   dedup-newsbin-files.pl [-h|--help]     (to print this help and exit)
-   dedup-newsbin-files.pl [options]       (to erase duplicates)
+   $pname  [-h|--help]   (to print this help and exit)
+   $pname  [options]     (to erase duplicates)
 
    -------------------------------------------------------------------------------
    Description of options:
 
-   Option:             Meaning:
-   -h or --help        Print help and exit.
-   -e or --debug       Print diagnostics and simulate file deletions.
-   -q or --quiet       Print     no    information.
-   -t or --terse       Print  limited  information.            (DEFAULT)
-   -v or --verbose     Print exuberant information.
-   -l or --local       DON'T recurse subdirectories.           (DEFAULT)
-   -r or --recurse     DO    recurse subdirectories.
-         --            End of options (all further CL items are arguments).
+   Option:            Meaning:
+   -h or --help       Print help and exit.
+   -e or --debug      Print diagnostics and simulate file deletions.
+   -q or --quiet      Be quiet.
+   -t or --terse      Be terse.                         (DEFAULT)
+   -v or --verbose    Be verbose.
+   -l or --local      DON'T recurse subdirectories.     (DEFAULT)
+   -r or --recurse    DO    recurse subdirectories.
+         --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
-   For example, use -vr to verbosely and recursively process items.
+   For example, use -vre to verbosely and recursively simulate deletions.
 
    If multiple conflicting separate options are given, latter overrides former.
 

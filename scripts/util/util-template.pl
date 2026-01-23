@@ -104,6 +104,7 @@
 #                   or "Cwd::utf8" and hence Cygwin compatible).
 # Sun Jan 18, 2026: Added provision for checking if $OriDir is actually valid (because I've seen that in some
 #                   edge cases it may not be!); now also doing RH::Dir debugging if doing local debugging.
+# Fri Jan 23, 2026: Fixed "pname" bug in help(). (Was saying "program_name.pl.pl".)
 ##############################################################################################################
 
 ##############################################################################################################
@@ -323,17 +324,17 @@ sub argv {
 
    # Process options:
    for ( @Opts ) {
-      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
-      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default.
-      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
-      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
-      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
-      /^-$s*f/ || /^--files$/   and $Target  = 'F' ;
-      /^-$s*d/ || /^--dirs$/    and $Target  = 'D' ;
-      /^-$s*b/ || /^--both$/    and $Target  = 'B' ;
-      /^-$s*a/ || /^--all$/     and $Target  = 'A' ; # Default.
+      /^-$s*h/ || /^--help$/      and $Help    =  1  ;
+      /^-$s*e/ || /^--debug$/     and $Debug   =  1  ;
+      /^-$s*q/ || /^--quiet$/     and $Verbose =  0  ;
+      /^-$s*t/ || /^--terse$/     and $Verbose =  1  ; # Default.
+      /^-$s*v/ || /^--verbose$/   and $Verbose =  2  ;
+      /^-$s*l/ || /^--local$/     and $Recurse =  0  ; # Default.
+      /^-$s*r/ || /^--recurse$/   and $Recurse =  1  ;
+      /^-$s*f/ || /^--files$/     and $Target  = 'F' ;
+      /^-$s*d/ || /^--dirs$/      and $Target  = 'D' ;
+      /^-$s*b/ || /^--both$/      and $Target  = 'B' ;
+      /^-$s*a/ || /^--all$/       and $Target  = 'A' ; # Default.
    }
 
    # Get number of arguments:
@@ -444,8 +445,8 @@ sub help {
    -------------------------------------------------------------------------------
    Command lines:
 
-   $pname.pl -h | --help                       (to print this help and exit)
-   $pname.pl [options] [Arg1] [Arg2] [Arg3]    (to [perform funciton] )
+   $pname  -h | --help                      (to print this help and exit)
+   $pname  [options] [Arg1] [Arg2] [Arg3]   (to [perform funciton] )
 
    -------------------------------------------------------------------------------
    Description of Options:
