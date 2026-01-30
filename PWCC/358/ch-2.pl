@@ -5,59 +5,53 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solution in Perl for The Weekly Challenge 358-2,
-written by Robbie Hatley on Tue Jan 27, 2025.
+written by Robbie Hatley on Fri Jan 30, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
 Task 358-2: Encrypted String
 Submitted by: Mohammad Sajid Anwar
+You are given a string $str and an integer $int. Write a script
+to encrypt the string using this algorithm: for each character
+$char in $str, replace $char with the $int th character after
+$char in the alphabet, wrapping if needed and return the
+encrypted string.
 
-You are given a string $str and an integer $int.
-
-Write a script to encrypt the string using the algorithm - for each character $char in $str, replace $char with the $int th character after $char in the alphabet, wrapping if needed and return the encrypted string.
-Example 1
-
+Example #1:
 Input: $str = "abc", $int = 1
 Output: "bcd"
 
-
-Example 2
-
+Example #2:
 Input: $str = "xyz", $int = 2
 Output: "zab"
 
-
-Example 3
-
+Example #3:
 Input: $str = "abc", $int = 27
 Output: "bcd"
 
-
-Example 4
-
+Example #4:
 Input: $str = "hello", $int = 5
 Output: "mjqqt"
 
-
-Example 5
-
+Example #5:
 Input: $str = "perl", $int = 26
 Output: "perl"
-
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
 This is a "rotation" variant of a Caesar cipher, akin to "ROT13". I'll use the ASCII codes for "a" and "A" as
-"base" ASCII codes. Then for each character to be encoded, I'll use "ord" to get the ASCII code, calculate the
-"offset" of each letter relative to one of those bases, add the "$int" value, take modulo 26, add the result
-to the base, and feed the result to "chr" to form the encoded character.
+"base" ASCII codes. Then for each alphabetic (/[a-zA-Z]/)character to be encoded, I'll use "ord" to get the
+ASCII code, calculate the "offset" of each letter relative to one of those bases, add the "$int" value, take
+modulo 26, add the result to the base, and feed the result to "chr" to form the encoded character.
+(Non-alphabetic characters, I'll send-through verbatim.)
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of arrays, with each inner array containing a double-quoted string followed by an integer,
+in proper Perl syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '(["Hatley", -72], ["Hatley", 6], ["Hatley", 11],["Hatley", 17])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 

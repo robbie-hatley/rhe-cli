@@ -5,77 +5,64 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solution in Perl for The Weekly Challenge 358-1,
-written by Robbie Hatley on Tue Jan 27, 2025.
+written by Robbie Hatley on Fri Jan 30, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
 Task 358-1: Max Str Value
 Submitted by: Mohammad Sajid Anwar
+You are given an array of alphanumeric string, @strings. Write a
+script to find the max "value" of alphanumeric string in the
+given array which is the numeric representation of the string if
+it consists of digits only, otherwise the length of the string.
 
-You are given an array of alphanumeric string, @strings.
-
-Write a script to find the max value of alphanumeric string in the given array. The numeric representation of the string, if it comprises of digits only otherwise length of the string.
-Example 1
-
+Example #1:
 Input: @strings = ("123", "45", "6")
 Output: 123
-
 "123" -> 123
 "45"  -> 45
 "6"   -> 6
 
-
-Example 2
-
+Example #2:
 Input: @strings = ("abc", "de", "fghi")
 Output: 4
-
 "abc"  -> 3
 "de"   -> 2
 "fghi" -> 4
 
-
-Example 3
-
+Example #3:
 Input: @strings = ("0012", "99", "a1b2c")
 Output: 99
-
 "0012"  -> 12
 "99"    -> 99
 "a1b2c" -> 5
 
-
-Example 4
-
+Example #4:
 Input: @strings = ("x", "10", "xyz", "007")
 Output: 10
-
 "x"   -> 1
 "xyz" -> 3
 "007" -> 7
 "10"  -> 10
 
-
-Example 5
-
+Example #5:
 Input: @strings = ("hello123", "2026", "perl")
 Output: 2026
-
 "hello123" -> 8
 "perl"     -> 4
 "2026"     -> 2026
 
-
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-This can be solved by simply calculating the "value" of each string and keeping track of the max seen.
+This can be solved by simply calculating the "value" (as defined in the problem description) of each string
+and keeping track of the maximum value seen so far.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
 single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
 
-./ch-1.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-1.pl '(["rat", "7", "armadillo"],["congratulations!", "15", "horse"])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
