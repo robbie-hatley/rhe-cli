@@ -1,1 +1,0 @@
-Result = MsgBox("This file cannot be opened from within the shell.  Please launch NewzToolz manually, select desired action, and navigate to the file from within NewzToolz.",16,"I'm afraid I can't do that.")

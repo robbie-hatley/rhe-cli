@@ -1,1 +1,0 @@
-"C:\Windows\System32\wscript.exe" "D:\rhe\scripts\vbs\launch-NewzToolz-manually-msg.vbs"

@@ -3,12 +3,12 @@
 use v5.32;
 use utf8;
 
-open(雪, "<:utf8", "/d/Captain’s-Den/Varna/Quenta/Tidbits.txt")
+open(雪, "<:utf8", "/home/aragorn/Data/Ulthar/Program-Resources/Tidbits/Tidbits.txt")
    or die "Can't open file for input. $!\n";
 my @lines = <雪>;
 close 雪;
 
-open(雪2, ">:utf8", "/d/Captain’s-Den/Varna/Quenta/Tidbits_2.txt")
+open(雪2, ">:utf8", "/home/aragorn/Data/Ulthar/Program-Resources/Tidbits/Tidbits_2.txt")
    or die "Can't open file for output. $!\n";
 print (雪2 $_) for @lines;
 close 雪2;
