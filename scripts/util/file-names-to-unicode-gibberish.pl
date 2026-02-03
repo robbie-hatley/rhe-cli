@@ -167,6 +167,10 @@ sub curdire {
 } # end sub curdire
 
 sub curfile ($old_name) {
+   my $suffix   = get_suffix($old_name);
+   my $new_name = '' ;
+   my $noex     = 0  ;
+   my $fails    = 0  ;
    my $chars =
    'ABCDEFGHIJKLMNOPQRSTUVWXYZ'              .
    'abcdefghijklmnopqrstuvwxyz'         x  2 .
@@ -179,11 +183,9 @@ sub curfile ($old_name) {
    '☿♀♁♂♃♄♅♆♇'                               ;
 
    # Try to find a random file name that doesn't already exist in file's directory:
-   my $new_name = '' ;
-   my $noex     = 0  ;
-   my $fails    = 0  ;
    while (!$noex) {
       $new_name .= substr $chars, int rand length $chars, 1 for 0..7;
+      $new_name .= $suffix;
       if ( ! -e $new_name ) {$noex = 1}
       else                  {++$fails }
       if ( $fails >= 500  ) {

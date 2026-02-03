@@ -6,27 +6,21 @@
 
 ##############################################################################################################
 # unopened-zip.pl
-# Finds directories with exactly 1 non-hidden regular file which is a zip file.
+# Lists subdirectories of the current directory which contain 1-or-more zip files but no jpg files.
 # Written by Robbie Hatley.
 # Edit history:
 # Fri Sep 19, 2025: Wrote it.
+# Tue Feb 03, 2026: Renamed to "unopened-zips.pl".
 ##############################################################################################################
 
-# Pragmas:
 use v5.36;
-
-# Essential CPAN Modules:
 use utf8::all;
 use Cwd::utf8;
 use Time::HiRes qw( time );
-
-# Extra CPAN Modules:
 use Scalar::Util qw( looks_like_number reftype );
 use Regexp::Common;
-
-# Essential RH Modules:
-use RH::Dir;        # Recurse directories; get list of file-info packets for names matching a regexp; etc.
-use RH::Util;       # Unbuffered single-keystroke inputs; etc.
+use RH::Dir;
+use RH::Util;
 
 # ======= VARIABLES: =========================================================================================
 
@@ -38,16 +32,20 @@ $" = ', ' ; # Quoted-array element separator = ", ".
 
 our    $pname;                                 # Declare program name.
 BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+our    $cmpl_beg;                              # Declare compilation begin time.
+BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
+our    $cmpl_end;                              # Declare compilation end   time.
+INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
 # ------- Local variables: -----------------------------------------------------------------------------------
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
 my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
 # Counters:
 my $direcount = 0         ; # Count of directories processed by curdire().
@@ -55,13 +53,9 @@ my $filecount = 0         ; # Count of files matching target, regexp, and predic
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-# NOTE: These alert the compiler that these names, when encountered (whether in subroutine definitions,
-# BEGIN, CHECK, UNITCHECK, INIT, END, other subroutines, or in the main body of the program), are subroutines,
-# so it needs to find, compile, and link their definitions:
 sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
 sub BLAT    ; # Print messages only if debugging.
-sub stats   ; # Print statistics.
 sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
@@ -74,30 +68,67 @@ sub help    ; # Print help and exit.
    # Process @ARGV and set settings:
    argv;
 
-   # Print program entry message if being verbose:
-   if ( $Verbose >= 2 ) {
-      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+   # Print program entry message if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
                     $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
    }
 
-   # Process current directory and all subdirectories and print stats,
+   # Print compilation time if being verbose:
+   if ( $Verbose >= 2 ) {
+      printf STDERR "Compilation time was %.3fms\n",
+                    1000 * ($cmpl_end - $cmpl_beg);
+   }
+
+   # Print basic settings if being terse or verbose:
+   if ( $Verbose >= 1 ) {
+      say STDERR "Starting directory = $OriDir";
+   }
+
+   # If debugging, print the values of all variables except counters, after processing @ARGV:
+   BLAT "Debug message: Values of variables after running argv():\n"
+      . "pname     = $pname     \n"
+      . "cmpl_beg  = $cmpl_beg  \n"
+      . "cmpl_end  = $cmpl_end  \n"
+      . "Options   = (@Opts)    \n"
+      . "Arguments = (@Args)    \n"
+      . "OriDir    = $OriDir    \n"
+      . "Debug     = $Debug     \n"
+      . "Help      = $Help      \n"
+      . "Verbose   = $Verbose";
+
+   print "\n" if $Verbose > 0 || $Debug > 0;
+
+   # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
    if ($Help) {
-      help;
+      help
    }
    else {
-      my $mlor = RecurseDirs {curdire};
-      say "\nMaximum levels of recursion reached = $mlor";
+      # If "$OriDir" is a real directory, perform the program's function:
+      if ( -e $OriDir && -d $OriDir ) {
+         $Debug and RH::Dir::rhd_debug('on');
+         my $mlor = RecurseDirs {curdire};
+         print "\n" if $Verbose > 0 || $Debug > 0;
+         say "Maximum levels of recursion reached = $mlor" if $Verbose >= 1;
+         $Debug and RH::Dir::rhd_debug('off');
+      }
+      # Otherwise, just print an error message:
+      else { # Severe error!
+         say STDERR "Error in \"$pname\": \"original\" directory \"$OriDir\" does not exist!\n"
+                  . "Skipping execution.\n"
+                  . "$!";
+      }
    }
 
    # Stop execution timer:
    my $t1 = time;
    my @s1 = localtime($t1);
 
-   # Print exit message if being verbose:
-   if ( $Verbose >= 2 ) {
+   # Print exit message if being terse or verbose:
+   if ( $Verbose >= 1 ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
-      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+      printf STDERR "Now exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
                     $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
       printf STDERR "Execution time was %.3fms.\n", $ms;
    }
@@ -151,18 +182,21 @@ sub curdire {
    # Get current working directory:
    my $cwd = cwd;
 
-   # Get list of file records for non-hidden regular files in this directory:
-   my @files = @{GetFiles($cwd, 'F', '^[^.]')};
-   my $n = scalar(@files);
+   # Get list of file names for non-hidden regular files in this directory:
+   my @names = readdir_regexp_utf8($cwd, 'F', '^[^.]', '1');
 
-   # If size of list is 1:
-   if ( 1 == scalar @files ) {
-      # If that one file has extension ".zip":
-      if ( $files[0]->{Name} =~ m/\.zip$/ ) {
-         # Print the path of the current directory:
-         say $cwd;
-      }
-   }
+   # Get count of zip files:
+   my @zips = grep {$_ =~ m/\.zip$/} @names;
+   BLAT "zips = (@zips)";
+   my $zips = scalar @zips;
+
+   # Get count of jpg files:
+   my @jpgs = grep {$_ =~ m/\.jpg$/} @names;
+   BLAT "jpgs = (@jpgs)";
+   my $jpgs = scalar @jpgs;
+
+   # Say $cwd if $zips > 1 and $jpgs < 1:
+   say $cwd if $zips > 0 && $jpgs < 1;
 
    # Return success code 1 to caller:
    return 1;
@@ -178,15 +212,14 @@ sub help {
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "$pname". This program prints the paths of all
-   subdirectories of the current directory which contain exactly 1 non-hidden
-   regular file which is a zip file.
+   Welcome to "$pname". This program prints the paths of all subdirectories
+   of the current directory which contain 1-or-more zip files but no jpg files.
 
    -------------------------------------------------------------------------------
    Command lines:
 
    $pname -h | --help   (to print this help and exit)
-   $pname [options]     (to find dirs containing only a single zip file)
+   $pname [options]     (to find subdirs with zips but no jpgs)
 
    -------------------------------------------------------------------------------
    Description of Options:
