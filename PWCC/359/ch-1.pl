@@ -11,61 +11,32 @@ written by Robbie Hatley on Tue Feb 03, 2025.
 PROBLEM DESCRIPTION:
 Task 359-1: Digital Root
 Submitted by: Mohammad Sajid Anwar
+You are given a positive integer, $int. Write a function that
+calculates the additive persistence of a positive integer and
+also return the digital root. Digital root is the recursive sum
+of all digits in a number until a single digit is obtained.
+Additive persistence is the number of times you need to sum the
+digits to reach a single digit.
 
-You are given a positive integer, $int.
-
-Write a function that calculates the additive persistence of a positive integer and also return the digital root.
-
-    Digital root is the recursive sum of all digits in a number until a single digit is obtained.
-
-    Additive persistence is the number of times you need to sum the digits to reach a single digit.
-
-Example 1
-
+Example #1:
 Input: $int = 38
-Output: Persistence  = 2
-        Digital Root = 2
+Expected output: Digital Root = 2; Persistence = 2
 
-38 => 3 + 8 => 11
-11 => 1 + 1 => 2
-
-
-Example 2
-
+Example #2:
 Input: $int = 7
-Output: Persistence  = 0
-        Digital Root = 7
+Expected output: Digital Root = 7; Persistence = 0
 
-
-Example 3
-
+Example #3:
 Input: $int = 999
-Output: Persistence  = 2
-        Digital Root = 9
+Expected output: Digital Root = 9; Persistence = 2
 
-999 => 9 + 9 + 9 => 27
-27  => 2 + 7 => 9
-
-
-Example 4
-
+Example #4:
 Input: $int = 1999999999
-Output: Persistence  = 3
-        Digital Root = 1
+Expected output: Digital Root = 1; Persistence = 3
 
-1999999999 => 1 + 9 + 9 + 9 + 9 + 9 + 9 + 9 + 9 + 9 => 82
-82 => 8 + 2 => 10
-10 => 1 + 0 => 1
-
-
-Example 5
-
+Example #5:
 Input: $int = 101010
-Output: Persistence  = 1
-        Digital Root = 3
-
-101010 => 1 + 0 + 1 + 0 + 1 + 0 => 3
-
+Expected output: Digital Root = 3; Persistence = 1
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
@@ -74,9 +45,9 @@ This is just a matter of performing the calculations described and seeing what o
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of positive integers, in proper Perl syntax, like so:
 
-./ch-1.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-1.pl '(7, 16, 482, 9271, 37846)'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -85,27 +56,34 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
+   use v5.36;
+   use utf8::all;
+   use List::Util 'sum0';
 
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   # Calculate the Digital Root and Persistence
+   # of a given positive integer:
+   sub drps ( $x ) {
+      my $dr = $x; # digital root
+      my $ps =  0; # persistence
+      while ( length($dr) > 1 ) {
+         $dr = sum0 split '', $dr;
+         ++$ps
+      };
+      return ($dr, $ps);
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @ints = @ARGV ? eval($ARGV[0]) : (  38,     7,    999,  1999999999, 101010  );
+#                Expected outputs :   (2,2)  (7,0)  (9,2)     (1,3)     (3,1)
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
-for my $aref (@arrays) {
+for my $int (@ints) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   say "Input Integer = $int";
+   my ($dr, $ps) = drps($int);
+   say "Digital Root  = $dr";
+   say "Persistence   = $ps";
 }

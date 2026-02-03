@@ -11,51 +11,30 @@ written by Robbie Hatley on Tue Feb 03, 2025.
 PROBLEM DESCRIPTION:
 Task 359-2: String Reduction
 Submitted by: Mohammad Sajid Anwar
+You are given a word containing only alphabetical characters
+(/^[a-zA-Z]$/). Write a function that repeatedly removes adjacent
+duplicate characters from a string until no adjacent duplicates
+remain and return the final word.
 
-You are given a word containing only alphabets,
-
-Write a function that repeatedly removes adjacent duplicate characters from a string until no adjacent duplicates remain and return the final word.
-Example 1
-
+Example #1:
 Input: $word = "aabbccdd"
-Output: ""
+Expected output: ""
 
-Iteration 1: remove "aa", "bb", "cc", "dd" => ""
-
-
-Example 2
-
+Example #2:
 Input: $word = "abccba"
-Output: ""
+Expected output: ""
 
-Iteration 1: remove "cc" => "abba"
-Iteration 2: remove "bb" => "aa"
-Iteration 3: remove "aa" => ""
-
-
-Example 3
-
+Example #3:
 Input: $word = "abcdef"
-Output: "abcdef"
+Expected output: "abcdef"
 
-No duplicate found.
-
-
-Example 4
-
+Example #4:
 Input: $word = "aabbaeaccdd"
-Output: "aea"
+Expected output: "aea"
 
-Iteration 1: remove "aa", "bb", "cc", "dd" => "aea"
-
-
-Example 5
-
+Example #5:
 Input: $word = "mississippi"
-Output: "m"
-
-Iteration 1: Remove "ss", "ss", "pp" => "miiii"
-Iteration 2: Remove "ii", "ii" => "m"
+Expected output: "m"
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
@@ -66,9 +45,9 @@ creation of another pair.
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of double-quoted strings, in proper Perl syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '("rat", "caabaage", "pppeeetttuuunnniiiaaa", "rraattaattaattuuiillee")'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -77,27 +56,34 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
+   use v5.36;
+   use utf8::all;
 
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   # Reduce a word by repetitively removing duplicate letters:
+   sub reduce ( $word ) {
+      my @c = split '', $word;
+      for ( my $i = 0 ; $i < $#c ; ++$i ) {
+         $i = 0 if $i < 0;         # Assure index is >= 0
+         if ($c[$i] eq $c[$i+1]) { # If duplicates found,
+            splice @c, $i, 2;      # remove.
+            --$i;                  # Compensate for "++$i".
+            --$i;                  # Check for duplicate creation.
+         }
+      }
+      join '', @c;
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @words = @ARGV ? eval($ARGV[0]) : ("aabbccdd", "abccba", "abcdef", "aabbaeaccdd", "mississippi");
+#                 Expected outputs :      ""         ""     "abcdef"      "aea"           "m"
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
-for my $aref (@arrays) {
+for my $word (@words) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   say "Original Word = \"$word\"";
+   my $dd = reduce($word);
+   say "Reduced  Word = \"$dd\"";
 }
