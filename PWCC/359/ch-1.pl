@@ -45,9 +45,9 @@ This is just a matter of performing the calculations described and seeing what o
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of positive integers, in proper Perl syntax, like so:
+single-quoted array of double-quoted positive integers, in proper Perl syntax, like so:
 
-./ch-1.pl '(7, 16, 482, 9271, 37846)'
+./ch-1.pl '("7", "9271", "3784638574549678478597848694869647486948378684789844785678567474838348578547375")'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -63,10 +63,12 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    # Calculate the Digital Root and Persistence
    # of a given positive integer:
    sub drps ( $x ) {
-      my $dr = $x; # digital root
-      my $ps =  0; # persistence
+      my $dr = $x ; # digital root
+      my $ps =  0 ; # persistence
+      say "dr = $dr";
       while ( length($dr) > 1 ) {
          $dr = sum0 split '', $dr;
+         say "dr = $dr";
          ++$ps
       };
       return ($dr, $ps);

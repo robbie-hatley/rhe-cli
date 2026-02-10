@@ -47,7 +47,7 @@ IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
 single-quoted array of double-quoted strings, in proper Perl syntax, like so:
 
-./ch-2.pl '("rat", "caabaage", "pppeeetttuuunnniiiaaa", "rraattaattaattuuiillee")'
+./ch-2.pl '("ssammanntthhaa", "antidisestablishmentarianism", "caabaage", "rrratttaaatttouiiileee")'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -59,9 +59,10 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use v5.36;
    use utf8::all;
 
-   # Reduce a word by repetitively removing duplicate letters:
-   sub reduce ( $word ) {
-      my @c = split '', $word;
+   # Reduce a string by repetitively removing consecutive
+   # duplicate characters:
+   sub reduce ( $string ) {
+      my @c = split '', $string;
       for ( my $i = 0 ; $i < $#c ; ++$i ) {
          $i = 0 if $i < 0;         # Assure index is >= 0
          if ($c[$i] eq $c[$i+1]) { # If duplicates found,
@@ -75,15 +76,15 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @words = @ARGV ? eval($ARGV[0]) : ("aabbccdd", "abccba", "abcdef", "aabbaeaccdd", "mississippi");
-#                 Expected outputs :      ""         ""     "abcdef"      "aea"           "m"
+my @strings = @ARGV ? eval($ARGV[0]) : ("aabbccdd", "abccba", "abcdef", "aabbaeaccdd", "mississippi");
+#                   Expected outputs :      ""         ""     "abcdef"      "aea"           "m"
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
-for my $word (@words) {
+for my $string (@strings) {
    say '';
-   say "Original Word = \"$word\"";
-   my $dd = reduce($word);
-   say "Reduced  Word = \"$dd\"";
+   say "Original string = \"$string\"";
+   my $dd = reduce($string);
+   say "Reduced  string = \"$dd\"";
 }
