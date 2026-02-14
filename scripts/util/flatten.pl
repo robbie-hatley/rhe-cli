@@ -191,7 +191,7 @@ sub curfile ($path) {
    # Get the name of the immediate parent directory of the file at this path:
    my $dirname = get_dirname_from_path($path);
    my $oldname = get_name_from_path($path);
-   my $newname = $dirname . '_' . $oldname;
+   my $newname = $dirname . '__' . $oldname;
 
    # Announce path:
    if ( $Db ) {

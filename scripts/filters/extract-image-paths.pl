@@ -13,6 +13,6 @@
 use utf8::all;
 while (<>) {
    s/^\N{BOM}//; s/^\s+//; s/\s+$//;
-   next if $_ !~ m/\S+?\.(?:bmp|gif|jfif|jpe?g|jp2|png|tiff?|webp)/i;
+   next if $_ !~ m/.+\.(?:bmp|gif|jfif|jp2|jpe?g|png|svg|tiff?|webp)$/i;
    print $_ . "\n";
 }

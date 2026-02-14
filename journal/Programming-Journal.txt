@@ -650,3 +650,9 @@ I refactored all of my "Core" scripts to use "#!/usr/bin/env perl", "use utf8::a
 I then deleted all usage of "d" and "e" from these scripts, I moved them from "Core" to "Util", and I
 deleted "Core", this dramatically simplifying my utility scripts collection (all utility scripts are in
 "/d/rhe-cli/scripts/util", period, with no need for remembering which are in "util" and which are in "core").
+
+--------------------------------------------------------------------------------------------------------------
+Mon Feb 09, 2026:
+file extensions to lower:
+perl -E 'while (<*>) {chomp; my $n = ($_ =~ s/^(.+\.)([^\.]+)$/${1}\L${2}/r); if ($n ne $_) {rename $_, $n} }'
+

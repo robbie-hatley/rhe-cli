@@ -1,4 +1,6 @@
 #!/usr/bin/bash
+sudo umount /home/aragorn/net/KE/Windows
 sudo umount /home/aragorn/net/KE/Valinor
 sudo umount /home/aragorn/net/KE/Beleriand
 sudo umount /home/aragorn/net/KE/Eriador
+sudo umount /home/aragorn/net/KE/Ossiriand
