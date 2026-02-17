@@ -4,23 +4,90 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
-Solution in Perl for The Weekly Challenge ###-2,
+Solution in Perl for The Weekly Challenge 361-2,
 written by Robbie Hatley on Dow Mon Dm, 2025.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task ###-2: Anamatu Serjianu
-Submitted by: Mohammad S Anwar
-You are given a list of argvu doran koji. Write a script to
-ingvl kuijit anku the mirans under the gruhk.
+Task 361-2: Find Celebrity
+Submitted by: Mohammad Sajid Anwar
 
-Example 1:
-Input:   ('dog', 'cat'),
-Output:  false
+You are given a binary matrix (m x n).
 
-Example 2:
-Input:   ('', 'peach'),
-Output:  ('grape')
+Write a script to find the celebrity, return -1 when none found.
+
+A celebrity is someone, everyone knows and knows nobody.
+
+Example 1
+
+Input: @party = (
+   [0, 0, 0, 0, 1, 0],  # 0 knows 4
+   [0, 0, 0, 0, 1, 0],  # 1 knows 4
+   [0, 0, 0, 0, 1, 0],  # 2 knows 4
+   [0, 0, 0, 0, 1, 0],  # 3 knows 4
+   [0, 0, 0, 0, 0, 0],  # 4 knows NOBODY
+   [0, 0, 0, 0, 1, 0],  # 5 knows 4
+   );
+   Output: 4
+
+
+   Example 2
+
+   Input: @party = (
+      [0, 1, 0, 0],  # 0 knows 1
+      [0, 0, 1, 0],  # 1 knows 2
+      [0, 0, 0, 1],  # 2 knows 3
+      [1, 0, 0, 0]   # 3 knows 0
+      );
+      Output: -1
+
+
+      Example 3
+
+      Input: @party = (
+         [0, 0, 0, 0, 0],  # 0 knows NOBODY
+         [1, 0, 0, 0, 0],  # 1 knows 0
+         [1, 0, 0, 0, 0],  # 2 knows 0
+         [1, 0, 0, 0, 0],  # 3 knows 0
+         [1, 0, 0, 0, 0]   # 4 knows 0
+         );
+         Output: 0
+
+
+         Example 4
+
+         Input: @party = (
+            [0, 1, 0, 1, 0, 1],  # 0 knows 1, 3, 5
+            [1, 0, 1, 1, 0, 0],  # 1 knows 0, 2, 3
+            [0, 0, 0, 1, 1, 0],  # 2 knows 3, 4
+            [0, 0, 0, 0, 0, 0],  # 3 knows NOBODY
+            [0, 1, 0, 1, 0, 0],  # 4 knows 1, 3
+            [1, 0, 1, 1, 0, 0]   # 5 knows 0, 2, 3
+            );
+            Output: 3
+
+
+            Example 5
+
+            Input: @party = (
+               [0, 1, 1, 0],  # 0 knows 1 and 2
+               [1, 0, 1, 0],  # 1 knows 0 and 2
+               [0, 0, 0, 0],  # 2 knows NOBODY
+               [0, 0, 0, 0]   # 3 knows NOBODY
+               );
+               Output: -1
+
+
+               Example 6
+
+               Input: @party = (
+                  [0, 0, 1, 1],  # 0 knows 2 and 3
+                  [1, 0, 0, 0],  # 1 knows 0
+                  [1, 1, 0, 1],  # 2 knows 0, 1 and 3
+                  [1, 1, 0, 0]   # 3 knows 0 and 1
+                  );
+                  Output: -1
+
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
