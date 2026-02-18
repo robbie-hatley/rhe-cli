@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solution in Perl for The Weekly Challenge ###-1,
-written by Robbie Hatley on Dow Mon Dm, 2025.
+written by Robbie Hatley on Dow Mon Dm, 2026.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:

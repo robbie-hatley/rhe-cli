@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solution in Perl for The Weekly Challenge 361-1,
-written by Robbie Hatley on Dow Mon Dm, 2025.
+written by Robbie Hatley on Wed Feb 18, 2026.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
@@ -43,14 +43,15 @@ Output: 89,8,3
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+To solve this problem, I'll greedily gobble Fibonacci numbers from $int until it becomes zero, then return
+the numbers gobbled.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of positive integers, in proper Perl syntax, like so:
 
-./ch-1.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-1.pl '(13, 54, 82)'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -59,27 +60,49 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
+   use v5.36;
+   use utf8::all;
+   $"=', ';
 
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   # Zeckendorf:
+   sub Zeckendorf ( $n ) {
+      my @out;
+      # Get Fibonacci number from 1 through $n:
+      my @fib = (1, 1, 2);
+      while ( $fib[-1] < $n ) {
+         push @fib, $fib[-1] + $fib[-2];
+      }
+      # Greedily gobble Fibonacci numbers from $n:
+      my $i = -1;
+      while ($n) {
+         if ( $i < -scalar(@fib) ) {
+            die "Error: \$i is $i which is out-of-range.\n$!\n";
+         }
+         if ( $fib[$i] <= $n ) {
+            $n -= $fib[$i];
+            push @out, $fib[$i];
+         }
+         --$i;
+      }
+      @out;
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @ints = @ARGV ? eval($ARGV[0]) :
+(
+     4, # Expected output: (3, 1)
+    12, # Expected output: (8, 3, 1)
+    20, # Expected output: (13, 5, 2)
+    96, # Expected output: (89, 5, 2)
+   100, # Expected output: (89, 8, 3)
+);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
-$"=', ';
-for my $aref (@arrays) {
+for my $int (@ints) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   say "Integer = $int";
+   my @Zeckendorf = Zeckendorf($int);
+   say "Zeckendorf representation = (@Zeckendorf)";
 }
