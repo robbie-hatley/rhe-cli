@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solution in Perl for The Weekly Challenge 361-1,
-written by Robbie Hatley on Wed Feb 18, 2026.
+written by Robbie Hatley on Sun Feb 22, 2026.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
@@ -19,7 +19,7 @@ non-consecutive Fibonacci numbers.
 Example 1
 Input: $int = 4
 Output: 3,1
-4 => 3 + 1 (non-consecutive fibonacci numbers)
+4 => 3 + 1 (non-consecutive Fibonacci numbers)
 
 Example 2
 Input: $int = 12
@@ -66,13 +66,16 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    # Zeckendorf:
    sub Zeckendorf ( $n ) {
+      # Create output array:
       my @out;
-      # Get Fibonacci number from 1 through $n:
+
+      # Get the Fibonacci numbers from 1 through $n:
       my @fib = (1, 1, 2);
       while ( $fib[-1] < $n ) {
          push @fib, $fib[-1] + $fib[-2];
       }
-      # Greedily gobble Fibonacci numbers from $n:
+
+      # Greedily gobble Fibonacci numbers from $n and store in @out:
       my $i = -1;
       while ($n) {
          if ( $i < -scalar(@fib) ) {
@@ -84,6 +87,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
          }
          --$i;
       }
+
+      # Return the result:
       @out;
    }
 

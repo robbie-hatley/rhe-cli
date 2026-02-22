@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solution in Perl for The Weekly Challenge 361-2,
-written by Robbie Hatley on Wed Feb 18, 2026.
+written by Robbie Hatley on Sun Feb 22, 2026.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
@@ -78,14 +78,17 @@ someone, everyone knows and knows nobody.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+To solve this problem, I simply look for a row of 0s at a vertical index $i such that all other rows have "1"
+at vertical index $i. That's easily determined by applying sum0 to vertical slice $i; a celebrity will always
+have a sum of ($i-1). (Celebrities can never be self-aware, because that would involve knowing someone. And
+there can never be more than one celebrity, because that would violate "everyone knows them".)
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of arrays of arrays of 0s and 1s, in proper Perl syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '([[1,0,1],[1,0,0],[0,1,1]],[[1,0,1],[0,1,1],[0,0,0]])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -100,13 +103,18 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    # Find celebrities:
    sub Celebrities ( $mref ) {
+      # First ensure matrix is square:
       my $m = scalar(@$mref);
       for my $i (0..$m-1) {
          if ($m != scalar(@{$$mref[$i]})) {
             return "Error: Matrix not square.";
          }
       }
+
+      # Make an array to hold our output:
       my @out;
+
+      # For each row, determine if it's a celebrity:
       for my $i (0..$m-1) {
          if (0 == sum0(@{$$mref[$i]})) {
             if ($m-1 == sum0(map {$mref->[$_]->[$i]} 0..$m-1)) {
@@ -115,6 +123,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
          }
       }
       if (0 == scalar(@out)) {push @out, -1}
+
+      # Return output:
       @out;
    }
 
