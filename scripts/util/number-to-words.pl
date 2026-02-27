@@ -32,7 +32,10 @@
 # Sun Apr 27, 2025: Reduced width from 120 to 110. Increased min ver from "v5.32" to "v5.36" to get
 #                   automatic strict and warnings. Converted from UTF-8 Unicode to ASCII. Simplified shebang.
 #                   Shortened subroutine names. Got rid of all prototypes. Converted bracing to C-style.
-# Fri Feb 27, 2026: Changed "sum" to "sum0".
+# Fri Feb 27, 2026: Changed "sum" to "sum0". Added provision for negative numbers. Increased range to
+#                   "the closed interval [-(10^102-1), +(10^102-1)]". Added warning to enclose integers with
+#                   more than 9 sig figs in "double quotes" to prevent shell rounding. "n2w" now returns a
+#                   return value instead of printing. "n2w" now does not alter its argument (it makes a copy).
 ##############################################################################################################
 
 use v5.36;
@@ -48,7 +51,7 @@ my $number;
 
 { # begin main body of script
    argv;
-   n2w;
+   say n2w($number);
    exit;
 } # end main body of script
 
@@ -72,17 +75,29 @@ sub argv {
    $number = Math::BigInt->new(int(Math::BigFloat->new($ARGV[0])));
 
    # Finally, abort if $number is not a number in the interval [0, 10^102-1]:
-   if ($number->is_nan       ) {warn("Error: Argument is not a number.\n\n"); help; exit 666;}
-   if ($number->blt(0)       ) {warn("Error: Argument is negative.    \n\n"); help; exit 666;}
-   if ($number->bgt(1e102-1) ) {warn("Error: Argument is too large.   \n\n"); help; exit 666;}
+   if ( $number->is_nan          ) { warn("Error: Argument is not a number.\n\n"); help; exit 666;}
+   if ( $number->blt(-(1e102-1)) ) { warn("Error: Argument is too small.   \n\n"); help; exit 666;}
+   if ( $number->bgt(+(1e102-1)) ) { warn("Error: Argument is too large.   \n\n"); help; exit 666;}
 
    # If we get to here, we successfully processed all arguments, so return 1:
    return 1;
 } # end sub argv
 
-sub n2w {
-   # Get string representation of $number :
-   my $string = $number->bstr();
+sub n2w ( $n ) {
+   # Get a new, local copy of $n:
+   my $local = $n->copy();
+
+   # Create a "$sign" string, defaulting to empty:
+   my $sign = '';
+
+   # If $local is negative, negate it and set $sign to 'negative ':
+   if ( $local->is_negative() ) {
+      $local->bneg();
+      $sign = 'negative ';
+   }
+
+   # Get a string representation of $local :
+   my $string = $local->bstr();
 
    # If debugging, print info on $string:
    if ($db) {
@@ -126,21 +141,21 @@ sub n2w {
       trigintillion         untrigintillion       duotrigintillion
    ) );
 
-   my @ones     = ( '',         'one',           'two',         'three',
-                               'four',          'five',           'six',
-                              'seven',         'eight',          'nine' );
+   my @ones     = ( '',           'one',           'two',         'three',
+                                 'four',          'five',           'six',
+                                'seven',         'eight',          'nine', );
 
-   my @teens    = ( '',      'eleven',        'twelve',      'thirteen',
-                           'fourteen',       'fifteen',       'sixteen',
-                          'seventeen',      'eighteen',      'nineteen' );
+   my @teens    = ( '',        'eleven',        'twelve',      'thirteen',
+                             'fourteen',       'fifteen',       'sixteen',
+                            'seventeen',      'eighteen',      'nineteen', );
 
-   my @tens     = ( '',         'ten',        'twenty',        'thirty',
-                              'forty',         'fifty',         'sixty',
-                            'seventy',        'eighty',        'ninety' );
+   my @tens     = ( '',           'ten',        'twenty',        'thirty',
+                                'forty',         'fifty',         'sixty',
+                              'seventy',        'eighty',        'ninety', );
 
-   my @hundreds = ( '', 'one hundred',   'two hundred', 'three hundred',
-                       'four hundred',  'five hundred',   'six hundred',
-                      'seven hundred', 'eight hundred',  'nine hundred' );
+   my @hundreds = ( '',   'one hundred',   'two hundred', 'three hundred',
+                         'four hundred',  'five hundred',   'six hundred',
+                        'seven hundred', 'eight hundred',  'nine hundred', );
 
    # Make a string to hold output:
    my $output  = '';
@@ -153,7 +168,7 @@ sub n2w {
       my @slice = @digits[3*$_+0, 3*$_+1, 3*$_+2];
 
       #If this slice is populated:
-      if (sum0(@slice)) {
+      if ( 0 != sum0(@slice) ) {
          # if hundreds:
          if ($slice[2] > 0) {
             $output .= $hundreds[$slice[2]];
@@ -202,34 +217,40 @@ sub n2w {
       } # end if (slice is populated)
    } # end for (each group)
 
-   # Print $output, unless it's empty, in which case print "zero":
-   if (length($output) > 0 ) {
-      say $output;
-   }
-   else {
-      say "zero";
+   # If $output is an empty string, our number is 0, so set $output to 'zero':
+   if ( 0 == length($output) ) {
+      $output = 'zero';
    }
 
-   # We're done, so return 1:
-   return 1;
+   # Append sign string to left end of $output :
+   $output = $sign.$output;
+
+   # Return $output :
+   return $output;
 } # end sub n2w
 
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
    Welcome to "number-to-words.pl". This program prints the words for the integer
-   part of the number given as its argument, provided that that number is a real
-   number in the closed interval [0, 10^102-1]. The words given for a non-integer
-   number will be for the integer part only. If the number of arguments is not 1,
-   or if the argument is not a number, or if the argument is out-of-range, this
-   program will print an error message and exit.
+   part of a number given as its argument, provided that that number is a real
+   number in the closed interval [-(10^102-1), +(10^102-1)]. The words given for
+   a non-integer number will be for the integer part only. For integers with over
+   nine significant figures, enclose your integer in "double quotes" or the shell
+   may round digits off of your number before passing it to Perl, resulting in
+   wrong output. If the number of arguments is not 1, or if the argument is not a
+   number, or if the argument is out-of-range, this program will print an error
+   message and exit.
 
    Command lines:
    number-to-words.pl -h | --help    (to print this help and exit)
-   number-to-words.pl ######         (to print the words for number ######)
+   number-to-words.pl "######"       (to print the words for number ######)
 
    For example:
-   %number-to-words.pl 205837
-   two hundred and five thousand, eight hundred and thirty-seven
+   %number-to-words.pl "-38547275925477542957"
+   negative thirty-eight quintillion, five hundred and forty-seven quadrillion,
+   two hundred and seventy-five trillion, nine hundred and twenty-five billion,
+   four hundred and seventy-seven million, five hundred and forty-two thousand,
+   nine hundred and fifty-seven
 
    Happy number-to-words converting!
    Cheers,
