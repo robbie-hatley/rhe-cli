@@ -9,10 +9,11 @@
 # Written by Robbie Hatley.
 # Edit history:
 # Thu Nov 20, 2025: Wrote it.
+# Fri Feb 27, 2026: Removed ".+" from start of RE. Subsumed "\n" into quoted phrase to be printed.
 ##############################################################################################################
 use utf8::all;
 while (<>) {
    s/^\N{BOM}//; s/^\s+//; s/\s+$//;
-   next if $_ !~ m/.+\.(?:bmp|gif|jfif|jp2|jpe?g|png|svg|tiff?|webp)$/i;
-   print $_ . "\n";
+   next if $_ !~ m/\.(?:bmp|gif|jfif|jp2|jpe?g|png|svg|tiff?|webp)$/i;
+   print "$_\n";
 }
