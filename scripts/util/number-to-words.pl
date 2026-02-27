@@ -32,11 +32,12 @@
 # Sun Apr 27, 2025: Reduced width from 120 to 110. Increased min ver from "v5.32" to "v5.36" to get
 #                   automatic strict and warnings. Converted from UTF-8 Unicode to ASCII. Simplified shebang.
 #                   Shortened subroutine names. Got rid of all prototypes. Converted bracing to C-style.
+# Fri Feb 27, 2026: Changed "sum" to "sum0".
 ##############################################################################################################
 
 use v5.36;
 use bignum;
-use List::Util 'sum';
+use List::Util 'sum0';
 
 sub argv ; # Process arguments.
 sub n2w  ; # Convert number to words.
@@ -94,7 +95,7 @@ sub n2w {
    # While this is backwards from the way people read numbers,
    # it makes the programming MUCH easier.
    my @digits = ();
-   unshift @digits, $_ for split //, $number;
+   unshift @digits, $_ for split //, $string;
 
    # Right-zero-pad @digits as necessary so that it will have
    # exactly 102 elements (usually most of them zeros):
@@ -152,7 +153,7 @@ sub n2w {
       my @slice = @digits[3*$_+0, 3*$_+1, 3*$_+2];
 
       #If this slice is populated:
-      if (sum(@slice)) {
+      if (sum0(@slice)) {
          # if hundreds:
          if ($slice[2] > 0) {
             $output .= $hundreds[$slice[2]];
@@ -194,7 +195,7 @@ sub n2w {
          if ($_ > 0) {
             $output .= ' ';
             $output .= $groups[$_];
-            if (sum(@digits[0 .. 3*$_-1]) > 0) {
+            if (sum0(@digits[0 .. 3*$_-1]) > 0) {
                $output .= ', ';
             } # end appending ', ' if necessary
          } # end if (not least-significant group)
