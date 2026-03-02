@@ -182,7 +182,7 @@ sub gname ( $g ) {
             $g_one .= 'x';
          }
       }
-      if ('septe' eq $g_one || 'nove'  eq $g_one) {
+      if ('septe' eq $g_one || 'nove' eq $g_one) {
          if
             (
                   'viginti'      eq $g_ten
