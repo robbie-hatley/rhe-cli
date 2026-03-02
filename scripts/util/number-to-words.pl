@@ -126,7 +126,7 @@ sub argv {
 sub gname ( $g ) {
    # Make a variable to hold the group name for group index $g:
    my $group = '';
-   # If $g is an element of {0, 1, ... , 10, 11} then use the standard g
+   # If $g is no-greater-than $#groups, then use the associated member of @groups:
    if ($g <= $#groups) {
       $group = $groups[$g];
    }
