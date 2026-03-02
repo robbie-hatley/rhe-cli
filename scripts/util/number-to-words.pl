@@ -216,7 +216,7 @@ sub gname ( $g ) {
       # Make the group name by tacking-together ones+tens+hundreds in that order. Yes, in THAT order.
       $group=$g_one.$g_ten.$g_hun;
 
-      # Elide any final vowel and tack 'llion' onto right end of group name:
+      # Elide any final vowel and tack 'illion' onto right end of group name:
       $group =~ s/[aeiou]$//;
       $group .= 'illion';
    }
