@@ -158,7 +158,7 @@ sub gname ( $g ) {
             $g_one .= 's';
          }
       }
-      if ('se'    eq $g_one) {
+      if ('se' eq $g_one) {
          if
             (
                   'viginti'      eq $g_ten
@@ -182,37 +182,7 @@ sub gname ( $g ) {
             $g_one .= 'x';;
          }
       }
-      if ('septe' eq $g_one) {
-         if
-            (
-                  'viginti'      eq $g_ten
-               || 'octoginta'    eq $g_ten
-               || '' eq $g_ten && 'octingenti'   eq $g_hun
-            )
-         {
-            $g_one .= 'm';
-         }
-         if
-            (
-                  'deci'         eq $g_ten
-               || 'triginta'     eq $g_ten
-               || 'quadraginta'  eq $g_ten
-               || 'quinquaginta' eq $g_ten
-               || 'sexaginta'    eq $g_ten
-               || 'septuaginta'  eq $g_ten
-               || '' eq $g_ten && 'centi'        eq $g_hun
-               || '' eq $g_ten && 'ducenti'      eq $g_hun
-               || '' eq $g_ten && 'trecenti'     eq $g_hun
-               || '' eq $g_ten && 'quadringenti' eq $g_hun
-               || '' eq $g_ten && 'quingenti'    eq $g_hun
-               || '' eq $g_ten && 'sescenti'     eq $g_hun
-               || '' eq $g_ten && 'septingenti'  eq $g_hun
-            )
-         {
-            $g_one .= 'n';
-         }
-      }
-      if ('nove'  eq $g_one) {
+      if ('septe' eq $g_one || 'nove'  eq $g_one) {
          if
             (
                   'viginti'      eq $g_ten
