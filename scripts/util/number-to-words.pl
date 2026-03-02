@@ -170,7 +170,7 @@ sub gname ( $g ) {
                || '' eq $g_ten && 'quingenti'    eq $g_hun
             )
          {
-            $g_one .= 's';;
+            $g_one .= 's';
          }
          if
             (
@@ -179,7 +179,7 @@ sub gname ( $g ) {
                || '' eq $g_ten && 'octingenti'   eq $g_hun
             )
          {
-            $g_one .= 'x';;
+            $g_one .= 'x';
          }
       }
       if ('septe' eq $g_one || 'nove'  eq $g_one) {
