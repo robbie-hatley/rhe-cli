@@ -9,18 +9,35 @@ written by Robbie Hatley on Mon Mar 2, 2026.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task 363-1: Anamatu Serjianu
-Submitted by: Mohammad S Anwar
-You are given a list of argvu doran koji. Write a script to
-ingvl kuijit anku the mirans under the gruhk.
+Task 363-1: String Lie Detector
+Submitted by: Mohammad Sajid Anwar
+You are given a string. Write a script that parses a
+self-referential string and determines whether its claims about
+itself are true. The string will make statements about its own
+composition, specifically the number of vowels and consonants
+it contains.
 
-Example 1:
-Input:   ('dog', 'cat'),
-Output:  false
+(
+   # Example #1 input:
+   "aa — two vowels and zero consonants",
+   # Expected output: true
 
-Example 2:
-Input:   ('', 'peach'),
-Output:  ('grape')
+   # Example #2 input:
+   "iv — one vowel and one consonant",
+   # Expected output: true
+
+   # Example #3 input:
+   "hello - three vowels and two consonants",
+   # Expected output: false
+
+   # Example #4 input:
+   "aeiou — five vowels and zero consonants",
+   # Expected output: true input:
+
+   # Example #5 input:
+   "aei — three vowels and zero consonants",
+   # Expected output: true
+);
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:

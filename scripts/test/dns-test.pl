@@ -6,9 +6,9 @@ my $Regex = qr{\b(($Valid\.){1,62}$Valid)/};
 while (<>)
 {
    if ( $_ !~ m/http/ and $_ =~ m/$Regex/ )
-	{
-	   s%$Regex%http://$1%i;
+   {
+      s%$Regex%http://$1%i;
    }
-	print;
+   print;
 }
 

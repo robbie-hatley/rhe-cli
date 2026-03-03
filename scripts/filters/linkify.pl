@@ -81,17 +81,17 @@ my $Regex2 = qr{((?:^$Header$Suffix)|(?:(?<=[\s"])$Header$Suffix))};
 # (If no files were specified, "while (<>)" reads from stdio instead.)
 while (<>)
 {
-	# Tack 'https://' onto be beginning of any strings which are probably URLS but
-	# lack 'https?://':
-	$_ =~ s{$Regex1}{https://$1}g; # and print "Regex1 matched $& \n";
+   # Tack 'https://' onto be beginning of any strings which are probably URLS but
+   # lack 'https?://':
+   $_ =~ s{$Regex1}{https://$1}g; # and print "Regex1 matched $& \n";
 
    # Wrap each found URL in an html anchor element with the found URL used both
-	# as the "href" atttribute and as the text:
+   # as the "href" atttribute and as the text:
    $_ =~ s{$Regex2}{<a href="$1">$1</a>}g; # and print "Regex2 matched $& \n";
 
    # Print the edited line.  If the line did not contain a URL, it will be
    # printed unexpurgated, including the original endline character, which
-	# is never chomped.
+   # is never chomped.
 
    print;
 

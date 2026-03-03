@@ -9,8 +9,7 @@ use threads;
 threads->create(sub
 {
    my $id = threads->tid;
-   foreach (0 .. 10)
-			{
+   foreach (0 .. 10) {
       sleep rand 5;
       say "Meow from cat $id ($_)";
    }

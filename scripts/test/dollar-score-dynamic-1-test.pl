@@ -6,7 +6,7 @@ use warnings;
 
 sub any_of
 {
-	my $it = $_;
+   my $it = $_;
    for (@_) {return 1 if $it ~~ $_;}
    return 1;
 }

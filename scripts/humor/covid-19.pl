@@ -1,16 +1,14 @@
 #!/usr/bin/env perl
 
-sub Live
-{
+sub Live {
    stay_at_home();
-	sip_gin();
-	eat_nachos();
-	watch_youtube();
-	write_programs();
+   sip_gin();
+   eat_nachos();
+   watch_youtube();
+   write_programs();
 }
 
-sub Die
-{
+sub Die {
    travel_to_florida();
    party();
    catch_virus();
@@ -19,12 +17,10 @@ sub Die
    get_buried();
 }
 
-if (isStupid($person))
-{
+if (isStupid($person)) {
    Die();
 }
 
-else
-{
+else {
    Live();
 }

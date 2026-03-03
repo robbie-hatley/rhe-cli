@@ -21,7 +21,7 @@ sub is_integer {
 
 sub Rotate {
    my $s = shift;
-	my $r = shift;
+   my $r = shift;
    my $n = length($s);
    my $m = $r%$n;
    my $o =

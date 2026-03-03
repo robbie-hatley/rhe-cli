@@ -20,10 +20,10 @@ sub h ($x) {return 0 == $x%2 ? $x/2 : 3*$x+1}
 # Print hailstone sequence for given seed:
 my $n = 0;
 while (1) {
-	print("$x\n");
-	last if 1 == $x;
-	$x = h($x);
-	++$n;
+   print("$x\n");
+   last if 1 == $x;
+   $x = h($x);
+   ++$n;
 }
 
 # Print Total Stopping Time:

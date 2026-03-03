@@ -9,12 +9,12 @@ my $Regex2 = qr{((?:^|(?<=\s))$Regex1)};
 while (<>)
 {
    say "Combined Regexp = $Regex2";
-	if ($_ =~ $Regex2)
-	{
-	   print "MATCH: $1\n";
-	}
-	else
-	{
-	   print "NO MATCH.\n";
-	}
+   if ($_ =~ $Regex2)
+   {
+      print "MATCH: $1\n";
+   }
+   else
+   {
+      print "NO MATCH.\n";
+   }
 }

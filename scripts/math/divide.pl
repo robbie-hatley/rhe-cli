@@ -104,7 +104,7 @@ sub divide($dividend, $divisor) {
    say "quotient = $quotient";
    say "offset   = $offset";
    say "period   = $period";
-	exit 0;
+   exit 0;
 }
 
 =pod
