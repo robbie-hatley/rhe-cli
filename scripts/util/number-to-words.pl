@@ -8,7 +8,7 @@
 # Writes a number in words.
 # Example: given "398", outputs "three hundred and ninety-eight"
 # Input:  A single command-line argument consisting of a non-negative integer
-#         in the range of 0 through 10^102-1.
+#         in the range of -(10**3003-1) through +(10**3003-1).
 # Output: The number in words.
 # Written by Robbie Hatley.
 # Edit history:
@@ -344,13 +344,13 @@ sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
    Welcome to "number-to-words.pl". This program prints the words for the integer
    part of a number given as its argument, provided that that number is a real
-   number in the closed interval [-(10^3003-1), +(10^3003-1)]. The words given for
-   a non-integer number will be for the integer part only. For integers with over
-   nine significant figures, enclose your integer in "double quotes" or the shell
-   may round digits off of your number before passing it to Perl, resulting in
-   wrong output. If the number of arguments is not 1, or if the argument is not a
-   number, or if the argument is out-of-range, this program will print an error
-   message and exit.
+   number in the closed interval [-(10**3003-1), +(10**3003-1)]. The words given
+   for a non-integer number will be for the integer part only. For integers with
+   over about nine significant figures, enclose your integer in "double quotes" or
+   the shell may round digits off of your number before passing it to Perl,
+   resulting in wrong output. If the number of arguments is not 1, or if the
+   argument is not a number, or if the argument is out-of-range, this program will
+   print an error message and exit.
 
    Options:
    -h or --help  : Print this help and exit.
