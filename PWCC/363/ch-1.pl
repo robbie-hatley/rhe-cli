@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solution in Perl for The Weekly Challenge 363-1,
-written by Robbie Hatley on Mon Mar 2, 2026.
+written by Robbie Hatley on Tue Mar 3, 2026.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
@@ -54,7 +54,7 @@ Then I'll return "true" if ALL of the following are true, else return "false":
 6. Sixth  field is "consonant(s)".
 7. Second field accurately describes number of   vowels   in first field.
 8. Fifth  field accurately describes number of consonants in first field.
-That approach will work for numbers up to 20. Larger numbers would require more-elaboratate programming,
+That approach will work for numbers up to 20. Larger numbers would require more-elaborate programming,
 which I don't have time for, so this approach will have to do.
 
 --------------------------------------------------------------------------------------------------------------
