@@ -6,7 +6,7 @@
 
 ##############################################################################################################
 # abundance.pl
-# Prints the abundances of the glyphical (visible) characters in the strings fed to it.
+# Prints the abundances of the characters in the strings fed to it.
 #
 # Edit history:
 # Sat Sep 18, 2021: Wrote it.
@@ -17,6 +17,7 @@
 # Thu Aug 15, 2024: Deleted unnecessary "use" statements, -C63, moved help() above main.
 # Tue Mar 04, 2025: Got rid of prototypes and empty signatures.
 # Thu May 01, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl".
+# Thu Mar 05, 2025: Now processes all characters.
 ##############################################################################################################
 
 use v5.36;
@@ -26,7 +27,7 @@ sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
    Welcome to "character-abundance.pl", Robbie Hatley's nifty program for
-   displaying the abundances of glyphical (visible) characters in a file.
+   displaying the abundances of glyphical (visible) characters and spacesin a file.
 
    Command line to print this help and exit:
    character-abundance.pl [-h|--help]
@@ -41,18 +42,17 @@ sub help {
    return 1;
 } # end sub help ()
 
-my @Fields;
+my @chars;
 my %Ab;
 
 for (@ARGV) {/^-h$/ || /^--help$/ and help and exit(777)}
 
 while (<>) {
-   s/[\s\pC\pZ]//g;                               # Get rid of all non-glyphical characters.
-   @Fields = ();                                  # Clear the Fields array for receiving data.
-   for my $Field (split //, $_) {                 # Split into individual characters.
-      push @Fields, $Field;                       # Push field onto array.
+   @chars = ();                                   # Clear the @chars array for receiving data.
+   for my $char (split //, $_) {                  # Split into individual characters.
+      push @chars, $char;                         # Push field onto array.
    }
-   map {++$Ab{$_}} @Fields;                       # Increment hash elements (autovivify if necessary).
+   map {++$Ab{$_}} @chars;                        # Increment hash elements (autovivify if necessary).
 }
 
 for my $key (sort {$Ab{$b}<=>$Ab{$a}} keys %Ab) { # Index hash by reverse order of abundance.

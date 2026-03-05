@@ -5,11 +5,10 @@
 
 ##############################################################################################################
 # /rhe/scripts/math/number-to-words.pl
-# Writes a number in words.
+# Writes numbers (given via stdin) in words.
 # Example: given "398", outputs "three hundred and ninety-eight"
-# Input:  A single command-line argument consisting of a non-negative integer
-#         in the range of -(10**3003-1) through +(10**3003-1).
-# Output: The number in words.
+# Input:  Numbers given via stdin, one number per line.
+# Output: The numbers in words.
 # Written by Robbie Hatley.
 # Edit history:
 # Sat Feb 20, 2016: Wrote first draft.
@@ -44,14 +43,15 @@
 # Mon Mar 02, 2026: Decreased limit to +- (10**3003-1). ("3004" was a bug.)
 #                   Converted to Conway-Wechsler-Miakinen ("CWM").
 #                   This is the same as Conway-Wechsler except "quin" instead of "quinqua".
+# Thu Mar 05, 2026: Increased range to -∞ through +∞. Changed input from @ARGV to stdin.
 ##############################################################################################################
 
 use v5.36;
 use Math::BigFloat;
 use Math::BigInt;
 
+$"=', ';
 my $db = 0; # set to 1 for debug, 0 for normal
-my $number;
 
 # Start with the dictionary group names ("" through "decillion"):
 my @groups =
@@ -85,16 +85,8 @@ sub gname; # Given group index, return group name.
 sub n2w  ; # Convert number to words.
 sub help ; # Print help.
 
-{ # begin main body of script
-   argv;
-   say n2w($number);
-   exit;
-} # end main body of script
-
 # Subroutine definitions follow:
-
 sub argv {
-   # First, process and splice-out all non-argument options from @ARGV :
    for ( my $i = 0 ; $i < @ARGV ; ++$i ) {
       $_ = $ARGV[$i];
       if (/^-[\pL]{1,}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/) {
@@ -104,21 +96,6 @@ sub argv {
          --$i;
       }
    }
-
-   # Next, make sure we have exactly 1 argument left in @ARGV :
-   if (scalar(@ARGV) != 1) {warn("Error: Wrong number of arguments.\n\n");help;exit 666;}
-
-   # Store a BigInt version of our one argument in global variable $number :
-   $number = Math::BigInt->new(int(Math::BigFloat->new($ARGV[0])));
-
-   # Finally, abort if $number is not a number in the interval [-(10**3003-1), +(10**3003-1)]:
-   my $MAX = Math::BigInt->new(10)->bpow(3003)->bdec();
-   my $MIN = $MAX->copy()->bneg();
-   if ( $number->is_nan    ) { warn("Error: Argument is not a number.\n\n"); help; exit 666;}
-   if ( $number->blt($MIN) ) { warn("Error: Argument is too small.   \n\n"); help; exit 666;}
-   if ( $number->bgt($MAX) ) { warn("Error: Argument is too large.   \n\n"); help; exit 666;}
-
-   # If we get to here, we successfully processed all arguments, so return 1:
    return 1;
 } # end sub argv
 
@@ -126,100 +103,158 @@ sub argv {
 sub gname ( $g ) {
    # Make a variable to hold the group name for group index $g:
    my $group = '';
-   # If $g is no-greater-than $#groups, then use the associated member of @groups:
-   if ($g <= $#groups) {
+
+   # If $g is no-greater-than 11, then just return the associated member of @groups:
+   if ($g <= 11) {
       $group = $groups[$g];
    }
-   # Otherwise, construct the Conway-Wechsler-Miakinen ("CWM") group name:
+
+   # Otherwise, make the full Conway-Wechsler-Miakinen group name:
    else {
+      # Make an array too hold triad names:
+      my @tnames;
+
       # Get the traditional group number, which will always be one-less-than the group index $g
       # (eg: "million" = 1, "billion" = 2, "trillion" = 3, etc):
       my $n = $g - 1;
-      # Get the raw CWM group name parts for ones, tens, and hundreds:
-      my $g_one = $g_ones[int($n/  1)%10];
-      my $g_ten = $g_tens[int($n/ 10)%10];
-      my $g_hun = $g_huns[int($n/100)%10];
 
-      # Adjust "tre", "se", "septe", or "nove" if necessary:
-      if ('tre' eq $g_one) {
-         if
-            (     'viginti'      eq $g_ten
-               || 'triginta'     eq $g_ten
-               || 'quadraginta'  eq $g_ten
-               || 'quinquaginta' eq $g_ten
-               || 'octoginta'    eq $g_ten
-               || '' eq $g_ten && 'centi'        eq $g_hun
-               || '' eq $g_ten && 'trecenti'     eq $g_hun
-               || '' eq $g_ten && 'quadringenti' eq $g_hun
-               || '' eq $g_ten && 'quingenti'    eq $g_hun
-               || '' eq $g_ten && 'octingenti'   eq $g_hun
-            )
-         {
-            $g_one .= 's';
-         }
-      }
-      if ('se' eq $g_one) {
-         if
-            (
-                  'viginti'      eq $g_ten
-               || 'triginta'     eq $g_ten
-               || 'quadraginta'  eq $g_ten
-               || 'quinquaginta' eq $g_ten
-               || '' eq $g_ten && 'trecenti'     eq $g_hun
-               || '' eq $g_ten && 'quadringenti' eq $g_hun
-               || '' eq $g_ten && 'quingenti'    eq $g_hun
-            )
-         {
-            $g_one .= 's';
-         }
-         if
-            (
-                  'octoginta'    eq $g_ten
-               || '' eq $g_ten && 'centi'        eq $g_hun
-               || '' eq $g_ten && 'octingenti'   eq $g_hun
-            )
-         {
-            $g_one .= 'x';
-         }
-      }
-      if ('septe' eq $g_one || 'nove' eq $g_one) {
-         if
-            (
-                  'viginti'      eq $g_ten
-               || 'octoginta'    eq $g_ten
-               || '' eq $g_ten && 'octingenti'   eq $g_hun
-            )
-         {
-            $g_one .= 'm';
-         }
-         if
-            (
-                  'deci'         eq $g_ten
-               || 'triginta'     eq $g_ten
-               || 'quadraginta'  eq $g_ten
-               || 'quinquaginta' eq $g_ten
-               || 'sexaginta'    eq $g_ten
-               || 'septuaginta'  eq $g_ten
-               || '' eq $g_ten && 'centi'        eq $g_hun
-               || '' eq $g_ten && 'ducenti'      eq $g_hun
-               || '' eq $g_ten && 'trecenti'     eq $g_hun
-               || '' eq $g_ten && 'quadringenti' eq $g_hun
-               || '' eq $g_ten && 'quingenti'    eq $g_hun
-               || '' eq $g_ten && 'sescenti'     eq $g_hun
-               || '' eq $g_ten && 'septingenti'  eq $g_hun
-            )
-         {
-            $g_one .= 'n';
-         }
-      }
+      # Decompose $n into and array of digits, and left-zero-pad the array to enforce 0==length%3:
+      my @gdigits = split //, $n;
+      my $padlen = (3 - scalar(@gdigits)%3)%3;
+      for (0..$padlen-1) {unshift @gdigits, 0}
+      if ($db) {say "\@gdigits = (@gdigits)"}
 
-      # Make the group name by tacking-together ones+tens+hundreds in that order. Yes, in THAT order.
-      $group=$g_one.$g_ten.$g_hun;
+      # Make array of digit triads:
+      my @triads;
+      for my $tidx (0..scalar(@gdigits)/3-1) {
+         if ($db) {say "\$tidx = $tidx"}
+         push @triads, 0 + join '', @gdigits[3*$tidx+0,3*$tidx+1,3*$tidx+2];
+      }
+      if ($db) {say "number of triads = ", scalar @triads}
+      if ($db) {say "triads = (@triads)"}
 
-      # Elide any final vowel and tack 'illion' onto right end of group name:
-      $group =~ s/[aeiou]$//;
-      $group .= 'illion';
-   }
+      # For each triad of digits, push the triad name onto @tnames:
+      for my $tidx (0..$#triads) {
+         # Get value of current triad:
+         my $triad = $triads[$tidx];
+
+         # Make a variable to hold the triad name:
+         my $tname = '';
+
+         # If value of triad is 0, set triad name to "nilli":
+         if ( 0 == $triad ) {
+            $tname = 'nilli';
+         }
+
+         # Else if value of triad is <= 10, use dictionary name, but chop-off the "on":
+         elsif ( $triad <= 10 ) {
+            $tname = $groups[$triad+1];
+            $tname =~ s/on$//;
+         }
+
+         # Else construct the CWM name for this triad manually:
+         else {
+            # Get the raw CWM group name parts for ones, tens, and hundreds:
+            my $g_one = $g_ones[int($triad/  1)%10];
+            my $g_ten = $g_tens[int($triad/ 10)%10];
+            my $g_hun = $g_huns[int($triad/100)%10];
+
+            # Adjust "tre", "se", "septe", or "nove" if necessary:
+            if ('tre' eq $g_one) {
+               if
+                  (     'viginti'      eq $g_ten
+                     || 'triginta'     eq $g_ten
+                     || 'quadraginta'  eq $g_ten
+                     || 'quinquaginta' eq $g_ten
+                     || 'octoginta'    eq $g_ten
+                     || '' eq $g_ten && 'centi'        eq $g_hun
+                     || '' eq $g_ten && 'trecenti'     eq $g_hun
+                     || '' eq $g_ten && 'quadringenti' eq $g_hun
+                     || '' eq $g_ten && 'quingenti'    eq $g_hun
+                     || '' eq $g_ten && 'octingenti'   eq $g_hun
+                  )
+               {
+                  $g_one .= 's';
+               }
+            } # end if (tre)
+
+            if ('se' eq $g_one) {
+               if
+                  (
+                        'viginti'      eq $g_ten
+                     || 'triginta'     eq $g_ten
+                     || 'quadraginta'  eq $g_ten
+                     || 'quinquaginta' eq $g_ten
+                     || '' eq $g_ten && 'trecenti'     eq $g_hun
+                     || '' eq $g_ten && 'quadringenti' eq $g_hun
+                     || '' eq $g_ten && 'quingenti'    eq $g_hun
+                  )
+               {
+                  $g_one .= 's';
+               }
+               if
+                  (
+                        'octoginta'    eq $g_ten
+                     || '' eq $g_ten && 'centi'        eq $g_hun
+                     || '' eq $g_ten && 'octingenti'   eq $g_hun
+                  )
+               {
+                  $g_one .= 'x';
+               }
+            } # end if (se)
+
+            if ('septe' eq $g_one || 'nove' eq $g_one) {
+               if
+                  (
+                        'viginti'      eq $g_ten
+                     || 'octoginta'    eq $g_ten
+                     || '' eq $g_ten && 'octingenti'   eq $g_hun
+                  )
+               {
+                  $g_one .= 'm';
+               }
+               if
+                  (
+                        'deci'         eq $g_ten
+                     || 'triginta'     eq $g_ten
+                     || 'quadraginta'  eq $g_ten
+                     || 'quinquaginta' eq $g_ten
+                     || 'sexaginta'    eq $g_ten
+                     || 'septuaginta'  eq $g_ten
+                     || '' eq $g_ten && 'centi'        eq $g_hun
+                     || '' eq $g_ten && 'ducenti'      eq $g_hun
+                     || '' eq $g_ten && 'trecenti'     eq $g_hun
+                     || '' eq $g_ten && 'quadringenti' eq $g_hun
+                     || '' eq $g_ten && 'quingenti'    eq $g_hun
+                     || '' eq $g_ten && 'sescenti'     eq $g_hun
+                     || '' eq $g_ten && 'septingenti'  eq $g_hun
+                  )
+               {
+                  $g_one .= 'n';
+               }
+            } # end if (septe or nove)
+
+            # Make the triad name by tacking-together ones+tens+hundreds in that order. Yes, in THAT order.
+            $tname=$g_one.$g_ten.$g_hun;
+
+            # Elide any final vowel:
+            $tname =~ s/[aeiou]$//;
+
+            # tack 'illi' onto right end of triad name:
+            $tname .= 'illi';
+         } # end else (construct CWM name for triad manually)
+
+         # Push triad name onto @tnames:
+         push @tnames, $tname;
+      } # end for (each triad)
+
+      # Join triads to form group;
+      $group = join '', @tnames;
+
+      # Tack a final "on" onto the end (to change the last "illi" to "illion"):
+      $group .= 'on';
+   } # end else (make full CWM name)
+
    # Finally, return our group name:
    return $group;
 }
@@ -343,25 +378,22 @@ sub n2w ( $n ) {
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
    Welcome to "number-to-words.pl". This program prints the words for the integer
-   part of a number given as its argument, provided that that number is a real
-   number in the closed interval [-(10**3003-1), +(10**3003-1)]. The words given
-   for a non-integer number will be for the integer part only. For integers with
-   over about nine significant figures, enclose your integer in "double quotes" or
-   the shell may round digits off of your number before passing it to Perl,
-   resulting in wrong output. If the number of arguments is not 1, or if the
-   argument is not a number, or if the argument is out-of-range, this program will
-   print an error message and exit.
+   part of each real number given via stdin, one number per line. The words given
+   for a non-integer number will be for the integer part only.
 
    Options:
    -h or --help  : Print this help and exit.
    -e or --debug : Debug.
 
+   Arguments:
+   This program ignores all non-option arguments.
+
    Command lines:
-   number-to-words.pl -h | --help         (to print this help and exit)
-   number-to-words.pl [options] "######"  (to print the words for number ######)
+   number-to-words.pl -h | --help           (to print this help and exit)
+   number-to-words.pl [options] < file.txt  (to print words for numbers)
 
    For example:
-   %number-to-words.pl "-38547275925477542957"
+   %echo "-38547275925477542957" | number-to-words.pl
    negative thirty-eight quintillion, five hundred and forty-seven quadrillion,
    two hundred and seventy-five trillion, nine hundred and twenty-five billion,
    four hundred and seventy-seven million, five hundred and forty-two thousand,
@@ -374,3 +406,16 @@ sub help {
    END_OF_HELP
    return 1;
 } # end sub help
+
+# Main body of script:
+argv;
+for (<>) {
+   chomp;
+   my $number = Math::BigInt->new(int(Math::BigFloat->new($_)));
+   # Warn-and-skip if $number is not a number:
+   if ( $number->is_nan ) {
+      warn("Error: Argument is not a number.\n\n");
+      next;
+   }
+   say n2w($number);
+}
