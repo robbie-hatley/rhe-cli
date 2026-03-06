@@ -80,12 +80,14 @@ my @hundreds = ( '',   'one hundred',   'two hundred', 'three hundred',
                      'seven hundred', 'eight hundred',  'nine hundred', );
 
 # Subroutine predeclarations:
-sub argv ; # Process arguments.
-sub gname; # Given group index, return group name.
-sub n2w  ; # Convert number to words.
-sub help ; # Print help.
+sub argv            ; # Process command-line arguments.
+sub gname           ; # Given group index, return group name.
+sub number_to_words ; # Convert number to words.
+sub help            ; # Print help.
 
 # Subroutine definitions follow:
+
+# Process command-line arguments:
 sub argv {
    for ( my $i = 0 ; $i < @ARGV ; ++$i ) {
       $_ = $ARGV[$i];
@@ -259,7 +261,10 @@ sub gname ( $g ) {
    return $group;
 }
 
-sub n2w ( $n ) {
+# Return the Conway-Wechsler-Miakinen (CWM) English short-form name of a given integer.
+# This will be the same as dictionary names for integers under 10**36.
+# This is also the same as Conway-Wechsler except that CWM uses "quin" instead of "quinqua".
+sub number_to_words ( $n ) {
    # Get a new, local copy of $n:
    my $local = $n->copy();
 
@@ -414,8 +419,8 @@ for (<>) {
    my $number = Math::BigInt->new(int(Math::BigFloat->new($_)));
    # Warn-and-skip if $number is not a number:
    if ( $number->is_nan ) {
-      warn("Error: Argument is not a number.\n\n");
+      warn("Error: Input \"$_\" is not a number.\n\n");
       next;
    }
-   say n2w($number);
+   say number_to_words($number);
 }
