@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# url-checker.sh
+# "url-checker.sh"
 
 while IFS= read -r line; do
 
@@ -24,11 +24,7 @@ while IFS= read -r line; do
 
    # Skip if empty after parsing:
    [[ -z $host ]] && {
-      echo "BAD   $line"
-      continue
-   }
-   # Skip if empty after parsing:
-   [[ -z $host ]] && {
+      echo "BAD:   line = $line  url = $url  host = $host"
       continue
    }
 
@@ -37,4 +33,5 @@ while IFS= read -r line; do
    else
       echo "DEAD:  line = $line  url = $url  host = $host"
    fi
+
 done
