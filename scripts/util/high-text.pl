@@ -7,7 +7,7 @@
 # characters, ideographic characters, etc.
 use utf8::all;
 my $text;
-for (0..100_000) {
+for (1..100_000) {
    $text .= chr(int(rand(40960)));
 }
 print $text;
