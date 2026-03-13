@@ -16,6 +16,7 @@
 #                   rather than the full flattening one might expect). Fixed errors in error().
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
+# Fri Mar 13, 2026: Fixed help to reflect use of '__' instead of '_'.
 ##############################################################################################################
 
 use v5.36;
@@ -246,10 +247,10 @@ sub help {
    Introduction:
 
    Welcome to "flatten". This program appends the name of the current directory
-   to all items in the current directory using a "_". For example, if the current
+   to all items in the current directory using "__". For example, if the current
    directly is "/apple/orange/banana", containing items "peach", "plum", and
-   "pear", then this program would rename those 3 items to "banana_peach",
-   "banana_plum", and "banana_pear".
+   "pear", then this program would rename those 3 items to "banana__peach",
+   "banana__plum", and "banana__pear".
 
    By default this program renames ALL items in the current directory, but this
    can be modified by using A|F|D|B switches, regexps, and predicates; see
