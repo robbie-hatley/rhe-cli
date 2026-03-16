@@ -158,18 +158,20 @@ INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
 # NOTE: Always remember, if using BEGIN blocks, only the declaration half of any "my|our $varname = value;"
 # statement is executed before the begin blocks; the "= value;" part is executed AFTER all BEGIN blocks!!!
-# So, THIS code:
+# So, the end effect of THIS script:
+#    #!/usr/bin/env perl
 #    my $dog = 'Spot';
 #    BEGIN {defined $dog ? print("defined\n") : print("undefined\n");}
 #    print("My dog's name is $dog.\n");
 #    END   {print("$dog is a nice dog.\n");}
-# Is the same as THIS code:
+# Is the same as the end effect of THIS script:
+#    #!/usr/bin/env perl
 #    my $dog;
 #    defined $dog ? print("defined\n") : print("undefined\n");
 #    $dog = 'Spot';
 #    print("My dog's name is $dog.\n");
 #    print("$dog is a nice dog.\n");
-# And EITHER of those code blocks will print:
+# And EITHER of those two scripts will print:
 #    undefined
 #    My dog's name is Spot.
 #    Spot is a nice dog.
