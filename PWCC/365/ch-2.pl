@@ -11,67 +11,40 @@ written by Robbie Hatley on Mon Mar 16, 2026.
 PROBLEM DESCRIPTION:
 Task 365-2: Valid Token Counter
 Submitted by: Mohammad Sajid Anwar
+You are given a sentence. Write a script to split the given
+sentence into space-separated tokens and count how many are valid
+words. A token is valid if it contains no digits, has at most one
+hyphen surrounded by lowercase letters, and at most one
+punctuation mark (!, ., ,) appearing only at the end.
 
-You are given a sentence.
+Example 1 input: $str = "cat and dog"
+Expected output: 3
 
-Write a script to split the given sentence into space-separated tokens and count how many are valid words. A token is valid if it contains no digits, has at most one hyphen surrounded by lowercase letters, and at most one punctuation mark (!, ., ,) appearing only at the end.
+Example 2 input: $str = "a-b c! d,e"
+Expected output: 2
 
-Example 1
+Example 3 input: $str = "hello-world! this is fun"
+Expected output: 4
 
-Input: $str = "cat and dog"
-Output: 3
+Example 4 input: $str = "ab- cd-ef gh- ij!"
+Expected output: 2
 
-Tokens: "cat", "and", "dog"
-
-Example 2
-
-Input: $str = "a-b c! d,e"
-Output: 2
-
-Tokens: "a-b", "c!", "d,e"
-"a-b" -> valid (one hyphen between letters)
-"c!"  -> valid (punctuation at end)
-"d,e" -> invalid (punctuation not at end)
-
-Example 3
-
-Input: $str = "hello-world! this is fun"
-Output: 4
-
-Tokens: "hello-world!", "this", "is", "fun"
-All satisfy the rules.
-
-Example 4
-
-Input: $str = "ab- cd-ef gh- ij!"
-Output: 2
-
-Tokens: "ab-", "cd-ef", "gh-", "ij!"
-"ab-"   -> invalid (hyphen not surrounded by letters)
-"cd-ef" -> valid
-"gh-"   -> invalid
-"ij!"   -> valid
-
-Example 5
-
-Input: $str = "wow! a-b-c nice."
-Output: 2
-
-Tokens: "wow!", "a-b-c", "nice."
-"wow!"  -> valid
-"a-b-c" -> invalid (more than one hyphen)
-"nice." -> valid
+Example 5 input: $str = "wow! a-b-c nice."
+Expected output: 2
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit the smijkors.
+I start by fully decomposing any extended grampheme clusters (so that any combining marks become separate
+Unicode codepoints); then I strip-out all combining marks (so that lower-case letters can easily be recognized
+as such); then I split the sentence on whitespace to tokens; then I scrutinizing all tokens and count only
+those which do not disobey the rules; then I return my final count.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of double-quoted sentences, in proper Perl syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '("Robbie ran 9 times around the track!", "--skew --tiger -- bat")'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -84,11 +57,11 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use utf8::all;
    use Unicode::Normalize 'NFD';
 
-   # Aggregate the belchers under the resinous swamps:
-   sub yuio ( $s ) {
-      my $n = NFD $s;                                   # Decompose extended grapheme clusters.
-      $n =~ s/\pM//;                                    # Remove combining marks.
-      my @t = split /\s+/, $n;                          # Get array of tokens
+   # Count the word-like tokens in a sentence:
+   sub cwlt ( $s ) {                                    # "cwlt" = "Count Word-Like Tokens"
+      my $d = NFD $s;                                   # Decompose extended grapheme clusters.
+      $d =~ s/\pM//;                                    # Remove combining marks.
+      my @t = split /\s+/, $d;                          # Get array of tokens
       my $valid = 0;                                    # Count valid tokens.
       for (@t) {                                        # Scrutinize tokens.
          next if $_ =~ m/[0-9]/;                        # No digits allowed.
@@ -124,7 +97,7 @@ my @strings = @ARGV ? eval($ARGV[0]) :
 $"=', ';
 for my $string (@strings) {
    say '';
-   my $vtc = yuio($string);
+   my $vtc = cwlt($string);
    say "Sentence = \"$string\"";
    say "Count of valid tokens = $vtc";
 }
