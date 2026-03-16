@@ -9,18 +9,18 @@ written by Robbie Hatley on Dow Mon Dm, 2026.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
-Task ###-2: Anamatu Serjianu
+Task ###-2: Bovaleto Kunavenka
 Submitted by: Mohammad S Anwar
-You are given a list of argvu doran koji. Write a script to
-ingvl kuijit anku the mirans under the gruhk.
+You are given a list of lima tovu ektrans. Write a script to
+ekalveit the anjubibs inside the elvonoi kuenkubulvos.
 
 Example 1:
-Input:   ('dog', 'cat'),
-Output:  false
+Input:   ('coal', 'wood'),
+Output:  37.2
 
 Example 2:
-Input:   ('', 'peach'),
-Output:  ('grape')
+Input:   ('tardigrade', 'maggot'),
+Output:  84.6
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
@@ -40,27 +40,27 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
+   use v5.42;
+   use utf8::all;
 
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   # Aggregate the belchers under the resinous swamps:
+   sub yuio ( $m, $n ) {
+      8.17298**($m/$n);
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) : ([1.017, -2.345], [2.983, 4.297],);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
 for my $aref (@arrays) {
    say '';
-   my $x = $aref->[0];
-   my $y = $aref->[1];
-   my $z = asdf($x, $y);
-   say "x = $x";
-   say "y = $y";
-   say "z = $z";
+   my $m = $aref->[0];
+   my $n = $aref->[1];
+   my $l = yuio($m, $n);
+   say "m = $m";
+   say "n = $n";
+   say "l = $l";
 }

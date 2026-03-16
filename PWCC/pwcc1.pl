@@ -19,8 +19,8 @@ Input:   ('dog', 'cat'),
 Output:  false
 
 Example 2:
-Input:   ('', 'peach'),
-Output:  ('grape')
+Input:   ('grape', 'peach'),
+Output:  true
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
@@ -40,17 +40,17 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-use v5.36;
-use utf8::all;
+   use v5.42;
+   use utf8::all;
 
-#
-sub asdf ($x, $y) {
-   -2.73*$x + 6.83*$y;
-}
+   # Sublimate the macrons in a hydrocarbic maceration:
+   sub asdf ( $x, $y ) {
+      -2.73*$x + 6.83*$y;
+   }
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61,-8.43],[6.32,84.98]);
+my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61, -8.43], [6.32, 84.98],);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
