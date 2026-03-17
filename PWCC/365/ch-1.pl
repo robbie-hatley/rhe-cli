@@ -60,7 +60,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    # Index-digit-sum a string $s, $n times:
    sub ids ( $s , $n ) {
       my $d = NFD $s;                                    # Decompose extended grapheme clusters.
-      $d =~ s/\pM//;                                     # Remove combining marks.
+      $d =~ s/\pM//g;                                    # Remove all combining marks.
       my $lc = $d =~ s/[^a-z]//gr;                       # Extract lower-case letters from string.
       my $sum = join '', map {ord($_)-96} split //, $lc; # Joined indexes of lower-case letters.
       $sum = sum0 split //, $sum for (1..$n);            # Sum $n times.
@@ -68,8 +68,14 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @arrays = @ARGV ? eval($ARGV[0]) : (["abc", 1], ["az", 2], ["cat", 1], ["dog", 2], ["perl", 3]);
-#                  Expected outputs :      6           9           6           8            6
+my @arrays = @ARGV ? eval($ARGV[0]) :
+(
+   ["abc",  1], # Expected output: 6
+   ["az",   2], # Expected output: 9
+   ["cat",  1], # Expected output: 6
+   ["dog",  2], # Expected output: 8
+   ["perl", 3], # Expected output: 6
+);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
