@@ -34,8 +34,12 @@ Expected output: 2
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-For version 2a of this solution, I'll try to cram as much of the solution as possible into a single regexp.
-I'll also
+For version 2b of this solution, I'll try to cram as much of the solution as possible into a single regexp.
+I'll also be MORE strict than the rules. In THIS version, a token will have to not only obey the rules, but
+must also actually look like a real English word: No blank tokens; no embedded capital letters (only the first
+letter may be capitalized); no characters other than [a-zA-Z.,!-]; PLUS must obey all the given rules. For
+the given examples, the results will be the same; but for edge cases, the results may be dramatically from
+versions 365-2 and 365-2a.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:

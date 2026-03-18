@@ -35,7 +35,7 @@ Expected output: 2
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
 For version 2a of this solution, I'll try to cram as much of the solution as possible into a single regexp.
-I'll also
+I'll also interpret the rules as literally as possible.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
