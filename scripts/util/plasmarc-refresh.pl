@@ -28,5 +28,5 @@ sub help {
 
 for (@ARGV) {/--help/ || /-h/ and help and exit}
 
-chdir '/d/OS-Resources/Background-Pictures';
+chdir '/c/OS-Resources/Background-Pictures';
 system 'list-paths.pl -fqr | extract-image-paths.pl | plasmarc-join.pl';
