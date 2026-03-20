@@ -136,7 +136,7 @@ sub argv {
    $Verbose       = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
    $Recurse       = 0         ; # Recurse subdirectories?   bool      Don't recurse.
    $Target        = 'A'       ; # Target                    F|D|B|A   All directory entries.
-   $RegExp        = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+   $RegExp        = qr/^.+$/s ; # Regular expression.       regexp    Process all file names.
    $Predicate     = 1         ; # Boolean predicate.        bool      Process all file types.
 
    # Get options and arguments:

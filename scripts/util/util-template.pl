@@ -187,7 +187,7 @@ my $Help      = 0         ; # Just print help and exit? bool      Don't print-he
 my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
-my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $RegExp    = qr/^.+$/s ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 
 
@@ -383,6 +383,9 @@ sub curdire {
    # Get sorted list of paths in $cwd matching $Target, $RegExp, and $Predicate:
    my @paths = sort {$a cmp $b} glob_regexp_utf8($cwd, $Target, $RegExp, $Predicate);
 
+   my $numpaths = scalar @paths;
+   BLAT "About to sent $numpaths paths to curfile.";
+
    # Send each path to curfile():
    foreach my $path (@paths) {curfile($path)}
 
@@ -529,7 +532,7 @@ sub help {
    A number of arguments less than 0 will likely rupture our spacetime manifold
    and destroy everything. But if you DO somehow manage to use a negative number
    of arguments without destroying the universe, please send me an email at
-   "Hatley.Software@gmail.com", because I'd like to know how you did that!
+   "Hatley.Software\@gmail.com", because I'd like to know how you did that!
 
    But if you somehow manage to use a number of arguments which is an irrational
    or complex number, please keep THAT to yourself. Some things would be better

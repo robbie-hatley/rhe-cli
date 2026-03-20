@@ -89,7 +89,7 @@ my $Help      = 0         ; # Just print help and exit? bool      Don't print-he
 my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'F'       ; # Target                    F|D|B|A   Target files only.
-my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $RegExp    = qr/^.+$/s ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 my $Hidden    = 0         ; # Process hidden files?     bool      Don't touch hidden files!
 

@@ -141,7 +141,7 @@ my $Help      = 0         ; # Just print help and exit? bool      Don't print-he
 my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 # NOTE: There's no variable "$Target" because this program processes data files only.
-my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $RegExp    = qr/^.+$/s ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
@@ -186,7 +186,7 @@ my $simucount = 0 ; # Count of simulated file unlinkages.
 
 # Default values:
 # The "0" value for each of the above settings is the "default" setting, which may be overridden by
-# command-line options or by this program itself. (Well, except for $RegExp, which has default qr/^.+$/o
+# command-line options or by this program itself. (Well, except for $RegExp, which has default qr/^.+$/s
 # which means "process all file names".)
 
 # File selection:

@@ -1,20 +1,18 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
-# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
-# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
-# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+# This is a 90-character-wide ASCII Perl-source-code text file with hard Unix line breaks.
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|
 
-##############################################################################################################
+##########################################################################################
 # File name: myprog.pl
 # Program name:  "Tropical Year"
 # Description:   Prints length of tropical year in days ending March of 2011-2030.
 # Written by Robbie Hatley.
 # Edit history:
 # Sat Jun 05, 2021: Wrote it.
-# Sat Mar 15, 2025: Changed "say" to "print" and removed "use v5.16" (can work with any Perl version).
-##############################################################################################################
-
-use utf8;
+# Sat Mar 15, 2025: Changed "say" to "print" and removed "use v5.16" (can work with any
+#                   Perl version).
+##########################################################################################
 
 my @lines;
 for my $line (<DATA>) {

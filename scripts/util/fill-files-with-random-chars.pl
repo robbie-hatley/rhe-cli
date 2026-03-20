@@ -54,7 +54,7 @@ my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 0         ; # Be verbose?               0,1,2     Shhh! Be quiet!
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
-my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $RegExp    = qr/^.+$/s ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 

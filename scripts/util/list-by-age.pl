@@ -34,7 +34,6 @@
 ##############################################################################################################
 
 use v5.36;
-use Sys::Binmode;
 use utf8::all;
 use Cwd::utf8;
 use Time::HiRes 'time';
@@ -66,7 +65,7 @@ my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be qui
 my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   All directory entries.
-my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $RegExp    = qr/^.+$/s ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 
 # Counts of events in this program:

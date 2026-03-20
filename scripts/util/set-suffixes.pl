@@ -69,7 +69,7 @@ my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be qui
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 # (It doesn't make sense for this program to have a "$Target" variable because it deals only with data files.)
-my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $RegExp    = qr/^.+$/s ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 
 # Counters:

@@ -5,11 +5,11 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# reverse-graphemes.pl
-# Reverses text, grapheme-by-grapheme, both horizontally and vertically.
-#
-# Text is input  from STDIN , or via redirects from files, or via pipes, or via file-name arguments.
-# Text is output to   STDOUT, or via redirects from files, or via pipes.
+# rev-gr-fl.pl
+# Reverses text, grapheme-by-grapheme, both horizontally and vertically, throughout an entire file or stream.
+# (Doesn't mangle extended grapheme clusters!)
+# Input  is from STDIN , or via redirects from files, or via pipes, or via file-name arguments.
+# Output is  to  STDOUT, or via redirects from files, or via pipes.
 #
 # Written by Robbie Hatley.
 #
@@ -21,35 +21,37 @@
 #                   No longer tampers with whitespace. Now uses "print" instead of "say".
 # Sat Nov 29, 2025: Downgraded from "v5.42" to "v5.16", because we're not using any features that weren't in
 #                   "v5.16", so we might as well allow a wider range of Perl versions to be used.
+# Thu Mar 19, 2026: Renamed from "reverse-graphemes.pl" to "rev-gr-fl.pl". Removed "use v5.16".
+#                   Also fixed Perl operator precedence error which was screwing-up newlines.
 ##############################################################################################################
 
-use v5.16;
 use utf8::all;
 
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
-   Welcome to "reverse-graphemes.pl", Robbie Hatley's nifty grapheme reverser.
+
+   Welcome to "rev-gr-fl.pl", Robbie Hatley's nifty file-wide grapheme reverser.
    This program reverses all text fed to it, both horizontally AND vertically,
    grapheme-by-grapheme.
 
    WARNING: This program reverses text grapheme-by-grapheme, so that extended
    grapheme clusters (such as in fully-decomposed Vietnamese) are not mangled.
    This means that in some cases, the codepoints will NOT be in reverse order.
-   If you need the codepoints to always be in reverse order, use my script
-   "reverse-codepoints.pl" instead. To render mark-stacking correctly, use
-   a suitable font, such as "Inconsolata".
+   If you need the codepoints to always be in reverse order, use my scripts
+   "rev-cp-ln.pl" or "rev-cp-fl.pl" instead. To render mark-stacking correctly,
+   use a suitable font, such as "Inconsolata".
 
    Command lines:
-   reverse-graphemes.pl -h|--help              (prints this help)
-   reverse-graphemes.pl                        (reverses text from keyboard)
-   reverse-graphemes.pl file1                  (reverses text from file1)
-   reverse-graphemes.pl < file1                (reverses text from file1)
-   reverse-graphemes.pl < file1 > file2        (reverses text from file1 to file2)
-   process1 | reverse-graphemes.pl | process2  (reverses text from process1 to process2)
+   rev-gr-fl.pl -h|--help              (prints this help)
+   rev-gr-fl.pl                        (reverses text from keyboard)
+   rev-gr-fl.pl file1                  (reverses text from file1)
+   rev-gr-fl.pl < file1                (reverses text from file1)
+   rev-gr-fl.pl < file1 > file2        (reverses text from file1 to file2)
+   process1 | rev-gr-fl.pl | process2  (reverses text from process1 to process2)
 
    Any options or arguments other than -h or --help are ignored.
 
-   All input  is from STDIN, or from files named in arguments, or from < or | .
+   All input is from STDIN, or from files named in arguments, or from < or | .
    Input data is not altered (unless user purposely over-writes input using >).
 
    All output is to STDOUT, or to > or | . Output will be a bottom-to-top AND
@@ -60,13 +62,13 @@ sub help {
    programmer.
    END_OF_HELP
    return 1;
-} # end sub help ()
+} # end sub help
 
-for (@ARGV) {
-   if($_ eq '--help' || $_ eq '-h') {
-      help;
-      exit;
-   }
+/-h/ || /--help/ and help and exit 777 for @ARGV;
+
+# Use "m/\X/g" to return a list of all eXtended grapheme clusters
+# in each line, then reverse and print that list, in reverse order:
+for (reverse <>) {
+   chomp;
+   print(join('', (reverse m/\X/g)), "\n");
 }
-
-print join '', reverse $_ =~ m/\X/g for reverse <>

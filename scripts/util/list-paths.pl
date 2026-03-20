@@ -47,7 +47,6 @@ use RH::Dir;
 
 $" = ', ' ; # Quoted-array element separator = ", ".
 
-
 # ------- Global Variables: ----------------------------------------------------------------------------------
 
 our    $pname;                                 # Declare program name.
@@ -68,7 +67,7 @@ my $Verbose   = 0         ; # Quiet, Terse, or Verbose? 0|1|2     Shhh! Be quiet
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Recurse.
 my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Target    = 'A'       ; # Target                    F|D|B|A   List paths of files of all types.
-my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    List paths of files of all names.
+my $RegExp    = qr/^.+$/s ; # Regular expression.       regexp    List paths of files of all names.
 my $Predicate = 1         ; # Boolean predicate.        bool      List paths of all combos of types.
 
 # Counts of events in this program:

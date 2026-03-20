@@ -43,7 +43,7 @@ I needed 5 subroutines for that one.
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of non-empty even-size arrays positive integers, in proper Perl syntax, like so:
+single-quoted array of non-empty even-size arrays of positive integers, in proper Perl syntax, like so:
 ./ch-2.pl '([5,1,3,4],[2,3,4,29,15,40])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.

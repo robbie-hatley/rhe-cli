@@ -73,7 +73,7 @@ my $Help      = 0         ; # Just print help and exit?         bool          Do
 my $Verbose   = 0         ; # Print entry/stats/exist msgs?     bool          Don't print the messages.
 my $Recurse   = 0         ; # Recurse subdirectories?           bool          Don't recurse.
 my $OriDir    = cwd       ; # Original directory.               cwd           Cwd on program entry.
-my $RegExp    = qr/^.+$/o ; # Regular expression.               regexp        Process all file names.
+my $RegExp    = qr/^.+$/s ; # Regular expression.               regexp        Process all file names.
 my $Predicate = 1         ; # Boolean predicate.                bool          Process all file types.
 my $Empty     = 0         ; # Show only empty directories?      bool          Show empty AND non-empty.
 my $GB        = 0.0       ; # Show only dirs w >= $GB GB.       non-neg real  Show dirs of all sizes.

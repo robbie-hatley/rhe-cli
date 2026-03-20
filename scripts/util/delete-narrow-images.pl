@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -19,12 +19,13 @@
 # Thu Aug 15, 2024: Narrowed from 120 to 110, "use v5.36", and removed unnecessary "use" statements.
 #                   Changed name from "erase-narrow-images.pl" to "delete-narrow-images.pl".
 # Tue Mar 04, 2024: Got rid of prototypes and empty sigs.
+# Wed Mar 18, 2026: Changed shebang from "#!/usr/bin/env -S perl -C63" to "#!/usr/bin/env perl".
+#                   Changed "use utf8" to "use utf8::all". Got rid of manual encoding/decoding.
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-use Encode qw( encode_utf8 decode_utf8 );
-use Cwd;
+use utf8::all;
+use Cwd::utf8;
 use File::Type;
 use Image::Size;
 
@@ -53,19 +54,19 @@ for my $arg (@ARGV) {
 # Make a file-typing functor:
 my $typer = File::Type->new();
 
-# Obtain and store decoded Current Working Directory (cwd):
-my $curdir = decode_utf8 getcwd;
+# Obtain Current Working Directory:
+my $curdir = cwd;
 
-# Obtain and store decoded paths of all non-hidden files in current working directory:
-my @paths = map {decode_utf8 $_} <*>;
+# Obtain paths of all non-hidden files in current working directory:
+my @paths = <*>;
 
 # Loop through @paths and erase all narrow images:
 foreach my $path (@paths) {
    # Skip this path if it doesn't point to something that actually exists:
-   next if !-e encode_utf8 $path;
+   next if ! -e $path;
 
    # Stat this path to load its stats into Perl's internal file-info buffer (so we can use "_" to save time):
-   lstat encode_utf8 $path;
+   lstat $path;
 
    # Skip this file if it's a non-file, link, dir, blk-spc, chr-spc, pipe, socket, or tty:
    next if !-f _ || -d _ || -l _ || -b _ || -c _ || -p _ || -S _ || -t _ ;
@@ -79,6 +80,6 @@ foreach my $path (@paths) {
    # Erase this images if its width is less than its height:
    if ($x < $y) {
       say "Deleting \"$path\" ($x x $y)";
-      unlink(encode_utf8($path)) or say STDERR q%Error: couldn't unlink file.%;
+      unlink $path or say STDERR q%Error: couldn't unlink file.%;
    }
 }

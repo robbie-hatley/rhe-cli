@@ -58,7 +58,7 @@ my $Verbose   = 1         ; # Be verbose?               bool      Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $OriDir    = cwd       ; # Original Directory.       cwd       Current working directory.
 # No "$Target" variable because it doesn't make sense to get the SHA1 data hash of a non-data object.
-my $RegExp    = qr/^.+$/o ; # Regular expression.       regexp    Process all file names.
+my $RegExp    = qr/^.+$/s ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 my $Yes       = 0         ; # Don't prompt; just do it. bool      Be safe: ask user.
 

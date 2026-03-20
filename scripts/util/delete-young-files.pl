@@ -44,7 +44,7 @@ sub help    ; # Print help  message.
 # Settings:                   Meaning:                         Range:    Default:
 my $Recurse  = 0          ; # Recurse subdirectories?          bool      0 (don't recurse)
 my $Simulate = 0          ; # Simulate and print diagnostics?  bool      0 (don't simulate)
-my $RegExp   = qr/^.+$/o  ; # Regular Expression.              regexp    qr/^.+$/o (matches all strings)
+my $RegExp   = qr/^.+$/s  ; # Regular Expression.              regexp    qr/^.+$/s (matches all strings)
 my $Yes      = 0          ; # Proceed without prompting?       bool      prompt
 my $Limit    = 365.2422   ; # Minimum age in days.             float     365.2422 days
 

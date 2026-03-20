@@ -1,4 +1,4 @@
-#!/usr/bin/env -S perl -C63
+#!/usr/bin/env perl
 
 # This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
 # ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
@@ -17,38 +17,39 @@
 #                   and removed unnecessary "use" statements.
 # Wed Feb 26, 2025: Trimmed one horizontal divider.
 # Tue Mar 04, 2025: Got rid of unnecessary prototypes and sigs.
+# Wed Mar 18, 2026: Changed shebang from "#!/usr/bin/env -S perl -C63" to "#!/usr/bin/env perl".
+#                   Changed "use utf8" to "use utf8::all". Got rid of manual encoding/decoding.
 ##############################################################################################################
 
 use v5.36;
-use utf8;
-use Encode;
+use utf8::all;
+use Cwd::utf8;
 
-# ======= SUBROUTINE PRE-DECLARATIONS ========================================================================
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv                     ;
-sub in_array :prototype($\@) ;
-sub error                    ;
-sub help                     ;
+sub argv     ; # Process @ARGV and set settings.
+sub in_array ; # Is a given scalar in a given array?
+sub error    ; # Handle errors.
+sub help     ; # Give help.
 
-# ======= GLOBAL VARIABLES ===================================================================================
+# ======= LEXICAL VARIABLES: =================================================================================
 
-our @Arguments;  # CL args not starting with '-'
-our @Options;    # CL args starting with '-'
+my @Arguments;  # CL args not starting with '-'
+my @Options;    # CL args starting with '-'
 
-# ======= MAIN BODY OF PROGRAM ===============================================================================
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
 
-# main
-{
+{ # begin main
    argv;
 
    my $fh1;
-   open($fh1, '<', encode_utf8 $Arguments[0]) or die "Can't open first file.\n$!\n";
-   my @First = <$fh1>; # Don't decode here; that's handled by the "-C63" in the shebang.
+   open($fh1, '<', $Arguments[0]) or die "Can't open first file.\n$!\n";
+   my @First = <$fh1>;
    close($fh1);
 
    my $fh2;
-   open($fh2, '<', encode_utf8 $Arguments[1]) or die "Can't open second file.\n$!\n";
-   my @Second = <$fh2>; # Don't decode here; that's handled by the "-C63" in the shebang.
+   open($fh2, '<', $Arguments[1]) or die "Can't open second file.\n$!\n";
+   my @Second = <$fh2>;
    close($fh2);
 
    my @Added;
@@ -75,7 +76,7 @@ our @Options;    # CL args starting with '-'
    exit 0;
 } # end main
 
-# ======= SUBROUTINE DEFINITIONS =============================================================================
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
 
 sub argv {
    foreach (@ARGV) {
@@ -99,7 +100,7 @@ sub argv {
    return 1;
 } # end argv
 
-sub in_array :prototype($\@) ($Element, $ArrayRef) {
+sub in_array ($Element, $ArrayRef) {
    foreach my $item (@$ArrayRef) {
       if ($item eq $Element) {
          return 1;

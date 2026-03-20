@@ -55,7 +55,7 @@ sub help    ; # Print help and exit.
 # Settings:   Default:      Meaning of setting:       Range:   Meaning of default:
 my $Help    = 0         ; # Print help and exit?      0,1      Don't print help.
 my $Recurse = 0         ; # Recurse subdirectories?   bool     Don't recurse.
-my $RegExp  = qr/^.+$/o ; # Regular Expression.       regexp   Process all file names.
+my $RegExp  = qr/^.+$/s ; # Regular Expression.       regexp   Process all file names.
 
 # Counters:
 my $direcount = 0; # Count of directories processed by curdire().
