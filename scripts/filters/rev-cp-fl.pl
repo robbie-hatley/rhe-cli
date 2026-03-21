@@ -5,16 +5,16 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# reverse-codepoints.pl
+# rev-cp-fl.pl
 # Reverses text, codepoint-by-codepoint, both horizontally and vertically.
 #
-# Text is input  from STDIN , or via redirects from files, or via pipes, or via file-name arguments.
-# Text is output to   STDOUT, or via redirects from files, or via pipes.
+# Input  is from STDIN , or via redirects from files, or via pipes, or via file-name arguments.
+# Output is  to  STDOUT, or via redirects from files, or via pipes.
 #
 # Written by Robbie Hatley.
 #
 # Edit history:
-# ????????????????: I probably wrote this in 2021, but I forgot to record the date.
+# Tue Mar 08, 2016: Wrote it.
 # Tue Nov 09, 2021: Refreshed shebang, colophon, and boilerplate.
 # Wed Dec 08, 2021: Reformatted titlecard.
 # Thu Dec 09, 2021: Simplified.
@@ -25,31 +25,33 @@
 # Sat Nov 29, 2025: Downgraded from "v5.42" to "v5.16", because we're not using any features that weren't in
 #                   "v5.16", so we might as well allow a wider range of Perl versions to be used.
 #                   Renamed program to "reverse-codepoints.pl" to be more specific about what gets reversed.
+# Fri Mar 20, 2026: Fixed bug in which checking for help requests was clobbering @ARGV. Renamed program from
+#                   "reverse-codepoints.pl" to "rev-cp-fl.pl".
 ##############################################################################################################
 
-use v5.16;
 use utf8::all;
 
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
-   Welcome to "reverse-codepoints.pl", Robbie Hatley's nifty codepoint reverser.
+
+   Welcome to "rev-cp-fl.pl", Robbie Hatley's nifty per-file codepoint reverser.
    This program reverses all text fed to it, both horizontally AND vertically,
    codepoint-by-codepoint.
 
    WARNING: This program reverses text codepoint-by-codepoint, so don't use it
    for text with extended grapheme clusters, such as fully-decomposed Vietnamese,
    unless you truly don't care that the diacritical marks get attached to the
-   wrong base characters. To reverse text grapheme-by-grapheme, use my script
-   "reverse-graphemes.pl" instead (and use a mark-stacking font such as
-   Inconsolata).
+   wrong base characters. To reverse a file of text grapheme-by-grapheme,
+   use my script "rev-gr-fl.pl" instead. I recommend using a mark-stacking font
+   such as Inconsolata to view text with a lot of diacritical marks.
 
    Command lines:
-   reverse-codepoints.pl -h|--help              (prints this help)
-   reverse-codepoints.pl                        (reverses text from keyboard)
-   reverse-codepoints.pl file1                  (reverses text from file1)
-   reverse-codepoints.pl < file1                (reverses text from file1)
-   reverse-codepoints.pl < file1 > file2        (reverses text from file1 to file2)
-   process1 | reverse-codepoints.pl | process2  (reverses text from process1 to process2)
+   rev-cp-fl.pl -h|--help              (prints this help)
+   rev-cp-fl.pl                        (reverses text from keyboard)
+   rev-cp-fl.pl file1                  (reverses text from file1)
+   rev-cp-fl.pl < file1                (reverses text from file1)
+   rev-cp-fl.pl < file1 > file2        (reverses text from file1 to file2)
+   process1 | rev-cp-fl.pl | process2  (reverses text from process1 to process2)
 
    Any options or arguments other than -h or --help are ignored.
 
@@ -66,11 +68,6 @@ sub help {
    return 1;
 } # end sub help ()
 
-for (@ARGV) {
-   if($_ eq '--help' || $_ eq '-h') {
-      help;
-      exit;
-   }
-}
+/-h/ || /--help/ and help and exit 777 for @ARGV;
 
 print join '', reverse split // for reverse <>

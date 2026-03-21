@@ -6,7 +6,7 @@
 
 ##############################################################################################################
 # rev-bi-fl.pl
-# Reverses data, bit-by-bit, throughout an entire file or stream.
+# Reverses data, bit-by-bit, throughout a file or a stream.
 # Input  is from STDIN , or via redirects from files, or via pipes, or via file-name arguments.
 # Output is  to  STDOUT, or via redirects from files, or via pipes.
 #
@@ -14,6 +14,7 @@
 #
 # Edit history:
 # Thu Mar 19, 2026: Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn.
+# Fri Mar 20, 2026: Fixed bug in which checking for help requests was clobbering @ARGV.
 ##############################################################################################################
 
 BEGIN {
@@ -28,7 +29,8 @@ sub help {
    This program reverses all data fed to it, bit-by-bit.
 
    WARNING: This program produces cursed data which will NOT be valid ASCII,
-   ISO-8859-1, Unicode, or UTF-8. My Cthulhu have mercy on you soul.
+   ISO-8859-1, Unicode, or UTF-8. If you try to print that data, then may
+   Cthulhu have mercy on you soul.
 
    Command lines:
    rev-bi-fl.pl -h|--help              (prints this help)
@@ -45,6 +47,9 @@ sub help {
 
    All output is to STDOUT, or to > or | . Output will be a file-wide bit-by-bit
    reversal of the input.
+
+   Interesting fact: This program is non-lossy and reversible, so if you run this
+   program on a piece of data twice, the data will return to its original state.
 
    Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn,
    Robbie Hatley,

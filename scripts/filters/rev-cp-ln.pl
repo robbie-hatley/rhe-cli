@@ -5,16 +5,16 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# reverse-codepoints-within-lines.pl
-# Reverses text, codepoint-by-codepoint, both horizontally and vertically.
+# rev-cp-ln.pl
+# Reverses text, codepoint-by-codepoint, horizontally but not vertically.
 #
-# Text is input  from STDIN , or via redirects from files, or via pipes, or via file-name arguments.
-# Text is output to   STDOUT, or via redirects from files, or via pipes.
+# Input  is from STDIN , or via redirects from files, or via pipes, or via file-name arguments.
+# Output is  to  STDOUT, or via redirects from files, or via pipes.
 #
 # Written by Robbie Hatley.
 #
 # Edit history:
-# ????????????????: I probably wrote this in 2021, but I forgot to record the date.
+# Tue Mar 08, 2016: Wrote it.
 # Tue Nov 09, 2021: Refreshed shebang, colophon, and boilerplate.
 # Wed Dec 08, 2021: Reformatted titlecard.
 # Thu Dec 09, 2021: Simplified.
@@ -27,32 +27,33 @@
 #                   Renamed program to "reverse-codepoints.pl" to be more specific about what gets reversed.
 # Thu Mar 19, 2026: Spun-off "reverse-codepoints-within lines.pl" and "reverse-codepoints-within-file.pl"
 #                   from "reverse-codepoints.pl". Got rid of "use v5.16" (now works with any Perl version).
+# Fri Mar 20, 2026: Fixed bug in which checking for help requests was clobbering @ARGV. Changed name of
+#                   program from "reverse-codepoints-within-lines.pl" to "rev-cp-ln.pl".
 ##############################################################################################################
 
 use utf8::all;
 
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
-   Welcome to "reverse-codepoints-within-lines.pl", Robbie Hatley's nifty
-   codepoints-within-lines reverser. This program reverses the order of the
-   Unicode codepoints (not graphemes) within each line of text fed to it
-   via STDIN and prints the result to STDOUT. (The input itself is not
-   changed.)
+
+   Welcome to "rev-cp-ln.pl", Robbie Hatley's nifty per-line codepoint reverser.
+   This program reverses all text fed to it, horizontally but not vertically,
+   codepoint-by-codepoint.
 
    WARNING: This program reverses text codepoint-by-codepoint, so don't use it
    for text with extended grapheme clusters, such as fully-decomposed Vietnamese,
    unless you truly don't care that the diacritical marks get attached to the
    wrong base characters. To reverse each line of text grapheme-by-grapheme,
-   use my script "reverse-graphemes-within-lines.pl" instead (and use a
-   mark-stacking font such as Inconsolata).
+   use my script "rev-gr-ln.pl" instead. I recommend using a mark-stacking font
+   such as Inconsolata to view text with a lot of diacritical marks.
 
    Command lines:
-   reverse-codepoints.pl -h|--help              (prints this help)
-   reverse-codepoints.pl                        (reverses text from keyboard)
-   reverse-codepoints.pl file1                  (reverses text from file1)
-   reverse-codepoints.pl < file1                (reverses text from file1)
-   reverse-codepoints.pl < file1 > file2        (reverses text from file1 to file2)
-   process1 | reverse-codepoints.pl | process2  (reverses text from process1 to process2)
+   rev-cp-ln.pl -h|--help              (prints this help)
+   rev-cp-ln.pl                        (reverses text from keyboard)
+   rev-cp-ln.pl file1                  (reverses text from file1)
+   rev-cp-ln.pl < file1                (reverses text from file1)
+   rev-cp-ln.pl < file1 > file2        (reverses text from file1 to file2)
+   process1 | rev-cp-ln.pl | process2  (reverses text from process1 to process2)
 
    Any options or arguments other than -h or --help are ignored.
 
@@ -69,11 +70,6 @@ sub help {
    return 1;
 } # end sub help ()
 
-for (@ARGV) {
-   if($_ eq '--help' || $_ eq '-h') {
-      help;
-      exit;
-   }
-}
+/-h/ || /--help/ and help and exit 777 for @ARGV;
 
-print join '', reverse split // for reverse <>
+print join '', reverse split // for <>

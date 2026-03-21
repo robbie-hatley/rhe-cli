@@ -6,7 +6,7 @@
 
 ##############################################################################################################
 # rev-gr-fl.pl
-# Reverses text, grapheme-by-grapheme, both horizontally and vertically, throughout an entire file or stream.
+# Reverses text, grapheme-by-grapheme, both horizontally and vertically.
 # (Doesn't mangle extended grapheme clusters!)
 # Input  is from STDIN , or via redirects from files, or via pipes, or via file-name arguments.
 # Output is  to  STDOUT, or via redirects from files, or via pipes.
@@ -23,6 +23,8 @@
 #                   "v5.16", so we might as well allow a wider range of Perl versions to be used.
 # Thu Mar 19, 2026: Renamed from "reverse-graphemes.pl" to "rev-gr-fl.pl". Removed "use v5.16".
 #                   Also fixed Perl operator precedence error which was screwing-up newlines.
+# Fri Mar 20, 2026: Fixed bug in which checking for help requests was clobbering @ARGV. Also, now chomps
+#                   trailing whitespace but leaves leading whitespace intact, to preserve formatting.
 ##############################################################################################################
 
 use utf8::all;
@@ -37,9 +39,9 @@ sub help {
    WARNING: This program reverses text grapheme-by-grapheme, so that extended
    grapheme clusters (such as in fully-decomposed Vietnamese) are not mangled.
    This means that in some cases, the codepoints will NOT be in reverse order.
-   If you need the codepoints to always be in reverse order, use my scripts
-   "rev-cp-ln.pl" or "rev-cp-fl.pl" instead. To render mark-stacking correctly,
-   use a suitable font, such as "Inconsolata".
+   If you need the codepoints to always be in reverse order, use my script
+   "rev-cp-fl.pl" instead. To render text with a lot of diacritical marks
+   correctly, I recommend a mark-stacking font such as "Inconsolata".
 
    Command lines:
    rev-gr-fl.pl -h|--help              (prints this help)
@@ -54,8 +56,8 @@ sub help {
    All input is from STDIN, or from files named in arguments, or from < or | .
    Input data is not altered (unless user purposely over-writes input using >).
 
-   All output is to STDOUT, or to > or | . Output will be a bottom-to-top AND
-   right-to-left reversal of the extended grapheme clusters of the input text.
+   All output is to STDOUT, or to > or | . Output will be a horizontal AND
+   vertical reversal of the extended grapheme clusters of the input text.
 
    Cheers,
    Robbie Hatley,
@@ -69,6 +71,14 @@ sub help {
 # Use "m/\X/g" to return a list of all eXtended grapheme clusters
 # in each line, then reverse and print that list, in reverse order:
 for (reverse <>) {
-   chomp;
-   print(join('', (reverse m/\X/g)), "\n");
+   # Get rid of trailing (but not leading) whitespace and control characters:
+   s/[\p{Zs}\p{Cc}]+$//;
+   # Splice-and-store leading whitespace and control characters:
+   my $leader;
+   # Join leader, reversed text, and newline, and print:
+   if (m/^([\p{Zs}\p{Cc}]+)/) {
+      $leader = $1;
+      substr $_, 0, length($leader), '';
+   }
+   print $leader . join('', (reverse m/\X/g)) . "\n";
 }
