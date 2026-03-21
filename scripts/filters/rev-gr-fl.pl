@@ -23,8 +23,8 @@
 #                   "v5.16", so we might as well allow a wider range of Perl versions to be used.
 # Thu Mar 19, 2026: Renamed from "reverse-graphemes.pl" to "rev-gr-fl.pl". Removed "use v5.16".
 #                   Also fixed Perl operator precedence error which was screwing-up newlines.
-# Fri Mar 20, 2026: Fixed bug in which checking for help requests was clobbering @ARGV. Also, now chomps
-#                   trailing whitespace but leaves leading whitespace intact, to preserve formatting.
+# Fri Mar 20, 2026: Fixed bug in which checking for help requests was clobbering @ARGV.
+# Sat Mar 21, 2026: Now chomps trailing whitespace but leaves leading whitespace intact.
 ##############################################################################################################
 
 use utf8::all;
@@ -75,10 +75,10 @@ for (reverse <>) {
    s/[\p{Zs}\p{Cc}]+$//;
    # Splice-and-store leading whitespace and control characters:
    my $leader;
-   # Join leader, reversed text, and newline, and print:
    if (m/^([\p{Zs}\p{Cc}]+)/) {
       $leader = $1;
       substr $_, 0, length($leader), '';
    }
+   # Join leader, reversed text, and newline, and print:
    print $leader . join('', (reverse m/\X/g)) . "\n";
 }

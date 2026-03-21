@@ -23,8 +23,8 @@
 # Thu Mar 19, 2026: Changed shebang to "#!/usr/bin/env perl". Now using "utf8::all". Moved to filters.
 #                   Renamed from "backwards.pl" to "rev-gr-ln.pl".
 #                   Also fixed Perl operator precedence error which was screwing-up newlines.
-# Fri Mar 20, 2026: Fixed bug in which checking for help requests was clobbering @ARGV. Also, now chomps
-#                   trailing whitespace but leaves leading whitespace intact, to preserve formatting.
+# Fri Mar 20, 2026: Fixed bug in which checking for help requests was clobbering @ARGV.
+# Sat Mar 21, 2026: Now chomps trailing whitespace but leaves leading whitespace intact.
 ##############################################################################################################
 
 use utf8::all;
@@ -75,10 +75,10 @@ while(<>) {
    s/[\p{Zs}\p{Cc}]+$//;
    # Splice-and-store leading whitespace and control characters:
    my $leader;
-   # Join leader, reversed text, and newline, and print:
    if (m/^([\p{Zs}\p{Cc}]+)/) {
       $leader = $1;
       substr $_, 0, length($leader), '';
    }
+   # Join leader, reversed text, and newline, and print:
    print $leader . join('', (reverse m/\X/g)) . "\n";
 }
