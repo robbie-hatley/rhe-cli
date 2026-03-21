@@ -74,7 +74,7 @@ while(<>) {
    # Get rid of trailing (but not leading) whitespace and control characters:
    s/[\p{Zs}\p{Cc}]+$//;
    # Splice-and-store leading whitespace and control characters:
-   my $leader;
+   my $leader = '';
    if (m/^([\p{Zs}\p{Cc}]+)/) {
       $leader = $1;
       substr $_, 0, length($leader), '';
