@@ -43,9 +43,10 @@ INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
 my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $Verbose   = 1         ; # Be verbose?               bool      Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   All directory entries.
 my $RegExp    = qr/^.+$/s ; # Regular expression.       regexp    Process all file names.
@@ -53,9 +54,8 @@ my $Predicate = 1         ; # Boolean predicate.        bool      Process all fi
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
-my $filecount = 0 ; # Count of files matching target and regexp.
-my $predcount = 0 ; # Count of files also matching predicate.
-my $probcount = 0; # Count of problematic file names found.
+my $filecount = 0 ; # Count of files matching target, regexp, and predicate.
+my $probcount = 0 ; # Count of problematic file names found.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -63,7 +63,6 @@ sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
 sub curfile ; # Process current file.
 sub stats   ; # Print statistics.
-sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
@@ -71,24 +70,25 @@ sub help    ; # Print help and exit.
 { # begin main
    # Start execution timer:
    my $t0 = time;
+   my @s0 = localtime($t0);
 
    # Process @ARGV and set settings:
    argv;
 
    # Print program entry message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
-      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
-      say STDERR '';
+      say    STDERR "\nNow entering program \"$pname\"";
+      printf STDERR "at %02d:%02d:%02d on %d/%d/%d.\n", $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
    }
 
    # Also print compilation time if being verbose:
    if ( 2 == $Verbose ) {
-      printf(STDERR "Compilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
-      say STDERR '';
+      printf(STDERR "\nCompilation time was %.3fms\n",1000*($cmpl_end-$cmpl_beg));
    }
 
    # Print the values of all variables if debugging:
    if ( 1 == $Debug ) {
+      say STDERR '';
       say STDERR "pname     = $pname";
       say STDERR "cmpl_beg  = $cmpl_beg";
       say STDERR "cmpl_end  = $cmpl_end";
@@ -101,21 +101,45 @@ sub help    ; # Print help and exit.
       say STDERR "Target    = $Target";
       say STDERR "RegExp    = $RegExp";
       say STDERR "Predicate = $Predicate";
-      say STDERR '';
    }
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+   if ($Help) {
+      help
+   }
+   else {
+      # If "$OriDir" is a real directory, perform the program's function:
+      if ( -e $OriDir && -d $OriDir ) {
+         $Debug and RH::Dir::rhd_debug('on');
+         if ($Recurse) {
+            my $mlor = RecurseDirs {curdire};
+            say "\nMaximum levels of recursion reached = $mlor" if $Verbose >= 1;
+         }
+         else {
+            curdire;
+         }
+         $Debug and RH::Dir::rhd_debug('off');
+         stats if $Verbose >= 1;
+      }
+      # Otherwise, just print an error message:
+      else { # Severe error!
+         say STDERR "Error in \"$pname\": \"original\" directory \"$OriDir\" does not exist!\n"
+         . "Skipping execution.\n"
+         . "$!";
+      }
+   }
 
    # Stop execution timer:
    my $t1 = time;
+   my @s1 = localtime($t1);
 
    # Print exit message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
-      my $te = $t1 - $t0; my $ms = 1000 * $te;
+      my $ms = 1000 * ($t1 - $t0);
       say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
+      say    STDERR "Now exiting program \"$pname\"";
+      printf STDERR "at %02d:%02d:%02d on %d/%d/%d. ", $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
       printf STDERR "Execution time was %.3fms.", $ms;
    }
 
@@ -146,8 +170,8 @@ sub argv {
    for ( @Opts ) {
       /^-$s*h/ || /^--help$/    and $Help    =  1  ;
       /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default.
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
@@ -160,13 +184,8 @@ sub argv {
    # Get number of arguments:
    my $NA = scalar(@Args);
 
-   # If user typed more than 2 arguments, and we're not debugging, print error and help messages and exit:
-   if ( $NA > 2                  # If number of arguments > 2
-        && !$Debug && !$Help ) { # and we're not debugging and not getting help,
-      error($NA);                # print error message,
-      help;                      # and print help message,
-      exit 666;                  # and exit, returning The Number Of The Beast.
-   }
+   # If user typed more than 2 arguments, warn that extra arguments will be ignored:
+   warn "Warning: All arguments after first 2 will be ignored." if $NA > 2;
 
    # First argument, if present, is a file-selection regexp:
    if ( $NA > 0 ) {              # If number of arguments > 0,
@@ -195,18 +214,11 @@ sub curdire {
       say "\nDirectory # $direcount: $cwd\n";
    }
 
-   # Get list of file-info packets in $cwd matching $Target and $RegExp:
-   my @paths = glob_regexp_utf8($cwd, $Target, $RegExp);
+   # Get list of file-info packets in $cwd matching $Target, $RegExp, and $Predicate:
+   my @paths = glob_regexp_utf8($cwd, $Target, $RegExp, $Predicate);
 
    # Process each path that matches $RegExp, $Target, and $Predicate:
-   foreach my $path (@paths) {
-      ++$filecount;
-      local $_ = $path;
-      if (eval($Predicate)) {
-         ++$predcount;
-         curfile($path);
-      }
-   }
+   foreach my $path (@paths) {curfile($path)}
 
    # Return success code 1 to caller:
    return 1;
@@ -214,6 +226,7 @@ sub curdire {
 
 # Process current file:
 sub curfile ($path) {
+   ++$filecount;
    if ( get_name_from_path($path) =~ m/[\[\](){}<>`'"^\$!#&*:;=?^~\\|\/\s\pC]/ ) {
       ++$probcount;
       say $path;
@@ -229,21 +242,9 @@ sub stats {
     . "Navigated $direcount directories.\n"
     . "Processed $filecount files.\n"
     . "Found $probcount problematic file names.\n"
-    . "\n"
    );
    return 1;
 } # end sub stats
-
-sub error ($NA) {
-   print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
-
-   Error: you typed $NA arguments, but \"find-problematic-file-names.pl\"
-   takes at most 1 argument, which, if present, must be a regular expression
-   specifying which directory entries to process. (Did you forget to put
-   your regexp in 'single quotes'?)
-   END_OF_ERROR
-   return 1;
-} # end sub error
 
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
@@ -253,7 +254,7 @@ sub help {
    Windows.
 
    Command line:
-   find-spacey-names.pl [options] [argument]
+   find-problematic-names.pl [options] [argument]
 
    -------------------------------------------------------------------------------
    Description of Options:
@@ -261,8 +262,8 @@ sub help {
    Option:            Meaning:
    -h or --help       Print help and exit.
    -e or --debug      Print diagnostics.
-   -q or --quiet      Be quiet.                         (DEFAULT)
-   -t or --terse      Be terse.
+   -q or --quiet      Be quiet.
+   -t or --terse      Be terse.                         (DEFAULT)
    -v or --verbose    Be verbose.
    -l or --local      DON'T recurse subdirectories.     (DEFAULT)
    -r or --recurse    DO    recurse subdirectories.
@@ -325,8 +326,7 @@ sub help {
    backwards, they won't do what you want, as most predicates aren't valid regexps
    and vice-versa.
 
-   A number of arguments greater than 2 will cause this program to print an error
-   message and abort.
+   Any arguments after the first 2 will be ignored.
 
    Cheers,
    Robbie Hatley,
