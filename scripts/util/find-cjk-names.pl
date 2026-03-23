@@ -5,7 +5,11 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# find-cjk-file-names.pl
+# find-cjk-names.pl
+#
+# Finds files with names containing "CJK" (Chinese, Japanese, or Korean) ideograms, Perl Unicode Property
+# "\p{\p{Block: CJK}".
+#
 # Written by Robbie Hatley.
 #
 # Edit history:
@@ -17,6 +21,8 @@
 #                   single-letter options.
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
+# Sun Mar 22, 2026: Changed "$findcount" to "$cjklcount". Fixed logic error in "argv" which was causing
+#                   arguments to be skipped. Renamed from "find-cjk-file-names.pl" to "find-cjk-names.pl".
 ##############################################################################################################
 
 use v5.36;
@@ -47,7 +53,7 @@ my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-my $Verbose   = 0         ; # Be verbose?               0,1,2     Shhh! Be quiet!
+my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
 my $RegExp    = qr/^.+$/s ; # Regular expression.       regexp    Process all file names.
@@ -56,8 +62,8 @@ my $OriDir    = cwd       ; # Original directory.       cwd       Directory on p
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
-my $filecount = 0 ; # Count of files matching target.
-my $findcount = 0 ; # Count of all CJK file names found.
+my $filecount = 0 ; # Count of files matching cwd, Target, RegExp, and Predicate.
+my $cjklcount = 0 ; # Count of all CJK file names found.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -65,7 +71,6 @@ sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
 sub curfile ; # Process current file.
 sub stats   ; # Print statistics.
-sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
@@ -91,8 +96,8 @@ sub help    ; # Print help and exit.
       say STDERR '';
    }
 
-   # Print the values of all variables if debugging or being verbose:
-   if ( 1 == $Debug || 2 == $Verbose ) {
+   # Print the starting values of all non-counter variables if debugging:
+   if ( 1 == $Debug ) {
       say STDERR "pname     = $pname";
       say STDERR "cmpl_beg  = $cmpl_beg";
       say STDERR "cmpl_end  = $cmpl_end";
@@ -110,7 +115,30 @@ sub help    ; # Print help and exit.
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+   if ($Help) {
+      help
+   }
+   else {
+      # If "$OriDir" is a real directory, perform the program's function:
+      if ( -e $OriDir && -d $OriDir ) {
+         $Debug and RH::Dir::rhd_debug('on');
+         if ($Recurse) {
+            my $mlor = RecurseDirs {curdire};
+            say "\nMaximum levels of recursion reached = $mlor" if $Verbose >= 1;
+         }
+         else {
+            curdire;
+         }
+         $Debug and RH::Dir::rhd_debug('off');
+         stats if $Verbose >= 1;
+      }
+      # Otherwise, just print an error message:
+      else { # Severe error!
+         say STDERR "Error in \"$pname\": \"original\" directory \"$OriDir\" does not exist!\n"
+         . "Skipping execution.\n"
+         . "$!";
+      }
+   }
 
    # Stop execution timer:
    my $t1 = time;
@@ -131,37 +159,32 @@ sub help    ; # Print help and exit.
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
+# Process @ARGV and set settings:
 sub argv {
    # Get options and arguments:
-   my $end = 0;               # end-of-options flag
-   my $s = '[a-zA-Z0-9]';     # single-hyphen allowable chars (English letters, numbers)
-   my $d = '[a-zA-Z0-9=.-]';  # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {            # For each element of @ARGV:
-      if ( !$end ) {             # If we're not at end-of-options:
-         if ( /^--$/ ) {            # If we see "--",
-            $end = 1;                  # then set the "end-of-options" flag
-            push @Opts, $_;            # and push the "--" to @Opts
-            next;                      # and move on to next item.
-         }
-         if ( /^-(?!-)$s+$/ ) {     # If we see a valid short option,
-            push @Opts, $_;            # then push item to @Opts
-            next;                      # and move on to next item.
-         }
-         if ( /^--(?!-)$d+$/ ) {    # If we see a valid long option,
-            push @Opts, $_;            # then push item to @Opts
-            next;                      # and move on to next item.
-         }
-      }
-      push @Args, $_; # If we get to here, then the current command-line item must be construed as an
-      next;           # "argument" rather than as an option, so push it it @Args and move on to next item.
+   my $end = 0;              # end-of-options flag
+   my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
+   my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
+   for ( @ARGV ) {           # For each element of @ARGV:
+      !$end                  # If we have not yet reached end-of-options,
+      && /^--$/              # and we see an "--" option,
+      and $end = 1           # set the "end-of-options" flag
+      and push @Opts, '--'   # and push "--" to @Opts
+      and next;              # and skip to next element of @ARGV.
+      !$end                  # If we have not yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we see a valid short option
+      ||  /^--(?!-)$d+$/ )   # or a valid long option,
+      and push @Opts, $_     # then push item to @Opts
+      and next;              # and skip to next element of @ARGV.
+      push @Args, $_;        # If we get to here, push item to @Args.
    }
 
    # Process options:
    for ( @Opts ) {
       /^-$s*h/ || /^--help$/    and $Help    =  1  ;
       /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default.
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
@@ -174,13 +197,10 @@ sub argv {
    # Get number of arguments:
    my $NA = scalar(@Args);
 
-   # If user typed more than 2 arguments, and we're not debugging or getting help,
-   # then print error and help messages and exit:
-   if ( $NA > 2                  # If number of arguments > 2
-        && !$Debug && !$Help ) { # and we're not debugging and not getting help,
-      error($NA);                # print error message,
-      help;                      # and print help message,
-      exit 666;                  # and exit, returning The Number Of The Beast.
+   # If user typed more than 2 arguments, warn that extra arguments will be ignored:
+   if ( $NA > 2 ) {
+      warn "\nWarning: All arguments after the first 2 will be ignored;\n"
+          ."use a -h or --help option to get help.\n";
    }
 
    # First argument, if present, is a file-selection regexp:
@@ -197,6 +217,7 @@ sub argv {
    return 1;
 } # end sub argv
 
+# Process current directory:
 sub curdire {
    # Increment directory counter:
    ++$direcount;
@@ -204,15 +225,13 @@ sub curdire {
    # Get current working directory:
    my $cwd = cwd;
 
-   # If being very verbose, announce cwd:
-   if ( $Verbose >= 2 ) {
-      say "\nDirectory # $direcount: $cwd\n";
-   }
+   # If being verbose, announce cwd:
+   say "\nDirectory # $direcount: $cwd\n" if $Verbose >= 2;
 
-   # Get list of file-info packets in $cwd matching $Target and $RegExp:
+   # Get list of file names $cwd matching $Target, $RegExp, and $Predicate:
    my @names = sort {$a cmp $b} readdir_regexp_utf8($cwd, $Target, $RegExp, $Predicate);
 
-   # Iterate through $curdirfiles and send each file to curfile():
+   # Iterate through $names and send each name to curfile():
    foreach my $name (@names) {curfile($cwd, $name)}
 
    # Return success code 1 to caller:
@@ -223,73 +242,121 @@ sub curdire {
 sub curfile ($cwd, $name) {
    # Increment file counter:
    ++$filecount;
-   # Print paths of all files with names containing at least one CJK (Chinese, Japanese, or Korean) character:
+   # If $name contains at least one CJK (Chinese, Japanese, or Korean) character,
+   # increment counter and print path:
    if ( $name =~ m/\p{Block: CJK}/ ) {
-      ++$findcount; # Count of all files which also match both regexps.
+      ++$cjklcount;
       say path($cwd, $name);
    }
    return 1;
 } # end sub curfile
 
+# Print stats:
 sub stats {
-   if ( $Verbose >= 1 ) {
-      warn "\n";
-      warn "Statistics for running program \"$pname\"\n"
-          ."on directory tree descending from \"$OriDir\":\n"
-          ."Navigated $direcount directories.\n"
-          ."Processed $filecount files.\n"
-          ."Found $findcount files with names containing CJK characters.\n";
-   }
+   warn "\nStatistics for running program \"$pname\"\n"
+       ."on directory tree descending from \"$OriDir\":\n"
+       ."Navigated $direcount directories.\n"
+       ."Processed $filecount files.\n"
+       ."Found $cjklcount files with names containing CJK ideograms.\n";
    return 1;
 } # end sub stats
 
-sub error ($NA) {
-   print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
+# Print help:
+sub help {
+   print ((<<"   END_OF_HELP") =~ s/^   //gmr);
 
-   Error: you typed $NA arguments, but this program takes at most 1 argument,
-   which, if present, must be a Perl-Compliant Regular Expression specifying
-   which directory entries to process. Help follows:
-   END_OF_ERROR
-   return 1;
-} # end sub error
+   -------------------------------------------------------------------------------
+   Introduction:
 
-sub help
-{
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
-
-   Welcome to "find-cjk-file-names.pl". This program finds all files
+   Welcome to "$pname". This program finds all files
    in the current directory (and all subdirectories if a -r or --recurse
    option is used) which have names containing Chinese, Japanese, or
    Korean ideographic characters belonging to the "CJK" Unicode block,
    and prints their fully-qualified paths.
 
+   -------------------------------------------------------------------------------
    Command lines:
-   find-cjk-file-names.pl -h | --help            (to print help)
-   find-cjk-file-names.pl [options] [arguments]  (to find files)
 
-   Description of options:
-   Option:                      Meaning:
-   "-h" or "--help"             Print help and exit.
-   "-r" or "--recurse"          Recurse subdirectories.
-   "-f" or "--target=files"     Target files only.
-   "-d" or "--target=dirs"      Target directories only.
-   "-b" or "--target=both"      Target both files and directories.
-   "-a" or "--target=all"       Target all (files, directories, symlinks, etc).
-   "-v" or "--verbose"          Print lots of extra statistics.
+   $pname  -h | --help            (to print help)
+   $pname  [options] [arguments]  (to find files)
 
-   Description of arguments:
-   In addition to options, this program can take one optional argument which, if
-   present, must be a Perl-Compliant Regular Expression specifying which items to
-   process. To specify multiple patterns, use the | alternation operator.
-   To apply pattern modifier letters, use an Extended RegExp Sequence.
-   For example, if you want to search for items with names containing "cat",
-   "dog", or "horse", title-cased or not, you could use this regexp:
-   '(?i:c)at|(?i:d)og|(?i:h)orse'
+   -------------------------------------------------------------------------------
+   Description of Options:
+
+   Option:            Meaning:
+   -h or --help       Print help and exit.
+   -e or --debug      Print diagnostics.
+   -q or --quiet      Be quiet.                         (DEFAULT)
+   -t or --terse      Be terse.
+   -v or --verbose    Be verbose.
+   -l or --local      DON'T recurse subdirectories.     (DEFAULT)
+   -r or --recurse    DO    recurse subdirectories.
+   -f or --files      Target Files.
+   -d or --dirs       Target Directories.
+   -b or --both       Target Both.
+   -a or --all        Target All.                       (DEFAULT)
+         --           End of options (all further CL items are arguments).
+
+   Multiple single-letter options may be piled-up after a single hyphen.
+   For example, use -vr to verbosely and recursively process items.
+
+   If multiple conflicting separate options are given, latter overrides former.
+
+   If multiple conflicting single-letter options are piled after a single hyphen,
+   the precedence is the inverse of the options in the above table.
+
+   If you want to use an argument that looks like an option (say, you want to
+   search for files which contain "--recurse" as part of their name), use a "--"
+   option; that will force all command-line entries to its right to be considered
+   "arguments" rather than "options".
+
+   All options not listed above are ignored.
+
+   -------------------------------------------------------------------------------
+   Description of Arguments:
+
+   In addition to options, this program can take 1 or 2 optional arguments.
+
+   Arg1 (OPTIONAL), if present, must be a Perl-Compliant Regular Expression
+   specifying which file names to process. To specify multiple patterns, use the
+   | alternation operator. To apply pattern modifier letters, use an Extended
+   RegExp Sequence. For example, if you want to process items with names
+   containing "cat", "dog", or "horse", title-cased or not, you could use this
+   regexp: '(?i:c)at|(?i:d)og|(?i:h)orse'
    Be sure to enclose your regexp in 'single quotes', else BASH may replace it
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
 
-   Happy CJK file finding!
+   Arg2 (OPTIONAL), if present, must be a boolean predicate using Perl
+   file-test operators. The expression must be enclosed in parentheses (else
+   this program will confuse your file-test operators for options), and then
+   enclosed in single quotes (else the shell won't pass your expression to this
+   program intact). Here are some examples of valid and invalid predicate arguments:
+   '(-d && -l)'  # VALID:   Finds symbolic links to directories
+   '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
+   '(-b)'        # VALID:   Finds block special files
+   '(-c)'        # VALID:   Finds character special files
+   '(-S || -p)'  # VALID:   Finds sockets and pipes.  (S must be CAPITAL S   )
+    '-d && -l'   # INVALID: missing parentheses       (confuses program      )
+    (-d && -l)   # INVALID: missing quotes            (confuses shell        )
+     -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
+
+   Arguments and options may be freely mixed, but the arguments must appear in
+   the order Arg1, Arg2 (RegExp first, then File-Type Predicate); if you get them
+   backwards, they won't do what you want, as most predicates aren't valid regexps
+   and vice-versa.
+
+   NOTE: You can't "skip" Arg1 and go straight to Arg2 because your intended Arg2
+   would be construed as Arg1! But you can "bypass" Arg1 by using '.+' meaning
+   "some characters" which will match every file name.
+
+   Any arguments after the first 2 will be ignored.
+
+   WARNING: Do not try to use "--" as an argument! That will not work, as that is
+   this program's "end of options" indicator.
+
+   Happy file finding!
+
    Cheers,
    Robbie Hatley,
    programmer.

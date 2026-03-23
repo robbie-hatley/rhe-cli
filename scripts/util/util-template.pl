@@ -260,8 +260,6 @@ sub help    ; # Print help and exit.
       . "RegExp    = $RegExp    \n"
       . "Predicate = $Predicate \n";
 
-
-
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
    if ($Help) {
@@ -324,22 +322,22 @@ sub argv {
       ||  /^--(?!-)$d+$/ )   # or a valid long option,
       and push @Opts, $_     # then push item to @Opts
       and next;              # and skip to next element of @ARGV.
-      push @Args, $_;        # Otherwise, push item to @Args.
+      push @Args, $_;        # If we get to here, push item to @Args.
    }
 
    # Process options:
    for ( @Opts ) {
-      /^-$s*h/ || /^--help$/      and $Help    =  1  ;
-      /^-$s*e/ || /^--debug$/     and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/     and $Verbose =  0  ;
-      /^-$s*t/ || /^--terse$/     and $Verbose =  1  ; # Default.
-      /^-$s*v/ || /^--verbose$/   and $Verbose =  2  ;
-      /^-$s*l/ || /^--local$/     and $Recurse =  0  ; # Default.
-      /^-$s*r/ || /^--recurse$/   and $Recurse =  1  ;
-      /^-$s*f/ || /^--files$/     and $Target  = 'F' ;
-      /^-$s*d/ || /^--dirs$/      and $Target  = 'D' ;
-      /^-$s*b/ || /^--both$/      and $Target  = 'B' ;
-      /^-$s*a/ || /^--all$/       and $Target  = 'A' ; # Default.
+      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
+      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default.
+      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
+      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
+      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
+      /^-$s*f/ || /^--files$/   and $Target  = 'F' ;
+      /^-$s*d/ || /^--dirs$/    and $Target  = 'D' ;
+      /^-$s*b/ || /^--both$/    and $Target  = 'B' ;
+      /^-$s*a/ || /^--all$/     and $Target  = 'A' ; # Default.
    }
 
    # Get number of arguments:
@@ -354,8 +352,11 @@ sub argv {
    }
 
    # First argument, if present, is a file-selection regexp:
-   if ( $NA >= 1 ) {             # If number of arguments >= 1,
-      $RegExp = qr/$Args[0]/o;   # set $RegExp to $Args[0].
+   if ( $NA >= 1 ) {                 # If number of arguments >= 1,
+      eval {$RegExp = qr/$Args[0]/}; # try to set $RegExp to $Args[0];
+      if ($@) {                      # if that fails, print error message and abort program:
+         die "Error: Invalid file-selection regexp \"$Args[0]\".\n$@";
+      }
    }
 
    # Second argument, if present, is a file-selection predicate:
@@ -460,7 +461,7 @@ sub help {
    Description of Options:
 
    Option:            Meaning:
-   -h or --help       Print this help and exit.
+   -h or --help       Print help and exit.
    -e or --debug      Print diagnostics.
    -q or --quiet      Be quiet.
    -t or --terse      Be terse.                         (DEFAULT)
@@ -529,15 +530,8 @@ sub help {
    A number of arguments greater than 2 will cause this program to print an error
    message and abort.
 
-   A number of arguments less than 0 will likely rupture our spacetime manifold
-   and destroy everything. But if you DO somehow manage to use a negative number
-   of arguments without destroying the universe, please send me an email at
-   "Hatley.Software\@gmail.com", because I'd like to know how you did that!
-
-   But if you somehow manage to use a number of arguments which is an irrational
-   or complex number, please keep THAT to yourself. Some things would be better
-   for my sanity for me not to know. I don't want to find myself enthralled to
-   Cthulhu.
+   WARNING: Do not try to use "--" as an argument! That will not work, as that is
+   this program's "end of options" indicator.
 
    Happy item processing!
 

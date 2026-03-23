@@ -5,9 +5,12 @@
 # =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
 
 ##############################################################################################################
-# find-ideographic-names.pl
+# find-other-letter-names.pl
 #
-# Author: Robbie Hatley.
+# Finds files which have names containing "other" (unicameral or ideographic) letters, Perl Unicode Property
+# "\p{Lo}".
+#
+# Written by Robbie Hatley.
 #
 # Edit history:
 # Mon Mar 15, 2021: Wrote it.
@@ -21,6 +24,12 @@
 #                   Shortened width from 120 to 110. Put "-C63" in shebang.
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
+# Sun Mar 22, 2026: Changed name from "find-ideographic-names.pl" to "find-other-letter-names.pl" because
+#                   this script checks for presence of characters matching "\p{Lo}" ("other letters"), and
+#                   that property matches many syllabic, unicameral, non-ideographic letters, such as the
+#                   entire "Canadian Aboriginal" character set. Added variable "$OriDir". Changed "$ideocount"
+#                   to "$othlcount". Now uses local time for start and end times.
+#                   Fixed logic error in "argv" which was causing arguments to be skipped.
 ##############################################################################################################
 
 use v5.36;
@@ -31,10 +40,12 @@ use RH::Dir;
 
 # ======= VARIABLES: =========================================================================================
 
-# System Variables:
+# ------- System Variables: ----------------------------------------------------------------------------------
+
 $" = ', ' ; # Quoted-array element separator = ", ".
 
-# Global Variables:
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
 our    $pname;                                 # Declare program name.
 BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
 our    $cmpl_beg;                              # Declare compilation begin time.
@@ -42,24 +53,24 @@ BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
 our    $cmpl_end;                              # Declare compilation end   time.
 INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
-# Local variables:
+# ------- Local variables: -----------------------------------------------------------------------------------
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
 my @Opts      = ()        ; # options                   array     Options.
 my @Args      = ()        ; # arguments                 array     Arguments.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
 my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
-my $Verbose   = 0         ; # Be verbose?               bool      Shhhh!! Be quiet!!
+my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   All directory entries.
 my $RegExp    = qr/^.+$/s ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 
 # Counts of events in this program:
 my $direcount = 0 ; # Count of directories processed by curdire().
-my $filecount = 0 ; # Count of files matching target and regexp.
-my $predcount = 0 ; # Count of files also matching predicate.
-my $ideocount = 0; # Count of dir entries matching regexps.
+my $filecount = 0 ; # Count of files matching cwd, Target, RegExp, and Predicate.
+my $othlcount = 0; # Count of dir entries matching regexps.
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
@@ -67,7 +78,6 @@ sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
 sub curfile ; # Process current file.
 sub stats   ; # Print statistics.
-sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
@@ -75,14 +85,16 @@ sub help    ; # Print help and exit.
 { # begin main
    # Start execution timer:
    my $t0 = time;
+   my @s0 = localtime($t0);
 
    # Process @ARGV and set settings:
    argv;
 
    # Print program entry message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
-      say STDERR "\nNow entering program \"$pname\" at timestamp $t0.";
-      say STDERR '';
+      say    STDERR "\nNow entering program \"$pname\"";
+      printf STDERR "at %02d:%02d:%02d on %d/%d/%d.\n", $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
+      say    STDERR '';
    }
 
    # Also print compilation time if being verbose:
@@ -91,7 +103,7 @@ sub help    ; # Print help and exit.
       say STDERR '';
    }
 
-   # Print the values of all variables if debugging:
+   # Print the starting values of all non-counter variables if debugging:
    if ( 1 == $Debug ) {
       say STDERR "pname     = $pname";
       say STDERR "cmpl_beg  = $cmpl_beg";
@@ -110,16 +122,41 @@ sub help    ; # Print help and exit.
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
-   $Help and help or ($Recurse and RecurseDirs {curdire} or curdire) and stats;
+   if ($Help) {
+      help
+   }
+   else {
+      # If "$OriDir" is a real directory, perform the program's function:
+      if ( -e $OriDir && -d $OriDir ) {
+         $Debug and RH::Dir::rhd_debug('on');
+         if ($Recurse) {
+            my $mlor = RecurseDirs {curdire};
+            say "\nMaximum levels of recursion reached = $mlor" if $Verbose >= 1;
+         }
+         else {
+            curdire;
+         }
+         $Debug and RH::Dir::rhd_debug('off');
+         stats if $Verbose >= 1;
+      }
+      # Otherwise, just print an error message:
+      else { # Severe error!
+         say STDERR "Error in \"$pname\": \"original\" directory \"$OriDir\" does not exist!\n"
+         . "Skipping execution.\n"
+         . "$!";
+      }
+   }
 
    # Stop execution timer:
    my $t1 = time;
+   my @s1 = localtime($t1);
 
    # Print exit message if being terse or verbose:
    if ( 1 == $Verbose || 2 == $Verbose ) {
-      my $te = $t1 - $t0; my $ms = 1000 * $te;
+      my $ms = 1000 * ($t1 - $t0);
       say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\" at timestamp $t1.";
+      say    STDERR "Now exiting program \"$pname\"";
+      printf STDERR "at %02d:%02d:%02d on %d/%d/%d. ", $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
       printf STDERR "Execution time was %.3fms.", $ms;
    }
 
@@ -128,30 +165,33 @@ sub help    ; # Print help and exit.
 } # end main
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
+
 # Process @ARGV and set settings:
 sub argv {
-  # Get options and arguments:
+   # Get options and arguments:
    my $end = 0;              # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {           # For each element of @ARGV,
-      /^--$/ && !$end        # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1           # so if we see that, then set the "end-of-options" flag
-      and push @Opts, $_     # and push the "--" to @Opts
+   for ( @ARGV ) {           # For each element of @ARGV:
+      !$end                  # If we have not yet reached end-of-options,
+      && /^--$/              # and we see an "--" option,
+      and $end = 1           # set the "end-of-options" flag
+      and push @Opts, '--'   # and push "--" to @Opts
       and next;              # and skip to next element of @ARGV.
-      !$end                  # If we haven't yet reached end-of-options,
-      && ( /^-(?!-)$s+$/     # and if we get a valid short option
+      !$end                  # If we have not yet reached end-of-options,
+      && ( /^-(?!-)$s+$/     # and if we see a valid short option
       ||  /^--(?!-)$d+$/ )   # or a valid long option,
       and push @Opts, $_     # then push item to @Opts
-      or  push @Args, $_;    # else push item to @Args.
+      and next;              # and skip to next element of @ARGV.
+      push @Args, $_;        # If we get to here, push item to @Args.
    }
 
    # Process options:
    for ( @Opts ) {
       /^-$s*h/ || /^--help$/    and $Help    =  1  ;
       /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ; # Default.
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default.
       /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
@@ -164,12 +204,10 @@ sub argv {
    # Get number of arguments:
    my $NA = scalar(@Args);
 
-   # If user typed more than 2 arguments, and we're not debugging, print error and help messages and exit:
-   if ( $NA > 2                  # If number of arguments > 2
-        && !$Debug && !$Help ) { # and we're not debugging and not getting help,
-      error($NA);                # print error message,
-      help;                      # and print help message,
-      exit 666;                  # and exit, returning The Number Of The Beast.
+   # If user typed more than 2 arguments, warn that extra arguments will be ignored:
+   if ( $NA > 2 ) {
+      warn "\nWarning: All arguments after the first 2 will be ignored;\n"
+          ."use a -h or --help option to get help.\n";
    }
 
    # First argument, if present, is a file-selection regexp:
@@ -194,67 +232,60 @@ sub curdire {
    # Get current working directory:
    my $cwd = cwd;
 
-   # Announce current working directory if being verbose:
-   if ( 2 == $Verbose) {
-      say "\nDirectory # $direcount: $cwd\n";
-   }
+   # If being verbose, announce cwd:
+   say "\nDirectory # $direcount: $cwd\n" if $Verbose >= 2;
 
-   # Get list of file-info packets in $cwd matching $Target and $RegExp:
-   my @paths = glob_regexp_utf8($cwd, $Target, $RegExp);
+   # Get list of file names $cwd matching $Target, $RegExp, and $Predicate:
+   my @names = sort {$a cmp $b} readdir_regexp_utf8($cwd, $Target, $RegExp, $Predicate);
 
-   # Process each path that matches $RegExp, $Target, and $Predicate:
-   foreach my $path (@paths) {
-      ++$filecount;
-      local $_ = $path;
-      if (eval($Predicate)) {
-         ++$predcount;
-         curfile($path);
-      }
-   }
+   # Iterate through $names and send each name to curfile():
+   foreach my $name (@names) {curfile($cwd, $name)}
 
    # Return success code 1 to caller:
    return 1;
 } # end sub curdire
 
 # Process current file:
-sub curfile ($path) {
-   if ( get_name_from_path($path) =~ m/\p{Lo}/ ) {
-      ++$ideocount;
-      say $path;
+sub curfile ($cwd, $name) {
+   # Increment file counter:
+   ++$filecount;
+   # If $name contains at least one "other" (ideographic or unicameral) letter,
+   # increment counter and print path:
+   if ( $name =~ m/\p{Lo}/ ) {
+      ++$othlcount;
+      say path($cwd, $name);
    }
    return 1;
 } # end sub curfile
 
+# Print stats:
 sub stats {
-   warn "\nStatistics for this directory tree:\n";
-   warn "Navigated $direcount directories.\n";
-   warn "Processed $filecount files.\n";
-   warn "Found $ideocount paths with names containing \"other\" letters.\n";
+   warn "\nStatistics for running program \"$pname\"\n"
+       ."on directory tree descending from \"$OriDir\":\n"
+       ."Navigated $direcount directories.\n"
+       ."Processed $filecount files.\n"
+       ."Found $othlcount files with names containing \"other\" letters.\n";
    return 1;
 } # end sub stats
 
-sub error ($NA) {
-   print ((<<"   END_OF_ERROR") =~ s/^   //gmr);
-
-   Error: you typed $NA arguments, but this program takes at most 1 argument,
-   which, if present, must be a Perl-Compliant Regular Expression specifying
-   which directory entries to process.
-
-   Help follows.
-   END_OF_ERROR
-   return 1;
-} # end sub error
-
+# Print help:
 sub help {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
-   Welcome to "find-ideographic-file-names.pl". This program finds all files
-   in the current directory (and all subdirectories if a -r or --recurse
-   option is used) which have names containing ideographic characters,
-   and prints their whole paths.
+   print ((<<"   END_OF_HELP") =~ s/^   //gmr);
 
+   -------------------------------------------------------------------------------
+   Introduction:
+
+   Welcome to "$pname". This program finds all files
+   in the current directory (and all subdirectories if a -r or --recurse
+   option is used) which have names containing "other" (ideographic or unicameral)
+   letters, matching the Perl Unicode Properties descriptor "\p{Lo}",
+   and prints their fully-qualified paths.
+
+   -------------------------------------------------------------------------------
    Command lines:
-   find-ideographic-file-names.pl -h | --help            (to print help)
-   find-ideographic-file-names.pl [options] [arguments]  (to find files)
+
+   $pname  -h | --help            (to print help)
+   $pname  [options] [arguments]  (to find files)
 
    -------------------------------------------------------------------------------
    Description of Options:
@@ -276,10 +307,10 @@ sub help {
    Multiple single-letter options may be piled-up after a single hyphen.
    For example, use -vr to verbosely and recursively process items.
 
-   If two piled-together single-letter options conflict, the option
-   appearing lowest on the options chart above will prevail.
-   If two separate (not piled-together) options conflict, the right
-   overrides the left.
+   If multiple conflicting separate options are given, latter overrides former.
+
+   If multiple conflicting single-letter options are piled after a single hyphen,
+   the precedence is the inverse of the options in the above table.
 
    If you want to use an argument that looks like an option (say, you want to
    search for files which contain "--recurse" as part of their name), use a "--"
@@ -317,17 +348,21 @@ sub help {
     (-d && -l)   # INVALID: missing quotes            (confuses shell        )
      -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
 
-   (Exception: Technically, you can use an integer as a boolean, and it doesn't
-   need quotes or parentheses; but if you use an integer, any non-zero integer
-   will process all paths and 0 will process no paths, so this isn't very useful.)
-
    Arguments and options may be freely mixed, but the arguments must appear in
    the order Arg1, Arg2 (RegExp first, then File-Type Predicate); if you get them
    backwards, they won't do what you want, as most predicates aren't valid regexps
    and vice-versa.
 
-   A number of arguments greater than 2 will cause this program to print an error
-   message and abort.
+   NOTE: You can't "skip" Arg1 and go straight to Arg2 because your intended Arg2
+   would be construed as Arg1! But you can "bypass" Arg1 by using '.+' meaning
+   "some characters" which will match every file name.
+
+   Any arguments after the first 2 will be ignored.
+
+   WARNING: Do not try to use "--" as an argument! That will not work, as that is
+   this program's "end of options" indicator.
+
+   Happy file finding!
 
    Cheers,
    Robbie Hatley,

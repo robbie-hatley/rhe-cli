@@ -1,5 +1,0 @@
-Pentagonal number #1020: 1560090
-Pentagonal number #2167: 7042750
-Sum = pentagonal number #2395 = 8602840
-Difference = pentagonal number #1912 = 5482660
-Elapsed time = 7.339728 seconds

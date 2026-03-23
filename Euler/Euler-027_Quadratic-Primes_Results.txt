@@ -1,4 +1,0 @@
-Longest run length = 71
-a = -61
-b = 971
-ab = -59231

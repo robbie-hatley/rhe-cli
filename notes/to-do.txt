@@ -1,6 +1,0 @@
-To-Do:
-
-Re-test these:
-cleanup-fb-block-list
-cleanup-fb-friends-list
-

@@ -42,10 +42,10 @@ sub help {
    return 1;
 } # end sub help ()
 
+for (@ARGV) {/^-h$/ || /^--help$/ and help and exit(777)}
+
 my @chars;
 my %Ab;
-
-for (@ARGV) {/^-h$/ || /^--help$/ and help and exit(777)}
 
 while (<>) {
    @chars = ();                                   # Clear the @chars array for receiving data.
