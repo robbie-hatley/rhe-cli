@@ -4,8 +4,11 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
-Solution in Perl for The Weekly Challenge 366-1,
-written by Robbie Hatley on Mon Mar 23, 2026.
+Solution in Perl for The Weekly Challenge 366-1.
+Written by Robbie Hatley.
+Edit history:
+   Mon Mar 23, 2026: Wrote it.
+   Tue Mar 24, 2026: Edited it.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
@@ -67,8 +70,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    # Count those words in an array of words
    # which are prefixes of a given word:
-   sub count_prefixes($ᔳ){
-      grep{$ᔳ->[1]=~/^$_/}@{$ᔳ->[0]}
+   sub count_prefixes( $喜 ){
+      grep{$喜->[1]=~/^$_/}@{$喜->[0]}
    }
 
 # ------------------------------------------------------------------------------------------------------------

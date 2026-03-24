@@ -4,8 +4,11 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
-Solution in Perl for The Weekly Challenge 366-2,
-written by Robbie Hatley on Mon Mar 23, 2026.
+Solution in Perl for The Weekly Challenge 366-2.
+Written by Robbie Hatley.
+Edit history:
+   Mon Mar 23, 2026: Wrote it.
+   Tue Mar 24, 2026: Edited it.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
@@ -48,7 +51,7 @@ IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
 single-quoted array of double-quoted 24h time strings with "?" wildcards, in proper Perl syntax, like so:
 
-./ch-2.pl '("12:??", "rambler", "2?:4?", "3?:27", "?4:?4")'
+./ch-2.pl '("Rambler", "3?:27", "12:??", "2?:4?", "?4:?4", "?2:?8", "2?:3?")'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -64,6 +67,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    sub valid_string ( $s ) {
       return 1 if $s =~ m/^[0-1?][0-9?]:[0-5?][0-9?]$/;
       return 1 if $s =~ m/^  2   [0-3?]:[0-5?][0-9?]$/x;
+      say "Warning: \"$s\" is not a valid time string.";
       return 0;
    }
 
