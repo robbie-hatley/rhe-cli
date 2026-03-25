@@ -455,7 +455,7 @@ sub help {
    Command lines:
 
    $pname  -h | --help                      (to print this help and exit)
-   $pname  [options] [Arg1] [Arg2] [Arg3]   (to [perform funciton] )
+   $pname  [options] [Arg1] [Arg2] [Arg3]   (to [perform function] )
 
    -------------------------------------------------------------------------------
    Description of Options:
@@ -492,7 +492,7 @@ sub help {
    -------------------------------------------------------------------------------
    Description of Arguments:
 
-   In addition to options, this program can take 1 or 2 optional arguments.
+   In addition to options, this program can take 0, 1, or 2 optional arguments.
 
    Arg1 (OPTIONAL), if present, must be a Perl-Compliant Regular Expression
    specifying which file names to process. To specify multiple patterns, use the
@@ -504,11 +504,23 @@ sub help {
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
 
-   Arg2 (OPTIONAL), if present, must be a boolean predicate using Perl
-   file-test operators. The expression must be enclosed in parentheses (else
-   this program will confuse your file-test operators for options), and then
-   enclosed in single quotes (else the shell won't pass your expression to this
-   program intact). Here are some examples of valid and invalid predicate arguments:
+   Arg2 (OPTIONAL), if present, will be executed as Perl code once for each file
+   processed, with \$_ set to that file's path. The return value of that code
+   will be construed as a boolean predicate, with "true" meaning "process this
+   file" and "false" meaning "skip this file".
+
+   Thus, by using an expression containing Perl file test operators without
+   argument, you can specify a subset of directory entries for processing.
+
+   Warning: because Arg2 will be executed as Perl code, make sure that that code
+   does exactly what you want, else an unintended (and possibly destructive)
+   outcome may result.
+
+   The expression in Arg2 must be enclosed in parentheses (else this program will
+   confuse your file-test operators for options), and then enclosed in single
+   quotes (else the shell won't pass your expression to this program intact).
+
+   Here are some examples of valid and invalid predicate arguments:
    '(-d && -l)'  # VALID:   Finds symbolic links to directories
    '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
    '(-b)'        # VALID:   Finds block special files
@@ -530,7 +542,7 @@ sub help {
    A number of arguments greater than 2 will cause this program to print an error
    message and abort.
 
-   WARNING: Do not try to use "--" as an argument! That will not work, as that is
+   Warning: Do not try to use "--" as an argument! That will not work, as that is
    this program's "end of options" indicator.
 
    Happy item processing!
