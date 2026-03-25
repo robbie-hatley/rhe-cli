@@ -525,10 +525,10 @@ sub help {
    '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
    '(-b)'        # VALID:   Finds block special files
    '(-c)'        # VALID:   Finds character special files
-   '(-S || -p)'  # VALID:   Finds sockets and pipes.  (S must be CAPITAL S   )
-    '-d && -l'   # INVALID: missing parentheses       (confuses program      )
-    (-d && -l)   # INVALID: missing quotes            (confuses shell        )
-     -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
+   '(-S || -p)'  # VALID:   Finds sockets and pipes.  (S must be CAPITAL S     )
+    '-d && -l'   # INVALID: missing parentheses       (confuses program        )
+    (-d && -l)   # INVALID: missing quotes            (confuses shell          )
+     -d && -l    # INVALID: missing parens AND quotes (confuses program & shell)
 
    Arguments and options may be freely mixed, but the arguments must appear in
    the order Arg1, Arg2 (RegExp first, then File-Type Predicate); if you get them

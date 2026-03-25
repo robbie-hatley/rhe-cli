@@ -38,6 +38,11 @@ sub tree_stats ;
 sub error      ;
 sub help       ;
 
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+
 # ======= LEXICAL VARIABLES: =================================================================================
 
 # Settings:
@@ -79,7 +84,6 @@ my @deadpaths = ();
 {
    # Set time and program variables:
    my $t0 = time;
-   my $pname = substr $0, 1 + rindex $0, '/';
 
    # Process @ARGV:
    argv;
@@ -296,12 +300,12 @@ sub error ($NA) {
 } # end sub error
 
 sub help {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print ((<<"   END_OF_HELP") =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "dir-stats.pl", Robbie Hatley's nifty directory statistics
+   Welcome to "$pname", Robbie Hatley's nifty directory statistics
    printing program. This program prints stats on all of the objects in the
    current directory (and all subdirectories if a -r or --recurse option
    is used).
@@ -309,8 +313,8 @@ sub help {
    -------------------------------------------------------------------------------
    Command lines:
 
-   dir-stats.pl -h | --help                       (to print this help and exit)
-   dir-stats.pl [options] [Arg1] [Arg2] [Arg3]    (to print directory statistics)
+   $pname -h | --help                       (to print this help and exit)
+   $pname [options] [Arg1] [Arg2] [Arg3]    (to print directory statistics)
 
    -------------------------------------------------------------------------------
    Description of options:
@@ -341,9 +345,9 @@ sub help {
    All options not listed above are ignored.
 
    -------------------------------------------------------------------------------
-   Description of arguments:
+   Description of Arguments:
 
-   This program can take 0, 1, or 2 arguments.
+   In addition to options, this program can take 0, 1, or 2 optional arguments.
 
    Arg1 (OPTIONAL), if present, must be a Perl-Compliant Regular Expression
    specifying which file names to process. To specify multiple patterns, use the
@@ -355,23 +359,31 @@ sub help {
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
 
-   Arg2 (OPTIONAL), if present, must be a boolean predicate using Perl
-   file-test operators. The expression must be enclosed in parentheses (else
-   this program will confuse your file-test operators for options), and then
-   enclosed in single quotes (else the shell won't pass your expression to this
-   program intact). If this argument is used, it overrides "--files", "--dirs",
-   or "--both", and sets target to "--all" in order to avoid conflicts with
-   the predicate.
+   Arg2 (OPTIONAL), if present, will be executed as Perl code once for each file
+   processed, with \$_ set to that file's path. The return value of that code
+   will be construed as a boolean predicate, with "true" meaning "process this
+   file" and "false" meaning "skip this file".
+
+   Thus, by using an expression containing Perl file test operators without
+   argument, you can specify a subset of directory entries for processing.
+
+   Warning: because Arg2 will be executed as Perl code, make sure that that code
+   does exactly what you want, else an unintended (and possibly destructive)
+   outcome may result.
+
+   The expression in Arg2 must be enclosed in parentheses (else this program will
+   confuse your file-test operators for options), and then enclosed in single
+   quotes (else the shell won't pass your expression to this program intact).
 
    Here are some examples of valid and invalid predicate arguments:
    '(-d && -l)'  # VALID:   Finds symbolic links to directories
    '(-l && !-d)' # VALID:   Finds symbolic links to non-directories
    '(-b)'        # VALID:   Finds block special files
    '(-c)'        # VALID:   Finds character special files
-   '(-S || -p)'  # VALID:   Finds sockets and pipes.  (S must be CAPITAL S   )
-    '-d && -l'   # INVALID: missing parentheses       (confuses program      )
-    (-d && -l)   # INVALID: missing quotes            (confuses shell        )
-     -d && -l    # INVALID: missing parens AND quotes (confuses prgrm & shell)
+   '(-S || -p)'  # VALID:   Finds sockets and pipes.  (S must be CAPITAL S     )
+    '-d && -l'   # INVALID: missing parentheses       (confuses program        )
+    (-d && -l)   # INVALID: missing quotes            (confuses shell          )
+     -d && -l    # INVALID: missing parens AND quotes (confuses program & shell)
 
    Arguments and options may be freely mixed, but the arguments must appear in
    the order Arg1, Arg2 (RegExp first, then File-Type Predicate); if you get them
