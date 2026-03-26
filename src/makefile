@@ -1,7 +1,3 @@
-# Main Make File
-# Note: Only automatically make frequenly-used categories.
-# Don't automatically make humor, jive, libname, problematic, test, or Windows,
-# as those require manual intervention.
 .PHONY: a b
 a : b
 	$(MAKE) -C librh

@@ -1,4 +1,0 @@
-This folder (Cygwin path "/d/rhe/src", Windows path "D:\rhe\src", Linux path "/d/rhe/src")
-is for the source code for command-line-interface ("CLI") programs of my own design,
-written in C and C++ for the Cygwin environment. The corresponding executables 
-are located in the "/rhe2/bin*" directories.
