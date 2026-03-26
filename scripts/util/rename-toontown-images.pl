@@ -53,21 +53,22 @@ use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
 
-# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
-
-sub argv;
-sub curdire;
-sub curfile;
-sub stats;
-sub help;
-
 # ======= VARIABLES: =========================================================================================
 
-# Debug?
+# ------- System Variables: ----------------------------------------------------------------------------------
+
+$" = ', ' ; # Quoted-array element separator = ", ".
+
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+
+# ------- Local variables: -----------------------------------------------------------------------------------
 
 # Settings:
 my $Db        = 0; # Print diagnostics and exit?
-my $Verbose   = 0; # Print stats?
+my $Verbose   = 1; # Quiet, terse, or verbose? (Default is terse.)
 my $Recurse   = 0; # Recurse subdirectories?
 my $RE =
 qr/^(?:tt(?:r|o)-)?screenshot(?:-_[^_]+_)?-\pL{3}-\pL{3}-\d{2}-\d{2}-\d{2}-\d{2}-\d{4}-\d+\.(?:jpg|png)$/;
@@ -99,30 +100,57 @@ my %Months =
    Dec => '12',
 );
 
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
+
+sub argv;
+sub curdire;
+sub curfile;
+sub stats;
+sub help;
+
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
+   # Start execution timer:
    my $t0 = time;
-   argv;
-   my $pname = get_name_from_path($0);
+   my @s0 = localtime($t0);
+
+   # Print program entry message if being terse or verbose:
    if ( $Verbose >= 1 ) {
+      printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                    $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
+   }
+
+   argv;
+
+   # Print settings if debugging or being verbose:
+   if ( $Db >= 1 || $Verbose >= 2 ) {
       say STDERR '';
-      say STDERR "Now entering program \"$pname\".";
       say STDERR "\$Db        = $Db      ";
       say STDERR "\$Verbose   = $Verbose ";
       say STDERR "\$Recurse   = $Recurse ";
       say STDERR "\$RE        = $RE  ";
    }
 
+   # Rename Toontown images:
    $Recurse and RecurseDirs {curdire} or curdire;
 
+   #Print stats:
    stats;
-   my $et = time - $t0;
+
+   # Stop execution timer:
+   my $t1 = time;
+   my @s1 = localtime($t1);
+
+   # Print exit message if being terse or verbose:
    if ( $Verbose >= 1 ) {
-      say    STDERR '';
-      say    STDERR "Now exiting program \"$pname\".";
-      printf STDERR "Execution time was %.3f seconds.\n", $et;
+      my $te = $t1 - $t0; my $ms = 1000 * $te;
+      printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                    $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
+      printf STDERR "Execution time was %.3fms.\n", $ms;
    }
+
+   # Exit program, returning success code "0" to caller:
    exit 0;
 } # end main
 
@@ -145,8 +173,9 @@ sub argv {
    for ( @opts ) {
       /^-$s*h/ || /^--help$/     and help and exit 777 ;
       /^-$s*e/ || /^--debug$/    and $Db      =  1     ;
-      /^-$s*q/ || /^--quiet$/    and $Verbose =  0     ; # DEFAULT
-      /^-$s*v/ || /^--verbose$/  and $Verbose =  1     ;
+      /^-$s*q/ || /^--quiet$/    and $Verbose =  0     ;
+      /^-$s*t/ || /^--terse$/    and $Verbose =  1     ; # DEFAULT
+      /^-$s*v/ || /^--verbose$/  and $Verbose =  2     ;
       /^-$s*l/ || /^--local$/    and $Recurse =  0     ; # DEFAULT
       /^-$s*r/ || /^--recurse$/  and $Recurse =  1     ;
    }

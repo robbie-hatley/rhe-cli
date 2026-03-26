@@ -11,8 +11,8 @@
 # root. Optionally, this program can be instructed to NOT move any files for which duplicates exist in the
 # destination, and/or change the name of the file to its own SHA1 hash.
 #
-# NOTE: You must have Perl and my RH::Dir module installed in order to use this script. Contact Robbie Hatley
-# at <lonewolf@well.com> and I'll send my RH::Dir module to you.
+# NOTE: You must have Perl and my RH::Dir module installed in order to use this script.
+# My "RH::" modules are available at "https://github.com/robbie-hatley/rhe-cli/tree/main/modules/RH".
 #
 # Edit history:
 # Sat Jan 02, 2021: Wrote it.
@@ -36,29 +36,45 @@ use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
 
+# ======= VARIABLES: =========================================================================================
+
+# ------- System Variables: ----------------------------------------------------------------------------------
+
+$" = ', ' ; # Quoted-array element separator = ", ".
+
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+
+# ------- Local variables: -----------------------------------------------------------------------------------
+
+# Settings:
+my $db        =  0 ; # Use debugging? (Ie, print diagnostics?)
+my $src       = '' ; # Srce directory.
+my $dst       = '' ; # Dest directory.
+my $cur       = '' ; # Curr directory.
+my @MoveArgs  = () ; # Arguments for move_files().
+
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
 sub argv  ;
 sub error ;
 sub help  ;
 
-# ======= PAGE-GLOBAL LEXICAL VARIABLES: =====================================================================
-
-# Debugging:
-my $db = 0; # Use debugging? (Ie, print diagnostics?)
-
-# Settings:
-my $src       = ''; # Srce directory.
-my $dst       = ''; # Dest directory.
-my $cur       = ''; # Curr directory.
-my @MoveArgs  = (); # Arguments for move_files().
-
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   say "\nNow entering program \"" . get_name_from_path($0) . "\".\n";
+   # Start execution timer:
    my $t0 = time;
+   my @s0 = localtime($t0);
+
+   # Print program entry messagwL
+   printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
+                 $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
+
    argv;
+
    if ($db)
    {
       warn "In main body of program \"move-files.pl\"\n",
@@ -88,9 +104,17 @@ my @MoveArgs  = (); # Arguments for move_files().
    # Move files:
    move_files($src, $dst, @MoveArgs);
 
-   # We're done, so exit:
-   my $t1 = time; my $te = $t1 - $t0;
-   say "\nNow exiting program \"" . get_name_from_path($0) . "\". Execution time was $te seconds.\n";
+   # Stop execution timer:
+   my $t1 = time;
+   my @s1 = localtime($t1);
+
+   # Print exit message:
+   my $te = $t1 - $t0; my $ms = 1000 * $te;
+   printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
+                 $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
+   printf STDERR "Execution time was %.3fms.\n", $ms;
+
+   # Exit program, returning success code "0" to caller:
    exit 0;
 } # end main
 

@@ -1,1 +1,0 @@
-$s = q(print qq(\$s = q($s);eval \$s;));eval $s;

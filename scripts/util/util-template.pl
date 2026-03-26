@@ -190,8 +190,6 @@ my $Target    = 'A'       ; # Target                    F|D|B|A   Target all dir
 my $RegExp    = qr/^.+$/s ; # Regular expression.       regexp    Process all file names.
 my $Predicate = 1         ; # Boolean predicate.        bool      Process all file types.
 
-
-
 # Counters:
 my $direcount = 0         ; # Count of directories processed by curdire().
 my $filecount = 0         ; # Count of files matching target, regexp, and predicate.
@@ -216,9 +214,6 @@ sub help    ; # Print help and exit.
    my $t0 = time;
    my @s0 = localtime($t0);
 
-   # Process @ARGV and set settings:
-   argv;
-
    # Print program entry message if being terse or verbose:
    if ( $Verbose >= 1 ) {
       printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
@@ -230,6 +225,9 @@ sub help    ; # Print help and exit.
       printf STDERR "Compilation time was %.3fms\n\n",
                     1000 * ($cmpl_end - $cmpl_beg);
    }
+
+   # Process @ARGV and set settings:
+   argv;
 
    # Print basic settings if being terse or verbose:
    if ( $Verbose >= 1 ) {
