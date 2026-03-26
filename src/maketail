@@ -174,7 +174,7 @@ ifdef DEBUG
   CXE := -finput-charset=UTF-8 -fextended-identifiers -g -Og -std=gnu++23 -fsanitize=address
 else
   CCE := -finput-charset=UTF-8 -fextended-identifiers -s -Ofast -std=gnu23
-  CXE := -finput-charset=UTF-8 -fextended-identifiers -s -O2 -std=gnu++23
+  CXE := -finput-charset=UTF-8 -fextended-identifiers -s -O2    -std=gnu++23
 endif
 
 # C & C++ Library compilation flags (DON'T strip symbol table, compile to object, DON'T link):

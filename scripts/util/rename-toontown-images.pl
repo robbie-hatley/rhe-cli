@@ -199,25 +199,24 @@ sub curdire {
    say "Directory # $direcount: $curdir";
    say '';
 
-   # Get list of Regular files matching $RE (ie, old-format Toontown screenshots) in current directory:
-   my $curdirfiles = GetFiles($curdir, 'F', $RE);
+   # Get paths of Regular files matching $RE (ie, old-format Toontown screenshots) in current directory:
+   my @paths = glob_regexp_utf8($curdir, 'F', $RE, 1);
 
    # Send each file to curfile:
-   foreach my $file (@$curdirfiles) {curfile($file)}
+   foreach my $path (@paths) {curfile($path)}
 
    return 1;
 } # end sub curdire
 
-sub curfile ($file) {
+sub curfile ($path) {
    # Increment file counter:
    ++$filecount;
 
-   my $path = $file->{Path};
    my $dir  = get_dir_from_path($path);
-   my $name = $file->{Name};
+   my $name = get_name_from_path($path);
    my $pref = denumerate_file_name(get_prefix($name));
    my $suff = get_suffix($name);
-   my $n;
+   my $n    = 0;
 
    # Get parts from prefix. This is tough, because we can't just split on "-", because any annotation may have
    # hyphens in it. And we can't do varible-width look-behinds. But we can look for hyphens with either 0 or 2

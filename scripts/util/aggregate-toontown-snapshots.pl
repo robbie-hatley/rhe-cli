@@ -213,7 +213,7 @@ sub aggregate {
    # Rename Toontown screenshot files as necessary:
    say STDOUT '';
    say STDOUT 'Now canonicalizing names of Toontown screenshots....';
-   system('rename-toontown-images.pl -v');
+   system('rename-toontown-images.pl -t');
 
    # Get ref to FRESH list of file-info hashes for all jpg and png files in screenshots directory
    # (NOTE: all the names will have changed, so we can't re-use old list):
