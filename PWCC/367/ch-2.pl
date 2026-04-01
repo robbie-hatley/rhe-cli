@@ -14,7 +14,12 @@ Submitted by: Mohammad Sajid Anwar
 You are given two events start and end time. Write a script to
 find out if there is a conflict between the two events.
 A conflict happens when two events have some non-empty
-intersection.
+intersection. [Comment by Robbie Hatley: This task is ambiguous
+because no dates are given. Example 5 is especially ambiguous
+because it can be interpreted in two equally-valid ways (see
+my notes below). So to disambiguate, I'll assume that if event2
+has a start time before that of event1, then event2's times are
+intended to mean the next day.]
 
 Example 1
 Input: @event1 = ("10:00", "12:00")
@@ -43,25 +48,32 @@ Output: false
 There is a 1-minute gap from "09:00" to "09:01".
 
 Example 5
-
 Input: @event1 = ("23:30", "00:30")
        @event2 = ("00:00", "01:00")
-Output: true
-They overlap from "00:00" to "00:30".
+Output: false? true? (Ambiguous.)
+The Weekly Challenge web site says "true", but that is wrong,
+because it assumes, without reason to so do, that the event2
+times are the next day. Without that unwarranted assumption,
+there is no overlap. To indicate the next day, the event2
+times would need to be ("24:00", "25:00").
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
 Given Event E1 as a reference, the outcome will depend on the beginning and end of event E2.
+
 If E2beg is before E1beg, conflict iff E2end is > E1beg.
 If E2beg is during E1, conflit.
 If E2beg is after  E1, no conflict.
 
+However, keep in-mind that this task is ambiguous, because no date is associated with any of the times. Example 5 is especially ambiguous because there are two equally valid ways of interpreting it: One can assume that event2's times are both the next day (in which case, there is a conflict), or the same day (in which case there is no conflict because event1 began 22.5 hours after event2 ended). To disambiguate, I'll assume that if event2 has a start time before that of event1, then event2's times are intended to mean the next day.
+
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of pairs of events, with each event being a pair of times (start, end), in proper Perl
+syntax, like so:
 
-./ch-2.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-2.pl '([["14:30", "17:50"], ["17:45", "19:20"]], [["14:30", "17:50"], ["14:45", "19:20"]])'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -75,11 +87,15 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    # Aggregate the belchers under the resinous swamps:
    sub events_conflict ( $pair_ref ) {
+      # Calculate Event1's times in minutes:
       my $E1 = $pair_ref->[0];
       my $E1_beg_str = $E1->[0];
       my $E1_end_str = $E1->[1];
       my $E1_beg = 60*substr($E1_beg_str, 0, 2) + substr($E1_beg_str, 3, 2);
       my $E1_end = 60*substr($E1_end_str, 0, 2) + substr($E1_end_str, 3, 2);
+
+      # If Event1 has "rolled over", add 1440 minutes to its end time:
+      if ($E1_beg > $E1_end) {$E1_end += 1440}
 
       my $E2 = $pair_ref->[1];
       my $E2_beg_str = $E2->[0];
@@ -87,36 +103,25 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       my $E2_beg = 60*substr($E2_beg_str, 0, 2) + substr($E2_beg_str, 3, 2);
       my $E2_end = 60*substr($E2_end_str, 0, 2) + substr($E2_end_str, 3, 2);
 
-      my $aflag   = '';
-      my $ret_val = '';
+      # If Event2 has "rolled over", add 1440 minutes to its end time:
       if ($E2_beg > $E2_end) {$E2_end += 1440}
-      # If E1's clock rolls-over at midnight, assume E2's times refer to
-      # the next day, and possibily spill into the next day after THAT as well;
-      # however, this is ambiguous, so also set the ambiguity flag:
-      if ($E1_beg > $E1_end) {
-         $E1_end += 1440;
-         $E2_beg += 1440;
-         $E2_end += 1440;
-         $aflag = ' (Ambiguous. Assumes E2\'s times refer to the next day.)';
-      }
 
+      # If Event2's start time is before Event1's start time, assume that
+      # Event2's times are intended to mean the next day so add 1440 minutes:
       if ($E2_beg < $E1_beg) {
-         if ($E2_end <= $E1_beg) {
-            $ret_val = 'false';
-         }
-         else {
-            $ret_val = 'true';
-         }
-      }
+         $E2_beg += 1440;
+         $E2_end += 1440}
+
+      # Determine if a conflict has occurred:
+      my $ret_val = '';
+      if ($E2_beg < $E1_beg) {
+         if   ($E2_end <= $E1_beg) {$ret_val = 'false'}
+         else                      {$ret_val = 'true' }}
       elsif ($E2_beg >= $E1_beg && $E2_beg < $E1_end) {
-         $ret_val = 'true';
-      }
+         $ret_val = 'true'}
       else {
-         $ret_val = 'false';
-      }
-      $ret_val .= $aflag;
-      return $ret_val;
-   }
+         $ret_val = 'false'}
+      return $ret_val}
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
@@ -145,7 +150,7 @@ my @arrays = @ARGV ? eval($ARGV[0]) :
    [
       ["23:30", "00:30"],
       ["00:00", "01:00"],
-   ],                     # true or false (ambiguous)
+   ],                     # true
 );
 
 # ------------------------------------------------------------------------------------------------------------

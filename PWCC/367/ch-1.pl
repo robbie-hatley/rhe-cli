@@ -46,9 +46,9 @@ max is '1'x($n-1) . '0'x$m . '1'.
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
-single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
+single-quoted array of double-quoted binary numbers, in proper Perl syntax, like so:
 
-./ch-1.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
+./ch-1.pl '("10101010", "00111100", "00001111")'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
