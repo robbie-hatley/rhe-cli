@@ -234,7 +234,7 @@ sub curfile ($path) {
       my $size   = 100_000 + int rand 900_000;
       my $buffer = '';
       for (1..$size) {
-         $buffer .= chr(int rand 255);
+         $buffer .= chr(int rand 256);
       }
       # Write garbage from buffer to file:
       my $fh = undef;
