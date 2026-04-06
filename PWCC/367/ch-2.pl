@@ -4,7 +4,7 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
-Solution in Perl for The Weekly Challenge ###-2,
+Solution in Perl for The Weekly Challenge 367-2,
 written by Robbie Hatley on Tue Mar 31, 2026.
 
 --------------------------------------------------------------------------------------------------------------
@@ -156,7 +156,14 @@ my @arrays = @ARGV ? eval($ARGV[0]) :
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 $"=', ';
+say "Note: if Event1 starts before Event2 in any case below,\n"
+   ."the times of Event2 are to be construed as being on the next day.";
 for my $aref (@arrays) {
    say '';
-   say events_conflict $aref;
+   my @E1 = @{$aref->[0]};
+   my @E2 = @{$aref->[1]};
+   say "Event1 is from $E1[0] to $E1[1]";
+   say "Event2 is from $E2[0] to $E2[1]";
+   my $conf = events_conflict $aref;
+   say "Conflict? $conf";
 }
