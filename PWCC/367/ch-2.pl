@@ -77,10 +77,10 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-   use v5.42;
+   use v5.36;
    use utf8::all;
 
-   # Aggregate the belchers under the resinous swamps:
+   # Are two events in conflict?
    sub events_conflict ( $pair_ref ) {
       # Calculate Event1's times in minutes:
       my $E1 = $pair_ref->[0];

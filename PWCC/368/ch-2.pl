@@ -71,11 +71,15 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use utf8::all;
    use List::Util 'uniq';
 
-   # Determine all prime factors of a positive integer n:
+   # Determine all prime factors
+   # of a positive integer $n:
    sub factor ($n) {
       my @factors;
       my $r = $n;
-      while ( 0 == $r % 2 ) {push @factors, 2;$r /= 2}
+      while ( 0 == $r % 2 ) {
+         push @factors, 2;
+         $r /= 2
+      }
       for (my $i = 3; $i * $i <= $r; $i += 2) {
          while ( 0 == $r % $i ) {
             push @factors, $i;$r /= $i}}
