@@ -51,11 +51,6 @@ Example 5
 Input: @event1 = ("23:30", "00:30")
        @event2 = ("00:00", "01:00")
 Output: false? true? (Ambiguous.)
-The Weekly Challenge web site says "true", but that is wrong,
-because it assumes, without reason to so do, that the event2
-times are the next day. Without that unwarranted assumption,
-there is no overlap. To indicate the next day, the event2
-times would need to be ("24:00", "25:00").
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
