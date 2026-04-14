@@ -11,11 +11,39 @@
 # Written by Robbie Hatley.
 #
 # Edit history:
-# Thu Mar 26, 2026: Wrote it, based heavily on "aggregate-toontown-screenshots.pl".
+# Thu Oct 29, 2020: Wrote it.
+# Sat Jan 02, 2021: Refactored to use my new "move-files.pl" script.
+# Sun Jan 03, 2021: Sub "move-file" in RH::Dir now uses system(mv), so cross-system moving actually does
+#                   work now. Also, simplified dir names, and now moving to 2021 instead of 2020.
+# Fri Jan 29, 2021: Now also renames and files-away screenshots in appropriate year/month directories.
+# Sat Feb 13, 2021: Simplified. Now an ASCII file. No-longer uses -CSDA. Runs on all Perl versions.
+# Sat Jul 31, 2021: File is now UTF-8, 120 characters wide. Now using "use utf8", "use Sys::Binmode", and "e".
+# Wed Oct 27, 2021: Added Help() function.
+# Sat Nov 20, 2021: Refreshed shebang, colophon, title card, and boilerplate. Now using "common::sense".
+# Thu Nov 25, 2021: Fixed regexp bug that was causing program to find no files. Added timestamping.
+# Fri Nov 26, 2021: Fixed yet another regexp bug (program was refusing to file files by date).
+# Thu Aug 17, 2023: Reduced width from 120 to 110. Upgraded from "V5.32" to "v5.36". Got rid of CPAN module
+#                   "common::sense" (antiquated). Got rid of prototypes. Program is very broken, though,
+#                   because it's trying to use directories which don't exist. TO-DO: Fix dirs.
+# Sat Aug 19, 2023: Fixed directories and returned full multi-platform functionality.
+# Thu Aug 24, 2023: Got rid of "/...|.../" in favor of "/.../ || /.../" (speeds-up program).
+# Fri Aug 25, 2023: Now calls "rename-toontown-images.pl" in "verbose" mode.
+#                   Now expressing execution time in seconds, to nearest millisecond.
+# Mon Aug 28, 2023: Changed all "$db" to "$Db". Now using "d getcwd" instead of "cwd_utf8".
+# Wed Aug 14, 2024: Removed unnecessary "use" statements.
+# Wed Feb 26, 2025: Trimmed one horizontal divider.
+# Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
+#                   Nixed all "d", "e", and now using "cwd" instead of "d getcwd".
+# Mon May 05, 2025: Reverted to using "#!/usr/bin/env -S perl -C63" shebang and "utf8" instead of "utf8::all"
+#                   and "Cwd" instead of "Cwd::utf8", for Cygwin compatibility. Fixed no-mk-yr-dir bug.
+# Fri Dec 26, 2025: Re-reverted to "#!/usr/bin/env perl", "use utf8::all", "use Cwd::utf8".
+#                   Moved from "core" to "util". Deleted "core".
+# Thu Mar 26, 2026: Split into two branches:
+#                   1. aggregate-corclash-screenshots.pl
+#                   2. aggregate-toontown-screenshots.pl
 # Fri Mar 27, 2026: Now renames files. Handled time zone ambiguity. To-do: file files by date.
 # Fri Mar 27, 2026: Now also files files by date. Program is essentially complete. Yeah! 🥳
-# Sat Mar 28, 2026: Renamed from "aggregate-corclash-snapshots.pl" to "aggregate-corclash-screenshots.pl".
-# Sat Mar 28, 2026: Changed "ATS" to "ACS". Fixed double program entry notice.
+# Sat Mar 28, 2026: Fixed double program entry notice.
 # Sun Mar 29, 2026: Made more concise: No-longer re-specifies directories with every move.
 # Sun Mar 29, 2026: Added and edited some comments.
 # Sun Mar 29, 2026: Fixed multiple bugs which were resulting in deletion of files. Removed "unlink".
@@ -33,6 +61,13 @@
 #                   Instead, I'm copying files from program_dir to screens_dir, and copying files from
 #                   screens_dir to date dirs. This leaves 3 copies of everything on-system, including on two
 #                   separate physical devices with two different backup schemes.
+# Fri Apr 10, 2026: Now MOVING photos from screens_dir to date_dir, but still leaving the originals in
+#                   program_dir for now.
+# Sat Apr 11, 2026: Split "aggregate" into "PHASE_1", "PHASE_2", and "PHASE_3". Moved current-directory checks
+#                   from breakpoints into main code. Simplified breakpoints. Reduced differences between the
+#                   two versions of this file. Now prints "program_dir" and "screens_dir" instead of
+#                   "$program_dir" and "$screens_dir". Now prints settings in main code (not Breakpoint 1).
+# Sun Apr 12, 2026: Now uses centralized pre-compiled REs for valid original and renamed screenshot names.
 ##############################################################################################################
 
 # ======= PRELIMINARIES: =====================================================================================
@@ -46,10 +81,6 @@ use POSIX 'tzset';
 
 # ======= VARIABLES: =========================================================================================
 
-# ------- System Variables: ----------------------------------------------------------------------------------
-
-$" = ', ' ; # Quoted-array element separator = ", ".
-
 # ------- Global Variables: ----------------------------------------------------------------------------------
 
 our    $pname;                                 # Declare program name.
@@ -62,11 +93,17 @@ my $Db          =     0     ; # Shall we debug? And if so, at what level? (0, 1,
 my $program_dir = 'not_set' ; # What is the first  program directory?
 my $screens_dir = 'not_set' ; # What is the screenshots directory?
 
+# Regular expressions:
+my $ttcc_original = qr/^corporateclash-screenshot-\d{10}\.png$/;
+my $ttcc_renamed  = qr/^ccl-screenshot_\d{4}-\d{2}-\d{2}-\pL{3}_\d{2}-\d{2}-\d{2}\.png$/;
+
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
 sub set_settings;  # Set settings.
-sub make_new_name; # Make a new name for a CCL screenshot file.
-sub aggregate;     # Aggregate Corporate-Clash screenshots.
+sub make_new_name; # Make a new name for a screenshot.
+sub PHASE_1;       # Copy to screens_dir/original and move to screens_dir.
+sub PHASE_2;       # Rename to time-and-date-based name.
+sub PHASE_3;       # File in year/month subdirectories of screens_dir.
 sub help;          # Print help.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
@@ -83,10 +120,12 @@ sub help;          # Print help.
    # Set settings:
    set_settings;
 
-   { # Aggregate Corporate-Clash screenshots:
+   { # Aggregate Toontown screenshots:
       local $ENV{TZ} = 'America/Los_Angeles';
       tzset();
-      aggregate;
+      PHASE_1;
+      PHASE_2;
+      PHASE_3;
    } # Local $ENV{TZ} goes out-of-scope here.
    tzset(); # Reset time zone back to previous value.
 
@@ -134,8 +173,8 @@ sub set_settings {
       elsif ( /^-2$/ || /^--debug2$/ )    {$Db = 2;}
       elsif ( /^-3$/ || /^--debug3$/ )    {$Db = 3;}
       elsif ( /^-4$/ || /^--debug4$/ )    {$Db = 4;}
-      elsif ( /^--program_dir\s*=\s*(.+)$/ ) {$program_dir = $1} # Over-rides ini file.
-      elsif ( /^--screens_dir\s*=\s*(.+)$/ ) {$screens_dir = $1} # Over-rides ini file.
+      elsif ( /^--program_dir=(.+)$/ ) {$program_dir = $1} # Over-rides ini file.
+      elsif ( /^--screens_dir=(.+)$/ ) {$screens_dir = $1} # Over-rides ini file.
    }
 
    # Abort program if $program_dir or $screens_dir is not set:
@@ -154,16 +193,17 @@ sub set_settings {
    $screens_dir =~ s/^'(.*)'$/$1/;
    $screens_dir =~ s/^"(.*)"$/$1/;
 
-   # Print $program_dir and $screens_dir to STDOUT:
+   # Print settings:
    say "program_dir = $program_dir";
    say "screens_dir = $screens_dir";
+   say "debug level = $Db";
 
-   # Make sure program_dir is non-empty, exists, and is a directory:
+   # Make sure program_dir has a non-empty-string name, exists, and is a directory:
    $program_dir =~ m/^$/ and die "Error: program directory name must not be an empty string; use \"--help\" to get help.\n";
    ! -e $program_dir     and die "Error: program directory does not exist; use \"--help\" to get help.\n";
    ! -d $program_dir     and die "Error: program directory is not a directory; use \"--help\" to get help.\n";
 
-   # Make sure screens_dir exists and is a directory:
+   # Make sure screens_dir has a non-empty-string name, exists, and is a directory:
    $screens_dir =~ m/^$/ and die "Error: screens directory name must not be an empty string; use \"--help\" to get help.\n";
    ! -e $screens_dir     and die "Error: screens directory does not exist; use \"--help\" to get help.\n";
    ! -d $screens_dir     and die "Error: screens directory is not a directory; use \"--help\" to get help.\n";
@@ -176,10 +216,15 @@ sub set_settings {
 sub make_new_name ( $old_name ) {
    # As of 2026, typical CCL screenshots are formatted like this:
    # corporateclash-screenshot-1774787469.png
-   # Capture fields; return '***ERROR***' if file doesn't match regexp:
-   return '***ERROR***' if $old_name !~ m/^corporateclash-screenshot-(\d{10})\.png$/;
+   # Print warning and return '***ERROR***' if file doesn't match regexp:
+   if ( $old_name !~ m/$ttcc_original/ ) {
+      warn "Warning: Old name does not match RE for valid original screenshot name.\n";
+      return '***ERROR***';
+   }
+
    # Make the fields we need for our new screenshot format:
-   my ($lt_sec, $lt_min, $lt_hou, $lt_dom, $lt_mon, $lt_year, $lt_dow, $lt_doy, $lt_dst) = localtime $1;
+   my $epoch = $old_name =~ s/^corporateclash-screenshot-(\d{10})\.png$/$1/r;
+   my ($lt_sec, $lt_min, $lt_hou, $lt_dom, $lt_mon, $lt_year, $lt_dow, $lt_doy, $lt_dst) = localtime $epoch;
    my $year = 1900+$lt_year;
    my $mnth = $lt_mon + 1;
    my $domn = $lt_dom;
@@ -187,91 +232,146 @@ sub make_new_name ( $old_name ) {
    my $hour = $lt_hou;
    my $minu = $lt_min;
    my $seco = $lt_sec;
-   # If any of these are now not defined or have wrong values, return '***ERROR***':
-   return '***ERROR***' if
-         !defined($year) || $year < 2000 || $year > 2999
-      || !defined($mnth) || $mnth <    1 || $mnth >   12
-      || !defined($domn) || $domn <    1 || $domn >   31
-      || !defined($dowk) || !($dowk =~ m/^\pL\pL\pL$/)
-      || !defined($hour) || $hour <    0 || $hour >   23
-      || !defined($minu) || $minu <    0 || $minu >   59
-      || !defined($seco) || $seco <    0 || $seco >   59;
+
+   # If any of these are now not defined or have wrong values, print warning and return '***ERROR***':
+   if (     !defined($year) || $year < 2000 || $year > 2999
+         || !defined($mnth) || $mnth <    1 || $mnth >   12
+         || !defined($domn) || $domn <    1 || $domn >   31
+         || !defined($dowk) || !($dowk =~ m/^\pL\pL\pL$/)
+         || !defined($hour) || $hour <    0 || $hour >   23
+         || !defined($minu) || $minu <    0 || $minu >   59
+         || !defined($seco) || $seco <    0 || $seco >   59 ) {
+      warn "Warning: Malformed field for new name.\n";
+      return '***ERROR***';
+   }
+
    # Create new name:
    sprintf("ccl-screenshot_%4d-%02d-%02d-%s_%02d-%02d-%02d.png", $year, $mnth, $domn, $dowk, $hour, $minu, $seco);
-}
+} # end sub make_new_name
 
-# Aggregate Corporate-Clash screenshots:
-sub aggregate {
+# =========================================================================================================
+# PHASE 1: Verify existence of "$program_dir" and "$screens_dir" directories, make "$screens_dir/original"
+# directory if it doesn't exist, then for each screenshot in "$program_dir", first copy it to "original"
+# then move it to "screens_dir":
+sub PHASE_1 {
    # BREAKPOINT 1: If debugging, run sanity checks; if debug level is 1, exit here:
    if ( $Db ) {
       say STDERR '';
-      say STDERR 'In ACS, at breakpoint 1, at top of sub "aggregate". Values of settings:';
-      say STDERR "Db          = $Db";
-      say STDERR "program_dir = \"$program_dir\".";
-      say STDERR "screens_dir = \"$screens_dir\".";
+      say STDERR 'At Breakpoint 1 (before moving screenshots from program_dir to screens_dir).';
       if ( 1 == $Db ) {exit 111}
    }
 
-   # =========================================================================================================
-   # PHASE 1: Copy Corporate-Clash screenshots from program directory to screenshots directory:
-
    # First make sure that these two directories exist and are directories:
-   if ( ! -e $program_dir ) {die "Error in ACS: program directory does not exist!\n$!\n";}
-   if ( ! -d $program_dir ) {die "Error in ACS: program directory is not a directory!\n$!\n";}
-   if ( ! -e $screens_dir ) {die "Error in ACS: screenshots directory does not exist!\n$!\n";}
-   if ( ! -d $screens_dir ) {die "Error in ACS: screenshots directory is not a directory!\n$!\n";}
+   if ( ! -e $program_dir ) {die "Fatal error in PHASE_1: program directory does not exist!\n$!\n";}
+   if ( ! -d $program_dir ) {die "Fatal error in PHASE_1: program directory is not a directory!\n$!\n";}
+   if ( ! -e $screens_dir ) {die "Fatal error in PHASE_1: screenshots directory does not exist!\n$!\n";}
+   if ( ! -d $screens_dir ) {die "Fatal error in PHASE_1: screenshots directory is not a directory!\n$!\n";}
 
-   # Enter program directory:
-   chdir $program_dir
-   or die "Error in ACS, in sub aggregate: couldn't cd to \"$program_dir\".\n$!\n";
+   # Make a directory to hold copies of original screenshots, if it doesn't already exist:
+   if ( ! -e "$screens_dir/original" ) {
+      mkdir "$screens_dir/original"
+      or die "Fatal error in PHASE_1: \"original\" directory cannot be created.\nAborting execution.\n$!\n";
+   }
+
+   # Now double check to make sure that "$screens_dir/original" exists and is a directory:
+   -e "$screens_dir/original"
+   or die "Fatal error in PHASE_1: \"original\" directory does not exist.\nAborting execution.\n$!\n";
+   -d "$screens_dir/original"
+   or die "Fatal error in PHASE_1: \"original\" directory is not a directory.\nAborting execution.\n$!\n";
+
+   # Enter program directory, if we're not already there:
+   my $cwd = cwd;
+   if ( $program_dir ne $cwd ) {
+      chdir $program_dir
+      or die "Fatal error in PHASE_1: Couldn't cd to program_dir.\n$!\n";
+   }
+   $cwd = cwd;
+   if ( $program_dir ne $cwd ) {
+      die "Fatal error in PHASE_1: Couldn't cd to program_dir.\n$!\n";
+   }
 
    # Get list of "*.png" file names:
    my @names1 = <*.png>;
    my $num1 = scalar @names1;
 
    say STDOUT '';
-   say STDOUT 'Now copying screenshots from program_dir to screens_dir....';
-   # Copy all screenshots to the screenshots directory, unless a file of that name, or of an equivalent
-   # new-style name, already exists there, or unless at debug level 1 (in which case just emulate copying):
+   say STDOUT 'Now copying screenshots from program_dir to screens_dir/original then moving them to screens_dir....';
+   # For each screenshot in "$program_dir", first copy it to "$screens_dir/original", then move it to
+   # "$screens_dir", unless a file of that name, or of an equivalent new-style name, already exists there,
+   # or unless at debug level 2 (in which case just emulate moving):
    for my $name1 (@names1) {
-      # As of 2026, typical CCL screenshots are formateed like this:
-      # corporateclash-screenshot-1774787469.png
-      # Print a warning and skip this file if it doesn't match regexp:
-      if ( $name1 !~ m/^corporateclash-screenshot-\d{10}\.png$/ ) {
-         say STDERR "Warning: File \"$name1\" in program_dir\n"
-                   ."does not have a valid original-CCL-screenshot name;\n"
-                   ."skipping this file and moving on to the next.";
-         next;
+      # If at debug level 2, don't copy or move anything, just emulate:
+      if ( 2 == $Db) {
+         say "Would have copied file \"$name1\" from program_dir to screens_dir/original.";
+         say "Would have moved  file \"$name1\" from program_dir to screens_dir.";
       }
-      # Silently skip current file if a file named "$name1" exists in screens_dir:
-      next if -e "$screens_dir/$name1";
-      # Get the new-style name for this file:
-      my $new_name = make_new_name($name1);
-      # Skip current file and print warning if new name is '***ERROR***':
-      if ('***ERROR***' eq $new_name) {
-         say STDERR "Warning: couldn’t make valid new name for file \"$name1\"\n"
-                   ."in program_dir; skipping this file and moving on to next.";
-         next;
-      }
-      # Silently skip current file if a file named "$new_name" exists in screens_dir:
-      next if -e "$screens_dir/$new_name";
-      # If at debug level 1, emulate copy:
-      if ( 1 == $Db ) {
-         say STDERR "Would have copied file \"$name1\" from program_dir to screens_dir.";
-         next;
-      }
-      # Otherwise, copy file:
-      else {
-         copy($name1, "$screens_dir/$name1")
-         and say  "Copied \"$name1\" from program_dir to screens_dir."
-         or  warn "Error: Failed to copy \"$name1\" from program_dir to screens_dir.\n$!\n";
-      }
-   }
-   say STDOUT 'Finished copying screenshots from program_dir to screens_dir.';
 
-   # Enter screenshots directory:
-   chdir $screens_dir
-   or die "Error in ACS, in sub aggregate: couldn't cd to \"$screens_dir\".\n$!\n";
+      # Otherwise, copy current file to "$screens_dir/original" then move it to "$screens_dir":
+      else {
+         # Copy a copy to "$screens_dir/original" if it doesn't exist:
+         if ( ! -e "$screens_dir/original/$name1" ) {
+            copy("$program_dir/$name1", "$screens_dir/original/$name1")
+            and say "Copied file \"$name1\" from program_dir to screens_dir/original."
+            or warn "Warning: Unable to copy file \"$name1\" to \"original\" directory;\n"
+                   ."skipping this file and moving on to next.\n$!\n"
+            and next;
+         }
+
+         # As of 2026, typical CCL screenshots are formatted like this:
+         # corporateclash-screenshot-1774787469.png
+         # Print a warning and skip this file if it doesn't match regexp:
+         if ( $name1 !~ m/$ttcc_original/ ) {
+            say STDERR "Warning: File \"$name1\" in program_dir\n"
+                      ."does not have a valid original screenshot name;\n"
+                      ."skipping this file and moving on to the next.";
+            next;
+         }
+
+         # Print warning and skip current file if a file named "$name1" exists in screens_dir:
+         if ( -e "$screens_dir/$name1" ) {
+            warn "Warning: A file named \"$name1\" already exists in screens_dir; moving on to next file.\n";
+            next;
+         }
+
+         # Get the new-style name for this file:
+         my $new_name = make_new_name($name1);
+
+         # Skip current file and print warning if new name is '***ERROR***':
+         if ('***ERROR***' eq $new_name) {
+            say STDERR "Warning: Couldn’t make valid new name for file \"$name1\";\n"
+                      ."skipping this file and moving on to next.";
+            next;
+         }
+
+         # Print warning and skip current file if a file named "$new_name" exists in screens_dir:
+         if ( -e "$screens_dir/$new_name" ) {
+            warn "Warning: A file named \"$new_name\" already exists in screens_dir;"
+                ."skipping this file and moving on to next.\n";
+            next;
+         }
+
+         # If we get to here, move file:
+         move($name1, "$screens_dir/$name1")
+         and say  "Moved  file \"$name1\" from program_dir to screens_dir." # Keep extra space after "Moved".
+         or  warn "Error: Failed to move \"$name1\" from program_dir to screens_dir.\n$!\n";
+      } # end else not emulating
+   } # end for each original screenshot
+   say STDOUT 'Finished moving screenshots from program_dir to screens_dir.';
+} # end sub PHASE_1
+
+# =========================================================================================================
+# PHASE 2: Rename Screenshots:
+sub PHASE_2 {
+   # Enter screenshots directory, if we're not already there:
+   my $cwd = cwd;
+   if ( $screens_dir ne $cwd ) {
+      chdir $screens_dir
+      or die "Fatal error in PHASE_2: Couldn't cd to screens_dir.\n$!\n";
+   }
+   $cwd = cwd;
+   if ( $screens_dir ne $cwd ) {
+      die "Fatal error in PHASE_2: Couldn't cd to screens_dir.\n$!\n";
+   }
 
    # Get fresh list of "*.png" file names:
    my @names2 = <*.png>;
@@ -280,45 +380,49 @@ sub aggregate {
    # Set file permissions of screenshots so that user and group can read and write but others can read only:
    for my $name2 (@names2) {
       chmod 0664, $name2
-      or warn "Warning: Couldn't update permissions\non file \"$name2\" in screens_dir.\n$!\n";
+      or warn "Warning: Couldn't update permissions on file \"$name2\" in screens_dir.\n$!\n";
    }
 
    # BREAKPOINT 2: If debugging, run sanity checks; if debug level is 2, exit here:
    if ( $Db )
    {
-      say STDERR "\nIn acs, at breakpoint 2, in sub \"aggregate\", after copying files\n"
-                ."from program_dir to screens_dir and before renaming files.\n"
-                ."Let’s do a sanity check! Are we actually where we think we are?";
-      my $cwd = cwd;
-      say STDERR "Screenshots dir = \"$screens_dir\".";
-      say STDERR "Current wrk dir = \"$cwd\".";
-      $cwd eq $screens_dir
-      and say STDERR 'Hooray, the two match!'
-      or  say STDERR 'Oh-oh, the two don’t match!';
-      say STDERR "Number of files in program_dir = $num1";
-      say STDERR "Number of files in screens_dir = $num2";
+      say STDERR '';
+      say STDERR 'At breakpoint 2, before renaming screenshots.';
+      say STDERR "Number of files in screens_dir after moving from program_dir = $num2";
       if ( 2 == $Db ) {exit 222}
    }
-
-   # =========================================================================================================
-   # PHASE 2: Rename Screenshots:
 
    say STDOUT '';
    say STDOUT 'Now canonicalizing names of screenshots....';
    for my $name2 (@names2) {
-      # Silently skip current file if it doesn't have a valid original-style CCL screenshot name:
-      next if $name2 !~ m/^corporateclash-screenshot-\d{10}\.png$/;
+      # Skip current file if it doesn't have a valid original-style CCL screenshot name:
+      if ( $name2 !~ m/$ttcc_original/ ) {
+         next;
+      }
+
       # Get new file name:
       my $new_name = make_new_name($name2);
-      # Skip to next file if current file couldn't be renamed:
-      next if '***ERROR***' eq $new_name;
-      # Skip to next file if a file with this new name already exists in screens_dir:
-      next if -e $new_name;
+
+      # Print warning and skip current file if it couldn't be renamed:
+      if ( '***ERROR***' eq $new_name ) {
+         warn "Warning: File \"$name2\" couldn't be renamed to \"$new_name\";"
+             ."skipping this file and moving on to next.\n";
+         next;
+      }
+
+      # Print warning and skip current file if a file with the new name already exists in screens_dir:
+      if ( -e $new_name ) {
+         warn "Warning: A file with proposed new name \"$new_name\" already exists in screens_dir;\n"
+             ."skipping this file and moving on to next.\n";
+         next;
+      }
+
       # If debugging, simulate rename:
       if (3 == $Db) {
          say "Would have renamed \"$name2\" to \"$new_name\".";
       }
-      # Otherwise, rename file:
+
+      # Otherwise, attempt to rename file:
       else {
          rename($name2, $new_name)
          and say  "Renamed \"$name2\" to \"$new_name\"."
@@ -326,6 +430,24 @@ sub aggregate {
       } # end else (rename file)
    } # end for (each file)
    say STDOUT 'Finished canonicalizing names of screenshots.';
+
+   # Return success code 1 to caller:
+   return 1;
+} # end sub PHASE_2
+
+# =========================================================================================================
+# PHASE 3: File Screenshots By Date:
+sub PHASE_3 {
+   # Enter screenshots directory, if we're not already there:
+   my $cwd = cwd;
+   if ( $screens_dir ne $cwd ) {
+      chdir $screens_dir
+      or die "Fatal error in PHASE_3: Couldn't cd to screens_dir.\n$!\n";
+   }
+   $cwd = cwd;
+   if ( $screens_dir ne $cwd ) {
+      die "Fatal error in PHASE_3: Couldn't cd to screens_dir.\n$!\n";
+   }
 
    # Get fresh list of "*.png" file names:
    my @names3 = <*.png>;
@@ -335,27 +457,18 @@ sub aggregate {
    if ( $Db )
    {
       say STDERR '';
-      say STDERR 'In ACS, at breakpoint 3, in sub "aggregate", after renaming files.';
-      say STDERR 'Let’s do another sanity check! Are we still where we think we are?';
-      my $cwd = cwd;
-      say STDERR "Screenshots dir = \"$screens_dir\".";
-      say STDERR "Current wrk dir = \"$cwd\".";
-      $cwd eq $screens_dir
-      and say STDERR 'Hooray, the two match!'
-      or  say STDERR 'Oh-oh, the two don’t match!';
-      say STDERR "Number of files in screens_dir before renaming = $num2";
-      say STDERR "Number of files in screens_dir after  renaming = $num3";
+      say STDERR 'At Breakpoint 3, before filing files by date.';
+      say STDERR "Number of files in screens_dir after renaming = $num3";
       if ( 3 == $Db ) {exit 333}
    }
 
-   # =========================================================================================================
-   # PHASE 3: File Screenshots By Date:
-
    say STDOUT '';
-   say STDOUT 'Now filing CCL screenshots by date....';
+   say STDOUT 'Now filing screenshots by date....';
    foreach my $name3 (@names3) {
-      # Silently skip this file if it doesn't match "renamed file" regexp:
-      next if $name3 !~ m/^ccl-screenshot_\d{4}-\d{2}-\d{2}-\pL{3}_\d{2}-\d{2}-\d{2}\.png$/;
+      # Skip current file if it doesn't match "renamed file" regexp:
+      if ( $name3 !~ m/$ttcc_renamed/ ) {
+         next;
+      }
 
       # Get prefix, label, date, time, and id; if anything is out-of-range, print warning and skip file:
       my $prefix = $name3 =~ s/\.png$//r;
@@ -369,7 +482,7 @@ sub aggregate {
          next;
       }
 
-      # Get year, month, day, and dayname; if anthing is out-of-range, print warning and skip file:
+      # Get year, month, day, and dayname; if anything is out-of-range, print warning and skip file:
       my ($year, $month, $day, $dayname) = split /-/, $date;
       if (     !defined($year)    || !($year    =~ m/^2\d\d\d$/  )
             || !defined($month)   || !($month   =~ m/^\d\d$/     )
@@ -389,46 +502,42 @@ sub aggregate {
 
       # If debug level is 4, emulate filing files; otherwise, file files by date:
       if (4 == $Db) {
-         say STDERR "Would have copied file \"$name3\" from screens_dir to \"$mnth_dir\".";
+         say STDERR "Would have moved file \"$name3\" from screens_dir to \"$mnth_dir\".";
       }
 
-      # Otherwise, attempt to copy the current file, after assuring needed directories actually do exist,
+      # Otherwise, attempt to move the current file, after assuring needed directories actually do exist,
       # and after assuring that there is no file by this name in the destination directory:
       else {
          if ( ! -e $year_dir ) {die "Error: directory \"$year_dir\" in screens_dir does not exist.    \n$!\n"}
          if ( ! -d $year_dir ) {die "Error: directory \"$year_dir\" in screens_dir is not a directory.\n$!\n"}
          if ( ! -e $mnth_dir ) {die "Error: directory \"$mnth_dir\" in screens_dir does not exist.    \n$!\n"}
          if ( ! -d $mnth_dir ) {die "Error: directory \"$mnth_dir\" in screens_dir is not a directory.\n$!\n"}
-         # Silently skip this file if a duplicate exists in the destination:
-         next if -e "$mnth_dir/$name3";
-         copy($name3, "$mnth_dir/$name3")
-         and say  "Copied \"$name3\" from screens_dir to \"$mnth_dir\"."
-         or  warn "Error: Failed to copy \"$name3\" from screens_dir to \"$mnth_dir\".\n$!\n";
-      } # end else attempt to actually copy file.
-   } # end copy each renamed file from screens_dir to mnth_dir
-   say STDOUT 'Finished filing CCL screenshots by date.';
 
-   # BREAKPOINT 4: If debugging, run sanity checks; if debug level is 4, don't exit here, because we're almost done:
-   if ( $Db )
-   {
-      say STDERR '';
-      say STDERR 'In ACS, at breakpoint 4, in sub "aggregate", after filing files by date.';
-      say STDERR 'Let’s do another sanity check! Are we still where we think we are?';
-      my $cwd = cwd;
-      say STDERR "Screenshots dir = \"$screens_dir\".";
-      say STDERR "Current wrk dir = \"$cwd\".";
-      $cwd eq $screens_dir
-      and say STDERR 'Hooray, the two match!'
-      or  say STDERR 'Oh-oh, the two don’t match!';
-      my @pngs = <*.png>;
-      my $numpng = scalar @pngs;
-      say "Root of screens_dir now contains $numpng png files.";
-      if ( 4 == $Db ) {;} # Don't exit, because we're almost done. Let normal program exit message print.
-   }
+         # Print warning and skip current file if a duplicate exists in the destination:
+         if ( -e "$mnth_dir/$name3" ) {
+            warn "Warning: a duplicate of \"$name3\" exists in mnth_dir;\n"
+                ."skipping this file and moving on to next.\n";
+            next;
+         }
+
+         # Otherwise, attempt to move file:
+         else {
+            move($name3, "$mnth_dir/$name3")
+            and say  "Moved \"$name3\" from screens_dir to \"$mnth_dir\"."
+            or  warn "Error: Failed to move \"$name3\" from screens_dir to \"$mnth_dir\".\n$!\n";
+         } # end else no duplicate exists
+      } # end else attempt to move file
+   } # end move each renamed file from screens_dir to mnth_dir
+   say STDOUT 'Finished filing screenshots by date.';
+
+   # Announce number of png files remaining in root of screens_dir:
+   my @names4 = <*.png>;
+   my $num4 = scalar @names4;
+   say "\nNumber of png files in root of screens_dir after filing-by-date: $num4";
 
    # Return success code 1 to caller:
    return 1;
-} # end sub aggregate
+} # end sub PHASE_3
 
 sub help {
    print ((<<"   END_OF_HELP") =~ s/^   //gmr);
@@ -436,20 +545,29 @@ sub help {
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "$pname". This program copies all
-   screenshots from your Corporate-Clash program's screenshots directory to
-   dated subdirectories of a screenshots directory of your choice. For this
-   program to work, you must first specify these two directories. You can do this
-   in one of two ways:
+   Welcome to "aggregate-corclash-screenshots.pl". This program does 3 things:
+
+   1. For eash screenshot in your Toontown-Corporate-Clash program's screenshots
+      directory (let's call it "program_dir" for short), this program will first
+      copy that file to a subdirectory named "original" of your own personal
+      screenshots directory (let's call it "screens_dir" for short), then move
+      the screenshot to the rool level of screens_dir.
+
+   2. It renames all screenshots in screens_dir to date-and-time-based names
+      such that sorting the screenshots by name also sorts them chronologically.
+
+   3. It moves all screenshots from the root of screens_dire to dated
+      subdirectories of screens_dir.
+
+   For this program to work, you MUST first specify the two directories
+   "program_dir" and "screens_dir". You can do this in one of two ways:
 
    Method #1: Put a file named "aggregate-corclash-screenshots.ini" in the same
    directory as this script, and put your directories in there, in this syntax:
 
    [Locations]
-   # comment 1:
-   program_dir = /opt/corporate-clash/screenshots
-   # comment 2:
-   screens_dir = /home/jack/corporate-clash-screenshots
+   program_dir = /opt/toontown-corporate-clash/screenshots
+   screens_dir = /home/jack/toontown-corporate-clash-screenshots
 
    Substitute-in the actual directories you're using. But don't put any comments
    on the ends of the lines giving the paths or they will be construed as being
@@ -459,8 +577,8 @@ sub help {
    syntax:
 
    aggregate-corclash-screenshots.pl \
-   --program_dir=/opt/corporate-clash/screenshots \
-   --screens_dir=/home/jack/corporate-clash-screenshots
+   --program_dir=/opt/toontown-corporate-clash/screenshots \
+   --screens_dir=/home/jack/toontown-corporate-clash-screenshots
 
    (Substitute-in the actual directories you're using.)
 
@@ -496,7 +614,7 @@ sub help {
 
    "Going UP, sir!"
 
-   Happy Corporate-Clash screenshot aggregating!
+   Happy Toontown-Corporate-Clash screenshot aggregating!
 
    Cheers,
    Robbie Hatley,

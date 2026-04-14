@@ -64,7 +64,6 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
-
    use v5.36;
    use utf8::all;
    use List::SomeUtils qw( indexes );
@@ -81,6 +80,19 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       }
       return $max
    }
+
+=pod
+
+# Alternate method (golfier, but slower):
+
+use v5.36;
+use utf8::all;
+use List::AllUtils qw( indexes max );
+sub max_pos_int ( $s, $c ) {
+   max map {substr($s, 0, $_).substr($s, $_+1)} indexes { $_ eq $c } split //, $s;
+}
+
+=cut
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
