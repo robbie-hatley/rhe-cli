@@ -55,7 +55,7 @@ Output: "#ultimateHourChallengeLivingInASmartHomeControlled\
 PROBLEM NOTES:
 The answer given for Example 2 by the "theweeklychallenge.org" web site seems wrong to me. However, let us not
 be hasty. If we construe "largely-intact" as being "one hyphenated compound word", then it's one word. So I'll
-let "word characters" as being "[a-zA-Z-]", then strip-out the hyphens later, AFTER adjusting case.
+construe "word characters" as being "[a-zA-Z-]", then strip-out the hyphens later, AFTER adjusting case.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
