@@ -64,9 +64,8 @@ Output: false
 PROBLEM NOTES:
 I know there are clever ways of solving this, but I'm not capable of wrapping my head around them, so I'll use
 a simpler way (albeit with higher Big-O Complexity): I'll make an array of all "scrambles" of $str1 and return
-true iff $str2 is in that array. With that in mind, I'll make these three subroutines:
+true iff $str2 is in that array. With that in mind, I'll make these two subroutines:
 
-sub is_in_array ( $s , @a ); # Is a given string in a given array of strings?
 sub scrambles   ( $s      ); # What are all the scrambles of a given string?
 sub is_scramble ( $s , $t ); # Is a given second string a scramble of a given first string?
 
