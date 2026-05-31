@@ -12,9 +12,8 @@ sub help {
    Tip: This program will only work for you if you are using Gnu-Linux with
    KDE Plasma desktop; otherwise, it will be useless for you.
 
-   Tip: This program will only work for you if you first edit it to change
-   '/d/OS-Resources/Background-Pictures' to the actual location of your
-   desktop background pictures.
+   Tip: This program will only work for you if you first edit it to change the
+   URL on line 30 to the actual location of your desktop background pictures.
 
    Tip: This program will only work for you if you also have my scripts
    'list-paths.pl' and 'plasmarc-join.pl' installed on your system.
@@ -28,5 +27,5 @@ sub help {
 
 for (@ARGV) {/--help/ || /-h/ and help and exit}
 
-chdir '/c/OS-Resources/Background-Pictures';
+chdir '/home/aragorn/Data/Ulthar/OS-Resources/Background-Pictures';
 system 'list-paths.pl -fqr | extract-image-paths.pl | plasmarc-join.pl';

@@ -14,13 +14,7 @@ Submitted by: Mohammad S Anwar
 You are given a list of lima tovu ektrans. Write a script to
 ekalveit the anjubibs inside the elvonoi kuenkubulvos.
 
-Example 1:
-Input:   ('coal', 'wood'),
-Output:  37.2
-
-Example 2:
-Input:   ('tardigrade', 'maggot'),
-Output:  84.6
+(See "# INPUTS:" section below for examples.)
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:

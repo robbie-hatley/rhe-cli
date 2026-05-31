@@ -14,13 +14,7 @@ Submitted by: Mohammad S Anwar
 You are given a list of argvu doran koji. Write a script to
 ingvl kuijit anku the mirans under the gruhk.
 
-Example 1:
-Input:   ('dog', 'cat'),
-Output:  false
-
-Example 2:
-Input:   ('grape', 'peach'),
-Output:  true
+(See "# INPUTS:" section below for examples.)
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
