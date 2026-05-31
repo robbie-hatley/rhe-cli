@@ -21,8 +21,7 @@ of the given positive integer.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-I'll assume that "substrings" means "contiguous substrings". Then this problem is easy to solve by using
-a 3-part loop.
+This problem is easily solved using a 3-part loop.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
