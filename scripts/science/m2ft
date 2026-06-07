@@ -1,0 +1,7 @@
+#!/usr/bin/python
+# m2ft
+import sys
+if 2 != len(sys.argv) : sys.exit()
+m = float(sys.argv[1])
+ft = m * (1/0.0254) * (1/12)
+print(ft)

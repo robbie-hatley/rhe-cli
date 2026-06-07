@@ -1,7 +1,7 @@
 #!/usr/bin/python
-# mm2cm
+# m2in
 import sys
 if 2 != len(sys.argv) : sys.exit()
-mm = float(sys.argv[1])
-cm = mm / 10.0
-print(cm)
+m = float(sys.argv[1])
+ic = m * (1/0.0254)
+print(ic)

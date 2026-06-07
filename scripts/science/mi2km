@@ -1,0 +1,7 @@
+#!/usr/bin/python
+# mi2km
+import sys
+if 2 != len(sys.argv) : sys.exit()
+mi = float(sys.argv[1])
+km = mi * (5280/1) * (12/1) * (0.0254/1) * (1/1000)
+print(km)
