@@ -19,7 +19,7 @@ if the two word lists are "similar" with the help the "similar-words groups".
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
 To solve this problem, I'll make a hash called "sim" containing the information from the "similar words maps"
-and also etries indicating that every word in every string is aslo "similar" to itself.
+and also entries indicating that every word in every string is also "similar" to itself.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
@@ -56,7 +56,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       return 0 if scalar(@{$aref->[2]}) < 1;
       # Get size of word lists:
       my $n = scalar(@{$aref->[0]});
-      # Make hash of similarites:
+      # Make hash of similarities:
       my %sim;
       # First, record similarities presented by similar-words groups:
       foreach my $group (@{$aref->[2]}) {
