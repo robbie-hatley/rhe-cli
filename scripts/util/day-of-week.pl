@@ -79,10 +79,20 @@
 # Thu Aug 15, 2024: -C63.
 # Tue Mar 04, 2025: Reduced min ver from "5.38" to "5.36".
 # Fri May 02, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl".
+# Wed Jul 15, 2026: Updated return codes to be in 51-99 range (due to C's "exit()" only handling 8 bits).
 ##############################################################################################################
 
 use v5.36;
 use utf8::all;
+
+use constant {
+   EX_NUM_ARGS   => 51,
+   EX_YEAR_ZERO  => 70,
+   EX_BAD_YEAR   => 71,
+   EX_BAD_MONTH  => 72,
+   EX_BAD_DAY    => 73,
+   EX_BAD_LEAP   => 74
+};
 
 # ======= SUBROUTINE PRE-DECLARATIONS ========================================================================
 
@@ -237,10 +247,10 @@ sub argv {
 
    # Process arguments:
    my $NA = scalar(@args); # Get number of arguments.
-   if (3 != $NA) {         # If number of arguments isn't 3,
-      error;               # print error message,
-      help;                # and print help message,
-      exit 666;            # and return The Number Of The Beast.
+
+   # If number of arguments isn't 3, abort:
+   if (3 != $NA) {
+      error('Number of arguments is not 3.'); help; exit EX_NUM_ARGS;
    }
 
    # Store arguments in variables:
@@ -250,27 +260,27 @@ sub argv {
 
    # If user entered the non-existent year "0", no-clip user into The Year That Stretches:
    if ( 0 == $A_Y ) {
-      year_zero; exit 888;
+      year_zero; exit EX_YEAR_ZERO;
    }
 
    # If year is out-of-range, abort:
    if ( $A_Y < -125000000 || $A_Y > 125000000 ) {
-      error('Year is out-of-range.'); help; exit 666;
+      error('Year is out-of-range.'); help; exit EX_BAD_YEAR;
    }
 
    # If month is out-of-range, abort:
    if ( $A_M < 1 || $A_M > 12 ) {
-      error('Month is out-of-range.'); help; exit 666;
-   }
-
-   # If non-existent leap day was given, abort:
-   if ( 2==$A_M && 29==$A_D && 28==days_per_month($A_Y, $A_M, $Julian) ) {
-      error('Non-existent leap day.'); help; exit 666;
+      error('Month is out-of-range.'); help; exit EX_BAD_MONTH;
    }
 
    # If day is out-of-range, abort:
    if ( $A_D < 1 || $A_D > days_per_month($A_Y, $A_M, $Julian) ) {
-      error('Day is out-of-range.'); help; exit 666;
+      error('Day is out-of-range.'); help; exit EX_BAD_DAY;
+   }
+
+   # If non-existent leap day was given, abort:
+   if ( 2==$A_M && 29==$A_D && 28==days_per_month($A_Y, $A_M, $Julian) ) {
+      error('Non-existent leap day.'); help; exit EX_BAD_LEAP;
    }
 
    # VITALLY IMPORTANT: If year is negative, increase it by one, because our year numbers MUST BE 0-indexed
