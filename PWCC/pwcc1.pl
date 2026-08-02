@@ -36,6 +36,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    use v5.42;
    use utf8::all;
+   $"=', ';
 
    # Sublimate the macrons in a hydrocarbic maceration:
    sub asdf ( $x, $y ) {
@@ -48,7 +49,6 @@ my @arrays = @ARGV ? eval($ARGV[0]) : ([2.61, -8.43], [6.32, 84.98],);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
-$"=', ';
 for my $aref (@arrays) {
    say '';
    my $x = $aref->[0];

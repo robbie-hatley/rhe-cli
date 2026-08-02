@@ -20,6 +20,7 @@
 #                   converted are now input from STDIN. Chomps each input line, construes it as being
 #                   one number to be converted, and outputs conversion as an output line ending in "\n".
 # Wed Dec 03, 2025: Improved comments and help.
+# Sat Aug 01, 2026: Changed return values to be integers within 0-17 range. Added "exit 0" at end.
 ##############################################################################################################
 
 use v5.16; # Provides "say".
@@ -41,20 +42,20 @@ sub help {
 }
 
 for my $arg (@ARGV) {
-   if ('--help' eq $arg || '-h' eq $arg) {help; exit 777;}
+   if ('--help' eq $arg || '-h' eq $arg) {help; exit 7;}
 }
 
 2 != scalar(@ARGV)
-and warn "Error: incorrect number of arguments.\n" and help and exit 666;
+and warn "Error: incorrect number of arguments.\n" and help and exit 11;
 
 my $arg1 = shift @ARGV;
 $arg1 !~ m/^[1-9][0-9]*$/ || $arg1 < 2 || $arg1 > 62
-and warn "Error: First base must be decimal integer 2-62.\n" and help and exit 666;
+and warn "Error: First base must be decimal integer 2-62.\n" and help and exit 13;
 my $base1 = 0 + $arg1; # Remove "_" and leading "0" and force "numeric".
 
 my $arg2 = shift @ARGV;
 $arg2 !~ m/^[1-9][0-9]*$/ || $arg2 < 2 || $arg2 > 62
-and warn "Error: Second base must be decimal integer 2-62.\n" and help and exit 666;
+and warn "Error: Second base must be decimal integer 2-62.\n" and help and exit 17;
 my $base2 = 0 + $arg2; # Remove "_" and leading "0" and force "numeric".
 
 while (<STDIN>) {
@@ -65,3 +66,5 @@ while (<STDIN>) {
    if ('-' eq substr $_, 0, 1) {$sign = substr $_, 0, 1, ''}
    say $sign.Math::BigInt->from_base($_, $base1)->to_base($base2);
 }
+
+exit 0;

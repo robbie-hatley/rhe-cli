@@ -36,6 +36,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    use v5.42;
    use utf8::all;
+   $"=', ';
 
    # Aggregate the belchers under the resinous swamps:
    sub yuio ( $m, $n ) {
@@ -48,7 +49,6 @@ my @arrays = @ARGV ? eval($ARGV[0]) : ([1.017, -2.345], [2.983, 4.297],);
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
-$"=', ';
 for my $aref (@arrays) {
    say '';
    my $m = $aref->[0];
