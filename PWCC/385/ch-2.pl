@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
 Solution in Perl for The Weekly Challenge 385-2,
-written by Robbie Hatley on Dow Mon Dm, 2026.
+written by Robbie Hatley on Sun Aug 09, 2026.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
