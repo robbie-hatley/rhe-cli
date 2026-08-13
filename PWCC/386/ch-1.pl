@@ -27,13 +27,13 @@ specified in 386.
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 Input is from @ARGV or default inputs. If using @ARGV, provided one-or-more space-separated single-quoted
-command-line arguments. Each argument must consist of the following 3 space-separated items:
-1. base_to_be_converted_FROM (integer in 2-to-75 range)
-2. base_to_be_converted_TO   (integer in 2-to-75 range)
-3. number_to_be_converted
+command-line arguments. Each argument must consist of these 2 or 3 space-separated items:
+1. number_to_be_converted
+2. base_to_be_converted_FROM (integer in 2-to-75 range)
+3. base_to_be_converted_TO   (integer in 2-to-75 range, defaulting to 10)
 
 For example:
-./ch-1.pl '25 7 g84j' '9 13 4807' '74 75 \6>mdW'
+./ch-1.pl 'gb4j 25 7' 'G84J 25 7' '4807 9 13' '\6>mdW 74 75' '21304 5' '-jIU9Mt3g 62 67'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -55,7 +55,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
      .'+/\<>~!@#$%^&';
 
    # Convert a number from one base to another (both bases in 2-to-75 range):
-   sub base ( $base1 , $base2, $num ) {
+   sub base ( $num, $base1 , $base2 ) {
       my $sign = '';
       if ('-' eq substr $num, 0, 1) {$sign = substr $num, 0, 1, ''}
       return $sign.Math::BigInt->from_base($num, $base1, $colseq)->to_base($base2, $colseq);
@@ -66,28 +66,24 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 my @strings = @ARGV ? @ARGV :
 (
    # Example 1 input:
-   '2 10 101010',
+   '101010 2',
    # Expected output: 42
 
    # Example 2 input:
-   '16 10 EEADEE',
+   'EEADEE 16',
    # Expected output: 15642094
 
    # Example 3 input:
-   '8 10 755',
+   '755 8',
    # Expected output: 493
 
    # Example 4 input:
-   '36 10 1BRJB',
+   '1BRJB 36',
    # Expected output: 2228519
 
    # Example 5 input:
-   '64 10 7MyqL',
+   '7MyqL 64',
    # Expected output: 123456789
-
-   # Example #6 input:
-   '62 67 -jIU9Mt3g',
-   # Expected output: -QLX06tfM
 );
 
 # ------------------------------------------------------------------------------------------------------------
@@ -101,6 +97,9 @@ for my $string (@strings) {
    # Increment conversion counter:
    ++$n;
 
+   # Nix newline, if any:
+   chomp $string;
+
    # Nix leading whitespace:
    $string =~ s/^\s+//;
 
@@ -111,18 +110,21 @@ for my $string (@strings) {
    my @args = split /\s+/, $string;
 
    # Verify correct number of arguments:
-   3 != scalar(@args)
-   and warn "Error in conversion #$n: Number of space-separated arguments is not 3.\n"
-           ."(Conversion #$n = \"$string\".)"
-           ."(Should be base1 base2 number_to_be_converted)\n"
+   my $na = scalar @args;
+   $na < 2 || $na > 3
+   and warn "Error in string #$n: Number of space-separated arguments is not 2 or 3.\n"
+           ."(String #$n = \"$string\".)"
+           ."(Should be 'number_to_be_converted base1 base2' with base2 defaulting to 10.)\n"
    and next;
 
    # Store arguments in variables:
-   my ($b1, $b2, $x) = @args;
+   my $x  = $args[0];
+   my $b1 = $args[1];
+   my $b2 = $args[2] // 10;
 
    # Verify $b1 is in-range:
    $b1 !~ m/^[1-9][0-9]*$/ || $b1 < 2 || $b1 > 75
-   and warn "Error in conversion #$n: First base (\"$b1\") must be a decimal integer 2-75.\n"
+   and warn "Error in string #$n: First base (\"$b1\") must be a decimal integer 2-75.\n"
    and next;
 
    # Force $b1 to be numeric:
@@ -136,12 +138,14 @@ for my $string (@strings) {
    # Force $b2 to be numeric:
    $b2 = 0 + $b2;
 
-   # Verify that $x is valid:
-   $x !~ m/\A0\z|\A-?[1-9A-Za-z+\/\\<>~!@#$%^&][0-9A-Za-z+\/\\<>~!@#$%^&]*\z/
-   and warn "Error in conversion #$n: number_to_be_converted (\"$x\") contains invalid characters.\n"
+   # Verify that $x does not contain characters which are invalid for base $b1:
+   my $v1 = substr $colseq, 1, $b1-1;
+   my $v2 = substr $colseq, 0, $b1-0;
+   $x !~ m/\A0\z|\A-?[\Q$v1\E][\Q$v2\E]*\z/
+   and warn "Error in string #$n: number_to_be_converted (\"$x\") contains characters which are invalid for base $b1.\n"
    and next;
 
    # Call base-conversion subroutine and print result:
-   my $out = base($b1, $b2, $x);
+   my $out = base($x, $b1, $b2);
    printf("Conversion #%d: %10s converted from base %2d to base %2d = %10s\n", $n, $x, $b1, $b2, $out);
 }
