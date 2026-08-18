@@ -42,7 +42,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # PRAGMAS, MODULES, AND SUBS:
 
    # Pragmas and modules:
-   use v5.42.2;                     # Use latest Perl as of this writing.
+   use v5.36;                       # For the "signatures" feature.
    use utf8::all;                   # Use the UTF-8 transformation of Unicode for all text.
    use Math::BigRat 'lib' => 'GMP'; # For unlimited-precision high-speed rational numbers.
    $"=', ';                         # For interpolating lists into strings.
