@@ -153,7 +153,7 @@ sub help    ; # Print help and exit.
    }
    #say "Musth      = (@musth)";
 
-   # Obtain list of words not containing globally-disallowed words:
+   # Obtain list of words not containing globally-disallowed letters:
    WORD: foreach my $word (@musth) {
       LETTER: foreach my $letter (@gd) {
          next WORD if $word =~ m/$letter/;
