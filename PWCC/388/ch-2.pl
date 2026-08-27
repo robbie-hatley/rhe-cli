@@ -54,8 +54,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
-my @numbers = @ARGV ? @ARGV : (  0,  1,  2,  3,  4,  5, 6 );
-#           Expected outputs:    1   0   1   2   9  44
+my @numbers = @ARGV ? @ARGV : ( 0,   1,   2,   3,   4,   5,   6 );
+#           Expected outputs:   1    0    1    2    9   44  265
 
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:

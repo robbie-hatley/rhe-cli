@@ -26,12 +26,12 @@ I first generate likely candidate equivalent integers (with the correct number o
 with 1 and ending with 0). I then check each candidate to see if it actually is a Dyck number. For each
 Dyck number, I sprintf it as a binary number, transliterate 01 to DU, quote it, and push it to a list.
 Finally, I return the list. (There is no need to sort the list, as the fact that I generate candidates in
-increasing order means that the final list is already pre-sorted.)
+increasing order means that the final list is already in sorted.)
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
-Input is via either built-in variables or via @ARGV. If using @ARGV, provide one-or-more arguments which must
-be non-negative integers. For example:
+Input is via either built-in variables or via @ARGV. If using @ARGV, provide one-or-more space-separated
+arguments which must be non-negative integers. For example:
 
 ./ch-1.pl 0 1 3 5 9 11
 
