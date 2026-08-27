@@ -21,7 +21,7 @@ bought (i.e., employee $i must not be assigned gift $i).
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-The number of Secret Santa arrangements for n persons is just the nth Pierre Remond de Montmort number,
+The number of Secret Santa arrangements for n persons is the nth Pierre Remond de Montmort number,
 which is the number of derangements of n items. The "derangements" function of CPAN module
 "Algorithm::Combinatorics" generates the correct number of arrays for all non-negative integers.
 (Sadly, CPAN module "Math::Combinatorics" does NOT give the correct answers for the "0" and "1" cases.)
