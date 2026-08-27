@@ -68,7 +68,7 @@ sub help    ; # Print help and exit.
    }
 
    # Announce known letters:
-   say 'known letters                   = (' . (join ', ', (map {"'".$_."'"} @kl)) . ')' ;
+   #say 'known letters                   = (' . (join ', ', (map {"'".$_."'"} @kl)) . ')' ;
 
    # Die if number-of-elements of @kl is not 5:
    if ( scalar(@kl) != 5 ) {
@@ -84,7 +84,7 @@ sub help    ; # Print help and exit.
    }
 
    # Announce positionally-disallowed letters:
-   say 'Positionally-Disallowed letters = (' . (join ', ', (map {"'".$_."'"} @pd)) . ')' ;
+   #say 'Positionally-Disallowed letters = (' . (join ', ', (map {"'".$_."'"} @pd)) . ')' ;
 
    # Die if number-of-elements of @pd is not 5:
    if ( scalar(@pd) != 5 ) {
@@ -95,7 +95,7 @@ sub help    ; # Print help and exit.
    @mh = uniq sort map {split //, $_} @pd;
 
    # Announce the must-have letters:
-   say 'Must-Have letters               = (' . (join ', ', (map {"'".$_."'"} @mh)) . ')' ;
+   #say 'Must-Have letters               = (' . (join ', ', (map {"'".$_."'"} @mh)) . ')' ;
 
    # Array of globally-disallowed letters defaults to an empty list:
    @gd = ();
@@ -106,7 +106,7 @@ sub help    ; # Print help and exit.
    }
 
    # Announce globally-disallowed letters:
-   say 'Globally-Disallowed letters     = (' . (join ', ', (map {"'".$_."'"} @gd)) . ')' ;
+   #say 'Globally-Disallowed letters     = (' . (join ', ', (map {"'".$_."'"} @gd)) . ')' ;
 
    # Get a list of most English words of length 5 from file "words-small.txt":
    my $path= __FILE__ =~ s#/[^/]+$#/#r;
@@ -155,7 +155,7 @@ sub help    ; # Print help and exit.
       }
       push @cands, $word;
    }
-   say "Candidates = (@cands)";
+   say for @cands;
 
    # Exit program, returning success code "0" to caller:
    exit 0;
