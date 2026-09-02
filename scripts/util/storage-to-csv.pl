@@ -4,7 +4,8 @@ use v5.42;
 use utf8::all;
 use Time::Piece;
 
-my $decimal_year;
+my $decimal_year =  1970.000000  ;
+my $line         = '1970.000000' ;
 
 while (<>) {
     chomp;
@@ -41,13 +42,16 @@ while (<>) {
         my $year_length  = $end->epoch  - $start->epoch;
 
         $decimal_year = $year + $elapsed / $year_length;
+        $line = sprintf("%.6f", $decimal_year);
         next;
     }
 
-    if (
-        defined $decimal_year
-        && m{^/\s+\d+(?:\.\d+)?GB\s+(\d+(?:\.\d+)?)GB\s+}
-    ) {
-        printf "%.6f,%s\n", $decimal_year, $1;
+    elsif (m#^/\s+\d+(?:\.\d+)?GB\s+(\d+(?:\.\d+)?)GB\s+#) {
+        $line .= sprintf(",%s", $1);
+    }
+
+    elsif (m#^/home/aragorn/Data\s+\d+(?:\.\d+)?GB\s+(\d+(?:\.\d+)?)GB\s+#) {
+        $line .= sprintf(",%s", $1);
+        say $line;
     }
 }
