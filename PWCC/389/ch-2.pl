@@ -103,8 +103,6 @@ my @arrays = @ARGV ? map {s/^\s+//; s/\s+$//; [split /\s+/, $_]} @ARGV :
 # MAIN BODY OF PROGRAM:
 for my $aref (@arrays) {
    say '';
-   my @array = @$aref;
-   say "Array = (@array)";
-   my $longest = lzs(@array);
-   say "Length of longest zigzag subarray = $longest";
+   say "Array = (@$aref)";
+   say 'Length of longest zigzag subarray = ', lzs(@$aref);
 }

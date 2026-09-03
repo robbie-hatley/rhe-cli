@@ -95,7 +95,6 @@ map {
    say '';
    say "Input  : $_";
    my ($composer, $melody, $positions) = parse_arg($_);
-   if ($composer eq '*ERROR*') {warn "Error  : Invalid input.\n"}
-   else {my $rearranged = rearrange($composer, $melody, $positions);
-   say "Output : $rearranged";}
+   $composer eq '*ERROR*' and warn "Error  : Invalid input.\n"
+   or say 'Output : ', rearrange($composer, $melody, $positions);
 } @args
