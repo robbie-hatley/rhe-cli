@@ -158,6 +158,8 @@ aides
 ailed
 aimed
 aimer
+ain't
+ain’t
 ainee
 ainus
 aioli
@@ -2142,6 +2144,8 @@ domal
 domed
 domes
 domic
+don't
+don’t
 donas
 donee
 donga
@@ -6351,6 +6355,7 @@ razee
 razer
 razes
 razor
+re-do
 reach
 react
 readd
@@ -6910,6 +6915,7 @@ sends
 sengi
 senna
 senor
+señor
 sensa
 sense
 sensu
@@ -6952,7 +6958,6 @@ sexed
 sexes
 sexto
 sexts
-señor
 shack
 shade
 shads
@@ -8723,6 +8728,10 @@ waxer
 waxes
 wayne
 wazoo
+we're
+we’re
+we've
+we’ve
 weald
 weals
 weans
@@ -9043,6 +9052,8 @@ yomim
 yonic
 yonis
 yores
+you'd
+you’d
 young
 yourn
 yours
