@@ -1,5 +1,0 @@
-#!/usr/bin/bash
-sudo umount /home/aragorn/net/EX/Ulthar
-sudo umount /home/aragorn/net/EX/Celephais
-sudo umount /home/aragorn/net/EX/Inganok
-sudo umount /home/aragorn/net/EX/Kled
