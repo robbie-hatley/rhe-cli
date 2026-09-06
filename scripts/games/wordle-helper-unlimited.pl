@@ -11,6 +11,7 @@
 # Edit history:
 # Tue Aug 25, 2026: Wrote it.
 # Wed Aug 26, 2026: Split into simple and unlimited versions.
+# Sat Sep 05, 2026: Removed commented-out debugging lines. Removed printing of $wl.
 ##############################################################################################################
 
 use v5.36;             # To get signatures.
@@ -59,9 +60,6 @@ sub help    ; # Print help and exit.
    # If user wants help, just print help and exit:
    if ($Help) {help; exit;}
 
-   # Announce word length:
-   say "Word length: $wl";
-
    # Die if word length is not an integer from 1 through 28:
    if ( $wl !~ m/^[1-9][0-9]*$/ || $wl < 1 || $wl > 28 ) {
       die "Error: Word length must be a positive integer 1-28.\n";
@@ -74,9 +72,6 @@ sub help    ; # Print help and exit.
    if ( 0 != length $kl ) {
       @kl = split ',', $kl, -1;
    }
-
-   # Announce known letters:
-   #say 'known letters                   = (' . (join ', ', (map {"'".$_."'"} @kl)) . ')' ;
 
    # Die if number-of-elements of @kl is not $wl:
    if ( scalar(@kl) != $wl ) {
@@ -91,9 +86,6 @@ sub help    ; # Print help and exit.
       @pd = split ',', $pd, -1;
    }
 
-   # Announce positionally-disallowed letters:
-   #say 'Positionally-Disallowed letters = (' . (join ', ', (map {"'".$_."'"} @pd)) . ')' ;
-
    # Die if number-of-elements of @pd is not $wl:
    if ( scalar(@pd) != $wl ) {
       die "Error: Wrong number of positionally-disallowed letter clusters.\n";
@@ -102,9 +94,6 @@ sub help    ; # Print help and exit.
    # Get Must-Have letters from Positionally-Disallowed letters:
    @mh = uniq sort map {split //, $_} @pd;
 
-   # Announce the must-have letters:
-   #say 'Must-Have letters               = (' . (join ', ', (map {"'".$_."'"} @mh)) . ')' ;
-
    # Array of globally-disallowed letters defaults to an empty list:
    @gd = ();
 
@@ -112,9 +101,6 @@ sub help    ; # Print help and exit.
    if ( length($gd) > 0 ) {
       @gd = split //, $gd;
    }
-
-   # Announce globally-disallowed letters:
-   #say 'Globally-Disallowed letters     = (' . (join ', ', (map {"'".$_."'"} @gd)) . ')' ;
 
    # Get a list of most English words of length $wl from file "words-large.txt":
    my $path= __FILE__ =~ s#/[^/]+$#/#r;
@@ -135,7 +121,6 @@ sub help    ; # Print help and exit.
       }
       push @known, $word;
    }
-   #say "Known      = (@known)";
 
    # Obtain list of words not containing positional disallowances:
    WORD: foreach my $word (@known) {
@@ -145,7 +130,6 @@ sub help    ; # Print help and exit.
       }
       push @posit, $word;
    }
-   #say "Posit      = (@posit)";
 
    # Obtain list of words containing "must-have" letters:
    WORD: foreach my $word (@posit) {
@@ -154,7 +138,6 @@ sub help    ; # Print help and exit.
       }
       push @musth, $word;
    }
-   #say "Musth      = (@musth)";
 
    # Obtain list of words not containing globally-disallowed letters:
    WORD: foreach my $word (@musth) {
