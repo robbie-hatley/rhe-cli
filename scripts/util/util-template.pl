@@ -202,7 +202,6 @@ my $filecount = 0         ; # Count of files matching target, regexp, and predic
 sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
 sub curfile ; # Process current file.
-sub BLAT    ; # Print messages only if debugging.
 sub stats   ; # Print statistics.
 sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
@@ -213,6 +212,9 @@ sub help    ; # Print help and exit.
    # Start execution timer:
    my $t0 = time;
    my @s0 = localtime($t0);
+
+   # Process @ARGV and set settings:
+   argv;
 
    # Print program entry message if being terse or verbose:
    if ( $Verbose >= 1 ) {
@@ -226,37 +228,34 @@ sub help    ; # Print help and exit.
                     1000 * ($cmpl_end - $cmpl_beg);
    }
 
-   # Process @ARGV and set settings:
-   argv;
-
-   # Print basic settings if being terse or verbose:
+   # Print settings if being terse or verbose:
    if ( $Verbose >= 1 ) {
-      say STDERR 'Basic settings:';
-      say STDERR "OriDir    = $OriDir";
-      say STDERR "Recurse   = $Recurse";
-      say STDERR "Target    = $Target";
-      say STDERR "RegExp    = $RegExp";
-      say STDERR "Predicate = $Predicate";
-
-
-      say STDERR '';
+      say STDERR
+         "Settings:              \n"
+        ."OriDir    = $OriDir    \n"
+        ."Recurse   = $Recurse   \n"
+        ."Target    = $Target    \n"
+        ."RegExp    = $RegExp    \n"
+        ."Predicate = $Predicate \n";
    }
 
-   # If debugging, print the values of all variables except counters, after processing @ARGV:
-   BLAT "Debug message: Values of variables after running argv():\n"
-      . "pname     = $pname     \n"
-      . "cmpl_beg  = $cmpl_beg  \n"
-      . "cmpl_end  = $cmpl_end  \n"
-      . "Options   = (@Opts)    \n"
-      . "Arguments = (@Args)    \n"
-      . "OriDir    = $OriDir    \n"
-      . "Debug     = $Debug     \n"
-      . "Help      = $Help      \n"
-      . "Verbose   = $Verbose   \n"
-      . "Recurse   = $Recurse   \n"
-      . "Target    = $Target    \n"
-      . "RegExp    = $RegExp    \n"
-      . "Predicate = $Predicate \n";
+   if ($Debug) {
+      say STDERR
+         "Values of all variables except counters after running argv:\n"
+        ."pname     = $pname     \n"
+        ."cmpl_beg  = $cmpl_beg  \n"
+        ."cmpl_end  = $cmpl_end  \n"
+        ."Options   = (@Opts)    \n"
+        ."Arguments = (@Args)    \n"
+        ."OriDir    = $OriDir    \n"
+        ."Debug     = $Debug     \n"
+        ."Help      = $Help      \n"
+        ."Verbose   = $Verbose   \n"
+        ."Recurse   = $Recurse   \n"
+        ."Target    = $Target    \n"
+        ."RegExp    = $RegExp    \n"
+        ."Predicate = $Predicate \n";
+   }
 
    # Process current directory (and all subdirectories if recursing) and print stats,
    # unless user requested help, in which case just print help:
@@ -266,19 +265,19 @@ sub help    ; # Print help and exit.
    else {
       # If "$OriDir" is a real directory, perform the program's function:
       if ( -e $OriDir && -d $OriDir ) {
-         $Debug and RH::Dir::rhd_debug('on');
+         if ($Debug) {RH::Dir::rhd_debug('on');}
          if ($Recurse) {
             my $mlor = RecurseDirs {curdire};
-            say "\nMaximum levels of recursion reached = $mlor" if $Verbose >= 1;
+            if ($Verbose >= 1) {say "\nMaximum levels of recursion reached = $mlor";}
          }
          else {
             curdire;
          }
-         $Debug and RH::Dir::rhd_debug('off');
+         if ($Debug) {RH::Dir::rhd_debug('off');}
          stats;
       }
       # Otherwise, just print an error message:
-      else { # Severe error!
+      else {
          say STDERR "Error in \"$pname\": \"original\" directory \"$OriDir\" does not exist!\n"
                   . "Skipping execution.\n"
                   . "$!";
@@ -309,33 +308,29 @@ sub argv {
    my $end = 0;              # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {           # For each element of @ARGV:
-      !$end                  # If we have not yet reached end-of-options,
-      && /^--$/              # and we see an "--" option,
-      and $end = 1           # set the "end-of-options" flag
-      and push @Opts, '--'   # and push "--" to @Opts
-      and next;              # and skip to next element of @ARGV.
-      !$end                  # If we have not yet reached end-of-options,
-      && ( /^-(?!-)$s+$/     # and if we see a valid short option
-      ||  /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @Opts, $_     # then push item to @Opts
-      and next;              # and skip to next element of @ARGV.
-      push @Args, $_;        # If we get to here, push item to @Args.
+   # Riffle through @ARGV, copying each element (except for a possible '--') to either $Opts or $Args:
+   for ( @ARGV ) {
+      # If we see '--', set $end to 1 (don't push '--' to @Opts or @Args):
+      if ( /^--$/ ) {$end = 1;}
+      # Else if we're not yet at end-of-options, and we see an option, push it to @Opts:
+      elsif ( !$end && ( /^-(?!-)$s+$/ ||  /^--(?!-)$d+$/ ) ) {push @Opts, $_;}
+      # Else push current item to @Args:
+      else {push @Args, $_;}
    }
 
    # Process options:
    for ( @Opts ) {
-      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
-      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ; # Default.
-      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
-      /^-$s*l/ || /^--local$/   and $Recurse =  0  ; # Default.
-      /^-$s*r/ || /^--recurse$/ and $Recurse =  1  ;
-      /^-$s*f/ || /^--files$/   and $Target  = 'F' ;
-      /^-$s*d/ || /^--dirs$/    and $Target  = 'D' ;
-      /^-$s*b/ || /^--both$/    and $Target  = 'B' ;
-      /^-$s*a/ || /^--all$/     and $Target  = 'A' ; # Default.
+      /^-$s*h$s*$/ || /^--help$/    and $Help    =  1  ;
+      /^-$s*e$s*$/ || /^--debug$/   and $Debug   =  1  ;
+      /^-$s*q$s*$/ || /^--quiet$/   and $Verbose =  0  ;
+      /^-$s*t$s*$/ || /^--terse$/   and $Verbose =  1  ; # Default.
+      /^-$s*v$s*$/ || /^--verbose$/ and $Verbose =  2  ;
+      /^-$s*l$s*$/ || /^--local$/   and $Recurse =  0  ; # Default.
+      /^-$s*r$s*$/ || /^--recurse$/ and $Recurse =  1  ;
+      /^-$s*f$s*$/ || /^--files$/   and $Target  = 'F' ;
+      /^-$s*d$s*$/ || /^--dirs$/    and $Target  = 'D' ;
+      /^-$s*b$s*$/ || /^--both$/    and $Target  = 'B' ;
+      /^-$s*a$s*$/ || /^--all$/     and $Target  = 'A' ; # Default.
    }
 
    # Get number of arguments:
@@ -383,7 +378,7 @@ sub curdire {
    my @paths = sort {$a cmp $b} glob_regexp_utf8($cwd, $Target, $RegExp, $Predicate);
 
    my $numpaths = scalar @paths;
-   BLAT "About to sent $numpaths paths to curfile.";
+   if ($Debug) {say STDERR "About to sent $numpaths paths to curfile.";}
 
    # Send each path to curfile():
    foreach my $path (@paths) {curfile($path)}
@@ -398,7 +393,7 @@ sub curfile ($path) {
    ++$filecount;
 
    # Announce path:
-   if ( $Debug >= 1 ) {
+   if ($Debug) {
       say STDOUT "Simulate: $path";
       # (Don't actually DO anything to file at $path.)
    }
@@ -410,9 +405,6 @@ sub curfile ($path) {
    # Return success code 1 to caller:
    return 1;
 } # end sub curfile
-
-# Print messages only if debugging:
-sub BLAT ($string) {if ($Debug) {say STDERR $string}}
 
 # Print statistics for this program run:
 sub stats {

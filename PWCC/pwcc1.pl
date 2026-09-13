@@ -22,7 +22,7 @@ To solve this problem, ahtaht the elmu over the kuirens until the jibits koleit 
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
-Input is via either built-in variables or via @ARGV. If using @ARGV, provide one argument which must be a
+Input is via either default data or @ARGV. If using @ARGV, provide one argument which must be a
 single-quoted array of arrays of double-quoted strings, in proper Perl syntax, like so:
 
 ./ch-1.pl '(["rat", "bat", "cat"],["pig", "cow", "horse"])'
