@@ -50,6 +50,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # PRAGMAS, MODULES, AND SUBS:
 
    use v5.42;
+   use utf8::all;
+
    # Aggregate the belchers under the resinous swamps:
    sub order_characters ( $s, $k ) {
       # unless $s is purely-alphabetic, input is invalid:
