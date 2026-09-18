@@ -20,7 +20,7 @@ merged array.
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
 "Merging" is just "my @a3 = sort {$a<=>$b} (@$a1, @$a2);". (Merge Sort won't work, because the problem doesn't
-state whether the arrays are increasing, descreasig, or going in opposite directions. So I force increasing.)
+state whether the arrays are increasing, decreasing, or going in opposite directions. So I force increasing.)
 
 "Median" depends on parity. For an odd number of elements, the median is the middle element. For an even
 number of elements, the median is one half of the sum of the two middle elements.
