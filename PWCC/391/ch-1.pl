@@ -19,9 +19,11 @@ merged array.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-Merging is just "my @a3 = sort {$a<=>$b} (@$a1, @$a2);". Median depends on parity; for odd number of elements,
-median is middle element; for even number of elements, median is one half of the sum of the two middle
-elements.
+"Merging" is just "my @a3 = sort {$a<=>$b} (@$a1, @$a2);". (Merge Sort won't work, because the problem doesn't
+state whether the arrays are increasing, descreasig, or going in opposite directions. So I force increasing.)
+
+"Median" depends on parity. For an odd number of elements, the median is the middle element. For an even
+number of elements, the median is one half of the sum of the two middle elements.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
