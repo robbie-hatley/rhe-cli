@@ -48,7 +48,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       my $n = scalar @s;
       for (    my $i =    0   ; $i < $n - 1 ; ++$i ) {
          for ( my $j = $i + 1 ; $j < $n - 0 ; ++$j ) {
-            if ( $s[$i] !~ m/[$s[$j]]/ ) {
+            if ( $s[$i] !~ m/[\Q$s[$j]\E]/ ) {
                my $prod = length($s[$i]) * length($s[$j]);
                if ( $prod > $wlp ) {
                   $wlp = $prod;

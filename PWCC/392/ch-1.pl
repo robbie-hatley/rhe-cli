@@ -18,8 +18,8 @@ concatenating the minimum number of characters to its left.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
-To solve this problem, I realized that to minimize letters added, I should look for the longest leftmost part
-of the word which is already a palindrome, then just tack the reversed remainder to the word's left.
+To solve this problem, I realized that to minimize letters added, I should look for the longest palindromic
+prefix within the word, then just tack the reversed remainder to the word's left.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
