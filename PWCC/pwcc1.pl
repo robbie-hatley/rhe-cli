@@ -70,12 +70,32 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       $s =~ s/\A[\pZ\p{Cc}\p{Cf}]*(.*?)[\pZ\p{Cc}\p{Cf}]*\z/$1/sr;
    }
 
+   # Parse single-quoted lists of space-separated strings:
+   sub parse_argv_1 ( @bash_args ) {
+      my @args = ();
+      foreach my $bash_arg (@bash_args) {
+         my $list_string = trim_nonglyph($bash_arg);
+         push @args, [split /\s+/, $list_string];
+      }
+      return @args;
+   }
+
    # Parse lists of lists:
    sub parse_argv_2 ( @bash_args ) {
       my @args = ();
       foreach my $bash_arg (@bash_args) {
          my @lst_strs = map {trim_nonglyph $_} split ',', $bash_arg;
          push @args, [map {[split /\s+/, $_]} @lst_strs];
+      }
+      return @args;
+   }
+
+   # Parse lists of matrices:
+   sub parse_argv_3 ( @bash_args ) {
+      my @args = ();
+      foreach my $bash_arg (@bash_args) {
+         my @mat_strs = map {trim_nonglyph $_} split ';', $bash_arg;
+         push @args, [map {[map {[split /\s+/, $_]} map {trim_nonglyph $_} split ',', $_]} @mat_strs];
       }
       return @args;
    }

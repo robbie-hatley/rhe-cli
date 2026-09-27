@@ -12,9 +12,9 @@
 # Tue Aug 25, 2026: Wrote it.
 # Wed Aug 26, 2026: Split into simple and unlimited versions.
 # Sat Sep 05, 2026: Removed commented-out debugging lines.
+# Thu Sep 24, 2026: Removed minimum Perl version requirement. Print words as string.
 ##############################################################################################################
 
-use v5.36;             # To get signatures.
 use utf8::all;         # Use UTF-8 for everything.
 use List::Util 'uniq'; # Nix dups.
 
@@ -129,7 +129,7 @@ sub help    ; # Print help and exit.
    # Obtain list of words containing "must-have" letters:
    WORD: foreach my $word (@posit) {
       LETTER: foreach my $letter (@mh) {
-         next WORD if $word !~ m/$letter/;
+         next WORD unless $word =~ m/$letter/;
       }
       push @musth, $word;
    }
@@ -137,11 +137,64 @@ sub help    ; # Print help and exit.
    # Obtain list of words not containing globally-disallowed letters:
    WORD: foreach my $word (@musth) {
       LETTER: foreach my $letter (@gd) {
-         next WORD if $word =~ m/$letter/;
+         next WORD unless $word !~ m/$letter/;
       }
       push @cands, $word;
    }
-   say for @cands;
+
+   # Print candidates:
+   print "Candidates:\n";
+   my $words_string = join ', ', @cands;
+   print "$words_string\n";
+
+   # Rank unknown letters in descending order of how many of the candidate words they're used in:
+   my %count;
+   foreach my $word (@cands) {
+      my @unique_letters = uniq sort split //, $word;
+      foreach my $letter (@unique_letters) {
+         next if $kl =~ $letter;
+         next if $pd =~ $letter;
+         next if $gd =~ $letter;
+         ++$count{$letter};
+      }
+   }
+   my $letters = join '', sort {$count{$b}<=>$count{$a}} keys %count;
+
+   # Announce unknown letters in descending order of how many of the candidate words they're used in:
+   print "Unknown letters in descending order of how many of the candidate words they're used in:\n";
+   print "$letters\n";
+
+   # Generate suggested probe words:
+   my @probes;
+   foreach my $word (@words) {
+      my $score = 0;
+      my @letters = uniq split //, $word;
+      foreach my $letter (@letters) {
+         $score += $count{$letter} // 0;
+      }
+      push @probes, [$score, $word];
+      @probes = sort {$b->[0] <=> $a->[0]} @probes;
+      pop @probes if @probes > 5;
+   }
+   my $probes_string = join ', ', map {$_->[1]} @probes;
+   print "Suggested probe words:\n";
+   print "$probes_string\n";
+
+   # Generate suggested candidate words:
+   my @sugg_cands;
+   foreach my $cand (@cands) {
+      my $score = 0;
+      my @letters = uniq split //, $cand;
+      foreach my $letter (@letters) {
+         $score += $count{$letter} // 0;
+      }
+      push @sugg_cands, [$score, $cand];
+      @sugg_cands = sort {$b->[0] <=> $a->[0]} @sugg_cands;
+      pop @sugg_cands if @sugg_cands > 5;
+   }
+   my $sugg_cands_string = join ', ', map {$_->[1]} @sugg_cands;
+   print "Suggested candidate words:\n";
+   print "$sugg_cands_string\n";
 
    # Exit program, returning success code "0" to caller:
    exit 0;

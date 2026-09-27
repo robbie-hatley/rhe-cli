@@ -12,9 +12,9 @@
 # Tue Aug 25, 2026: Wrote it.
 # Wed Aug 26, 2026: Split into simple and unlimited versions.
 # Sat Sep 05, 2026: Removed commented-out debugging lines. Removed printing of $wl.
+# Thu Sep 24, 2026: Removed minimum Perl version requirement. Print words as string.
 ##############################################################################################################
 
-use v5.36;             # To get signatures.
 use utf8::all;         # Use UTF-8 for everything.
 use List::Util 'uniq'; # Nix dups.
 
@@ -134,7 +134,7 @@ sub help    ; # Print help and exit.
    # Obtain list of words containing "must-have" letters:
    WORD: foreach my $word (@posit) {
       LETTER: foreach my $letter (@mh) {
-         next WORD if $word !~ m/$letter/;
+         next WORD unless $word =~ m/$letter/;
       }
       push @musth, $word;
    }
@@ -142,11 +142,29 @@ sub help    ; # Print help and exit.
    # Obtain list of words not containing globally-disallowed letters:
    WORD: foreach my $word (@musth) {
       LETTER: foreach my $letter (@gd) {
-         next WORD if $word =~ m/$letter/;
+         next WORD unless $word !~ m/$letter/;
       }
       push @cands, $word;
    }
-   say for @cands;
+
+   # Print candidates:
+   print "Candidates:\n";
+   my $words_string = join ', ', @cands;
+   print "$words_string\n";
+
+   # Rank used letters in descending order of how many of the candidate words they're used in:
+   my %count;
+   foreach my $word (@cands) {
+      my @unique_letters = uniq sort split //, $word;
+      foreach my $letter (@unique_letters) {
+         ++$count{$letter};
+      }
+   }
+   my $letters = join '', sort {$count{$b}<=>$count{$a}} keys %count;
+
+   # Announce letters in descending order of how many of the candidate words they're used in:
+   print "Letters in descending order of how many of the candidate words they're used in:\n";
+   print "$letters\n";
 
    # Exit program, returning success code "0" to caller:
    exit 0;
