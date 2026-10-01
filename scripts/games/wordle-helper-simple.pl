@@ -6,13 +6,16 @@
 
 ##############################################################################################################
 # wordle-helper-simple.pl
-# Helps user solve Wordle (5-letter words only).
+# Helps user solve NYT's "Wordle" game (5-letter words only).
 # Written by Robbie Hatley.
 # Edit history:
 # Tue Aug 25, 2026: Wrote it.
 # Wed Aug 26, 2026: Split into simple and unlimited versions.
-# Sat Sep 05, 2026: Removed commented-out debugging lines.
+# Sat Sep 05, 2026: Removed commented-out debugging lines. Removed printing of settings.
 # Thu Sep 24, 2026: Removed minimum Perl version requirement. Print words as string.
+# Thu Oct 01, 2026: Renamed word-list files. Fixed "no candidates" bug. Now printing unknown letters in
+#                   descending order of usage, suggested probe words, and suggested candidate words, in both
+#                   the "simple" and "unlimited" versions of this script.
 ##############################################################################################################
 
 use utf8::all;         # Use UTF-8 for everything.
@@ -60,6 +63,11 @@ sub help    ; # Print help and exit.
    # If user wants help, just print help and exit:
    if ($Help) {help; exit;}
 
+
+
+
+
+
    # Array of known letters defaults to a list of 5 empty strings:
    @kl = ('')x5;
 
@@ -99,8 +107,8 @@ sub help    ; # Print help and exit.
 
    # Get a list of most English words of length 5 from file "words-small.txt":
    my $path= __FILE__ =~ s#/[^/]+$#/#r;
-   open FH, '<', $path.'words-small.txt'
-   or die "Error: Couldn't open file \"words-small.txt\".\n$!\n";
+   open FH, '<', $path.'wordle-valid-guesses_5-letters.txt'
+   or die "Error: Couldn't open file \"wordle-valid-guesses_5-letters.txt\".\n$!\n";
    foreach my $line (<FH>) {
       chomp $line;
       next if length($line) != 5;
@@ -110,7 +118,7 @@ sub help    ; # Print help and exit.
 
    # Obtain list of words containing known letters:
    WORD: foreach my $word (@words) {
-      POSITION: for ( my $i = 0 ; $i < 5 ; ++$i ) {
+      POSITION: for ( my $i = 0 ; $i <  5  ; ++$i ) {
          next POSITION if 0 == length $kl[$i];
          next WORD     if $kl[$i] ne '' && substr($word, $i, 1) ne $kl[$i];
       }
@@ -119,7 +127,7 @@ sub help    ; # Print help and exit.
 
    # Obtain list of words not containing positional disallowances:
    WORD: foreach my $word (@known) {
-      POSITION: for ( my $i = 0 ; $i < 5 ; ++$i ) {
+      POSITION: for ( my $i = 0 ; $i <  5  ; ++$i ) {
          next POSITION if 0 == length $pd[$i];
          next WORD     if substr($word, $i, 1) =~ m/[$pd[$i]]/;
       }
@@ -145,9 +153,10 @@ sub help    ; # Print help and exit.
    # Print candidates:
    print "Candidates:\n";
    my $words_string = join ', ', @cands;
+   if ( '' eq $words_string ) {$words_string = '(no candidates)'}
    print "$words_string\n";
 
-   # Rank unknown letters in descending order of how many of the candidate words they're used in:
+   # Print unknown letters in descending order of how many of the candidate words they're used in:
    my %count;
    foreach my $word (@cands) {
       my @unique_letters = uniq sort split //, $word;
@@ -159,40 +168,53 @@ sub help    ; # Print help and exit.
       }
    }
    my $letters = join '', sort {$count{$b}<=>$count{$a}} keys %count;
-
-   # Announce unknown letters in descending order of how many of the candidate words they're used in:
+   if ( '' eq $letters ) {$letters = '(no letters)'}
    print "Unknown letters in descending order of how many of the candidate words they're used in:\n";
    print "$letters\n";
 
-   # Generate suggested probe words:
+   # Print suggested probe words:
    my @probes;
-   foreach my $word (@words) {
-      my $score = 0;
-      my @letters = uniq split //, $word;
-      foreach my $letter (@letters) {
-         $score += $count{$letter} // 0;
-      }
-      push @probes, [$score, $word];
-      @probes = sort {$b->[0] <=> $a->[0]} @probes;
-      pop @probes if @probes > 5;
+   my $probes_string;
+   if ( 0 == scalar keys %count ) {
+      @probes = ();
+      $probes_string = '(no suggested probe words)';
    }
-   my $probes_string = join ', ', map {$_->[1]} @probes;
+   else {
+      foreach my $word (@words) {
+         my $score = 0;
+         my @letters = uniq split //, $word;
+         foreach my $letter (@letters) {
+            $score += $count{$letter} // 0;
+         }
+         push @probes, [$score, $word];
+         @probes = sort {$b->[0] <=> $a->[0]} @probes;
+         pop @probes if @probes > 5;
+      }
+      $probes_string = join ', ', map {$_->[1]} @probes;
+   }
    print "Suggested probe words:\n";
    print "$probes_string\n";
 
    # Generate suggested candidate words:
    my @sugg_cands;
-   foreach my $cand (@cands) {
-      my $score = 0;
-      my @letters = uniq split //, $cand;
-      foreach my $letter (@letters) {
-         $score += $count{$letter} // 0;
-      }
-      push @sugg_cands, [$score, $cand];
-      @sugg_cands = sort {$b->[0] <=> $a->[0]} @sugg_cands;
-      pop @sugg_cands if @sugg_cands > 5;
+   my $sugg_cands_string;
+   if ( 0 == scalar keys %count ) {
+      @sugg_cands = ();
+      $sugg_cands_string = '(no suggested candidate words)';
    }
-   my $sugg_cands_string = join ', ', map {$_->[1]} @sugg_cands;
+   else {
+      foreach my $cand (@cands) {
+         my $score = 0;
+         my @letters = uniq split //, $cand;
+         foreach my $letter (@letters) {
+            $score += $count{$letter} // 0;
+         }
+         push @sugg_cands, [$score, $cand];
+         @sugg_cands = sort {$b->[0] <=> $a->[0]} @sugg_cands;
+         pop @sugg_cands if @sugg_cands > 5;
+      }
+      $sugg_cands_string = join ', ', map {$_->[1]} @sugg_cands;
+   }
    print "Suggested candidate words:\n";
    print "$sugg_cands_string\n";
 
