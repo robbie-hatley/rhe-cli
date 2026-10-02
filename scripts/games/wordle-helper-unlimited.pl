@@ -16,6 +16,8 @@
 # Thu Oct 01, 2026: Renamed word-list files. Fixed "no candidates" bug. Now printing unknown letters in
 #                   descending order of usage, suggested probe words, and suggested candidate words, in both
 #                   the "simple" and "unlimited" versions of this script.
+# Fri Oct 02, 2026: I went back to "words-small.txt" and "words-large.txt", because the Official Lists change
+#                   from day to day and sometimes fail to present the actual answer among the candidates.
 ##############################################################################################################
 
 use utf8::all;         # Use UTF-8 for everything.
@@ -107,8 +109,8 @@ sub help    ; # Print help and exit.
 
    # Get a list of most English words of length $wl from file "words-large.txt":
    my $path= __FILE__ =~ s#/[^/]+$#/#r;
-   open FH, '<', $path.'wordle-valid-guesses_n-letters.txt'
-   or die "Error: Couldn't open file \"wordle-valid-guesses_n-letters.txt\".\n$!\n";
+   open FH, '<', $path.'words-large.txt'
+   or die "Error: Couldn't open file \"words-large.txt\".\n$!\n";
    foreach my $line (<FH>) {
       chomp $line;
       next if length($line) != $wl;
@@ -154,7 +156,7 @@ sub help    ; # Print help and exit.
    print "Candidates:\n";
    my $words_string = join ', ', @cands;
    if ( '' eq $words_string ) {$words_string = '(no candidates)'}
-   print "$words_string\n";
+   print "\n$words_string\n\n";
 
    # Print unknown letters in descending order of how many of the candidate words they're used in:
    my %count;
@@ -170,7 +172,7 @@ sub help    ; # Print help and exit.
    my $letters = join '', sort {$count{$b}<=>$count{$a}} keys %count;
    if ( '' eq $letters ) {$letters = '(no letters)'}
    print "Unknown letters in descending order of how many of the candidate words they're used in:\n";
-   print "$letters\n";
+   print "\n$letters\n\n";
 
    # Print suggested probe words:
    my @probes;
@@ -193,9 +195,9 @@ sub help    ; # Print help and exit.
       $probes_string = join ', ', map {$_->[1]} @probes;
    }
    print "Suggested probe words:\n";
-   print "$probes_string\n";
+   print "\n$probes_string\n\n";
 
-   # Generate suggested candidate words:
+   # Print suggested candidate words:
    my @sugg_cands;
    my $sugg_cands_string;
    if ( 0 == scalar keys %count ) {
@@ -216,7 +218,7 @@ sub help    ; # Print help and exit.
       $sugg_cands_string = join ', ', map {$_->[1]} @sugg_cands;
    }
    print "Suggested candidate words:\n";
-   print "$sugg_cands_string\n";
+   print "\n$sugg_cands_string\n";
 
    # Exit program, returning success code "0" to caller:
    exit 0;
