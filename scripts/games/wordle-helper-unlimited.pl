@@ -235,11 +235,11 @@ sub argv {
    }
    # Process options:
    for ( @Opts ) {
-      /^-h$/ || /^--help$/ and $Help = 1  ;
-      /^--wl=(.+)$/        and $wl   = $1 ;
-      /^--kl=(.+)$/        and $kl   = $1 ;
-      /^--pd=(.+)$/        and $pd   = $1 ;
-      /^--gd=(.+)$/        and $gd   = $1 ;
+      /^-h$/ || /^--help$/ and $Help = 1      ;
+      /^--wl=(.+)$/        and $wl   = 0 + $1 ;
+      /^--kl=(.+)$/        and $kl   = lc  $1 ;
+      /^--pd=(.+)$/        and $pd   = lc  $1 ;
+      /^--gd=(.+)$/        and $gd   = lc  $1 ;
    }
    # Ignore all other options.
    # Ignore all arguments.
