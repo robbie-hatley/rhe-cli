@@ -4,11 +4,13 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
+
 Solution in Perl for The Weekly Challenge ###-1,
 written by Robbie Hatley on Dow Mon Dm, 2026.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
+
 Task ###-1: Words In-Common
 Submitted by: Robbie Hatley.
 Write a script which, given a list of two-to-ten lists of words,
@@ -18,6 +20,7 @@ prints which words are in-common between all lists.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
+
 To solve this problem, I use a hash, keyed by words and with binary numbers as values. Each time a word is
 seen, the 1 bit of it's value in the hash is set if it's from list 1, or the 2 bit if from list 2, etc.
 
@@ -37,8 +40,11 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-   use v5.36;
+   use v5.40;
    use utf8::all;
+   use builtin qw( inf nan );
+   no warnings 'experimental::builtin';
+   use Math::MatrixReal;
    $"=', ';
 
    # Which words are in-common between multiple lists?
@@ -65,17 +71,12 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       return @ic;
    }
 
-   # Trim non-glyph characters from the front and back of a string:
-   sub trim_nonglyph ( $s ) {
-      $s =~ s/\A[\pZ\p{Cc}\p{Cf}]*(.*?)[\pZ\p{Cc}\p{Cf}]*\z/$1/sr;
-   }
-
-   # Parse single-quoted lists of space-separated strings:
+   # Parse lists of strings:
    sub parse_argv_1 ( @bash_args ) {
       my @args = ();
       foreach my $bash_arg (@bash_args) {
-         my $list_string = trim_nonglyph($bash_arg);
-         push @args, [split /\s+/, $list_string];
+         my $lst_str = trim $bash_arg;
+         push @args, [split /\s+/, $lst_str];
       }
       return @args;
    }
@@ -84,7 +85,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    sub parse_argv_2 ( @bash_args ) {
       my @args = ();
       foreach my $bash_arg (@bash_args) {
-         my @lst_strs = map {trim_nonglyph $_} split ',', $bash_arg;
+         my @lst_strs = map {trim $_} split ',', $bash_arg;
          push @args, [map {[split /\s+/, $_]} @lst_strs];
       }
       return @args;
@@ -94,8 +95,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    sub parse_argv_3 ( @bash_args ) {
       my @args = ();
       foreach my $bash_arg (@bash_args) {
-         my @mat_strs = map {trim_nonglyph $_} split ';', $bash_arg;
-         push @args, [map {[map {[split /\s+/, $_]} map {trim_nonglyph $_} split ',', $_]} @mat_strs];
+         my @mat_strs = map {trim $_} split ';', $bash_arg;
+         push @args, [map {[map {[split /\s+/, $_]} map {trim $_} split ',', $_]} @mat_strs];
       }
       return @args;
    }
@@ -114,6 +115,8 @@ my @arrays = @ARGV ? parse_argv_2(@ARGV) :
 # MAIN BODY OF PROGRAM:
 for my $aref (@arrays) {
    say '';
+   my $vmtu = nan;
+   my $mwsc = inf;
    say 'Lists:';
    say "@$_" for @$aref;
    if (scalar @$aref <  2) {warn "Error: Too-few  lists (should be 2-10).\n";next;}

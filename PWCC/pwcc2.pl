@@ -4,11 +4,13 @@
 
 --------------------------------------------------------------------------------------------------------------
 TITLE AND ATTRIBUTION:
+
 Solution in Perl for The Weekly Challenge ###-2,
 written by Robbie Hatley on Dow Mon Dm, 2026.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM DESCRIPTION:
+
 Task ###-2: Equal Determinants
 Submitted by: Robbie Hatley
 Write a script which compares two matrices of real numbers and
@@ -18,6 +20,7 @@ says whether their determinants are equal.
 
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
+
 To solve this problem, I use the "Math::MatrixReal" CPAN module.
 
 --------------------------------------------------------------------------------------------------------------
@@ -37,8 +40,10 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 # ------------------------------------------------------------------------------------------------------------
 # PRAGMAS, MODULES, AND SUBS:
 
-   use v5.36;
+   use v5.40;
    use utf8::all;
+   use builtin qw( inf nan );
+   no warnings 'experimental::builtin';
    use Math::MatrixReal;
    $"=', ';
 
@@ -51,17 +56,12 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       $det1 == $det2;
    }
 
-   # Trim non-glyph characters from the front and back of a string:
-   sub trim_nonglyph ( $s ) {
-      $s =~ s/\A[\pZ\p{Cc}\p{Cf}]*(.*?)[\pZ\p{Cc}\p{Cf}]*\z/$1/sr;
-   }
-
-   # Parse single-quoted lists of space-separated strings:
+   # Parse lists of strings:
    sub parse_argv_1 ( @bash_args ) {
       my @args = ();
       foreach my $bash_arg (@bash_args) {
-         my $list_string = trim_nonglyph($bash_arg);
-         push @args, [split /\s+/, $list_string];
+         my $lst_str = trim $bash_arg;
+         push @args, [split /\s+/, $lst_str];
       }
       return @args;
    }
@@ -70,7 +70,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    sub parse_argv_2 ( @bash_args ) {
       my @args = ();
       foreach my $bash_arg (@bash_args) {
-         my @lst_strs = map {trim_nonglyph $_} split ',', $bash_arg;
+         my @lst_strs = map {trim $_} split ',', $bash_arg;
          push @args, [map {[split /\s+/, $_]} @lst_strs];
       }
       return @args;
@@ -80,8 +80,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    sub parse_argv_3 ( @bash_args ) {
       my @args = ();
       foreach my $bash_arg (@bash_args) {
-         my @mat_strs = map {trim_nonglyph $_} split ';', $bash_arg;
-         push @args, [map {[map {[split /\s+/, $_]} map {trim_nonglyph $_} split ',', $_]} @mat_strs];
+         my @mat_strs = map {trim $_} split ';', $bash_arg;
+         push @args, [map {[map {[split /\s+/, $_]} map {trim $_} split ',', $_]} @mat_strs];
       }
       return @args;
    }
