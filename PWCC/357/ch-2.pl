@@ -65,9 +65,8 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    use v5.40;
    use Math::Prime::Util 'gcd';
 
-   # Given a positive integer i, return all unique
-   # lowest-form fractions n/m (for n, m in 1..i)
-   # in increasing numeric order:
+   # Given a positive integer i, return all unique lowest-form
+   # fractions n/m (for n, m in 1..i) in increasing numeric order:
    sub unique_fractions ( $i ) {
       return () if $i !~ m/^[1-9]\d*$/;
       my @fractions;
