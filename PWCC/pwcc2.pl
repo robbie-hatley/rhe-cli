@@ -60,8 +60,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    sub parse_argv_1 ( @bash_args ) {
       my @args = ();
       foreach my $bash_arg (@bash_args) {
-         my $lst_str = trim $bash_arg;
-         push @args, [split /\s+/, $lst_str];
+         push @args, [map {trim $_} split /,/, $bash_arg, -1];
       }
       return @args;
    }
