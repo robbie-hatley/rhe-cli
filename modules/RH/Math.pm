@@ -30,7 +30,7 @@
 package RH::Math;
 
 # Pragmas:
-use v5.32;
+use v5.36;
 use strict;
 use warnings;
 use experimental 'switch';
@@ -46,7 +46,7 @@ use open         OUT => ':encoding(UTF-8)';
 # CPAN modules:
 use parent 'Exporter';
 use Regexp::Common;
-use Math::BigInt;
+use Math::BigInt 'lib' => 'GMP';
 use Math::BigFloat;
 use bigint;
 
@@ -57,6 +57,8 @@ Math::BigInt->accuracy(250);
 our @EXPORT =
    qw
    (
+      base
+
       is_number                is_integer               is_nonnegative_integer
       is_positive_integer      is_negative_integer      is_zero
 
@@ -73,75 +75,87 @@ my $db = 0;
 # ============================================================================================================
 # Subroutine Predeclarations:
 
+# Bases:
+sub base                     :prototype($$$) ; # Convert numbers from one base to another.
+
 # Identification ("is" functions):
-sub is_number                ($)   ; # Is a value a real number?
-sub is_integer               ($)   ; # Is a value an integer?
-sub is_nonnegative_integer   ($)   ; # Is a value a non-negative integer?
-sub is_positive_integer      ($)   ; # Is a value a positive integer?
-sub is_negative_integer      ($)   ; # Is a value a negative integer?
-sub is_zero                  ($)   ; # Is a value zero?
+sub is_number                :prototype($)   ; # Is a value a real number?
+sub is_integer               :prototype($)   ; # Is a value an integer?
+sub is_nonnegative_integer   :prototype($)   ; # Is a value a non-negative integer?
+sub is_positive_integer      :prototype($)   ; # Is a value a positive integer?
+sub is_negative_integer      :prototype($)   ; # Is a value a negative integer?
+sub is_zero                  :prototype($)   ; # Is a value zero?
 
 # Prime Numbers:
-sub is_prime                 ($)   ; # Is a value a prime number?
-sub primes_up_to             ($)   ; # Generate prime numbers up to a value.
+sub is_prime                 :prototype($)   ; # Is a value a prime number?
+sub primes_up_to             :prototype($)   ; # Generate prime numbers up to a value.
 
 # Combinatorics:
-sub fact                     ($)   ; # Factorial of x.
-sub C                        ($$)  ; # C(n,k) = Number of k-Combinations of n things.
-sub P                        ($;$) ; # P(n,k) = Number of k-Permutations of n things.
+sub fact                     :prototype($)   ; # Factorial of x.
+sub C                        :prototype($$)  ; # C(n,k) = Number of k-Combinations of n things.
+sub P                        :prototype($;$) ; # P(n,k) = Number of k-Permutations of n things.
 
 # Miscellanious Mathematics Functions:
-sub number_of_digits         ($)   ; # Number of decimal digits in an integer.
-sub logb                     ($$)  ; # Logarithm to base b of n.
+sub number_of_digits         :prototype($)   ; # Number of decimal digits in an integer.
+sub logb                     :prototype($$)  ; # Logarithm to base b of n.
 
 # ============================================================================================================
 # Subroutine Definitions:
 
 # ------------------------------------------------------------------------------------------------------------
+# Bases:
+
+sub base :prototype($$$) ( $base1 , $base2 , $input ) {
+   $base1 >= 2 && $base1 <= 62
+   or return "Error: Base1 must be in the range 2..62.";
+   $base1 >= 2 && $base1 <= 62
+   or return "Error: Base1 must be in the range 2..62.";
+   $input =~ m/\A0\z|\A-?[1-9A-Za-z][0-9A-Za-z]*\z/
+   or return "Error: Input number contains invalid characters.";
+   my $sign = '';
+   if ('-' eq substr $input, 0, 1) {$sign = substr $input, 0, 1, ''}
+   return $sign.Math::BigInt->from_base($input, $base1)->to_base($base2);
+}
+
+# ------------------------------------------------------------------------------------------------------------
 # Identification ("is" functions):
 
-sub is_number ($) {
-   my $x = shift;                       # Get arg.
+sub is_number :prototype($) ( $x ) {
    if ($x =~ m/$RE{num}{real}/)         # If arg appears to be a real number,
       {return 1;}                       # return 1;
    else                                 # otherwise,
       {return 0;}                       # return 0.
 }
 
-sub is_integer ($) {
-   my $x = shift;                       # Get arg.
+sub is_integer :prototype($) ( $x ) {
    if ($x =~ m/^-?[1-9]\d*$/)           # If arg is digits w optional sign,
       {return 1;}                       # then arg represents an integer;
    else                                 # otherwise,
       {return 0;}                       # it doesn't.
 }
 
-sub is_nonnegative_integer ($) {
-   my $x = shift;                       # Get arg.
+sub is_nonnegative_integer :prototype($) ( $x ) {
    if ($x =~ m/^\d+$/ && $x >= 0)       # If arg is digits only and is >= 0,
       {return 1;}                       # then arg represents a non-negative integer;
    else                                 # otherwise,
       {return 0;}                       # it doesn't.
 }
 
-sub is_positive_integer ($) {
-   my $x = shift;                       # Get arg.
+sub is_positive_integer :prototype($) ( $x ) {
    if ($x =~ m/^[1-9]\d*$/ && $x  > 0)  # If arg is digits-only, starting with a non-zero digit,
       {return 1;}                       # then arg represents a positive integer;
    else                                 # otherwise,
       {return 0;}                       # it doesn't.
 }
 
-sub is_negative_integer ($) {
-   my $x = shift;                       # Get arg.
+sub is_negative_integer :prototype($) ( $x ) {
    if ($x !~ m/^-\d+$/ && $x < 0)       # If arg is a negative sign followed by all-digits and is < 0,
       {return 1;}                       # then arg represents a negative integer;
    else                                 # otherwise,
       {return 0;}                       # it doesn't.
 }
 
-sub is_zero ($) {
-   my $x = shift;                       # Get arg.
+sub is_zero :prototype($) ( $x ) {
    return ($x eq '0');                  # If arg is '0', return true, else return false.
 }
 
@@ -156,10 +170,7 @@ our @PrimeWheel =
       163, 167, 169, 173, 179, 181, 187, 191, 193, 197, 199, 209
    );
 
-sub is_prime ($)
-{
-   my $i = 0 + shift;
-
+sub is_prime :prototype($) ( $i ) {
    # If $i is not a positive integer, it is not a Prime Number:
    return 0 if ! is_positive_integer($i);
 
@@ -189,9 +200,7 @@ sub is_prime ($)
    }
 }
 
-sub primes_up_to ($)
-{
-   my $UpTo = shift;
+sub primes_up_to :prototype($) ( $UpTo ) {
    say "In \"primes_up_to\". \$UpTo = $UpTo." if $db;
    my @Primes = ();
    my $Candidate;
@@ -210,8 +219,7 @@ sub primes_up_to ($)
 # Combinatorics:
 
 # Factorial of x:
-sub fact ($) {
-   my $x = shift;
+sub fact :prototype($) ( $x ) {
    my $f = 1;
    for ( my $i = 2 ; $i <= $x ; ++$i ) {
       $f *= $i;
@@ -220,16 +228,12 @@ sub fact ($) {
 }
 
 # C(n,k) = Number of k-Combinations of n things:
-sub C ($$) {
-   my $n = shift;
-   my $k = shift;
+sub C :prototype($$) ( $n , $k ) {
    return (fact($n)/(fact($k)*fact($n-$k)));
 }
 
 # P(n,k) = Number of k-Permutations of n things:
-sub P ($;$) {
-   my $n = shift;
-   my $k = (@_ ? shift : $n);
+sub P :prototype($;$) ( $n , $k=$n ) {
    return fact($n)/fact($n-$k);
 }
 
@@ -237,9 +241,8 @@ sub P ($;$) {
 # Miscellanious Mathematical Functions:
 
 # Return number of digits in integer argument:
-sub number_of_digits ($)
-{
-   my $n      = int(abs(shift));
+sub number_of_digits :prototype($) ( $x ) {
+   my $n      = int abs $x;
    my $digits = 1;
    my $power  = 1;
    while ( $n / $power >= 10 )
@@ -251,10 +254,7 @@ sub number_of_digits ($)
 }
 
 # Log to base b of n:
-sub logb ($$)
-{
-   my $b = shift;
-   my $n = shift;
+sub logb :prototype($$) ( $b , $n ) {
    return log($n)/log($b);
 }
 
