@@ -23,11 +23,8 @@
 # Mon Dec 01, 2025: Wrote it.
 ##############################################################################################################
 
-use strict;
-use warnings;
-binmode STDIN  , ":encoding(utf8)" or die "Couldn't binmode STDIN  to \":encoding(utf8)\".\n$!\n";
-binmode STDOUT , ":encoding(utf8)" or die "Couldn't binmode STDOUT to \":encoding(utf8)\".\n$!\n";
-use warnings FATAL => "utf8";
+use v5.40;
+use utf8::all;
 
 # Selected CPAN Modules which may be helpful (erase whatever's not needed):
 use Scalar::Util qw( looks_like_number reftype );
@@ -39,30 +36,60 @@ use MIME::QuotedPrint;
 # ======= VARIABLES: =========================================================================================
 
 my @Opts;
-my @Args;
 my $Help  = 0 ; # Print help and exit?
 my $Debug = 0 ; # Print diagnostic messages using BLAT?
+
+# ======= SUBROUTINE PREDECLARATIONS: ========================================================================
+
+sub argv;
+sub BLAT;
+sub help;
+
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
+
+{ # begin main
+
+   # Process @ARGV:
+   argv;
+
+   # If user requested help, print help and exit:
+   if ($Help) {help;exit}
+
+   # Otherwise, filter input to output:
+   while (<>) {
+      BLAT("At top of main loop.");
+      print;
+   }
+
+} # end main
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
 
 # Process @ARGV:
 sub argv {
-   # Get options and arguments:
-   my $end = 0;              # end-of-options flag
+   # Declare and define certain variables we'll need:
+   my $e = 0;                # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {           # For each element of @ARGV:
-      !$end                  # If we have not yet reached end-of-options,
-      && /^--$/              # and we see an "--" option,
-      and $end = 1           # set the "end-of-options" flag
-      and push @Opts, '--'   # and push "--" to @Opts
-      and next;              # and skip to next element of @ARGV.
-      !$end                  # If we have not yet reached end-of-options,
-      && ( /^-(?!-)$s+$/     # and if we see a valid short option
-      ||  /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @Opts, $_     # then push item to @Opts
-      and next;              # and skip to next element of @ARGV.
-      push @Args, $_;        # Otherwise, push item to @Args.
+
+   # Pull all options OUT of @ARGV and put them in @Opts instead:
+   for ( my $i = 0 ; $i <= $#ARGV ; ++$i ) {
+      # If current item is end-of-options marker, remove it from @ARGV, set "$e", and consider all remaining
+      # contents of @ARGV to be "arguments" rather than "options":
+      if ( '--' eq $ARGV[$i] ) {
+         $e = 1;
+         splice @ARGV, $i, 1;
+         --$i;
+      }
+      # If current item is an "option", remove it from @ARGV and push it to @Opts:
+      elsif ( !$e && ( $ARGV[$i] =~ /^-(?!-)$s+$/ || $ARGV[$i] =~ /^--(?!-)$d+$/ ) ) {
+         push @Opts, splice @ARGV, $i, 1;
+         --$i;
+      }
+      # Otherwise, this item is an argument, so leave it in @ARGV:
+      else {
+         ; # Do nothing.
+      }
    }
 
    # Process options:
@@ -71,12 +98,8 @@ sub argv {
       /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
    }
 
-   # Process arguments:
-
-   # Get number of arguments:
-   my $NA = scalar(@Args);
-
-   # Add code here to process arguments, if this program will use arguments.
+   # @ARGV now contains NO options. If any items remain, they will be construed by the (<>) operator as being
+   # files to be input, filtered, and output.
 
    # Return success code 1 to caller:
    return 1;
@@ -137,17 +160,3 @@ sub help {
    END_OF_HELP
    return 1;
 } # end sub help
-
-# ======= MAIN BODY OF PROGRAM: ==============================================================================
-
-# Process @ARGV:
-argv;
-
-# If user requested help, print help and exit:
-if ($Help) {help;exit}
-
-# Otherwise, filter input to output (add code in this loop as necessary to achieve desired result):
-while (<STDIN>) {
-   BLAT("At top of main loop.");
-   print;
-}

@@ -304,18 +304,24 @@ sub help    ; # Print help and exit.
 
 # Process @ARGV:
 sub argv {
-   # Get options and arguments:
-   my $end = 0;              # end-of-options flag
+   # Declare-and-define certain variables we'll need:
+   my $e = 0;                # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
    # Riffle through @ARGV, copying each element (except for a possible '--') to either $Opts or $Args:
    for ( @ARGV ) {
       # If we see '--', set $end to 1 (don't push '--' to @Opts or @Args):
-      if ( /^--$/ ) {$end = 1;}
+      if ( /^--$/ ) {
+         $e = 1;
+      }
       # Else if we're not yet at end-of-options, and we see an option, push it to @Opts:
-      elsif ( !$end && ( /^-(?!-)$s+$/ ||  /^--(?!-)$d+$/ ) ) {push @Opts, $_;}
+      elsif ( !$e && ( /^-(?!-)$s+$/ ||  /^--(?!-)$d+$/ ) ) {
+         push @Opts, $_;
+      }
       # Else push current item to @Args:
-      else {push @Args, $_;}
+      else {
+         push @Args, $_;
+      }
    }
 
    # Process options:

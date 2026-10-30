@@ -42,15 +42,6 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    use v5.40;
 
-   # Multiply two complex-number strings:
-   sub mult_comp_str ( $s1 , $s2 ) {
-      my ($a, $b, $c, $d) = (0,0,0,0);
-      if ( $s1 =~ m// ) {
-         $a = 
-         $b = 
-      }
-   }
-
    # Parse lists of strings:
    sub parse_argv_1 ( @bash_args ) {
       my @args = ();
@@ -76,17 +67,23 @@ my @arrays = @ARGV ? parse_argv_1(@ARGV) :
 for my $aref (@arrays) {
    say '';
    my ($s1, $s2) = @$aref;
-   say "num1 = $s1   num2 = $s2";
    $s1 =~ s/\+\(-([^\)]+)\)/-$1/;
    $s2 =~ s/\+\(-([^\)]+)\)/-$1/;
-   if ( $s1 !~ m/^((?:-?[1-9]\d*(?:\.\d+)?)|0)(?:\+|-)((?:-?[1-9]\d*(?:\.\d+)?)|0)i$/
-      ||$s2 !~ m/^((?:-?[1-9]\d*(?:\.\d+)?)|0)(?:\+|-)((?:-?[1-9]\d*(?:\.\d+)?)|0)i$/ ) {
+   if ( $s1 !~ m/^((?:-?[1-9]\d*(?:\.\d+)?)|0)((?:\+|-)(?:(?:[1-9]\d*(?:\.\d+)?)|0))i$/ ) {
+      warn "Error: invalid first argument.\n";
+      next;
+   }
+   my $a = $1;
+   my $b = $2;
+   if ( $s2 !~ m/^((?:-?[1-9]\d*(?:\.\d+)?)|0)((?:\+|-)(?:(?:[1-9]\d*(?:\.\d+)?)|0))i$/ ) {
       warn "Error: invalid argument(s).\n";
       next;
    }
-   my $c1 = cplx($s1);
-   my $c2 = cplx($s2);
-   my $c3 = $c1 * $c2;
-   my $s3 = sprintf("%s", $c3);
-   say "product = $s3";
+   my $c = $1;
+   my $d = $2;
+   my $e = ($a*$c - $b*$d);
+   my $f = ($a*$d + $b*$c);
+   if ($f < 0) {$f = '('.$f.')';}
+   my $p = $e.'+'.$f.'i';
+   say "($s1) * ($s2) = $p";
 }

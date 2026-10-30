@@ -20,6 +20,7 @@
 #                   from day to day and sometimes fail to present the actual answer among the candidates.
 # Wed Oct 14, 2026: My dictionaries were yielding candidate lists which were too full of junk, so I switched
 #                   to using excerpts from NASPA's "NWL2023" word list.
+# Tue Oct 27, 2026: Fixed "gray letter duplicating green or yellow letter causes no candidates" bug.
 ##############################################################################################################
 
 use utf8::all;         # Use UTF-8 for everything.
@@ -147,10 +148,13 @@ sub help    ; # Print help and exit.
       push @musth, $word;
    }
 
-   # Obtain list of words not containing globally-disallowed letters:
+   # Obtain list of words not containing more copies of any globally-disallowed letter than there are copies
+   # of that letter in $kl and $pd combined:
    WORD: foreach my $word (@musth) {
       LETTER: foreach my $letter (@gd) {
-         next WORD unless $word !~ m/$letter/;
+         next WORD unless ($word =~ s/$letter/$letter/ge)
+                       <= ($kl   =~ s/$letter/$letter/ge)
+                        + ($pd   =~ s/$letter/$letter/ge);
       }
       push @cands, $word;
    }
