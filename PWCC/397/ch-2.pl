@@ -71,7 +71,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       return @args;
    }
 
-   # Is a given scalar a ref to an array of 1-or-more ints?
+   # Is a given scalar a ref to an array of 1-or-more non-negative ints?
    sub valid ( $aref ) {
       return false unless 'ARRAY' eq reftype $aref;
       return false unless 0 < scalar @$aref;
