@@ -22,14 +22,16 @@ than the average of all elements in the given array.
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
 
-I first hash the array, then take it's average, then start with the ceiling of average or with 1 (whichever
-is greater) and work upwards until I find an integer which isn't in my hash.
+I first hash the input array @$aref to %hash, then store it's average in $avg. I then set a variable $asp to
+the floor of $avg plus 1, or to 1, whichever is greater. I then repeatedly increment $asp for so long as $asp
+is in %hash. Then I simply return $asp. That yields "the smallest positive integer which is strictly-greater
+than the average of the array and which is absent from the array", as the problem requires.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 
 Input is via either default data or @ARGV. If using @ARGV, provide one-or-more space-separated single-quoted
-arguments. Each argument must be a comma-separated lists of integers. For example:
+arguments. Each argument must be a comma-separated list of integers. For example:
 
 ./ch-1.pl '47,-53,8,2,0,5,7' '-2,-1,0,1,2,3,4'
 
@@ -48,11 +50,10 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    # in a given array of integers and which is greater
    # than the mean of the integers in the array?
    sub absent_smallest_positive ( $aref ) {
-      my $asp;
       my %hash;
       $hash{$_} = 1 for (@$aref);
       my $avg = sum0(@$aref)/scalar(@$aref);
-      $asp = ($avg > 0) ? floor($avg) + 1 : 1;
+      my $asp = floor($avg) + 1; $asp = 1 if $asp < 1;
       ++$asp while $hash{$asp};
       return $asp;
    }
@@ -70,6 +71,9 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    sub valid ( $aref ) {
       return false unless 'ARRAY' eq reftype $aref;
       return false unless 0 < scalar @$aref;
+      foreach my $s (@$aref) {
+         return false unless $s =~ m/^0$|^-?[1-9]\d*$/;
+      }
       return true;
    }
 

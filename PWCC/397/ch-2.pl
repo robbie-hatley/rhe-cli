@@ -23,16 +23,22 @@ reflection, the smaller original number should appear first.
 --------------------------------------------------------------------------------------------------------------
 PROBLEM NOTES:
 
-I use two subs: "binary_reflection" (returns the binary reflection of an integer) and "reflection_sort"
-(sorts integers firstly by binary reflection, and secondly by value).
+I use two subs: "br" (which returns the binary reflection of an integer), and "reflection_sort" (which sorts
+integers firstly by binary reflection, and secondly by value).
+
+Also note that the problem description is flawed, because "binary reflection" is not uniquely defined for
+negative integers, because the number of "1" bits used depends on the size (in bits) of integer type being
+used, so it would be different for 8-bit, 16-bit, 32-bit, and 64-bit integers. And Perl doesn't make it easy
+to determine what it's using under-the-hood to represent negative integers. Therefore I restrict this program
+to non-negative integers only.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
 
 Input is via either default data or @ARGV. If using @ARGV, provide one-or-more space-separated single-quoted
-arguments. Each argument must be a comma-separated lists of integers. For example:
+arguments. Each argument must be a comma-separated list of integers. For example:
 
-./ch-1.pl '47,-53,8,2,0,5,7' '-2,-1,0,1,2,3,4'
+./ch-2.pl '47,28,8,2,0,9,14' '3,8,37,4,26,10,11'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
@@ -49,9 +55,11 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       oct('0b'.reverse(sprintf("%b",$x)));
    }
 
-   # Sort integers by binary reflection:
+   # Sort non-negative integers by binary reflection:
    sub reflection_sort ( $aref ) {
-      sort {br($a)<=>br($b)||$a<=>$b} @$aref;
+      my %hash;
+      $hash{$_} = br($_) for (@$aref);
+      sort {$hash{$a}<=>$hash{$b}||$a<=>$b} @$aref;
    }
 
    # Parse lists of strings:
@@ -67,6 +75,9 @@ Output is to STDOUT and will be each input followed by the corresponding output.
    sub valid ( $aref ) {
       return false unless 'ARRAY' eq reftype $aref;
       return false unless 0 < scalar @$aref;
+      foreach my $s (@$aref) {
+         return false unless $s =~ m/^0$|^[1-9]\d*$/;
+      }
       return true;
    }
 
@@ -87,7 +98,7 @@ for my $aref (@arrays) {
    say '';
    say "Integers = (@$aref)";
    if ( !valid($aref) ) {
-      warn "Error: Input must be an array of 1-or-more integers.\n";
+      warn "Error: Input must be an array of 1-or-more non-negative integers.\n";
       next;
    }
    my @rs = reflection_sort($aref);

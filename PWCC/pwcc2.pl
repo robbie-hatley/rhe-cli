@@ -85,6 +85,16 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       return @args;
    }
 
+   # Is a given scalar a ref to an array of 1-or-more ints?
+   sub valid ( $aref ) {
+      return false unless 'ARRAY' eq reftype $aref;
+      return false unless 0 < scalar @$aref;
+      foreach my $s (@$aref) {
+         return false unless $s =~ m/^0$|^-?[1-9]\d*$/;
+      }
+      return true;
+   }
+
 # ------------------------------------------------------------------------------------------------------------
 # INPUTS:
 my @arrays = @ARGV ? parse_argv_3(@ARGV) :
