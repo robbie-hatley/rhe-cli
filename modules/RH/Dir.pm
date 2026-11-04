@@ -250,7 +250,7 @@ our @EXPORT =
       copy_file               copy_files              move_file
       move_files              get_correct_suffix
 
-      rhd_debug                rename_file             time_from_mtime
+      rhd_debug               rename_file             time_from_mtime
       date_from_mtime         get_prefix              get_suffix
       get_dir_from_path       get_dirname_from_path   get_name_from_path
       path                    denumerate_file_name    enumerate_file_name
@@ -1114,7 +1114,6 @@ sub RecurseDirs :prototype(&) ($f) {
          || $oridir =~ m#/\.Recycle/$#i               # Windows: trash
          || $oridir =~ m#/\$Recycle\.Bin$#i           # Windows: trash
          || $oridir =~ m#/Recyler$#i                  # Windows: trash
-         || $oridir =~ m#/Trash.*$#i                  # Linux:   trash
          || $oridir =~ m#/\.Trash.*$#i                # Linux:   trash
       )
       {
@@ -1227,7 +1226,6 @@ sub RecurseDirs :prototype(&) ($f) {
       next SUBDIR if $subdir =~ m/^\.Recycle/i;              # Windows trash bins.
       next SUBDIR if $subdir =~ m/^\$Recycle.Bin/i;          # Windows trash bins.
       next SUBDIR if $subdir =~ m/^Recyler/i;                # Windows trash bins.
-      next SUBDIR if $subdir =~ m/^Trash/i;                  # Linux trash bins.
       next SUBDIR if $subdir =~ m/^\.Trash/i;                # Linux trash bins.
 
       # ------- SUBDIR PATH: ---------------------------------------------------------------------------------
@@ -1329,18 +1327,18 @@ sub copy_file :prototype($$;@)
    @args   # Additional arguments, if any, go in here.
 )
 {
-   my $dpath    = '';                         # Path of destination file, full  version.
-   my $sdire    =  get_dir_from_path($spath); # Directory of   source    file.
-   my $sname    = get_name_from_path($spath); #   Name    of   source    file.
-   my $spref    = get_prefix($sname);         #  Prefix   of   source    file.
-   my $ssuff    = get_suffix($sname);         #  Suffix   of   source    file.
-   my $mode     = 'normal';                   # Operating mode: 'normal', 'rename', or 'sha1'.
-   my $uname;                                 # User-provided name (for use in 'rename' mode).
-   my $corr     = 0;                          # Correct suffix?
-   my $sl       = 0;                          # Shorten names for Spotlight image processing?
-   my $dpref;                                 # File-name prefix for destination file.
-   my $dsuff;                                 # File-name suffix for destination file.
-   my $dname;                                 # File-name        for destination file.
+   my $dpath    = ''                         ; # Path of destination file, full  version.
+   my $sdire    =  get_dir_from_path($spath) ; # Directory of   source    file.
+   my $sname    = get_name_from_path($spath) ; #   Name    of   source    file.
+   my $spref    = get_prefix($sname)         ; #  Prefix   of   source    file.
+   my $ssuff    = get_suffix($sname)         ; #  Suffix   of   source    file.
+   my $mode     = 'normal'                   ; # Operating mode: 'normal', 'rename', or 'sha1'.
+   my $uname    = ''                         ; # User-provided name (for use in 'rename' mode).
+   my $corr     = 0                          ; # Correct suffix?
+   my $sl       = 0                          ; # Shorten names for Spotlight image processing?
+   my $dpref    = ''                         ; # File-name prefix for destination file.
+   my $dsuff    = ''                         ; # File-name suffix for destination file.
+   my $dname    = ''                         ; # File-name        for destination file.
 
    # If debugging, print diagnostics:
    rhd_blat "                      "
@@ -1541,14 +1539,14 @@ sub copy_files :prototype($$;@)
    my $byp_cnt  = 0                     ; # $byp_cnt  = count of files bypassed because of dup in dest
 
    # If debugging, print diagnostics:
-   rhd_blat "\n"
-          . "Just entered sub \"copy_files\". \n"
-          . "Src dir = \"$src\".              \n"
-          . "Dst dir = \"$dst\".              \n"
-          . "Target  = \"$target\".           \n"
-          . "Args    =                        \n"
-          . join("\n", @args)
-          . "\n";
+   rhd_blat
+      "                                 \n"
+     ."Just entered sub \"copy_files\". \n"
+     ."Src dir = \"$src\".              \n"
+     ."Dst dir = \"$dst\".              \n"
+     ."Target  = \"$target\".           \n"
+     ."Args    = (@args)                \n"
+     ."                                 \n";
 
    # Process only those arguments we need (some will be simply passed-on to copy_file):
    foreach (@args) {
@@ -1559,12 +1557,14 @@ sub copy_files :prototype($$;@)
    }
 
    # If debugging, print diagnostics:
-   rhd_blat "                                 \n"
-          . "In middle of sub \"copy_files\". \n"
-          . "RegExp  = \"$regexp\".           \n"
-          . "SL      = \"$sl\".               \n"
-          . "Unique  = \"$unique\".           \n"
-          . "Large   = \"$large\".            \n";
+   rhd_blat
+      "                                 \n"
+     ."In middle of sub \"copy_files\". \n"
+     ."RegExp  = \"$regexp\".           \n"
+     ."SL      = \"$sl\".               \n"
+     ."Unique  = \"$unique\".           \n"
+     ."Large   = \"$large\".            \n"
+     ."                                 \n";
 
    # Create variables for the "display" versions of the directories:
    my $srcdsh = $src;   #   Source    directory, short version. (Defaults to $src.)
@@ -1675,11 +1675,11 @@ sub copy_files :prototype($$;@)
          }
 
          # Attempt to copy this file from $src to $dst:
-         copy_file($spath, $dst, @args) and ++$cpy_cnt or  ++$err_cnt;
+         copy_file($spath, $dst, @args) and ++$cpy_cnt or ++$err_cnt;
       } # end for each path in source directory
    } # end else if (!$unique)
    say "Copied $cpy_cnt files from \"$srcdsh\" to \"$dstdsh\".";
-   if ($large) {say "Skipped $skp_cnt files because they weren't large images.";}
+   if ($large)  {say "Skipped  $skp_cnt files because they weren't large images.";}
    if ($unique) {say "Bypassed $byp_cnt files because of identical files in destination.";}
    say "Suffered $err_cnt errors.";
    return 1;
@@ -1925,15 +1925,14 @@ sub move_files :prototype($$;@)
    my $byp_cnt  = 0                     ; # $byp_cnt  = count of files bypassed because of dup in dest
 
    # If debugging, print diagnostics:
-   if ($rhddb) {
-      say STDERR "                                 ";
-      say STDERR "Just entered sub \"move_files\". ";
-      say STDERR "Src dir = \"$src\".              ";
-      say STDERR "Dst dir = \"$dst\".              ";
-      say STDERR "Target  = \"$target\".           ";
-      say STDERR "Args    = (@args)                ";
-      say STDERR "                                 ";
-   }
+   rhd_blat
+      "                                 \n"
+     ."Just entered sub \"move_files\". \n"
+     ."Src dir = \"$src\".              \n"
+     ."Dst dir = \"$dst\".              \n"
+     ."Target  = \"$target\".           \n"
+     ."Args    = (@args)                \n"
+     ."                                 \n";
 
    # Process only those arguments we need (most will be simply passed-on to move_file):
    foreach (@args) {
@@ -1944,15 +1943,14 @@ sub move_files :prototype($$;@)
    }
 
    # If debugging, print diagnostics:
-   if ($rhddb) {
-      say STDERR "                                 ";
-      say STDERR "In middle of sub \"move_files\". ";
-      say STDERR "RegExp  = \"$regexp\".           ";
-      say STDERR "SL      = \"$sl\".               ";
-      say STDERR "Unique  = \"$unique\".           ";
-      say STDERR "Large   = \"$large\".            ";
-      say STDERR "                                 ";
-   }
+   rhd_blat
+      "                                 \n"
+     ."In middle of sub \"move_files\". \n"
+     ."RegExp  = \"$regexp\".           \n"
+     ."SL      = \"$sl\".               \n"
+     ."Unique  = \"$unique\".           \n"
+     ."Large   = \"$large\".            \n"
+     ."                                 \n";
 
    # Create variables for the "display" versions of the directories:
    my $srcdsh = $src;   #   Source    directory, short version. (Defaults to $src.)
@@ -1978,7 +1976,7 @@ sub move_files :prototype($$;@)
 
    # If being unique, don't move files from source which have duplicates in destination:
    if ($unique) {
-      say "\nJust entered \"if (\$unique)\"; about to get src & dst file hashes." if $rhddb;
+      rhd_blat "\nJust entered \"if (\$unique)\"; about to get src & dst file hashes.";
 
       # Note starting directory:
       my $startdir = d(getcwd);
@@ -2002,7 +2000,7 @@ sub move_files :prototype($$;@)
       # For each size of source file, copy each file of that size to destination if-and-only-if no identical
       # file exists in destination:
       SIZE: foreach my $ssize (keys %{$ssizes}) {
-         say "\nProcessing size group \"$ssize\"." if $rhddb;
+         rhd_blat "\nProcessing size group \"$ssize\".";
 
          # Get array of file records for this size:
          @sfiles = @{$ssizes->{$ssize}};
@@ -2020,11 +2018,11 @@ sub move_files :prototype($$;@)
 
          # Iterate through the source file records for this size:
          SFILE: foreach my $sfile (@sfiles) {
-            say "\nProcessing src file \"$sfile->{Name}\"." if $rhddb;
+            rhd_blat "\nProcessing src file \"$sfile->{Name}\".";
 
             # If in "large" mode, skip this file if it's not a large image:
             if ( $large && ! is_large_image($sfile->{Path}) ) {
-               say "\nSkipping \"$sfile->{Name}\" because it's not a large image." if $rhddb;
+               rhd_blat "\nSkipping \"$sfile->{Name}\" because it's not a large image.";
                ++$skp_cnt;
                next SFILE;
             }
@@ -2033,12 +2031,13 @@ sub move_files :prototype($$;@)
             if ($both) { # Do files of this size exist in both directories?
                DFILE: foreach my $dfile (@dfiles) {
                   if (FilesAreIdentical($sfile->{Path}, $dfile->{Path})) {
-                     say "\nBypassing \"$sfile->{Name}\" because it has a dup in dst." if $rhddb;
+                     rhd_blat "\nBypassing \"$sfile->{Name}\" because it has a dup in dst.";
                      ++$byp_cnt;
                      next SFILE;
                   }
                }
             }
+
             # Attempt to move this file from $src to $dst:
             my $result = move_file($sfile->{Path}, $dst, @args);
             if (0 == $result) {++$err_cnt;}
@@ -2051,23 +2050,21 @@ sub move_files :prototype($$;@)
       # Get list of paths of existing regular files in source folder:
       my @spaths = glob_regexp_utf8($src, $target, $regexp);
       SOURCE: foreach my $spath (@spaths) {
-         my $sname = get_name_from_path($spath) if $rhddb;
-         say "\nProcessing src file \"$sname\"." if $rhddb;
+         my $sname = get_name_from_path($spath);
+         rhd_blat "\nProcessing src file \"$sname\".";
 
          # If in "large" mode, skip this file if it's not a large image:
          if ( $large && ! is_large_image($spath) ) {
-            say "\nSkipping \"$sname\" because it's not a large image." if $rhddb;
+            rhd_blat "\nSkipping \"$sname\" because it's not a large image.";
             ++$skp_cnt;
             next SOURCE;
          }
 
          # Attempt to move this file from $src to $dst:
-         my $result = move_file($spath, $dst, @args);
-         if (0 == $result) {++$err_cnt;}
-         if (1 == $result) {++$mov_cnt;}
+         move_file($spath, $dst, @args) and ++$mov_cnt or ++$err_cnt;
       } # end for each path in source directory
    } # end else if (!$unique)
-   say "Moved    $mov_cnt files from \"$srcdsh\" to \"$dstdsh\".";
+   say "Moved  $mov_cnt files from \"$srcdsh\" to \"$dstdsh\".";
    if ($large)  {say "Skipped  $skp_cnt files because they weren't large images.";}
    if ($unique) {say "Bypassed $byp_cnt files because of identical files in destination.";}
    say "Suffered $err_cnt errors.";
@@ -2157,7 +2154,6 @@ sub get_correct_suffix :prototype($) ($path) {
       m%^application/vnd.oasis.opendocument.text$%         and return '.odt'  ;
       m%^audio/ogg$%                                       and return '.ogg'  ;
       m%^font/otf$%                                        and return '.otf'  ;
-      m%^image/png$%                                       and return '.png'  ;
       m%^application/pdf$%                                 and return '.pdf'  ;
       m%^application/httpd-php$%                           and return '.php'  ;
       m%^application/vnd.ms-powerpoint$%                   and return '.ppt'  ;
@@ -2183,18 +2179,18 @@ sub get_correct_suffix :prototype($) ($path) {
    # If we get to here, we haven't returned a suffix yet, which means that checktype_filename() from CPAN
    # module "File::Type" was NOT able to determine the type of this file. So we'll have to use other methods.
 
-   # If this file is at-least 10 bytes in size, let's grab AT-LEAST the first 10 bytes of its contents,
-   # up to a max of 512 bytes, and examine the contents for clues as to what kind of file this is,
-   # or if we CAN'T read at least 10 bytes, return "***ERROR***":
+   # If this file is at-least 512 bytes in size, let's try to read its first 512 bytes
+   # into memory, then examine the contents for clues as to what kind of file this is.
+   # If we CAN'T read exactly 512 bytes, return "***ERROR***":
    my $size = -s e $path;
    my $buffer = '';
-   if ( $size >= 10 ) {
+   if ( $size >= 512 ) {
       my $fh = undef;
       open($fh, '< :raw', e($path)) or return '***ERROR***' ; # File can't be opened.
       read($fh, $buffer, 512)       or return '***ERROR***' ; # File can't be read.
       close($fh)                    or return '***ERROR***' ; # File can't be closed.
       my $bytes = length($buffer);
-      $bytes >= 10                  or return '***ERROR***' ; # Should have been able to read 10+ bytes.
+      512 == $bytes                 or return '***ERROR***' ; # Should have been able to read 512 bytes.
 
       if ( $rhddb ) {
          say STDERR '';
@@ -2204,9 +2200,6 @@ sub get_correct_suffix :prototype($) ($path) {
       }
 
       # Pore over the contents of $buffer and try to glean clues as to what type of file this is:
-
-      # Is this a Linux executable?
-      "\x{7F}ELF" eq substr($buffer, 0, 4)                 and return ''      ; # Linux ELF executable
 
       # Is this a hashbang script?
       if ( '#!' eq substr($buffer, 0, 2) ) {
@@ -2222,6 +2215,33 @@ sub get_correct_suffix :prototype($) ($path) {
       }
 
       # Next, see if this file is any of various non-text non-executable types:
+
+      # Is this a png file?
+      if ( "\x89PNG\x0D\x0A\x1A\x0A" eq substr($buffer, 0, 8) ) {
+         # If we get to here, this is a png file. To determine if it's still, animated, or malformed,
+         # walk its chunks, starting with at position 8, which is the start of the first chunk:
+         my $pos = 8;
+         while ( $pos + 8 <= 512 ) {
+            # Get data length and chunk type:
+            my $length = unpack('N', substr($buffer, $pos, 4));
+            my $type   = substr($buffer, $pos + 4, 4);
+
+            # If animation declaration is found before image data, this is an animated png:
+            return '.apng' if $type eq 'acTL';
+
+            # If image data is found before animation declaration, this is a still png:
+            return '.png' if $type eq 'IDAT';
+
+            # Move to next chunk:
+            $pos += (12 + $length);
+         }
+         # If we haven't returned by now, then consider this png file to be malformed; don't return anything.
+      }
+
+      # Is this a Linux executable?
+      "\x{7F}ELF" eq substr($buffer, 0, 4)                 and return ''      ; # Linux ELF executable
+
+      # Is it some other known kind of binary file?
       "AVI" eq substr($buffer, 8, 3)                       and return '.avi'  ; # AVI (Windows video)
       pack('C4',195,202,4,193) eq substr($buffer,0,4)      and return '.ccf'  ; # CCF (Chrome Cache File)
       'fLaC' eq substr($buffer,0,4)                        and return '.flac' ; # fLaC (high-quality sound)
@@ -2231,7 +2251,6 @@ sub get_correct_suffix :prototype($) ($path) {
       'ftypmp4' eq substr($buffer,4,7)                     and return '.mp4'  ; # MP4 (good video format)
       'PAR2' eq substr($buffer,0,4)                        and return '.par2' ; # PAR2 (checksum)
       'PDF' eq substr($buffer,1,3)                         and return '.pdf'  ; # PDF (Portable Document Fmt.)
-      'PNG' eq substr($buffer,1,3)                         and return '.png'  ; # PNG (Portable Network Grph.)
       'Rar' eq substr($buffer,0,3)                         and return '.rar'  ; # RAR (compressed archive)
       'WAVEfmt' eq substr($buffer,8,7)                     and return '.wav'  ; # WAV (lossless sound)
       'WEBP' eq substr($buffer,8,4)                        and return '.webp' ; # WEBP (photo or video)

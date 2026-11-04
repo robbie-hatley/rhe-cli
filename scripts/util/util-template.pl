@@ -105,6 +105,7 @@
 # Sun Jan 18, 2026: Added provision for checking if $OriDir is actually valid (because I've seen that in some
 #                   edge cases it may not be!); now also doing RH::Dir debugging if doing local debugging.
 # Fri Jan 23, 2026: Fixed "pname" bug in help(). (Was saying "program_name.pl.pl".)
+# Mon Nov 02, 2026: Refactored. Got rid of "$Help", "@Opts", "@Args", "error()", and all global variables.
 ##############################################################################################################
 
 ##############################################################################################################
@@ -116,7 +117,7 @@
 ##############################################################################################################
 
 # Pragmas:
-use v5.36;
+use v5.40;
 
 # Essential CPAN Modules:
 use utf8::all;
@@ -145,45 +146,14 @@ use RH::WinChomp;   # "chomp" for Microsoft Windows.
 
 $" = ', ' ; # Quoted-array element separator = ", ".
 
-# ------- Global Variables: ----------------------------------------------------------------------------------
-
-# WARNING: Do NOT initialize global variables on their declaration line! That wipes-out changes made to them
-#          by BEGIN, UNITCHECK, CHECK, and INIT blocks! Instead, initialize them in those blocks.
-our    $pname;                                 # Declare program name.
-BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
-our    $cmpl_beg;                              # Declare compilation begin time.
-BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
-our    $cmpl_end;                              # Declare compilation end   time.
-INIT  {$cmpl_end = time}                       # Set     compilation end   time.
-
-# NOTE: Always remember, if using BEGIN blocks, only the declaration half of any "my|our $varname = value;"
-# statement is executed before the begin blocks; the "= value;" part is executed AFTER all BEGIN blocks!!!
-# So, the end effect of THIS script:
-#    #!/usr/bin/env perl
-#    my $dog = 'Spot';
-#    BEGIN {defined $dog ? print("defined\n") : print("undefined\n");}
-#    print("My dog's name is $dog.\n");
-#    END   {print("$dog is a nice dog.\n");}
-# Is the same as the end effect of THIS script:
-#    #!/usr/bin/env perl
-#    my $dog;
-#    defined $dog ? print("defined\n") : print("undefined\n");
-#    $dog = 'Spot';
-#    print("My dog's name is $dog.\n");
-#    print("$dog is a nice dog.\n");
-# And EITHER of those two scripts will print:
-#    undefined
-#    My dog's name is Spot.
-#    Spot is a nice dog.
-
 # ------- Local variables: -----------------------------------------------------------------------------------
 
+# Program name:
+my $pname = substr $0, 1 + rindex $0, '/';
+
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
-my @Opts      = ()        ; # options                   array     Options.
-my @Args      = ()        ; # arguments                 array     Arguments.
 my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Debug     = 0         ; # Debug?                    bool      Don't debug.
-my $Help      = 0         ; # Just print help and exit? bool      Don't print-help-and-exit.
 my $Verbose   = 1         ; # Be verbose?               0,1,2     Be terse.
 my $Recurse   = 0         ; # Recurse subdirectories?   bool      Don't recurse.
 my $Target    = 'A'       ; # Target                    F|D|B|A   Target all directory entries.
@@ -196,14 +166,11 @@ my $filecount = 0         ; # Count of files matching target, regexp, and predic
 
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-# NOTE: These alert the compiler that these names, when encountered (whether in subroutine definitions,
-# BEGIN, CHECK, UNITCHECK, INIT, END, other subroutines, or in the main body of the program), are subroutines,
-# so it needs to find, compile, and link their definitions:
 sub argv    ; # Process @ARGV.
 sub curdire ; # Process current directory.
 sub curfile ; # Process current file.
+sub BLAT    ; # Print diagnostics if debugging.
 sub stats   ; # Print statistics.
-sub error   ; # Handle errors.
 sub help    ; # Print help and exit.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
@@ -216,40 +183,14 @@ sub help    ; # Print help and exit.
    # Process @ARGV and set settings:
    argv;
 
-   # Print program entry message if being terse or verbose:
-   if ( $Verbose >= 1 ) {
+   # Print program entry message and settings if being terse or verbose or debugging:
+   if ( $Verbose >= 1 || $Debug >= 1 ) {
       printf STDERR "Now entering program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n\n",
                     $s0[2], $s0[1], $s0[0], 1+$s0[4], $s0[3], 1900+$s0[5];
-   }
-
-   # Print compilation time if being verbose:
-   if ( $Verbose >= 2 ) {
-      printf STDERR "Compilation time was %.3fms\n\n",
-                    1000 * ($cmpl_end - $cmpl_beg);
-   }
-
-   # Print settings if being terse or verbose:
-   if ( $Verbose >= 1 ) {
       say STDERR
          "Settings:              \n"
         ."OriDir    = $OriDir    \n"
-        ."Recurse   = $Recurse   \n"
-        ."Target    = $Target    \n"
-        ."RegExp    = $RegExp    \n"
-        ."Predicate = $Predicate \n";
-   }
-
-   if ($Debug) {
-      say STDERR
-         "Values of all variables except counters after running argv:\n"
-        ."pname     = $pname     \n"
-        ."cmpl_beg  = $cmpl_beg  \n"
-        ."cmpl_end  = $cmpl_end  \n"
-        ."Options   = (@Opts)    \n"
-        ."Arguments = (@Args)    \n"
-        ."OriDir    = $OriDir    \n"
         ."Debug     = $Debug     \n"
-        ."Help      = $Help      \n"
         ."Verbose   = $Verbose   \n"
         ."Recurse   = $Recurse   \n"
         ."Target    = $Target    \n"
@@ -257,39 +198,28 @@ sub help    ; # Print help and exit.
         ."Predicate = $Predicate \n";
    }
 
-   # Process current directory (and all subdirectories if recursing) and print stats,
-   # unless user requested help, in which case just print help:
-   if ($Help) {
-      help
+   # Process current directory (and all subdirectories if recursing):
+   if ($Recurse) {
+      my $mlor = RecurseDirs {curdire};
+      if ( $Verbose >= 1 || $Debug >= 1 ) {
+         say "\nMaximum levels of recursion reached = $mlor";
+      }
    }
    else {
-      # If "$OriDir" is a real directory, perform the program's function:
-      if ( -e $OriDir && -d $OriDir ) {
-         if ($Debug) {RH::Dir::rhd_debug('on');}
-         if ($Recurse) {
-            my $mlor = RecurseDirs {curdire};
-            if ($Verbose >= 1) {say "\nMaximum levels of recursion reached = $mlor";}
-         }
-         else {
-            curdire;
-         }
-         if ($Debug) {RH::Dir::rhd_debug('off');}
-         stats;
-      }
-      # Otherwise, just print an error message:
-      else {
-         say STDERR "Error in \"$pname\": \"original\" directory \"$OriDir\" does not exist!\n"
-                  . "Skipping execution.\n"
-                  . "$!";
-      }
+      curdire;
+   }
+
+   # Print stats if being terse or verbose or debugging:
+   if ( $Verbose >= 1 || $Debug >= 1 ) {
+      stats;
    }
 
    # Stop execution timer:
    my $t1 = time;
    my @s1 = localtime($t1);
 
-   # Print exit message if being terse or verbose:
-   if ( $Verbose >= 1 ) {
+   # Print exit message if being terse or verbose or debugging:
+   if ( $Verbose >= 1 || $Debug >= 1 ) {
       my $te = $t1 - $t0; my $ms = 1000 * $te;
       printf STDERR "\nNow exiting program \"$pname\" at %02d:%02d:%02d on %d/%d/%d.\n",
                     $s1[2], $s1[1], $s1[0], 1+$s1[4], $s1[3], 1900+$s1[5];
@@ -304,30 +234,37 @@ sub help    ; # Print help and exit.
 
 # Process @ARGV:
 sub argv {
-   # Declare-and-define certain variables we'll need:
+   # Declare and define certain variables we'll need:
    my $e = 0;                # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   # Riffle through @ARGV, copying each element (except for a possible '--') to either $Opts or $Args:
-   for ( @ARGV ) {
-      # If we see '--', set $end to 1 (don't push '--' to @Opts or @Args):
-      if ( /^--$/ ) {
+   my @opts = ();            # options
+
+   # Pull all options OUT of @ARGV and put them in @opts instead:
+   for ( my $i = 0 ; $i <= $#ARGV ; ++$i ) {
+      # If current item is end-of-options marker, remove it from @ARGV, set "$e", and consider all remaining
+      # contents of @ARGV to be "arguments" rather than "options":
+      if ( '--' eq $ARGV[$i] ) {
          $e = 1;
+         splice @ARGV, $i, 1;
+         --$i;
       }
-      # Else if we're not yet at end-of-options, and we see an option, push it to @Opts:
-      elsif ( !$e && ( /^-(?!-)$s+$/ ||  /^--(?!-)$d+$/ ) ) {
-         push @Opts, $_;
+      # Else if current item is an "option", remove it from @ARGV and push it to @opts:
+      elsif ( !$e && ( $ARGV[$i] =~ /^-(?!-)$s+$/ || $ARGV[$i] =~ /^--(?!-)$d+$/ ) ) {
+         push @opts, splice @ARGV, $i, 1;
+         --$i;
       }
-      # Else push current item to @Args:
+      # Otherwise, this item is an argument, so leave it in @ARGV:
       else {
-         push @Args, $_;
+         ; # Do nothing.
       }
    }
+   # @ARGV now contains NO options. If any items remain, they will be construed as being "arguments".
 
    # Process options:
-   for ( @Opts ) {
-      /^-$s*h$s*$/ || /^--help$/    and $Help    =  1  ;
-      /^-$s*e$s*$/ || /^--debug$/   and $Debug   =  1  ;
+   for ( @opts ) {
+      /^-$s*h$s*$/ || /^--help$/    and help and exit;
+      /^-$s*e$s*$/ || /^--debug$/   and $Debug   =  1 and RH::Dir::rhd_debug('on');
       /^-$s*q$s*$/ || /^--quiet$/   and $Verbose =  0  ;
       /^-$s*t$s*$/ || /^--terse$/   and $Verbose =  1  ; # Default.
       /^-$s*v$s*$/ || /^--verbose$/ and $Verbose =  2  ;
@@ -340,27 +277,29 @@ sub argv {
    }
 
    # Get number of arguments:
-   my $NA = scalar(@Args);
+   my $NA = scalar(@ARGV);
 
-   # If user typed more than 2 arguments, and we're not debugging,
-   # then print error and help messages and exit:
-   if ( $NA >= 3 && !$Debug ) {  # If number of arguments >= 3 and we're not debugging,
-      error($NA);                # print error message,
-      help;                      # and print help message,
-      exit 666;                  # and exit, returning The Number Of The Beast.
+   # If user typed more than 2 arguments, and we're not debugging, print error and help messages and exit:
+   if ( $NA >= 3 && !$Debug ) {
+   say STDERR
+      "Error: you typed $NA arguments, but \"$pname\" takes at most 2 arguments:\n"
+     ."an optional file-selection regexp and an optional file-selection predicate.\n"
+     ."Help follows.";
+      help;
+      exit;
    }
 
    # First argument, if present, is a file-selection regexp:
    if ( $NA >= 1 ) {                 # If number of arguments >= 1,
-      eval {$RegExp = qr/$Args[0]/}; # try to set $RegExp to $Args[0];
+      eval {$RegExp = qr/$ARGV[0]/}; # try to set $RegExp to $Args[0];
       if ($@) {                      # if that fails, print error message and abort program:
-         die "Error: Invalid file-selection regexp \"$Args[0]\".\n$@";
+         die "Error: Invalid file-selection regexp \"$ARGV[0]\".\n$@";
       }
    }
 
    # Second argument, if present, is a file-selection predicate:
    if ( $NA >= 2 ) {             # If number of arguments >= 2,
-      $Predicate = $Args[1];     # set $Predicate to $Args[1].
+      $Predicate = $ARGV[1];     # set $Predicate to $Args[1].
    }
 
    # Return success code 1 to caller:
@@ -384,7 +323,7 @@ sub curdire {
    my @paths = sort {$a cmp $b} glob_regexp_utf8($cwd, $Target, $RegExp, $Predicate);
 
    my $numpaths = scalar @paths;
-   if ($Debug) {say STDERR "About to sent $numpaths paths to curfile.";}
+   BLAT("About to sent $numpaths paths to curfile.");
 
    # Send each path to curfile():
    foreach my $path (@paths) {curfile($path)}
@@ -404,7 +343,7 @@ sub curfile ($path) {
       # (Don't actually DO anything to file at $path.)
    }
    else {
-      say STDOUT "Activate: $path";
+      say STDOUT "$path";
       # (Insert code here to DO something to file at $path.)
    }
 
@@ -412,29 +351,23 @@ sub curfile ($path) {
    return 1;
 } # end sub curfile
 
+# Print messages only if debugging:
+sub BLAT ( $string ) {
+   if ($Debug) {
+      say STDERR "$string";
+   }
+}
+
 # Print statistics for this program run:
 sub stats {
-   # If being terse or verbose, print basic stats to STDERR:
-   if ( $Verbose >= 1 ) {
-      say STDERR '';
-      say STDERR "Statistics for running script \"$pname\" on \"$OriDir\" directory tree";
-      say STDERR "with target \"$Target\", regexp \"$RegExp\", and predicate \"$Predicate\":";
-      say STDERR "Navigated $direcount directories.";
-      say STDERR "Processed $filecount files matching given target, regexp, and predicate.";
-   }
+   say STDERR
+      "\nStatistics for running script \"$pname\"\n"
+     ."on \"$OriDir\" directory tree\n"
+     ."with target \"$Target\", regexp \"$RegExp\", and predicate \"$Predicate\":\n"
+     ."Navigated $direcount directories.\n"
+     ."Processed $filecount files matching given target, regexp, and predicate.";
    return 1;
 } # end sub stats
-
-# Handle errors:
-sub error ($NA) {
-   print STDERR ((<<"   END_OF_ERROR") =~ s/^   //gmr);
-
-   Error: you typed $NA arguments, but \"$pname\" takes at most
-   2 arguments (an optional file-selection regexp and an optional
-   file-selection predicate). Help follows.
-   END_OF_ERROR
-   return 1;
-} # end sub error
 
 # Print help:
 sub help {
@@ -450,8 +383,8 @@ sub help {
    -------------------------------------------------------------------------------
    Command lines:
 
-   $pname  -h | --help                      (to print this help and exit)
-   $pname  [options] [Arg1] [Arg2] [Arg3]   (to [perform function] )
+   $pname -h | --help                      (to print this help and exit)
+   $pname [options] [Arg1] [Arg2] [Arg3]   (to [perform function] )
 
    -------------------------------------------------------------------------------
    Description of Options:

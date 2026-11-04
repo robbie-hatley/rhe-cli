@@ -11,20 +11,19 @@
 # Edit history:
 # Tue Oct 27, 2026: Wrote it.
 # Wed Oct 28, 2026: Fixed "trying to print non-existent lines from empty input" bug.
+# Tue Nov 03, 2026: Got rid of "@Opts" and "$Help". Fixed errors in help().
 ##############################################################################################################
 
 use v5.40;
 use utf8::all;
+use Getopt::Long 'GetOptions';
 
 # ======= VARIABLES: =========================================================================================
 
-my @Opts;
-my $Help  =  0 ; # Print help and exit?
-my $NOLTP = 10 ; # Number Of Lines To Print (defaults to 10).
+my $NOLTP = 10; # Number Of Lines To Print (defaults to 10).
 
 # ======= SUBROUTINE PREDECLARATIONS: ========================================================================
 
-sub argv;
 sub help;
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
@@ -32,13 +31,12 @@ sub help;
 { # begin main
 
    # Process @ARGV:
-   argv;
+   GetOptions('h|help' => sub {help(); exit 0}, 'lines=i' => \$NOLTP)
+   or die "Error: Getopt::Long::GetOptions() failed.\n";
 
-   # If user requested help, print help and exit:
-   if ($Help) {
-      help;
-      exit;
-   }
+   # $NOLTP must be an integer:
+   $NOLTP =~ m/^0$|^-?[1-9]\d*$/
+   or die "Error: Number of lines to print must be an integer.\n";
 
    # Slurp all lines of input text into "@lines":
    my @lines = (<>);
@@ -47,56 +45,17 @@ sub help;
    my $num_lines = scalar @lines;
 
    # If @lines is empty, exit now to avoid trying to print non-existent lines:
-   exit unless $num_lines >= 1;
+   $num_lines >= 1
+   or die "Error: No input was received.\n";
 
    # Print $NOLTP random lines from input to output:
-   for ( 1 .. $NOLTP ) {
+   for ( my $i = 0 ; $i < $NOLTP ; ++ $i ) {
       print $lines[int rand $num_lines];
    }
 
 } # end main
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
-
-# Process @ARGV:
-sub argv {
-   # Declare and define certain variables we'll need:
-   my $e = 0;                # end-of-options flag
-   my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
-   my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-
-   # Pull all options OUT of @ARGV and put them in @Opts instead:
-   for ( my $i = 0 ; $i <= $#ARGV ; ++$i ) {
-      # If current item is end-of-options marker, remove it from @ARGV, set "$e", and consider all remaining
-      # contents of @ARGV to be "arguments" rather than "options":
-      if ( '--' eq $ARGV[$i] ) {
-         $e = 1;
-         splice @ARGV, $i, 1;
-         --$i;
-      }
-      # If current item is an "option", remove it from @ARGV and push it to @Opts:
-      elsif ( !$e && ( $ARGV[$i] =~ /^-(?!-)$s+$/ || $ARGV[$i] =~ /^--(?!-)$d+$/ ) ) {
-         push @Opts, splice @ARGV, $i, 1;
-         --$i;
-      }
-      # Otherwise, this item is an argument, so leave it in @ARGV:
-      else {
-         ; # Do nothing.
-      }
-   }
-
-   # Process options:
-   for ( @Opts ) {
-      /^-$s*h/ || /^--help$/ and $Help = 1;
-      /^--lines=([1-9]\d*)$/ and $NOLTP = $1;
-   }
-
-   # @ARGV now contains NO options. If any items remain, they will be construed by the (<>) operator as being
-   # files to be input, filtered, and output.
-
-   # Return success code 1 to caller:
-   return 1;
-} # end sub argv
 
 # Print help:
 sub help {
@@ -117,8 +76,8 @@ sub help {
    -------------------------------------------------------------------------------
    Command lines:
 
-   asdf.pl -h | --help      (to print this help and exit)
-   asdf.pl [opts] [Args]    (to print random lines from input)
+   random-lines.pl -h | --help      (to print this help and exit)
+   random-lines.pl [opts] [Args]    (to print random lines from input)
 
    -------------------------------------------------------------------------------
    Description of Options:
@@ -138,7 +97,7 @@ sub help {
    -------------------------------------------------------------------------------
    Description of Arguments:
 
-   Any arguments will be construed as paths to files to be input from.
+   Any arguments will be construed as paths to files from which to input text.
 
 
    Happy random line printing!

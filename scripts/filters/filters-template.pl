@@ -23,25 +23,55 @@
 # Mon Dec 01, 2025: Wrote it.
 ##############################################################################################################
 
+# Pragmas:
 use v5.40;
-use utf8::all;
 
-# Selected CPAN Modules which may be helpful (erase whatever's not needed):
+# Essential CPAN Modules:
+use utf8::all;
+use Cwd::utf8;
+use Time::HiRes qw( time );
+
+# Extra CPAN Modules:
 use Scalar::Util qw( looks_like_number reftype );
 use Regexp::Common;
 use Unicode::Normalize;
 use Unicode::Collate;
 use MIME::QuotedPrint;
 
+# Essential RH Modules:
+use RH::Dir;        # Recurse directories; get list of file-info packets for names matching a regexp; etc.
+use RH::Util;       # Unbuffered single-keystroke inputs; etc.
+
+# Extra RH modules:
+use RH::Math;       # Math routines.
+use RH::RegTest;    # Test regular expressions.
+use RH::WinChomp;   # "chomp" for Microsoft Windows.
+
 # ======= VARIABLES: =========================================================================================
 
-my @Opts;
-my $Help  = 0 ; # Print help and exit?
-my $Debug = 0 ; # Print diagnostic messages using BLAT?
+# ------- System Variables: ----------------------------------------------------------------------------------
+
+$" = ', ' ; # Quoted-array element separator = ", ".
+
+# ------- Global Variables: ----------------------------------------------------------------------------------
+
+our    $pname;                                 # Declare program name.
+BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
+our    $cmpl_beg;                              # Declare compilation begin time.
+BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
+our    $cmpl_end;                              # Declare compilation end   time.
+INIT  {$cmpl_end = time}                       # Set     compilation end   time.
+
+# ------- Local variables: -----------------------------------------------------------------------------------
+
+# Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
+my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
+my $Debug     =  0        ; # Print diagnostics?        bool      Don't print diagnostics.
 
 # ======= SUBROUTINE PREDECLARATIONS: ========================================================================
 
 sub argv;
+sub filter;
 sub BLAT;
 sub help;
 
@@ -52,12 +82,9 @@ sub help;
    # Process @ARGV:
    argv;
 
-   # If user requested help, print help and exit:
-   if ($Help) {help;exit}
-
-   # Otherwise, filter input to output:
+   # Filter input to output:
    while (<>) {
-      BLAT("At top of main loop.");
+      filter;
       print;
    }
 
@@ -71,8 +98,9 @@ sub argv {
    my $e = 0;                # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
+   my @opts = ();            # options
 
-   # Pull all options OUT of @ARGV and put them in @Opts instead:
+   # Pull all options OUT of @ARGV and put them in @opts instead:
    for ( my $i = 0 ; $i <= $#ARGV ; ++$i ) {
       # If current item is end-of-options marker, remove it from @ARGV, set "$e", and consider all remaining
       # contents of @ARGV to be "arguments" rather than "options":
@@ -81,9 +109,9 @@ sub argv {
          splice @ARGV, $i, 1;
          --$i;
       }
-      # If current item is an "option", remove it from @ARGV and push it to @Opts:
+      # Else if current item is an "option", remove it from @ARGV and push it to @opts:
       elsif ( !$e && ( $ARGV[$i] =~ /^-(?!-)$s+$/ || $ARGV[$i] =~ /^--(?!-)$d+$/ ) ) {
-         push @Opts, splice @ARGV, $i, 1;
+         push @opts, splice @ARGV, $i, 1;
          --$i;
       }
       # Otherwise, this item is an argument, so leave it in @ARGV:
@@ -91,22 +119,30 @@ sub argv {
          ; # Do nothing.
       }
    }
+   # @ARGV now contains NO options; if any items remain, they will be construed by <> as being input files.
 
    # Process options:
-   for ( @Opts ) {
-      /^-$s*h/ || /^--help$/    and $Help    =  1  ;
-      /^-$s*e/ || /^--debug$/   and $Debug   =  1  ;
+   for ( @opts ) {
+      /^-$s*h$s*$/ || /^--help$/    and help and exit(0)                        ;
+      /^-$s*e$s*$/ || /^--emulate$/ and $Debug = 1 and RH::Dir::rhd_debug('on') ;
    }
-
-   # @ARGV now contains NO options. If any items remain, they will be construed by the (<>) operator as being
-   # files to be input, filtered, and output.
 
    # Return success code 1 to caller:
    return 1;
 } # end sub argv
 
+# Filter input line:
+sub filter {
+   BLAT("At top of filter. \$_ = $_");
+           #ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+   y/A-Za-z/PZWLRKMQTOFDGUJAHEYINXCVSBgqzmlpaihwredsxfbknvytjouc/;
+   BLAT("At bottom of filter. \$_ = $_");
+}
+
 # Print messages only if debugging:
-sub BLAT {my $string = shift; if ($Debug) {print STDERR "$string\n"}}
+sub BLAT ( $string ) {
+   if ($Debug) {print STDERR "$string\n"}
+}
 
 # Print help:
 sub help {
@@ -115,8 +151,7 @@ sub help {
    -------------------------------------------------------------------------------
    Introduction:
 
-   [Tailor this intro to describe what your program does.]
-   Welcome to "asdf.pl". This program does blah blah blah to input text
+   Welcome to "$pname". This program does blah blah blah to input text
    and outputs the result, without altering the input text. All input is via
    STDIN and all output is via STDOUT. Use of pipes and/or redirects to channel
    text flow is highly recommended.
@@ -124,8 +159,8 @@ sub help {
    -------------------------------------------------------------------------------
    Command lines:
 
-   asdf.pl -h | --help                       (to print this help and exit)
-   asdf.pl [options] [Arg1] [Arg2] [Arg3]    (to [perform function] )
+   $pname -h | --help                      (to print this help and exit)
+   $pname [options] [Arg1] [Arg2] [Arg3]   (to [perform function] )
 
    -------------------------------------------------------------------------------
    Description of Options:

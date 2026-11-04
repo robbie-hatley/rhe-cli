@@ -17,9 +17,11 @@
 # Thu Aug 15, 2024: -C63; improved comments and help().
 # Wed Feb 26, 2025: Added missing "use utf8;".
 # Sun Apr 27, 2025: Now using "utf8::all". Simplified shebang to "#!/usr/bin/env perl". Nixed all "d", "e".
+# Mon Nov 02, 2026: Added "use Fcntl;".
 ##############################################################################################################
 
 use v5.36;
+use Fcntl;
 use utf8::all;
 use RH::Dir;
 

@@ -52,6 +52,7 @@
 # Mon May 05, 2025: Fixed several stats-related bugs.
 # Fri Dec 26, 2025: Re-reverted to "#!/usr/bin/env perl", "use utf8::all", "use Cwd::utf8".
 #                   Moved from "core" to "util". Deleted "core".
+# Sun Nov 01, 2025: Added ownership and mode.
 ##############################################################################################################
 
 use v5.36;
@@ -340,31 +341,39 @@ sub curdire {
 
    # Directory Listing (if in inodes mode):
    if ($Inodes)
-   {
-      say 'T: Date:       Time:        Size:      Inode:      L:   Bsize:  Blocks:  Name:';
+   {#      F  1932-08-27  13:28:15PST  4.83E+05  123  3847563925  4857365  2947510  1000:1000  12  0664  lengthy_file_name
+      say 'T  Date        Time         Size      L    Inode       Bsize    Blocks   uuid:ggid  Tp  Perm  Name';
       foreach my $type (@Types)
       {
          foreach my $file (sort {fc($a->{Name}) cmp fc($b->{Name})} @{$TypeLists{$type}})
          {
-            printf "%-1s  %-10s  %-11s  %-8.2E  %10d  %3u  %7u  %7u  %-s\n",
+            printf "%-1s  %-10s  %-11s  %-8.2E  %3d  %10d  %7d  %7d  %4s:%4s  %02o  %04o  %-s\n",
                    $file->{Type},  $file->{Date},   $file->{Time},
-                   $file->{Size},  $file->{Inode},  $file->{Nlink},
-                   $file->{Bsize}, $file->{Blocks}, $file->{Name};
+                   $file->{Size},  $file->{Nlink},
+                   $file->{Inode}, $file->{Bsize},  $file->{Blocks},
+                   $file->{UID},   $file->{GID},
+                   ($file->{Mode} & 0770000)>>12,
+                   ($file->{Mode} &   07777)>> 0,
+                   $file->{Name};
          }
       }
    }
 
    # Directory Listing (if NOT in inodes mode):
    else
-   {
-      say 'T: Date:       Time:        Size:     L:   Name:';
+   {#      F  1932-08-27  13:28:15PST  4.83E+05  123  1000:1000  12  0664  lengthy_file_name
+      say 'T  Date        Time         Size      L    uuid:ggid  Tp  Perm  Name';
       foreach my $type (@Types)
       {
          foreach my $file (sort {fc($a->{Name}) cmp fc($b->{Name})} @{$TypeLists{$type}})
          {
-            printf "%-1s  %-10s  %-11s  %-8.2E  %3u  %-s\n",
+            printf "%-1s  %-10s  %-11s  %-8.2E  %3d  %4s:%4s  %02o  %04o  %-s\n",
                    $file->{Type}, $file->{Date},  $file->{Time},
-                   $file->{Size}, $file->{Nlink}, $file->{Name};
+                   $file->{Size}, $file->{Nlink},
+                   $file->{UID},  $file->{GID},
+                   ($file->{Mode} & 0770000)>>12,
+                   ($file->{Mode} &   07777)>> 0,
+                   $file->{Name};
          }
       }
    }

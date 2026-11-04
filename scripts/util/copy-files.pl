@@ -45,10 +45,25 @@ use Cwd::utf8;
 use Time::HiRes 'time';
 use RH::Dir;
 
-# ======= GLOBAL VARIABLES: ==================================================================================
+# ======= VARIABLES: =========================================================================================
+
+# ------- System Variables: ----------------------------------------------------------------------------------
+
+$" = ', ' ; # Quoted-array element separator = ", ".
+
+# ------- Global Variables: ----------------------------------------------------------------------------------
 
 our $t0   ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program entry.
 our $t1   ; # Seconds since 00:00:00, Thu Jan 1, 1970, at the time of program exit.
+
+# ------- Local variables: -----------------------------------------------------------------------------------
+
+# Setting:    Default:   Meaning of setting:            Range:    Meaning of default:
+my $Debug     = 0    ;   # Debug?                       bool      Don't debug.
+my $Recurse   = 0    ;   # Recurse?                     bool      Don't recurse.
+my $srcdir    = ''   ;   # Source      directory.       string    empty
+my $dstdir    = ''   ;   # Destination directory.       string    empty
+my @copy_args = ()   ;   # Arguments for copy_files().  array     empty
 
 # ======= BEGIN AND END BLOCKS: ==============================================================================
 
@@ -67,20 +82,11 @@ END {
    printf STDERR "Execution time was %.3fms.\n", $ms;
 }
 
-# ======= PROGRAM-SETTINGS VARIABLES: ========================================================================
-
-# Setting:    Default:   Meaning of setting:            Range:    Meaning of default:
-   $"         = ', ' ;   # Quoted-array formatting.     string    Comma space.
-my $Db        = 0    ;   # Debug?                       bool      Don't debug.
-my $src       = ''   ;   # Srce directory.              string    empty
-my $dst       = ''   ;   # Dest directory.              string    empty
-my $cur       = ''   ;   # Curr directory.              string    empty
-my @copy_args = ()   ;   # Arguments for copy_files().  array     empty
-
 # ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
 
-sub argv  ; # Process @ARGV.
-sub help  ; # Print help.
+sub argv    ; # Process @ARGV.
+sub curdire ; # Process current directory.
+sub help    ; # Print help.
 
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
@@ -88,31 +94,41 @@ sub help  ; # Print help.
    # Process argv:
    argv;
 
-   # Get current working directory:
-   $cur = cwd;
+   # Get working directory on program entry:
+   my $oridir = cwd;
 
    # Get FULLY-QUALIFIED versions of source and destination directories by CDing to each, running getcwd,
-   # then CDing back to $cur. WARNING: ALWAYS CD BACK TO $cur BEFORE TRYING TO CD TO $src or $dst, BECAUSE
-   # $src AND $dst ARE RELATIVE TO $cur!!!
-   chdir  $src;
-   $src = cwd;
-   chdir  $cur;
-   chdir  $dst;
-   $dst = cwd;
-   chdir  $cur;
+   # then CDing back to $cur. WARNING: ALWAYS CD BACK TO $oridir BEFORE TRYING TO CD TO $src or $dst, BECAUSE
+   # $src AND $dst start off possibly relative to $oridir.
 
-   # If debugging, just emulate:
-   if ( $Db ) {
-      say STDERR  "\nEMULATING!!!\n".
-                  "At bottom of main body of \"copy-files.pl\", after qualifying dir names.\n".
-                  "Fully-qualified \$src = \"$src\"\n".
-                  "Fully-qualified \$dst = \"$dst\"";
+   chdir $srcdir;
+   $srcdir = cwd;
+   chdir $oridir;
+
+   chdir $dstdir;
+   $dstdir = cwd;
+   chdir $oridir;
+
+   # If debugging, print final values of $srcdir and $dstdir and exit:
+   if ( $Debug ) {
+      say "\nIn copyfiles.pl, in main body.";
+      say "Final value of \$oridir = \"$oridir\"";
+      say "Final value of \$srcdir = \"$srcdir\"";
+      say "Final value of \$dstdir = \"$dstdir\"";
+      exit 0;
    }
 
-   # Otherwise, copy files:
+   # Set current working directory to $srcdir, just before copying files:
+   chdir $srcdir;
+
+   # If recursing, run "RecurseDirs" on "curdire":
+   if ( $Recurse ) {
+      RecurseDirs {curdire};
+   }
+
+   # Otherwise, just run curdire:
    else {
-      say STDERR  "\nCOPYING!!!\n";
-      copy_files($src, $dst, @copy_args);
+      curdire;
    }
 
    # We're done, so exit program, returning success code 0 to caller:
@@ -123,73 +139,79 @@ sub help  ; # Print help.
 
 # Process @ARGV:
 sub argv {
-   # If debugging, print raw @ARGV:
-   if ($Db)
-   {
-      my $NV = scalar(@ARGV);
-      warn "In copy-files.pl, at top of sub argv.\n".
-           "\@ARGV $NV elements:\n".
-           join("\n", @ARGV) . "\n";
-   }
-
-   # Get options and arguments:
-   my @opts = ();
-   my @args = ();
-   my $end = 0;              # end-of-options flag
+   # Declare and define certain variables we'll need:
+   my $e = 0;                # end-of-options flag
    my $s = '[a-zA-Z0-9]';    # single-hyphen allowable chars (English letters, numbers)
    my $d = '[a-zA-Z0-9=.-]'; # double-hyphen allowable chars (English letters, numbers, equal, dot, hyphen)
-   for ( @ARGV ) {           # For each element of @ARGV,
-      /^--$/ && !$end        # "--" = end-of-options marker = construe all further CL items as arguments,
-      and $end = 1           # so if we see that, then set the "end-of-options" flag
-      and push @opts, $_     # and push the "--" to @opts
-      and next;              # and skip to next element of @ARGV.
-      !$end                  # If we haven't yet reached end-of-options,
-      && ( /^-(?!-)$s+$/     # and if we get a valid short option
-      ||  /^--(?!-)$d+$/ )   # or a valid long option,
-      and push @opts, $_     # then push item to @opts
-      or  push @args, $_;    # else push item to @args.
-   }
+   my @opts = ();            # options
 
-   # Get numbers of options and arguments:
-   my $NO = scalar(@opts);
-   my $NA = scalar(@args);
+   # Pull all options OUT of @ARGV and put them in @opts instead:
+   for ( my $i = 0 ; $i <= $#ARGV ; ++$i ) {
+      # If current item is end-of-options marker, remove it from @ARGV, set "$e", and consider all remaining
+      # contents of @ARGV to be "arguments" rather than "options":
+      if ( '--' eq $ARGV[$i] ) {
+         $e = 1;
+         splice @ARGV, $i, 1;
+         --$i;
+      }
+      # Else if current item is an "option", remove it from @ARGV and push it to @opts:
+      elsif ( !$e && ( $ARGV[$i] =~ /^-(?!-)$s+$/ || $ARGV[$i] =~ /^--(?!-)$d+$/ ) ) {
+         push @opts, splice @ARGV, $i, 1;
+         --$i;
+      }
+      # Otherwise, this item is an argument, so leave it in @ARGV:
+      else {
+         ; # Do nothing.
+      }
+   }
+   # @ARGV now contains NO options. If any items remain, they will be construed as being "arguments".
 
    # Process options:
    for ( @opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit(777)       ;
-      /^-$s*e/ || /^--emulate$/ and $Db = 1                  ;
-      /^-$s*S/ || /^--sl$/      and push @copy_args, 'sl'    ;
-      /^-$s*s/ || /^--sha1$/    and push @copy_args, 'sha1'  ;
-      /^-$s*u/ || /^--unique$/  and push @copy_args, 'unique';
-      /^-$s*l/ || /^--large$/   and push @copy_args, 'large' ;
-      /^-$s*c/ || /^--correct$/ and push @copy_args, 'corr'  ;
+      /^-$s*h/ || /^--help$/    and help and exit(0)                        ;
+      /^-$s*e/ || /^--emulate$/ and $Debug = 1 and RH::Dir::rhd_debug('on') ;
+      /^-$s*l/ || /^--local$/   and $Recurse = 0                            ; # DEFAULT
+      /^-$s*r/ || /^--recurse$/ and $Recurse = 1                            ;
+      /^-$s*S/ || /^--sl$/      and push @copy_args, 'sl'                   ;
+      /^-$s*s/ || /^--sha1$/    and push @copy_args, 'sha1'                 ;
+      /^-$s*u/ || /^--unique$/  and push @copy_args, 'unique'               ;
+      /^-$s*g/ || /^--large$/   and push @copy_args, 'large'                ;
+      /^-$s*c/ || /^--correct$/ and push @copy_args, 'corr'                 ;
    }
 
+   # Get number of arguments:
+   my $NA = scalar(@ARGV);
+
    # Set settings and check their validity:
-   if ($NA < 2 || $NA > 3)
-                      {say STDERR "Error: Must have 2 or 3 arguments. ".
-                                  "Use -h or --help to get help."                         ; exit(666) }
-   $src = $args[0];
-   if ( ! -e $src   ) {say STDERR "Error: source directory $src doesn't exist."          ; exit(666) }
-   if ( ! -d $src   ) {say STDERR "Error: source directory $src isn't a directory."      ; exit(666) }
-   $dst = $args[1];
-   if ( ! -e $dst   ) {say STDERR "Error: destination directory $dst doesn't exist."     ; exit(666) }
-   if ( ! -d $dst   ) {say STDERR "Error: destination directory $dst isn't a directory." ; exit(666) }
-   if ( 3 == $NA    ) {push @copy_args, 'regexp=' . $args[2];}
+   if ($NA < 2 || $NA > 3) {die "Error: Must have 2 or 3 arguments. Use -h or --help to get help.\n" ; }
+   $srcdir = $ARGV[0];
+   if ( ! -e $srcdir )     {die "Error: source directory $srcdir doesn't exist.\n"                   ; }
+   if ( ! -d $srcdir )     {die "Error: source directory $srcdir isn't a directory.\n"               ; }
+   $dstdir = $ARGV[1];
+   if ( ! -e $dstdir )     {die "Error: destination directory $dstdir doesn't exist.\n"              ; }
+   if ( ! -d $dstdir )     {die "Error: destination directory $dstdir isn't a directory.\n"          ; }
+   if ( 3 == $NA     )     {push @copy_args, 'regexp=' . $ARGV[2]                                    ; }
 
    # If debugging, print @Db, @copy_args, $src, $dst:
-   if ($Db) {
+   if ($Debug) {
       my $NC = scalar(@copy_args);
       warn "\nIn copy-files.pl, at bottom of sub argv.\n".
-           "\$Db = $Db\n".
-           "\@copy_args has $NC elements: " . join(" ", @copy_args) . "\n".
-           "Raw \$src = \"$src\"\n".
-           "Raw \$dst = \"$dst\"\n";
+           "\$Debug = $Debug\n".
+           "\$Recurse = $Recurse\n".
+           "\$srcdir = \"$srcdir\"\n".
+           "\$dstdir = \"$dstdir\"\n".
+           "\@copy_args has $NC elements: " . join(" ", @copy_args) . "\n";
    }
 
    # We're finished, so return success code 1 to caller:
    return 1;
 } # end sub argv
+
+# Process current directory:
+sub curdire {
+   my $curdir = cwd;
+   copy_files($curdir, $dstdir, @copy_args);
+}
 
 # Print help:
 sub help {
@@ -203,6 +225,10 @@ sub help {
    skip any files in dir1 for which duplicates exist in dir2, and/or rename
    the copied files' name roots to the files' own SHA1 hashes.
 
+   If a "-r" or "--recurse" option is used, this program will operate
+   recursively, copying all matching files from all subdirectories of dir1
+   into dir2, enumerating as necessary and optionally skipping duplicates.
+
    Command lines:
    copy-files.pl [-h|--help]                    (to print this help and exit)
    copy-files.pl [options] dir1 dir2 [regexp]   (to copy files)
@@ -214,8 +240,10 @@ sub help {
    "-S" or "--sl"      Shorten names for when processing Windows Spotlight images.
    "-s" or "--sha1"    Change name root of each file to its own hash.
    "-u" or "--unique"  Don't copy files for which duplicates exist in destination.
-   "-l" or "--large"   Copy only large image files (W=1200+, H=600+).
+   "-g" or "--large"   Copy only large image files (W=1200+, H=600+).
    "-c" or "--correct" Correct missing or wrong file name suffixes.
+   "-r" or "--recurse" Operate recursively.
+   "-l" or "--local"   Operate locally. (DEFAULT)
    "--"                All items to right are arguments, not options.
    All other options will be ignored.
    Multiple single-letter options can be stacked after a single hypen.
@@ -237,10 +265,6 @@ sub help {
    Be sure to enclose your regexp in 'single quotes', else BASH may replace it
    with matching names of entities in the current directory and send THOSE to
    this program, whereas this program needs the raw regexp instead.
-
-   Also note that this program cannot act recursively; it copies files only from
-   the root level of dir1 to the root level of dir2; the contents of any
-   subdirectories of dir1 or dir2 are not touched.
 
    Happy file copying!
    Cheers,
