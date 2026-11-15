@@ -68,6 +68,6 @@ sub help {
    return 1;
 } # end sub help ()
 
-/-h/ || /--help/ and help and exit 777 for @ARGV;
+/^-h$/ || /^--help$/|| /--help/ and help and exit for @ARGV;
 
 print join '', reverse split // for reverse <>

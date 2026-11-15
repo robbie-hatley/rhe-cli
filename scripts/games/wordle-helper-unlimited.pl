@@ -66,7 +66,7 @@ sub help    ; # Print help and exit.
    argv;
 
    # If user wants help, just print help and exit:
-   if ($Help) {help; exit;}
+   if ($Help) {help; exit 0;}
 
    # Die if word length is not an integer from 4 through 11:
    if ( $wl !~ m/^[1-9][0-9]*$/ || $wl < 4 || $wl > 11 ) {

@@ -102,7 +102,7 @@ sub argv {
    if ( 2 != $NA && !$Help ) {
       error($NA); # Print error message.
       help;       # Provide help.
-      exit 666;   # Return The Number Of The Beast.
+      exit 0;   # Return The Number Of The Beast.
    }
 
    # Else, set reference and test strings:

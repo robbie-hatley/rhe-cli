@@ -85,7 +85,7 @@ sub argv {
    for ( my $i = 0 ; $i < @ARGV ; ++$i ) {
       $_ = $ARGV[$i];
       if (/^-[\pL]{1,}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/) {
-         if (/^-h$/ || /^--help$/)  {help; exit;}
+         if (/^-h$/ || /^--help$/)  {help; exit 0;}
          if (/^-a$/ || /^--allow$/) {$allow = 1;}
          splice @ARGV, $i, 1;
          --$i;
@@ -206,7 +206,7 @@ sub error ($msg) {
 
    Run this program with a -h or --help option to get help.
    END_OF_ERROR
-   exit 666;
+   exit 0;
 } # end sub error
 
 # Give help:

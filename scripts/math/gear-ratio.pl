@@ -32,7 +32,7 @@ sub help;
 
 { # begin main
    argv;
-   $Help and help and exit 777;
+   $Help and help and exit 0;
    gear_ratio;
    exit 0;
 } # end main

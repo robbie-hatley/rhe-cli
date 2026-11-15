@@ -90,7 +90,7 @@ sub process_options_and_arguments {
    # If user wants help, just print help and bail:
    if ($Help) {
       help_msg;
-      exit 777;
+      exit 0;
    }
 
    # If number of arguments is out of range, bail:
@@ -171,7 +171,7 @@ sub error_msg
    say '3. last number';
    say 'Help follows:';
    help_msg;
-   exit 666;
+   exit 0;
 } # end sub error_msg
 
 sub help_msg

@@ -28,7 +28,7 @@ sub print_help_msg;
    if (@ARGV == 1 && ($ARGV[0] eq '-h' || $ARGV[0] eq '--help'))
    {
       print_help_msg();
-      exit;
+      exit 0;
    }
 
    if ( @ARGV != 1 )
@@ -39,7 +39,7 @@ sub print_help_msg;
        . "a path to a 256-byte-wide one-time pad.\n"
       );
       print_help_msg();
-      exit;
+      exit 0;
    }
 
    my  @Pad           = () ; # multi-line 256-byte-wide permutation-based one-time pad
@@ -94,7 +94,7 @@ sub print_help_msg;
    else             {say "\nNo errors found; pad is valid.";}
 
    # We're done, so end program:
-   exit;
+   exit 0;
 } # end main()
 
 

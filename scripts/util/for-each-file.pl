@@ -204,7 +204,7 @@ sub argv {
         && !$Help ) {            # and we're not getting help,
       error($NA);                # print error message,
       help;                      # and print help message,
-      exit 666;                  # and exit, returning The Number Of The Beast.
+      exit 0;                  # and exit, returning The Number Of The Beast.
    }
 
    # First argument is a command:

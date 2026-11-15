@@ -26,7 +26,7 @@ if (1 != scalar @ARGV || !(is_positive_integer($ARGV[0])) || $ARGV[0] < 2)
    say "This program requires exactly one command-line argument,";
    say "which must be an integer > 1; this program will then print";
    say "all prime numbers not greater than the given number.";
-   exit 666;
+   exit 0;
 }
 $UpTo = 0 + $ARGV[0];
 say "In \"primes-up-to.pl\". \$UpTo = $UpTo" if $db;

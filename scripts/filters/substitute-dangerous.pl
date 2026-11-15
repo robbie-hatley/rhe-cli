@@ -79,7 +79,8 @@ sub help;
    }
 
    # Exit program, returning success code 0 to caller:
-   exit 0;
+
+  exit 0;
 } # end main
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
@@ -102,7 +103,7 @@ sub argv {
 
    # Process options:
    for ( @Opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit;
+      /^-$s*h/ || /^--help$/    and help and exit 0;
       /^-$s*e/ || /^--debug$/   and $Debg    =  1  ;
       /^-$s*v/ || /^--verbose$/ and $Verb    =  2  ;
    }

@@ -27,7 +27,7 @@ for (@ARGV) {
          "codepoints-to-text conversion program. This program converts\n".
          "Unicode codepoints, written as space-separated hexadecimal ordinals, to\n".
          "Unicode text. For example: converts \"5BCC 58EB 5DDD 753A\" to \"富士川町\".\n";
-      exit 777;
+      exit 0;
    }
 }
 

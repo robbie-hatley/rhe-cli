@@ -185,7 +185,7 @@ sub argv {
         && !$Debug ) {  # and we're not debugging,
       error($NA);       # print error message,
       help;             # and print help message,
-      exit 666;         # and exit, returning The Number Of The Beast (because something evil happened).
+      exit 0;         # and exit, returning The Number Of The Beast (because something evil happened).
    }
 
    # First argument, if present, is a file-selection regexp:
@@ -213,7 +213,7 @@ sub curdire {
 
    # Get a list of all paths in current directory matching target "F", regexp $Gib, and regexp $RegExp:
    my @paths = glob_regexp_utf8($cwd, 'F', $RegExp, $Predicate);
-   #say for @paths; exit;
+   #say for @paths; exit 0;
    # Send each matching path to curfile:
    foreach my $path (@paths) {
       # Bypass all files that don't have gibberish names:

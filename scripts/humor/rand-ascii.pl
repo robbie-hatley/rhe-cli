@@ -92,7 +92,7 @@ sub argv {
    if ( $NA > 2                  # If number of arguments >= 3
         && !$Db && !$Help ) {    # and we're not debugging or getting help,
       error($NA);                # print error message
-      exit 666;                  # and exit, returning The Number Of The Beast.
+      exit 0;                  # and exit, returning The Number Of The Beast.
    }
 
    # First argument, if present, is number of rows:

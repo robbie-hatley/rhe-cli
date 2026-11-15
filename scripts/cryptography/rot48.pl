@@ -40,7 +40,7 @@ sub print_help_msg;
          if ($_ eq '-h' || $_ eq '--help')
          {
             print_help_msg();
-            exit;
+            exit 0;
          }
          splice @ARGV, $i, 1; # Remove option from @ARGV.
          --$i; # Re-sync to new item in same spot.
@@ -51,7 +51,7 @@ sub print_help_msg;
    {
       warn("Error: rot48.pl takes 1 or 2 arguments.");
       print_help_msg();
-      exit;
+      exit 0;
    }
 
    my @Pad          = ();  # One-time pad.
@@ -209,7 +209,7 @@ sub print_help_msg;
    warn "Verbatim  ",$FeedCount," characters.\n";
 
    # We're done, so end program:
-   exit;
+   exit 0;
 } # end main()
 
 

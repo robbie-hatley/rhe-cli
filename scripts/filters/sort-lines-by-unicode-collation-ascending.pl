@@ -47,7 +47,7 @@ sub argv {
    # If user wants help, just print help and bail:
    if ( @ARGV > 0 && ( $ARGV[0] eq '-h' || $ARGV[0] eq '--help' ) ) {
       help_msg;
-      exit 777;
+      exit 0;
    }
 }
 

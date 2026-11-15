@@ -32,14 +32,14 @@ sub print_help_msg;
    if (1 == scalar(@ARGV) && ("-h" eq $ARGV[0] || "--help" eq $ARGV[0]))
    {
       print_help_msg;
-      exit 777;
+      exit 0;
    }
    if (2 != scalar(@ARGV) || $ARGV[0] < 10 || $ARGV[0] > 2000000000
                           || $ARGV[1] < 10 || $ARGV[1] > 2000000000)
    {
       print_error_msg;
       print_help_msg;
-      exit 666;
+      exit 0;
    }
    my @RandomNumbers;
    for (1..$ARGV[0])

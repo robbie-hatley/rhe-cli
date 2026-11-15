@@ -75,7 +75,7 @@ sub argv {
       }
       else {push @CLArgs, $_;}
    }
-   if ($help) {help(); exit 777;}     # If user wants help, print help and exit 777.
+   if ($help) {help(); exit 0;}     # If user wants help, print help and exit.
    my $NA = scalar @CLArgs;           # Get number of arguments.
    if (1 == $NA) {                    # If  number of arguments is 1,
       $Command = $CLArgs[0];          # that argument is our command.

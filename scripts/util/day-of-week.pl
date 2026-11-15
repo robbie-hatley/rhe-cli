@@ -233,7 +233,7 @@ sub argv {
 
    # Process options:
    for ( @opts ) {
-      /^-$s*h/ || /^--help$/      and help and exit 777 ;
+      /^-$s*h/ || /^--help$/      and help and exit ;
       /^-$s*e/ || /^--debug$/     and $Db       =  1    ;
       /^-$s*g/ || /^--gregorian$/ and $Julian   =  0    ; # DEFAULT
       /^-$s*j/ || /^--julian$/    and $Julian   =  1    ;

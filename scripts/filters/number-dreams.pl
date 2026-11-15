@@ -115,7 +115,7 @@ sub argv {
 
    # Now, let's process our options:
    for (@Opts) {
-      /^-h$/ || /^--help$/ and help and exit;
+      /^-h$/ || /^--help$/ and help and exit 0;
       /^--number=(.+)$/    and $Number  = $1;
       /^--divider=(.+)$/   and $Divider = $1;
       /^--word=(.+)$/      and $Word    = $1;

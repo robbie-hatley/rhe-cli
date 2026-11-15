@@ -15,7 +15,7 @@ sub fact ($x) {
 { # begin main
    if ( 1 != scalar(@ARGV) || 0+$ARGV[0] < 0 ) {
       warn("Error: Must have one argument, which must be a non-negative integer.\n");
-      exit 666;
+      exit 0;
    }
    my $n   = 0 + $ARGV[0];
    my $num = fact(2*$n);

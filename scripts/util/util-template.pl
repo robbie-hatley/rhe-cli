@@ -263,7 +263,7 @@ sub argv {
 
    # Process options:
    for ( @opts ) {
-      /^-$s*h$s*$/ || /^--help$/    and help and exit;
+      /^-$s*h$s*$/ || /^--help$/    and help and exit 0;
       /^-$s*e$s*$/ || /^--debug$/   and $Debug   =  1 and RH::Dir::rhd_debug('on');
       /^-$s*q$s*$/ || /^--quiet$/   and $Verbose =  0  ;
       /^-$s*t$s*$/ || /^--terse$/   and $Verbose =  1  ; # Default.
@@ -286,7 +286,7 @@ sub argv {
      ."an optional file-selection regexp and an optional file-selection predicate.\n"
      ."Help follows.";
       help;
-      exit;
+      exit 0;
    }
 
    # First argument, if present, is a file-selection regexp:

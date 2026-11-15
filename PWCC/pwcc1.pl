@@ -2,13 +2,13 @@
 
 =pod
 
---------------------------------------------------------------------------------------------------------------
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 TITLE AND ATTRIBUTION:
 
 Solution in Perl for The Weekly Challenge ###-1,
 written by Robbie Hatley on Dow Mon Dm, 2026.
 
---------------------------------------------------------------------------------------------------------------
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 PROBLEM DESCRIPTION:
 
 Task ###-1: Words In-Common
@@ -18,13 +18,13 @@ prints which words are in-common between all lists.
 
 (See "# INPUTS:" section below for examples.)
 
---------------------------------------------------------------------------------------------------------------
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 PROBLEM NOTES:
 
 To solve this problem, I use a hash, keyed by words and with binary numbers as values. Each time a word is
 seen, the 1 bit of it's value in the hash is set if it's from list 1, or the 2 bit if from list 2, etc.
 
---------------------------------------------------------------------------------------------------------------
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 IO NOTES:
 
 Input is via either default data or @ARGV. If using @ARGV, provide one-or-more space-separated single-quoted
@@ -37,7 +37,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
 =cut
 
-# ------------------------------------------------------------------------------------------------------------
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 # PRAGMAS, MODULES, AND SUBS:
 
    use v5.40;
@@ -110,7 +110,7 @@ Output is to STDOUT and will be each input followed by the corresponding output.
       return true;
    }
 
-# ------------------------------------------------------------------------------------------------------------
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 # INPUTS:
 my @arrays = @ARGV ? parse_argv_2(@ARGV) :
 (
@@ -120,10 +120,8 @@ my @arrays = @ARGV ? parse_argv_2(@ARGV) :
    [["baseball", "polo"],["curling", "baseball", "fishing"],["baseball", "darts"],["soccer","baseball"]],
 );
 
-# ------------------------------------------------------------------------------------------------------------
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 # MAIN BODY OF PROGRAM:
-for my $aref (@arrays) {
-   say '';
    my $vmtu = nan;
    my $mwsc = inf;
    say 'Lists:';

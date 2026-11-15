@@ -132,7 +132,8 @@ sub help    ; # Print help.
    }
 
    # We're done, so exit program, returning success code 0 to caller:
-   exit 0;
+
+  exit 0;
 } # end main
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================

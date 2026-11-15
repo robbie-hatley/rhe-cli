@@ -41,7 +41,7 @@ sub help;
 # Main body of program:
 {                                                       # Begin main body of program.
    argv;                                                # Process command-line arguments.
-   $Help and help and exit 777;                         # If user wants help, just print help and exit.
+   $Help and help and exit 0;                         # If user wants help, just print help and exit.
    my $total = 0;                                       # Make-and-initialize a total-vowels counter.
    while (<>) {                                         # Process each line of input in-turn.
       s/\s+$//;                                         # Chomp trailing whitespace.

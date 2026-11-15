@@ -48,12 +48,12 @@ sub argv ()
 {
    for (@ARGV)
    {
-      if ( '-h' eq $_ || '--help' eq $_ ) {help; exit 777;}
+      if ( '-h' eq $_ || '--help' eq $_ ) {help; exit 0;}
    }
-   error and exit 666 if scalar(@ARGV) != 1;
+   error and exit 0 if scalar(@ARGV) != 1;
    $N = shift @ARGV;
-   error and exit 666 if $N !~ /^-?\d{1,2}$/;
-   error and exit 666 if $N < -26 || $N > 26;
+   error and exit 0 if $N !~ /^-?\d{1,2}$/;
+   error and exit 0 if $N < -26 || $N > 26;
    return 1;
 } # end sub argv ()
 

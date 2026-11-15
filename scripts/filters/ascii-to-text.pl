@@ -32,7 +32,7 @@ for (@ARGV) {
          "iso-8859-1 ordinal, is printed as \"�\" (Unicode \"replacement\" character\n".
          "indicating \"invalid ordinal\"). All other hexadecimal digit pairs are\n".
          "printed as their iso-8859-1 characters.";
-      exit 777;
+      exit 0;
    }
 }
 

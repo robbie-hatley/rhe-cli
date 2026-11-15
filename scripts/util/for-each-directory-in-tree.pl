@@ -66,7 +66,7 @@ sub argv {
    for ( my $i = 0 ; $i < @ARGV ; ++$i ) {
       $_ = $ARGV[$i];
       if (/^-[\pL]{1,}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/) {
-         if (/^-h$/ || /^--help$/) {help; exit 777;}
+         if (/^-h$/ || /^--help$/) {help; exit 0;}
          splice @ARGV, $i, 1;
          --$i;
       }
@@ -109,7 +109,7 @@ sub error ($NA) {
 sub help {
    print ((<<'   END_OF_HELP') =~ s/^   //gmr);
 
-   Welcome to "for-each-directory-in-tree.pl", Robbie Hatley's nifty program 
+   Welcome to "for-each-directory-in-tree.pl", Robbie Hatley's nifty program
    for executing a given command once for each directory of the current
    directory tree descending from the current node.
 

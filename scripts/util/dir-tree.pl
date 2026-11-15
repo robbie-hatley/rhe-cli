@@ -38,7 +38,7 @@ my $starting_directory = cwd;
 
 sub help;
 
-for ( @ARGV ) {if ( /^-h$/ || /^--help$/ ) {help;exit}}
+for ( @ARGV ) {if ( /^-h$/ || /^--help$/ ) {help;exit 0;}}
 
 if ( @ARGV ) {
    for ( @ARGV ) {

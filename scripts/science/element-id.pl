@@ -25,7 +25,7 @@ foreach my $arg (@ARGV) {
    }
 }
 
-$help and help and exit;
+$help and help and exit 0;
 
 my @data =
 (
@@ -227,7 +227,7 @@ foreach my $arg (@args) {
    }
 }
 
-exit;
+exit 0;
 
 # Subroutine definitions:
 

@@ -133,7 +133,7 @@ sub help {
 argv;
 
 # If user requested help, print help and exit:
-if ($Help) {help;exit}
+if ($Help) {help;exit 0;}
 
 # Otherwise, filter input to output (add code in this loop as necessary to achieve desired result):
 while (<STDIN>) {

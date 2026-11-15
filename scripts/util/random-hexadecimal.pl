@@ -46,13 +46,13 @@ sub help    ; # Print help and exit.
 # Process @ARGV :
 sub argv {
    for ( @ARGV ) {
-      /^-h$/ || /^--help$/    and help and exit 777;
+      /^-h$/ || /^--help$/    and help and exit 0;
       /^--digits=([1-9]\d*)$/ and $Digits = int($1);
       /^-t$/ || /^--tab$/     and $Tab = 1;
    }
    $Digits < 1 || $Digits > 1000000
    and print "Error: Number of digits must be 1-1,000,000 but you specified $Digits.\n"
-   and exit 666;
+   and exit 0;
    return 1;
 } # end sub argv
 

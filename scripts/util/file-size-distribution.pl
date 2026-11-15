@@ -126,7 +126,7 @@ sub argv {
 
    # Process options:
    for ( @opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit 777 ;
+      /^-$s*h/ || /^--help$/    and help and exit ;
       /^-$s*e/ || /^--debug$/   and $Db      =  1     ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0     ;
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1     ;
@@ -144,7 +144,7 @@ sub argv {
    if ( $NA >= 2 && !$Db ) {   # If number of arguments >= 2 and we're not debugging,
       error($NA);              # print error message,
       help;                    # and print help message,
-      exit 666;                # and exit, returning The Number Of The Beast.
+      exit 0;                # and exit, returning The Number Of The Beast.
    }
 
    # Return success code 1 to caller:

@@ -140,7 +140,7 @@ my $Current = 0;
       say 'Fatal error in program \"process-spotlight.pl\":';
       say 'Some of the needed directories don\'t exist!';
       say 'Aborting program to prevent disaster!';
-      exit 666;
+      exit 0;
    }
 
    # Update directory /sl from user directories:
@@ -164,7 +164,7 @@ my $Current = 0;
 sub argv {
    my $s = '[a-zA-Z0-9]';
    for ( @ARGV ) {
-      /^-$s*h/ || /^--help$/    and help and exit;
+      /^-$s*h/ || /^--help$/    and help and exit 0;
       /^-$s*e/ || /^--debug$/   and $Debug = 1;
       /^-$s*c/ || /^--current$/ and $Current = 1;
    }

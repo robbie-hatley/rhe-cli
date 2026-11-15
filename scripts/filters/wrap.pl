@@ -50,7 +50,7 @@ sub argv {
    for (@ARGV){
       if ( $_ eq '-h' || $_ eq '--help' ){
          help;
-         exit 777}
+         exit 0;}
       if ( $_ =~ m/^-[^-]*c((?:0(?:b|x)?)?\d+)/ || $_ =~ m/^--columns=((?:0(?:b|x)?)?\d+)$/ ){
          my $colstr = $1;
          $Columns = $colstr =~ m/^0/ ? oct $colstr : $colstr;

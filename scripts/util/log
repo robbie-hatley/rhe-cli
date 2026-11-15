@@ -1,0 +1,168 @@
+#!/usr/bin/env perl
+
+# This is a 110-character-wide Unicode UTF-8 Perl-source-code text file with hard Unix line breaks ("\x0A").
+# ¡Hablo Español! Говорю Русский. Björt skjöldur. ॐ नमो भगवते वासुदेवाय.    看的星星，知道你是爱。 麦藁雪、富士川町、山梨県。
+# =======|=========|=========|=========|=========|=========|=========|=========|=========|=========|=========|
+
+##############################################################################################################
+# log
+# Reads, creates, writes, appends, and deletes log files.
+# Written by Robbie Hatley.
+# Edit history:
+# Mon Nov 09, 2026: Wrote it.
+##############################################################################################################
+
+# ======= PRAGMAS AND MODULES: ===============================================================================
+
+use v5.40;
+use utf8::all;
+use Cwd::utf8;
+use Fcntl qw( O_RDONLY O_WRONLY O_RDWR O_CREAT O_EXCL O_APPEND O_TRUNC );
+
+# ======= SUBROUTINE PRE-DECLARATIONS: =======================================================================
+
+sub help; # Print help and exit.
+
+# ======= MAIN BODY OF PROGRAM: ==============================================================================
+
+{ # begin main
+   exit if !@ARGV;
+   if    ( '-h' eq $ARGV[0] || '--help' eq $ARGV[0] ) {
+      help;
+   }
+   elsif ( '-c' eq $ARGV[0] || '--create' eq $ARGV[0] ) {
+      if ( 2 != scalar @ARGV ) {
+         die "Error: You must specify the path of the file to create.\n";
+      }
+      my $path = $ARGV[1];
+      if ( -e $path ) {
+         die "Error: A file already exists at path \"$path\".\n";
+      }
+      my $fh = undef;
+      sysopen($fh, $path, O_WRONLY | O_CREAT | O_EXCL)
+      or die "Error: Could not create a log at path \"$path\".\n$!\n";
+      close $fh
+      or die "Error: Could not close the file at path \"$path\".\n$!\n";
+   }
+   elsif ( '-r' eq $ARGV[0] || '--read' eq $ARGV[0] ) {
+      if ( 2 != scalar @ARGV ) {
+         die "Error: You must specify the path of the file to read.\n";
+      }
+      my $path = $ARGV[1];
+      if ( ! -e $path || ! -f $path || -l $path ) {
+         die "Error: There is no file at path \"$path\".\n";
+      }
+      my $fh = undef;
+      sysopen($fh, $path, O_RDONLY)
+      or die "Error: Could not open the file at path \"$path\" for reading.\n$!\n";
+      print while (<$fh>);
+      close $fh
+      or die "Error: Could not close the file at path \"$path\".\n$!\n";
+   }
+   elsif ( '-w' eq $ARGV[0] || '--write' eq $ARGV[0] ) {
+      if ( 3 != scalar @ARGV ) {
+         die "Error: You must specify a path to a file to overwrite,\n"
+            ."followed by the text to write.\n";
+      }
+      my $path = $ARGV[1];
+      my $line = $ARGV[2];
+      if ( ! -e $path || ! -f $path || -l $path ) {
+         die "Error: There is no file at path \"$path\".\n";
+      }
+      my $fh = undef;
+      sysopen($fh, $path, O_WRONLY | O_TRUNC)
+      or die "Error: Could not open file at path \"$path\" for overwriting.\n$!\n";
+      say $fh $line
+      or die "Error: Could not overwrite file at path \"$path\".\n$!\n";
+      close $fh
+      or die "Error: Could not close the file at path \"$path\".\n$!\n";
+   }
+   elsif ( '-a' eq $ARGV[0] || '--append' eq $ARGV[0] ) {
+      if ( 3 != scalar @ARGV ) {
+         die "Error: You must specify a path of a file to append-to,\n"
+            ."followed by the text to append.\n";
+      }
+      my $path = $ARGV[1];
+      my $line = $ARGV[2];
+      if ( ! -e $path || ! -f $path || -l $path ) {
+         die "Error: There is no file at path \"$path\".\n";
+      }
+      my $fh = undef;
+      sysopen($fh, $path, O_WRONLY | O_APPEND)
+      or die "Error: Could not open file at path \"$path\" for appending.\n$!\n";
+      say $fh $line
+      or die "Error: Could not append to file at path \"$path\".\n$!\n";
+      close $fh
+      or die "Error: Could not close the file at path \"$path\".\n$!\n";
+   }
+   elsif ( '-d' eq $ARGV[0] || '--delete' eq $ARGV[0] ) {
+      if ( 2 != scalar @ARGV ) {
+         die "Error: You must specify the path of the file to delete.\n";
+      }
+      my $path = $ARGV[1];
+      if ( ! -e $path || ! -f $path || -l $path ) {
+         die "Error: There is no file at path \"$path\".\n";
+      }
+      unlink $path
+      or die "Error: Could not unlink the file at path \"$path\".\n$!\n";
+   }
+
+   exit;
+} # end main
+
+# ======= SUBROUTINE DEFINITIONS: ============================================================================
+
+# Print help:
+sub help {
+   print STDERR ((<<"   END_OF_HELP") =~ s/^   //gmr);
+
+   -------------------------------------------------------------------------------
+   Introduction:
+
+   Welcome to "log". This program manages log files.
+
+   Note: You must specify the path to the log file itself, not a symbolic link.
+
+   -------------------------------------------------------------------------------
+   Command lines:
+
+   log -h | --help              (to print this help and exit)
+   log [option] [Argument(s)]   (to manage log files)
+
+   -------------------------------------------------------------------------------
+   Description of Options:
+
+   Option:            Meaning:
+   -h or --help       Print this help and exit.
+   -c or --create     Create    a log.
+   -r or --read       Read      a log.
+   -w or --write      Overwrite a log.
+   -a or --append     Append-to a log.
+   -d or --delete     Delete    a log.
+
+   If no option is used, this program does nothing. Each option must be the first
+   command-line argument. Some options require additional arguments. All options
+   not listed above are ignored.
+
+   -------------------------------------------------------------------------------
+   Description of Arguments:
+
+   All options (except help) require the second command-line argument to be
+   a valid file path. The create option needs that path to be "valid but not yet
+   existing". The read, write, append, and delete options require the path to be
+   not only valid, but a path to an existing log file.
+
+   The write and append options need a "line" argument after the "path"
+   argument, specifying text to be written to the log. (The write option will
+   replace the log's contents with the line, whereas the append option will
+   append the line to the end of the log.)
+
+
+   Happy log managing!
+
+   Cheers,
+   Robbie Hatley,
+   programmer.
+   END_OF_HELP
+   return 1;
+} # end sub help

@@ -74,7 +74,7 @@ sub argv {
       $_ = $ARGV[$i];
       if (/^-[\pL]{1,}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/)
       {
-         if (/^-h$/ || /^--help$/) {help; exit 777;}
+         if (/^-h$/ || /^--help$/) {help; exit 0;}
          splice @ARGV, $i, 1;
          --$i;
       }

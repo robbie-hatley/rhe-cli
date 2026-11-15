@@ -66,7 +66,7 @@ sub help {
    return 1;
 } # end sub help
 
-/-h/ || /--help/ and help and exit 777 for @ARGV;
+/^-h$/ || /^--help$/|| /--help/ and help and exit for @ARGV;
 
 # Use "m/\X/g" to return a list of all eXtended grapheme clusters
 # in each line, then reverse and print that list, in reverse order:

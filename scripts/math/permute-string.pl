@@ -37,7 +37,7 @@ BEGIN
    if ((@ARGV > 0) && ('-h' eq $ARGV[0] || '--help' eq $ARGV[0]))
    {
       Help();
-      exit 777;
+      exit 0;
    }
 
    # Otherwise, die if not exactly 1 arg:
@@ -46,7 +46,7 @@ BEGIN
       say 'Error: Permute takes exactly 1 argument, which must be';
       say 'a string with at least 2 characters and at most 20 characters.';
       say 'Use a "-h" or "--help" option to get help.';
-      exit 666;
+      exit 0;
    }
 
    # Die if arg is too short or too long:
@@ -55,7 +55,7 @@ BEGIN
       say 'Error: Permute takes exactly 1 argument, which must be';
       say 'a string with at least 2 characters and at most 20 characters.';
       say 'Use a "-h" or "--help" option to get help.';
-      exit 666;
+      exit 0;
    }
 
    Permute('',$ARGV[0]);

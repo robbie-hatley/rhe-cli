@@ -92,7 +92,8 @@ my $failcount = 0         ; # Count of failed directory rename attempts.
    if ($Verbose) {say "\nNow exiting program \"$pname\". Execution time was ${ms}ms."}
 
    # We're finished, so exit program and return success code 0 to caller:
-   exit 0;
+
+  exit 0;
 } # end main
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
@@ -129,7 +130,7 @@ sub argv {
    my $NA = scalar(@args);
    if    ( 0 == $NA ) {                                  } # Do nothing.
    elsif ( 1 == $NA ) {$RegExp = qr/$args[0]/o           } # Set $RegExp.
-   else               {error($NA); say ''; help; exit 666} # Print error and help messages then exit 666.
+   else               {error($NA); say ''; help; exit 0;} # Print error and help messages then exit.
    return 1;
 } # end sub argv
 

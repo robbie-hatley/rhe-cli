@@ -92,7 +92,7 @@ sub argv {
    for ( my $i = 0 ; $i < @ARGV ; ++$i ) {
       $_ = $ARGV[$i];
       if (/^-[\pL]{1,}$/ || /^--[\pL\pM\pN\pP\pS]{2,}$/) {
-         if ( $_ eq '-h' || $_ eq '--help' ) {help; exit 777;}
+         if ( $_ eq '-h' || $_ eq '--help' ) {help; exit 0;}
          if ( $_ eq '-e' || $_ eq '--debug') {$db=1}
          splice @ARGV, $i, 1;
          --$i;

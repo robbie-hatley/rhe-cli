@@ -46,7 +46,7 @@ sub help {
 
 # Check @ARGV to see if user wants help:
 for (@ARGV) {
-   /^-h$|^--help$/ and help and exit 777;
+   /^-h$|^--help$/ and help and exit 0;
 }
 
 # Set number of bytes:

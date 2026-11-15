@@ -82,7 +82,7 @@ sub argv {
 
    # Process options:
    for ( @opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit 777 ;
+      /^-$s*h/ || /^--help$/    and help and exit ;
       /^-$s*e/ || /^--debug$/   and $Db      =  1     ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0     ;
       /^-$s*r/ || /^--recurse$/ and $Recurse =  1     ;

@@ -31,7 +31,7 @@ sub help;
 { # begin main
 
    # Process @ARGV:
-   GetOptions('h|help' => sub {help(); exit 0}, 'lines=i' => \$NOLTP)
+   GetOptions('h|help' => sub {help;exit 0;}, 'lines=i' => \$NOLTP)
    or die "Error: Getopt::Long::GetOptions() failed.\n";
 
    # $NOLTP must be an integer:
@@ -44,7 +44,7 @@ sub help;
    # How many lines do we have?
    my $num_lines = scalar @lines;
 
-   # If @lines is empty, exit now to avoid trying to print non-existent lines:
+   # If @lines is empty, die to avoid trying to print non-existent lines:
    $num_lines >= 1
    or die "Error: No input was received.\n";
 

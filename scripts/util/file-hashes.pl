@@ -131,7 +131,7 @@ sub argv {
 
    # Process options:
    for ( @opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit 777;
+      /^-$s*h/ || /^--help$/    and help and exit 0;
       /^-$s*r/ || /^--recurse$/ and $Recurse = 1;
    }
 

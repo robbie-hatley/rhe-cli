@@ -31,7 +31,7 @@ if ( 2 != scalar(@ARGV) || ! -e $ARGV[0] || -e $ARGV[1] ) {
        ."The first  argument must be a path to an existing file.\n"
        ."The second argument must be a valid path to rename the file to.\n"
        ."Aborting program execution.\n";
-   exit 666;
+   exit 0;
 }
 say "\"rename-file.pl\" will attempt the following file rename:";
 say "Original file path: $ARGV[0]";

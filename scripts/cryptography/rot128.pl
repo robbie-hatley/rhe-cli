@@ -40,14 +40,14 @@ sub print_help_msg;
    if (@ARGV == 1 && ($ARGV[0] eq '-h' || $ARGV[0] eq '--help'))
    {
       print_help_msg();
-      exit;
+      exit 0;
    }
 
    if (@ARGV < 1 || @ARGV > 2)
    {
       warn("Error: rot128.pl takes 1 or 2 arguments.");
       print_help_msg();
-      exit;
+      exit 0;
    }
 
    our @Pad           = ();
@@ -184,7 +184,7 @@ sub print_help_msg;
    print join '', @OutputChars;
 
    # We're done, so end program:
-   exit;
+   exit 0;
 } # end main()
 
 

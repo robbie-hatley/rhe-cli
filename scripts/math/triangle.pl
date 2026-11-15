@@ -86,7 +86,7 @@ sub argv {
    for (@ARGV) {if (/^-(?!-)$s+$/ || /^--(?!-)$d+$/) {push @opts, $_} else {push @args, $_}}
 
    # Process options:
-   for (@opts) {/^-$s*h$s*$/ || /^--help$/ and help and exit 777}
+   for (@opts) {/^-$s*h$s*$/ || /^--help$/ and help and exit 0;}
 
    # If inputs are bad, print error message and exit:
    if ( 3 != scalar                  @args ) {error('Number of arguments is not 3')}

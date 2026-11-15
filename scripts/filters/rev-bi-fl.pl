@@ -58,7 +58,7 @@ sub help {
    return 1;
 } # end sub help
 
-/-h/ || /--help/ and help and exit 777 for @ARGV;
+/^-h$/ || /^--help$/|| /--help/ and help and exit 0 for @ARGV;
 
 # Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn:
 my $input = do {local $/;<>};

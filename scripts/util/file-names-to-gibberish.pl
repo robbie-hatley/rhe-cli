@@ -148,7 +148,7 @@ sub help    ; # Print help and exit.
       say STDERR 'ARE YOU SURE THAT THAT IS WHAT YOU REALLY WANT TO DO???';
       say STDERR 'Press ":" (shift-semicolon) to continue, or any other key to abort.';
       my $char = get_character;
-      exit 0 unless ':' eq $char;
+      exit unless ':' eq $char;
    }
    $Recurse and RecurseDirs {curdire} or curdire;
 
@@ -183,7 +183,7 @@ sub argv {
 
    # Process options:
    for ( @opts ) {
-      /^-$s*h/ || /^--help$/      and help and exit 777 ;
+      /^-$s*h/ || /^--help$/      and help and exit ;
       /^-$s*e/ || /^--debug$/     and $Db        =  1   ;
       /^-$s*q/ || /^--quiet$/     and $Verbose   =  0   ;
       /^-$s*v/ || /^--verbose$/   and $Verbose   =  2   ;
@@ -221,7 +221,7 @@ sub argv {
    if ( $NA >= 3 && !$Db ) {   # If number of arguments >= 3 and we're not debugging,
       error($NA);              # print error message,
       help;                    # and print help message,
-      exit 666;                # and exit, returning The Number Of The Beast.
+      exit 0;                # and exit, returning The Number Of The Beast.
    }
 
    # Return success code 1 to caller:

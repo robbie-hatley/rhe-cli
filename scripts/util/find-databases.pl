@@ -57,7 +57,7 @@ sub argv {
    for ( my $i = 0 ; $i < @ARGV ; ++$i ) {
       $_ = $ARGV[$i];
       if (/^-\pL{1,}$/ || /^--\pL{2,}$/) {
-            if ( $_ eq '-h' || $_ eq '--help'         ) {help; exit 777;}
+            if ( $_ eq '-h' || $_ eq '--help'         ) {help; exit 0;}
          elsif ( $_ eq '-r' || $_ eq '--recurse'      ) {$Recurse =  1 ;}
          splice @ARGV, $i, 1;
          --$i;

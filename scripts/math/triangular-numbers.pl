@@ -20,17 +20,13 @@ sub NumberOfDivisors;
 
 # Main:
 {
-   if (1 != scalar @ARGV)
-   {
-      say "This program must take exactly 1 argument, which must be "
-        . "a positive integer.\n";
-      exit (666);
+   if (1 != scalar @ARGV) {
+      die "This program must take exactly 1 argument, which must be a positive integer.\n";
    }
    my $Limit = 0 + $ARGV[0];
    my $Index = 0;
    my $Triangle = 0;
-   do
-   {
+   do {
       ++$Index;
       $Triangle += $Index;
       printf("%20d%30d\n", $Index, $Triangle);

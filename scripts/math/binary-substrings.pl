@@ -8,13 +8,13 @@
 use v5.32;
 
 sub error;
-error and exit 666 if @ARGV != 2;
+error and exit if @ARGV != 2;
 my $B = shift @ARGV;
 my $S = shift @ARGV;
-error and exit 666 if $B !~ /^[01]{2,}$/;
-error and exit 666 if $S !~ /^[1-9]\d*$/;
+error and exit if $B !~ /^[01]{2,}$/;
+error and exit if $S !~ /^[1-9]\d*$/;
 my $L = length $B;
-error and exit 666 if 0 != $L % $S;
+error and exit if 0 != $L % $S;
 say "\$B = $B  \$S = $S";
 my @substrs;
 foreach my $group ( 0 .. $L/$S - 1 )

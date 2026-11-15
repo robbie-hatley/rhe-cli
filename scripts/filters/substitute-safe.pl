@@ -102,7 +102,7 @@ sub argv {
 
    # Process options:
    for ( @Opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit;
+      /^-$s*h/ || /^--help$/    and help and exit 0;
       /^-$s*e/ || /^--debug$/   and $Debg    =  1  ;
       /^-$s*v/ || /^--verbose$/ and $Verb    =  2  ;
    }

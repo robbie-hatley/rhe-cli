@@ -38,7 +38,7 @@ sub help;
 { # begin main
    argv;
    if ($Debug) {say "In main after argv.   \$X = $X   \$Y = $Y";}
-   if ($Help ) {help; exit 777;}
+   if ($Help ) {help; exit 0;}
    my $b = binomial_coefficient($X, $Y);
    1 == $b->denominator() and say $b->as_int() or say $b->as_float(100_000);
    exit 0;

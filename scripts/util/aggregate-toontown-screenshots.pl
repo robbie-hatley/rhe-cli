@@ -168,7 +168,7 @@ sub set_settings {
 
    # Process @ARGV:
    for ( @ARGV ) {
-         if ( /^-h$/ || /^--help$/   )    {help; exit 777;}
+         if ( /^-h$/ || /^--help$/   )    {help; exit 0;}
       elsif ( /^-1$/ || /^--debug1$/ )    {$Db = 1;}
       elsif ( /^-2$/ || /^--debug2$/ )    {$Db = 2;}
       elsif ( /^-3$/ || /^--debug3$/ )    {$Db = 3;}
@@ -260,7 +260,7 @@ sub PHASE_1 {
    if ( $Db ) {
       say STDERR '';
       say STDERR 'At Breakpoint 1 (before moving screenshots from program_dir to screens_dir).';
-      if ( 1 == $Db ) {exit 111}
+      if ( 1 == $Db ) {exit 1}
    }
 
    # First make sure that these two directories exist and are directories:
@@ -391,7 +391,7 @@ sub PHASE_2 {
       say STDERR '';
       say STDERR 'At breakpoint 2, before renaming screenshots.';
       say STDERR "Number of files in screens_dir after moving from program_dir = $num2";
-      if ( 2 == $Db ) {exit 222}
+      if ( 2 == $Db ) {exit 2}
    }
 
    say STDOUT '';
@@ -461,7 +461,7 @@ sub PHASE_3 {
       say STDERR '';
       say STDERR 'At Breakpoint 3, before filing files by date.';
       say STDERR "Number of files in screens_dir after renaming = $num3";
-      if ( 3 == $Db ) {exit 333}
+      if ( 3 == $Db ) {exit 3}
    }
 
    say STDOUT '';

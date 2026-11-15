@@ -53,7 +53,7 @@ $, = ' ';
    if ($ARGV[0] eq '-h' || $ARGV[0] eq '--help')
    {
       Help();
-      exit 777;
+      exit 0;
    }
 
    # If number of arguments is out of range, bail:
@@ -61,7 +61,7 @@ $, = ' ';
    {
       warn "Error: \"substitute-while-preserving-case.pl\" requires 2 command-line arguments.";
       Help();
-      exit 666;
+      exit 0;
    }
 
    my $Pat = $ARGV[0];

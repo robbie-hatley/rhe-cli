@@ -33,7 +33,7 @@ sub help {
 
 # If user wants help, just print help and exit:
 for (@ARGV) {
-   /^-h$|^--help$/ and help and exit;
+   /^-h$|^--help$/ and help and exit 0;
 }
 
 # Otherwise, print the file-system type of the current working directory:

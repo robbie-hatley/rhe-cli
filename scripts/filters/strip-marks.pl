@@ -62,7 +62,7 @@ sub argv {
          --$index;
       }
    }
-   if ($佐) {佐; exit 777;}
+   if ($佐) {佐; exit 0;}
 } # end sub process_argv
 
 sub 佐 {

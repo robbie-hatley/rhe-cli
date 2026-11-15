@@ -20,7 +20,7 @@
 #                   converted are now input from STDIN. Chomps each input line, construes it as being
 #                   one number to be converted, and outputs conversion as an output line ending in "\n".
 # Wed Dec 03, 2025: Improved comments and help.
-# Sat Aug 01, 2026: Changed return values to be integers within 0-17 range. Added "exit 0" at end.
+# Sat Aug 01, 2026: Changed return values to be integers within 0-17 range. Added "exit" at end.
 ##############################################################################################################
 
 use v5.16; # Provides "say".

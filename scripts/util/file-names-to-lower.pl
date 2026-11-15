@@ -175,7 +175,7 @@ sub argv {
         && !$Debug && !$Help ) { # and we're not debugging and not getting help,
       error($NA);                # print error message,
       help;                      # and print help message,
-      exit 666;                  # and exit, returning The Number Of The Beast.
+      exit 0;                  # and exit, returning The Number Of The Beast.
    }
 
    # First argument, if present, is a file-selection regexp:

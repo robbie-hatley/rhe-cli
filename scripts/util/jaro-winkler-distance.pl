@@ -75,10 +75,10 @@ sub help {
    return 1;
 }
 
-for (@ARGV) {'-h' eq $_ || '--help' eq $_ and help and exit}
+for (@ARGV) {'-h' eq $_ || '--help' eq $_ and help and exit 0;}
 
 # If we don't have 2 arguments, print error message, give help, and exit:
-2 != @ARGV and warn "Error: Invalid input. Help follows.\n" and help and exit;
+2 != @ARGV and warn "Error: Invalid input. Help follows.\n" and help and exit 0;
 
 # Get strings and their lengths:
 my $string1 = fc $ARGV[0];

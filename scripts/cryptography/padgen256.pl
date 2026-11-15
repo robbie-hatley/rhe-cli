@@ -35,7 +35,7 @@ sub print_help_msg;
    if (@ARGV == 1 && ($ARGV[0] eq '-h' || $ARGV[0] eq '--help'))
    {
       print_help_msg();
-      exit;
+      exit 0;
    }
 
    if (@ARGV != 1 || $ARGV[0] < 10 || $ARGV[0] > 2000000000)
@@ -43,7 +43,7 @@ sub print_help_msg;
       warn("Error: padgen256.pl takes 1 argument, which must be an integer\n".
            "in the 10-2000000000 range.\n");
       print_help_msg();
-      exit;
+      exit 0;
    }
 
    my @Charset = map chr, (0..255);
@@ -57,7 +57,7 @@ sub print_help_msg;
       }
       print((join '', @PermCharset));
    }
-   exit;
+   exit 0;
 }
 
 

@@ -37,7 +37,7 @@ my @charset = split //,'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
       {
          printf("charset[%2d] = %s\n", $i, $charset[$i]);
       }
-      exit 742;
+      exit 0;
    }
    while (<>)
    {
@@ -53,7 +53,7 @@ sub argv :prototype()
 {
    for ( @ARGV )
    {
-      if ( $_ eq '-h' || $_ eq '--help' ) {help; exit 777;}
+      if ( $_ eq '-h' || $_ eq '--help' ) {help; exit 0;}
    }
    return 1;
 } # end sub argv ()

@@ -109,7 +109,7 @@ sub help    ; # Print help and exit.
    say STDERR 'ARE YOU SURE THAT THAT IS WHAT YOU REALLY WANT TO DO???';
    say STDERR 'Press "<" (shift-comma) to continue, or any other key to abort.';
    my $char = get_character;
-   exit 0 unless '<' eq $char;
+   exit unless '<' eq $char;
 
    $Recurse and RecurseDirs {curdire} or curdire;
    stats;

@@ -78,7 +78,7 @@ my $failcount = 0; # Count of file deletion failures.
                    say 'ARE YOU SURE THAT THIS IS WHAT YOU REALLY WANT TO DO???';
                    say 'PRESS "&" (SHIFT-7) TO CONTINUE OR ANY OTHER KEY TO ABORT.';
       my $char = get_character;
-      exit 0 unless '&' eq $char;
+      exit unless '&' eq $char;
    }
 
    $Recurse and RecurseDirs {curdire} or curdire;
@@ -115,7 +115,7 @@ sub argv {
 
    # Process options:
    for ( @opts ) {
-      /^-$s*h/ || /^--help$/     and help and exit 777 ;
+      /^-$s*h/ || /^--help$/     and help and exit ;
       /^-$s*s/ || /^--simulate$/ and $Simulate =  1    ;
       /^-$s*l/ || /^--local$/    and $Recurse  =  0    ;
       /^-$s*r/ || /^--recurse$/  and $Recurse  =  1    ;
@@ -134,7 +134,7 @@ sub argv {
    my $NA = scalar(@args);
    if    (0 == $NA) {                                 ; } # Do nothing.
    elsif (1 == $NA) {$RegExp = qr/$args[0]/o          ; } # Set $RegExp.
-   else             {error($NA) and help and exit 666 ; } # Print error and help messages then exit 666.
+   else             {error($NA) and help and exit ; } # Print error and help messages then exit.
    return 1;
 } # end sub argv
 

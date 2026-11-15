@@ -24,7 +24,7 @@
 #                   "use v5.32;" to "use v5.36;". Got rid of prototypes. Sub "error" is now "error($NA)".
 #                   Single-letter options can now be piled-up after a single hyphen. Got rid of
 #                   "common::sense" (antiquated). Sub "error" now prints error message ONLY (doesn't run help
-#                   or exit; those are called from argv). Still using obsolete given/when via "experimental".
+#                   or exit 0; those are called from argv). Still using obsolete given/when via "experimental".
 # Sat Jul 29, 2023: Got rid of all uses of "given" and "when". Also, I'm now sending all printing to STDERR
 #                   except for printing each matching path to STDOUT. That way a 1> redirect should print
 #                   matching paths only, and a 2> redirect should print diagnostics only.
@@ -244,7 +244,7 @@ sub argv {
 
    # Process options:
    for ( @Opts ) {
-      /^-$s*h/ || /^--help$/     and help and exit 777 ;
+      /^-$s*h/ || /^--help$/     and help and exit ;
       /^-$s*e/ || /^--debug$/    and $Debug   =  1     ;
       /^-$s*q/ || /^--quiet$/    and $Verbose =  0     ; # DEFAULT
       /^-$s*t/ || /^--terse$/    and $Verbose =  1     ;
@@ -271,7 +271,7 @@ sub argv {
       && !$Debug ) {           # and we're not debugging,
       error($NA);              # print error message,
       help;                    # and print help message,
-      exit 666;                # and exit, returning The Number Of The Beast.
+      exit 0;                # and exit, returning The Number Of The Beast.
    }
    if ( $NA >= 1 ) {           # If number of arguments >= 1,
       $RegExp = qr/$Args[0]/o; # set $RegExp to $Args[0].

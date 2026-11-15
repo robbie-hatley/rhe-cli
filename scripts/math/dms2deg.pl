@@ -43,7 +43,7 @@ sub help {
 for ( @ARGV ) {
    if ( '-h' eq $_ || '--help' eq $_ ) {
       help;
-      exit 777;
+      exit 0;
    }
 }
 
@@ -56,7 +56,7 @@ for my $i (0..$#ARGV) {
    ) {
       warn "Error: Argument out-of-range.\n";
       help;
-      exit 666;
+      exit 0;
    }
 }
 

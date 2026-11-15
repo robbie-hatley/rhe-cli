@@ -25,7 +25,7 @@ sub help {
    return 1;
 } # end sub help
 
-for (@ARGV) {/--help/ || /-h/ and help and exit}
+for (@ARGV) {/--help/ || /-h/ and help and exit 0;}
 
 chdir '/home/aragorn/Data/Ulthar/OS-Resources/Background-Pictures';
 system 'list-paths.pl -fqr | extract-image-paths.pl | plasmarc-join.pl';

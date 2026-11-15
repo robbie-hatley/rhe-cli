@@ -39,7 +39,7 @@ sub help;
    # If user requested help, print help and exit:
    if ($Help) {
       help;
-      exit;
+      exit 0;
    }
 
    # Otherwise, print normalized version of input:

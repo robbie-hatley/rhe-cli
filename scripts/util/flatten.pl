@@ -17,6 +17,9 @@
 # Sun Apr 27, 2025: Now using "utf8::all" and "Cwd::utf8". Simplified shebang to "#!/usr/bin/env perl".
 #                   Nixed all "d", "e".
 # Fri Mar 13, 2026: Fixed help to reflect use of '__' instead of '_'.
+# Sat Nov 14, 2026: Fixed "program return value truncated to 8 bits" bug, by removing all explicit values for
+#                   "exit". Reverted to using "_" because "__" looks ugly. Fixed "$pname" bug. Set default
+#                   verbosity level to 1 (terse) instead of 0 (quiet). Updated help().
 ##############################################################################################################
 
 use v5.36;
@@ -45,9 +48,12 @@ BEGIN {$t0 = time}
 
 # ======= LEXICAL VARIABLES: =================================================================================
 
+# Set program name:
+my $pname = substr $0, 1 + rindex $0, '/';
+
 # Setting:      Default Value:   Meaning of Setting:         Range:     Meaning of Default:
 my $Db        = 0            ; # Debug?                      bool       Don't debug.
-my $Verbose   = 0            ; # Be wordy?                   0,1,2      Be quiet.
+my $Verbose   = 1            ; # Be wordy?                   0,1,2      Be quiet.
 my $Target    = 'A'          ; # Files, dirs, both, all?     F|D|B|A    Process all file types.
 my $RegExp    = qr/^.+$/     ; # Regular expression.         regexp     Process all file names.
 my $Predicate = 1            ; # Boolean predicate.          bool       Process all file types.
@@ -60,8 +66,6 @@ my $predcount = 0 ; # Count of files found which also match file-type predicate.
 # ======= MAIN BODY OF PROGRAM: ==============================================================================
 
 { # begin main
-   # Set program name:
-   my $pname = substr $0, 1 + rindex $0, '/';
 
    # Process @ARGV:
    argv;
@@ -90,7 +94,7 @@ my $predcount = 0 ; # Count of files found which also match file-type predicate.
       printf STDERR "Execution time was %.3f seconds.", time - $t0;
    }
 
-   # Exit program, returning success code "0" to caller:
+   # We're done, so exit:
    exit 0;
 } # end main
 
@@ -117,15 +121,15 @@ sub argv {
 
    # Process options:
    for ( @opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit 777 ;
-      /^-$s*e/ || /^--debug$/   and $Db      =  1     ;
-      /^-$s*q/ || /^--quiet$/   and $Verbose =  0     ;
-      /^-$s*t/ || /^--terse$/   and $Verbose =  1     ;
-      /^-$s*v/ || /^--verbose$/ and $Verbose =  2     ;
-      /^-$s*f/ || /^--files$/   and $Target  = 'F'    ;
-      /^-$s*d/ || /^--dirs$/    and $Target  = 'D'    ;
-      /^-$s*b/ || /^--both$/    and $Target  = 'B'    ;
-      /^-$s*a/ || /^--all$/     and $Target  = 'A'    ;
+      /^-$s*h/ || /^--help$/    and help and exit  ;
+      /^-$s*e/ || /^--debug$/   and $Db      =  1  ;
+      /^-$s*q/ || /^--quiet$/   and $Verbose =  0  ;
+      /^-$s*t/ || /^--terse$/   and $Verbose =  1  ;
+      /^-$s*v/ || /^--verbose$/ and $Verbose =  2  ;
+      /^-$s*f/ || /^--files$/   and $Target  = 'F' ;
+      /^-$s*d/ || /^--dirs$/    and $Target  = 'D' ;
+      /^-$s*b/ || /^--both$/    and $Target  = 'B' ;
+      /^-$s*a/ || /^--all$/     and $Target  = 'A' ;
    }
    if ( $Db ) {
       say STDERR '';
@@ -150,7 +154,7 @@ sub argv {
    if ( $NA >= 3 && !$Db ) {   # If number of arguments >= 3 and we're not debugging,
       error($NA);              # print error message,
       help;                    # and print help message,
-      exit 666;                # and exit, returning The Number Of The Beast.
+      exit 0;                # and exit, returning The Number Of The Beast.
    }
 
    # Return success code 1 to caller:
@@ -192,7 +196,7 @@ sub curfile ($path) {
    # Get the name of the immediate parent directory of the file at this path:
    my $dirname = get_dirname_from_path($path);
    my $oldname = get_name_from_path($path);
-   my $newname = $dirname . '__' . $oldname;
+   my $newname = $dirname . '_' . $oldname;
 
    # Announce path:
    if ( $Db ) {
@@ -241,16 +245,16 @@ sub error ($NA) {
 
 # Print help:
 sub help {
-   print ((<<'   END_OF_HELP') =~ s/^   //gmr);
+   print ((<<"   END_OF_HELP") =~ s/^   //gmr);
 
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "flatten". This program appends the name of the current directory
-   to all items in the current directory using "__". For example, if the current
+   Welcome to "$pname". This program appends the name of the current directory
+   to all items in the current directory using "_". For example, if the current
    directly is "/apple/orange/banana", containing items "peach", "plum", and
-   "pear", then this program would rename those 3 items to "banana__peach",
-   "banana__plum", and "banana__pear".
+   "pear", then this program would rename those 3 items to "banana_peach",
+   "banana_plum", and "banana_pear".
 
    By default this program renames ALL items in the current directory, but this
    can be modified by using A|F|D|B switches, regexps, and predicates; see
@@ -263,8 +267,8 @@ sub help {
    -------------------------------------------------------------------------------
    Command lines:
 
-   program-name.pl -h | --help                       (to print this help and exit)
-   program-name.pl [options] [Arg1] [Arg2] [Arg3]    (to [perform funciton] )
+   $pname -h | --help                       (to print this help and exit)
+   $pname [options] [Arg1] [Arg2] [Arg3]    (to [perform funciton] )
 
    -------------------------------------------------------------------------------
    Description of options:
@@ -272,8 +276,8 @@ sub help {
    Option:            Meaning:
    -h or --help       Print help and exit.
    -e or --debug      Print diagnostics.
-   -q or --quiet      Be quiet.                         (DEFAULT)
-   -t or --terse      Be terse.
+   -q or --quiet      Be quiet.
+   -t or --terse      Be terse.                         (DEFAULT)
    -v or --verbose    Be verbose.
    -f or --files      Target Files.
    -d or --dirs       Target Directories.
@@ -346,4 +350,3 @@ sub help {
    END_OF_HELP
    return 1;
 } # end sub help
-__END__

@@ -38,3 +38,4 @@ while(<>) {
    }
    print STDOUT "\n";                          # Print newline at end of line.
 }                                              # Loop to next line, or exit if no more lines.
+exit 0;

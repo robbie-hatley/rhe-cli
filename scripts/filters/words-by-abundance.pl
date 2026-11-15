@@ -29,7 +29,7 @@ sub help;
 # Main body of program:
 {                                                        # Begin main body of program.
    argv;                                                 # Process command-line arguments.
-   $Help and help and exit 777;                          # If user wants help, just print help and exit.
+   $Help and help and exit 0;                          # If user wants help, just print help and exit.
    my @words;                                            # Words array.
    my %hash;                                             # Words hash.
    for my $line ( <> ) {                                 # Process input line-by-line.

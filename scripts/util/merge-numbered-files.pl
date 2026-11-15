@@ -146,7 +146,7 @@ sub argv {
 
    # If number of arguments is out-of-range and we're not getting help or debugging,
    # print error and help messages and exit:
-   (5 != $NA) && !$Help && !$Debug and error($NA) and help and exit 666;
+   (5 != $NA) && !$Help && !$Debug and error($NA) and help and exit 0;
 
    # Set settings:
    ($prefix, $digits, $suffix, $dir1, $dir2) = @Args;

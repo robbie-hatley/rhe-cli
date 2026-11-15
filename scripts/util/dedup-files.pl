@@ -355,7 +355,7 @@ sub argv {
    if ( $NA >= 3 && !$Debug ) {  # If number of arguments >= 3 and we're not debugging,
       error($NA);                # print error message,
       help;                      # and print help message,
-      exit 666;                  # and exit, returning The Number Of The Beast.
+      exit 0;                      # and exit, returning The Number Of The Beast.
    }
 
    # First argument, if present, is a file-selection regexp:
@@ -511,7 +511,7 @@ sub curdire {
                   case 'deleted'   {++$deledirec;++$delecount}
                   case 'failed'    {++$faildirec;++$failcount}
                   case 'error'     {++$errodirec;++$errocount}
-                  case 'exit'      {dire_stats;tree_stats;exit 0}
+                  case 'exit'      {dire_stats;tree_stats;exit 0;}
                   case 'simulated' {++$simudirec;++$simucount}
                   # Otherwise, we received an unknown result code; this is a fatal error, so die:
                   else {die "Fatal error in \"dedup-files.pl\": Invalid result code in curdire.\n$!\n"}

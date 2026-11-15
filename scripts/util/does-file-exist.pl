@@ -52,7 +52,7 @@ for (@ARGV) {
       Robbie Hatley,
       programmer.
       END_OF_HELP
-      exit 777;
+      exit 0;
    }
 }
 

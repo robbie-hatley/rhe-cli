@@ -45,7 +45,7 @@ sub help;
    }
 
    # Exit program, returning success code 0 to caller:
-   exit;
+   exit 0;
 } # end main
 
 # ======= SUBROUTINE DEFINITIONS: ============================================================================
@@ -74,7 +74,7 @@ sub argv {
 
    # Now, let's process our options:
    for (@Opts) {
-      /^-h$/ || /^--help$/ and help and exit;
+      /^-h$/ || /^--help$/ and help and exit 0;
    }
 
    # Finally, return success code 1 to caller:

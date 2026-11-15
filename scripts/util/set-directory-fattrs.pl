@@ -114,7 +114,7 @@ sub argv {
    }
 
    for ( @opts ) {
-      /^-$s*h/ || /^--help$/    and help and exit 777 ;
+      /^-$s*h/ || /^--help$/    and help and exit ;
       /^-$s*q/ || /^--quiet$/   and $Verbose =  0     ;
       /^-$s*v/ || /^--verbose$/ and $Verbose =  1     ;
       /^-$s*l/ || /^--local$/   and $Recurse =  0     ;
@@ -126,7 +126,7 @@ sub argv {
    $NA >= 2                    # If number of arguments >= 2,
    and error($NA)              # print error message,
    and help                    # and print help message,
-   and exit 666;               # and exit, returning The Number Of The Beast.
+   and exit 0;               # and exit, returning The Number Of The Beast.
    $NA >= 1                    # If number of arguments >= 1,
    and $RegExp = qr/$args[0]/; # set $RegExp.
 

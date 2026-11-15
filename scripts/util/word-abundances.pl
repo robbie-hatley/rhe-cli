@@ -35,7 +35,7 @@ sub help;
 # Main body of program:
 {                                                # Begin main body of program.
    argv;                                         # Process command-line arguments.
-   $Help and help and exit 777;                  # If user wants help, just print help and exit.
+   $Help and help and exit 0;                  # If user wants help, just print help and exit.
    my $tw = 0;                                   # Total-words counter.
    my %wh;                                       # Words abundance hash.
    for my $line ( <> ) {                         # Process input line-by-line.
@@ -62,7 +62,8 @@ sub help;
    }
 
    # Exit program, returning success code 0 to caller:
-   exit 0;
+
+  exit 0;
 }
 
 # Subroutine definitions:

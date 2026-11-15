@@ -59,7 +59,7 @@ sub help;
    # Get options:
    GetOptions
       (
-         'help|h'   => sub {help; exit;},
+         'help|h'   => sub {help; exit 0;},
          'xmin=f'   => \$xmin,
          'xmax=f'   => \$xmax,
          'ymin=f'   => \$ymin,

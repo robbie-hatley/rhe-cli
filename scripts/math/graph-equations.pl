@@ -66,7 +66,7 @@ sub help_msg;
 
    GetOptions
       (
-         'help|h'   => sub {help_msg; exit 777;},
+         'help|h'   => sub {help_msg; exit 0;},
          'xmin=f'   => \$xmin,
          'xmax=f'   => \$xmax,
          'ymin=f'   => \$ymin,
@@ -80,7 +80,7 @@ sub help_msg;
       or die 'Error: Invalid arguments in "graph-equations.pl".';
 
    # If user wants help, just print help and bail:
-   if ($help) {help_msg; exit 777;}
+   if ($help) {help_msg; exit 0;}
 
    # Get equations:
    my @Equations;
@@ -90,14 +90,14 @@ sub help_msg;
    if ( @Equations < 1 )
    {
       say 'Error in "graph-equations.pl": You didn\'t provide any equations to graph.';
-      exit 666;
+      exit 0;
    }
 
    # Bail if user provided more than 10 equations:
    if ( @Equations > 10 )
    {
       say 'Error in "graph-equations.pl": Max # of equations is 10.';
-      exit 666;
+      exit 0;
    }
 
    # Calculate delta_x:

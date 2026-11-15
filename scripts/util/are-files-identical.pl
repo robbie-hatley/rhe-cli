@@ -41,7 +41,7 @@ my $path2; # Path to second file.
 
 sub argv {
    # If user wants help, just print help and bail:
-   /^-h$/ || /^--help$/ and help and exit 777 for @ARGV;
+   /^-h$/ || /^--help$/ and help and exit for @ARGV;
 
    # If number of arguments is not 2, bail:
    die "Error: are-files-identical.pl takes 2 arguments, which must be paths to\n".

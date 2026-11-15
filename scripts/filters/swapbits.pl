@@ -44,7 +44,7 @@ sub help;
    }
 
    # Exit app:
-   exit;
+   exit 0;
 
 } # end main
 

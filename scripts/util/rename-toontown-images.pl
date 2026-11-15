@@ -171,7 +171,7 @@ sub argv {
    # ---------------------------------------------------------------------------------------------------------
    # Process Options:
    for ( @opts ) {
-      /^-$s*h/ || /^--help$/     and help and exit 777 ;
+      /^-$s*h/ || /^--help$/     and help and exit ;
       /^-$s*e/ || /^--debug$/    and $Db      =  1     ;
       /^-$s*q/ || /^--quiet$/    and $Verbose =  0     ;
       /^-$s*t/ || /^--terse$/    and $Verbose =  1     ; # DEFAULT

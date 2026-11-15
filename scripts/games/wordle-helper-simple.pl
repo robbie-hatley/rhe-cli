@@ -66,7 +66,7 @@ sub help    ; # Print help and exit.
    argv;
 
    # If user wants help, just print help and exit:
-   if ($Help) {help; exit;}
+   if ($Help) {help; exit 0;}
 
 
 

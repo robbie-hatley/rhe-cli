@@ -10,7 +10,7 @@ for (@ARGV) {
       say "with unlimited precision. Present your integer as first-and-only";
       say "command-line argument, and make sure it consists only of valid";
       say "hexadecimal digits and does not begin with a 0.";
-      exit;
+      exit 0;
    }
 }
 die "Wrong number of arguments!\n$!\n" if 1 != scalar(@ARGV);
