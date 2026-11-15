@@ -24,7 +24,7 @@ PROBLEM NOTES:
 
 To solve this problem, I'll use the "number of leading tabs" as "depths", then keep track of "current working
 directory" by pushing/popping directories on a stack. Then make the relative path (no leading slant) for each
-file, and keep track of the longest.
+file, and keep track of the longest. Then return longest path and its length.
 
 --------------------------------------------------------------------------------------------------------------
 IO NOTES:
@@ -48,12 +48,37 @@ Output is to STDOUT and will be each input followed by the corresponding output.
 
    # What is the longest path to a file?
    sub longest_path ( $s ) {
-      my $lp = 0;
-      my @paths = split /\n/, $s;
-      foreach my $path (@paths) {
-         ;
+      my $lp  = '';                            # Longest path.
+      my $llp = 0;                             # Length of longest path.
+      my @cwd = ();                            # CWD
+      my @strings = split /\n/, $s;
+      for ( my $i = 0 ; $i <= $#strings ; ++$i ) {
+         my $string = $strings[$i];
+         my $depth = 0;                         # Depth
+         while ("\t" eq substr $string, 0, 1) {
+            substr $string, 0, 1, '';
+            ++$depth;                           # Deeper!
+         }
+         my $next_string = $strings[$i+1] // '';# Next string.
+         my $next_depth = 0;                    # Next depth.
+         while ("\t" eq substr $next_string, 0, 1) {
+            substr $next_string, 0, 1, '';
+            ++$next_depth;                      # Next deeper!
+         }
+         if ($string =~ m/^[^\.]+\.[^\.]+$/
+             && $next_depth <= $depth){         # File
+            my $path = join '/', (@cwd[0..$depth-1],$string);
+            if ( length($path) > $llp ) {
+               $lp = $path;
+               $llp = length($path);
+            }
+         }
+         else {                                 # Directory
+            @cwd = @cwd[0..$depth-1];           # Truncate CWD.
+            push @cwd, $string;                 # Rebuild CWD.
+         }
       }
-      return $lp;
+      return $lp,$llp;
    }
 
 # ------------------------------------------------------------------------------------------------------------
@@ -70,8 +95,9 @@ my @strings = @ARGV ? @ARGV :
 # ------------------------------------------------------------------------------------------------------------
 # MAIN BODY OF PROGRAM:
 for my $string (@strings) {
-   say '';
-   my $lp = longest_path($string);
-   print "Raw directory string =\n$string\n"
-        ."Longest path to file = $lp\n";
+   print "\n\n";
+   my ($lp,$llp) = longest_path($string);
+   print "Directory tree =\n$string\n"
+        ."Longest path for a file = $lp\n"
+        ."Length of longest path  = $llp\n";
 }
