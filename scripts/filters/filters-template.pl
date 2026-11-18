@@ -57,15 +57,10 @@ $" = ', ' ; # Quoted-array element separator = ", ".
 
 our    $pname;                                 # Declare program name.
 BEGIN {$pname = substr $0, 1 + rindex $0, '/'} # Set     program name.
-our    $cmpl_beg;                              # Declare compilation begin time.
-BEGIN {$cmpl_beg = time}                       # Set     compilation begin time.
-our    $cmpl_end;                              # Declare compilation end   time.
-INIT  {$cmpl_end = time}                       # Set     compilation end   time.
 
 # ------- Local variables: -----------------------------------------------------------------------------------
 
 # Settings:     Default:      Meaning of setting:       Range:    Meaning of default:
-my $OriDir    = cwd       ; # Original directory.       cwd       Directory on program entry.
 my $Debug     =  0        ; # Print diagnostics?        bool      Don't print diagnostics.
 
 # ======= SUBROUTINE PREDECLARATIONS: ========================================================================
@@ -151,10 +146,10 @@ sub help {
    -------------------------------------------------------------------------------
    Introduction:
 
-   Welcome to "$pname". This program does blah blah blah to input text
-   and outputs the result, without altering the input text. All input is via
-   STDIN and all output is via STDOUT. Use of pipes and/or redirects to channel
-   text flow is highly recommended.
+   Welcome to "$pname". This program does blah blah blah to a copy of the input
+   text and outputs the result, without altering the input text. All input is
+   via STDIN and all output is via STDOUT. Use of pipes and/or redirects to
+   channel text flow is highly recommended.
 
    -------------------------------------------------------------------------------
    Command lines:
@@ -171,16 +166,15 @@ sub help {
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
-   If multiple conflicting separate options are given, latter overrides former.
-   If multiple conflicting single-letter options are piled after a single hyphen,
-   the precedence is the inverse of the options in the above table.
+
+   If multiple conflicting options are given, later overrides earlier.
 
    If you want to use an argument that looks like an option (say, you want to
-   search for files which contain "--recurse" as part of their name), use a "--"
+   process files which contain "--help" as part of their name), use a "--"
    option; that will force all command-line entries to its right to be considered
    "arguments" rather than "options".
 
-   All options not listed above will be ignored.
+   All options not listed above are ignored.
 
    -------------------------------------------------------------------------------
    Description of Arguments:

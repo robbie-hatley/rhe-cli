@@ -404,15 +404,11 @@ sub help {
          --           End of options (all further CL items are arguments).
 
    Multiple single-letter options may be piled-up after a single hyphen.
-   For example, use -vr to verbosely and recursively process items.
 
-   If multiple conflicting separate options are given, latter overrides former.
-
-   If multiple conflicting single-letter options are piled after a single hyphen,
-   the precedence is the inverse of the options in the above table.
+   If multiple conflicting options are given, later overrides earlier.
 
    If you want to use an argument that looks like an option (say, you want to
-   search for files which contain "--recurse" as part of their name), use a "--"
+   process files which contain "--help" as part of their name), use a "--"
    option; that will force all command-line entries to its right to be considered
    "arguments" rather than "options".
 
