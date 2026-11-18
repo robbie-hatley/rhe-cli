@@ -31,7 +31,7 @@ IO NOTES:
 Input is via either default data or @ARGV. If using @ARGV, provide one-or-more space-separated single-quoted
 arguments. Each argument must be a positive integer. For example:
 
-./ch-1.pl '12345' '34567' '56789'
+./ch-1.pl '56789' '117463' '284706'
 
 Output is to STDOUT and will be each input followed by the corresponding output.
 
